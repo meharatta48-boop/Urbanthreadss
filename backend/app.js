@@ -24,14 +24,12 @@ import seoRoutes from "./routes/seo.routes.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
-const allowedOrigins = new Set(
-  (process.env.FRONTEND_URL || "http://localhost:5173")
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean)
-);
-allowedOrigins.add("http://localhost:5173");
-allowedOrigins.add("http://127.0.0.1:5173");
+const allowedOrigins = new Set([
+  "https://urbanthreadss.store",
+  "https://www.urbanthreadss.store",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173"
+]);
 
 app.use(requestContext);
 app.use(cors({
