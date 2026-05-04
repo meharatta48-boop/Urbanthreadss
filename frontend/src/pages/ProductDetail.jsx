@@ -142,6 +142,27 @@ export default function ProductDetail() {
     navigate("/cart");
   };
 
+  const handleBuyNow = () => {
+    // Require size selection if product has sizes
+    if (product.sizes?.length > 0 && !size) {
+      setSizeError(true);
+      toast.error("⚠️ Pehle size choose karo!");
+      document.getElementById("size-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    // Require color selection if product has colors
+    if (product.colors?.length > 0 && !color) {
+      setColorError(true);
+      toast.error("⚠️ Pehle color choose karo!");
+      document.getElementById("color-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    setSizeError(false);
+    setColorError(false);
+    addToCart({ ...product, size, color, quantity: qty });
+    setTimeout(() => navigate("/checkout"), 100);
+  };
+
   const prevImg = () => setActiveImg((i) => (i - 1 + images.length) % images.length);
   const nextImg = () => setActiveImg((i) => (i + 1) % images.length);
 
@@ -452,6 +473,16 @@ export default function ProductDetail() {
                 style={{ padding: "16px 24px", fontSize: "1rem" }}
               >
                 <FiShoppingCart size={17} /> Add to Cart
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleBuyNow}
+                disabled={product.stock === 0}
+                className="btn-outline flex-1 min-w-45 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ padding: "16px 24px", fontSize: "1rem" }}
+              >
+                Buy Now
               </motion.button>
 
               <button
