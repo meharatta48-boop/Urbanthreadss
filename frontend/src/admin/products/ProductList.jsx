@@ -58,7 +58,7 @@ export default function ProductList() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-orange-900/10 border border-orange-700/30 rounded-2xl px-5 py-4 flex items-start gap-3"
         >
-          <FiAlertTriangle size={18} className="text-orange-400 flex-shrink-0 mt-0.5" />
+          <FiAlertTriangle size={18} className="text-orange-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-orange-400 font-semibold text-sm">
               {needsUpdate.length} product{needsUpdate.length > 1 ? "s" : ""} mein size/color nahi hai
@@ -138,7 +138,7 @@ export default function ProductList() {
                   >
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                       {/* IMAGE */}
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#0a0a0a] border border-[#1a1a1a] flex-shrink-0">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#0a0a0a] border border-[#1a1a1a] shrink-0">
                         {p.images?.length ? (
                           <img
                             src={getImageUrl(p.images[0])}
@@ -158,7 +158,7 @@ export default function ProductList() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-white font-medium truncate">{p.name}</p>
                           {missing && (
-                            <span className="text-[9px] bg-orange-900/20 text-orange-400 border border-orange-700/20 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 flex-shrink-0">
+                            <span className="text-[9px] bg-orange-900/20 text-orange-400 border border-orange-700/20 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0">
                               <FiAlertTriangle size={8} /> Size/Color missing
                             </span>
                           )}
@@ -207,7 +207,7 @@ export default function ProductList() {
                     </div>
 
                     {/* ACTIONS */}
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                    <div className="flex items-center gap-2 shrink-0 ml-3">
                       <Link
                         to={`/admin-dashboard/products/${p._id}/edit`}
                         className={`p-2 rounded-lg border transition-all ${
