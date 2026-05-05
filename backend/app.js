@@ -1,10 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import { fileURLToPath } from "url";
-import morgan from "morgan";
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import fs from "fs";
 
 import errorHandler from "./middleware/error.middleware.js";
 import { requestContext, requestLogger } from "./middleware/requestContext.middleware.js";
@@ -77,14 +74,16 @@ app.use("/api/nav-links", navLinkRoutes);
 app.use("/api/pages", customPageRoutes);
 app.use("/api/seo", seoRoutes);
 
-// Serve static files from frontend build
+// Serve static files from frontend build if available
 const frontendPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendPath));
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
 
-// SPA fallback - serve index.html for all non-API routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+  // SPA fallback - serve index.html for all non-API routes
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
 
 app.use(errorHandler);
 
