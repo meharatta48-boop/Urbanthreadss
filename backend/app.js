@@ -77,8 +77,13 @@ app.use("/api/nav-links", navLinkRoutes);
 app.use("/api/pages", customPageRoutes);
 app.use("/api/seo", seoRoutes);
 
-app.get("/", (req, res) => {
-  res.send(`Backend running on port ${process.env.PORT || 5001}`);
+// Serve static files from frontend build
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
+// SPA fallback - serve index.html for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 app.use(errorHandler);
