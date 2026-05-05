@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 
 export default function LaunchTimer({ launchDate }) {
-  const calculateTimeLeft = () => {
+  const calculateTimeLeft = useCallback(() => {
     const difference = new Date(launchDate).getTime() - new Date().getTime();
     let timeLeft = {};
 
@@ -17,7 +17,7 @@ export default function LaunchTimer({ launchDate }) {
       timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
     }
     return timeLeft;
-  };
+  }, [launchDate]);
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
@@ -26,10 +26,10 @@ export default function LaunchTimer({ launchDate }) {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
     return () => clearInterval(timer);
-  }, [launchDate]);
+  }, [calculateTimeLeft]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#0c0c0c] text-white overflow-hidden p-4">
+    <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-[#0c0c0c] text-white overflow-hidden p-4">
       {/* Background glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
         <div className="w-[60vw] h-[60vw] rounded-full bg-[#c9a84c] blur-[150px]"></div>
@@ -52,7 +52,7 @@ export default function LaunchTimer({ launchDate }) {
           {Object.entries(timeLeft).map(([unit, value]) => (
             <div key={unit} className="flex flex-col items-center">
               <div className="w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl bg-[#111] border border-[#222] flex items-center justify-center shadow-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] to-transparent opacity-50" />
+                <div className="absolute inset-0 bg-linear-to-b from-[#1a1a1a] to-transparent opacity-50" />
                 <span className="relative z-10 text-4xl sm:text-5xl md:text-6xl font-mono font-bold text-[#c9a84c] drop-shadow-[0_0_15px_rgba(201,168,76,0.4)]">
                   {value.toString().padStart(2, '0')}
                 </span>

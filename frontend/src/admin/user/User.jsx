@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 
-import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiCrown, FiCheck } from "react-icons/fi";
+import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiAward, FiCheck } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function UserList() {
@@ -171,7 +171,7 @@ export default function UserList() {
                             className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.1)] disabled:opacity-50 transition-all"
                             title="Make Admin"
                           >
-                            <FiCrown size={12} /> {updatingRole === user._id ? "..." : "Make Admin"}
+                            <FiAward size={12} /> {updatingRole === user._id ? "..." : "Make Admin"}
                           </button>
                         ) : (
                           <button
