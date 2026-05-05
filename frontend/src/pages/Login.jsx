@@ -5,6 +5,7 @@ import { useSettings } from "../context/SettingsContext";
 import { motion } from "framer-motion";
 import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
@@ -12,7 +13,7 @@ export default function Login() {
   const { login } = useAuth();
   const { settings } = useSettings();
   const brandName = settings?.brandName || "URBAN THREAD";
-  const logoImg = settings?.logoImage ? `${API_BASE}${settings.logoImage}` : null;
+  const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);

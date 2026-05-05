@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 const SUGGESTIONS = ["Summer", "Winter", "Spring", "Eid Collection", "Sale"];
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 /* ─── tiny reusable image-picker ─── */
@@ -331,7 +332,7 @@ export default function CategoryList() {
                         {c.image ? (
                           <div className="w-11 h-11 rounded-xl overflow-hidden border border-[#1a1a1a] flex-shrink-0">
                             <img
-                              src={`${API_BASE}${c.image}`}
+                              src={getImageUrl(c.image)}
                               alt={c.name}
                               className="w-full h-full object-cover"
                               onError={(e) => { e.target.style.display = "none"; }}

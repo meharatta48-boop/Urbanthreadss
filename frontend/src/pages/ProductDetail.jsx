@@ -13,6 +13,7 @@ import {
   FiCamera, FiVideo, FiX, FiPlay
 } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
@@ -190,7 +191,7 @@ export default function ProductDetail() {
                 {hasImages ? (
                   <motion.img
                     key={activeImg}
-                    src={`${API_BASE}${images[activeImg]}`}
+                    src={getImageUrl(images[activeImg])}
                     alt={product.name}
                     className="w-full h-full object-cover"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -240,7 +241,7 @@ export default function ProductDetail() {
                     className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
                       activeImg === i ? "border-[#c9a84c]" : "border-[#1a1a1a] hover:border-[#333]"
                     }`}>
-                    <img src={`${API_BASE}${img}`} alt={`thumb-${i}`} className="w-full h-full object-cover"
+                    <img src={getImageUrl(img)} alt={`thumb-${i}`} className="w-full h-full object-cover"
                       onError={(e) => { e.target.style.display = "none"; }} />
                   </button>
                 ))}
@@ -255,7 +256,7 @@ export default function ProductDetail() {
                   <span className="text-xs uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Product Video</span>
                 </div>
                 <video
-                  src={`${API_BASE}${product.video}`}
+                  src={getImageUrl(product.video)}
                   controls
                   className="w-full max-h-64 object-contain bg-black"
                   preload="metadata"
@@ -891,12 +892,12 @@ function ProductReviews({ product, setProduct }) {
                   {r.images?.length > 0 && (
                     <div className="flex gap-2 overflow-x-auto pb-1">
                       {r.images.map((img, i) => (
-                        <a key={i} href={`${API_BASE}${img}`} target="_blank" rel="noreferrer"
+                        <a key={i} href={getImageUrl(img)} target="_blank" rel="noreferrer"
                           className="shrink-0 w-16 h-16 rounded-xl overflow-hidden transition-all"
                           style={{ border: "1px solid var(--border)" }}
                           onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"}
                           onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}>
-                          <img src={`${API_BASE}${img}`} alt={`review-img-${i}`}
+                          <img src={getImageUrl(img)} alt={`review-img-${i}`}
                             className="w-full h-full object-cover"
                             onError={(e) => { e.target.style.display="none"; }}
                           />
@@ -909,7 +910,7 @@ function ProductReviews({ product, setProduct }) {
                   {r.video && (
                     <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--bg-elevated)" }}>
                       <video
-                        src={`${API_BASE}${r.video}`}
+                        src={getImageUrl(r.video)}
                         controls
                         className="w-full max-h-40 object-contain"
                         preload="metadata"

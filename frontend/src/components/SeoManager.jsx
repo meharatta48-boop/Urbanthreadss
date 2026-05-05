@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
@@ -44,7 +45,7 @@ export default function SeoManager() {
     const twitterHandle = safeText(settings.seoTwitterHandle, "");
     const tagline = safeText(settings.seoBrandTagline, "Pakistan ka premium streetwear brand.");
 
-    const fallbackImage = settings.logoImage ? `${API_BASE}${settings.logoImage}` : `${window.location.origin}/logo.png`;
+    const fallbackImage = settings.logoImage ? getImageUrl(settings.logoImage) : `${window.location.origin}/logo.png`;
     const imageUrl = safeText(settings.seoDefaultImage, fallbackImage);
     const canonical = `${window.location.origin}${pathname}`;
 

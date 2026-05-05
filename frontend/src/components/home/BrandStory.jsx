@@ -5,6 +5,7 @@ import { useSettings } from "../../context/SettingsContext";
 import fallbackImg from "../../assets/images/slider1.jpg";
 
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 export default function BrandStory() {
@@ -12,7 +13,7 @@ export default function BrandStory() {
   const brandName = settings?.brandName || "URBAN THREAD";
 
   const img = settings?.brandImage
-    ? `${API_BASE}${settings.brandImage}`
+    ? getImageUrl(settings.brandImage)
     : fallbackImg;
 
   return (

@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 const API_BASE = SERVER_URL;
 const SIZES_PRESET = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const COLORS_PRESET = ["Black", "White", "Navy", "Grey", "Beige", "Brown", "Olive", "Red", "Blue", "Green"];
@@ -322,7 +323,7 @@ export default function ProductForm() {
                     className="relative group aspect-square rounded-xl overflow-hidden border border-[#1a1a1a] bg-[#0c0c0c]"
                   >
                     <img
-                      src={`${API_BASE}${img}`}
+                      src={getImageUrl(img)}
                       alt={`existing-${i}`}
                       className="w-full h-full object-cover"
                     />
@@ -398,7 +399,7 @@ export default function ProductForm() {
             {(videoPreview || existingVideo) ? (
               <div className="relative rounded-xl overflow-hidden border border-[#2a2a2a] bg-black">
                 <video
-                  src={videoPreview || `${API_BASE}${existingVideo}`}
+                  src={videoPreview || getImageUrl(existingVideo)}
                   controls
                   className="w-full max-h-48 object-contain"
                   preload="metadata"

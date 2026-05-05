@@ -191,3 +191,35 @@ export const getAllUsers = async (req, res) => {
     return sendError(res, error.message);
   }
 };
+
+/* =====================
+   UPDATE USER ROLE (admin only)
+   PUT /api/auth/users/:userId/role
+===================== */
+export const updateUserRole = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!role || !["user", "admin"].includes(role)) {
+      return sendError(res, "Invalid role. Must be 'user' or 'admin'", 400);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true }
+    ).select("name email role isActive createdAt");
+
+    if (!user) {
+      return sendError(res, "User not found", 404);
+    }
+
+    return sendSuccess(res, {
+      message: `User role updated to ${role}`,
+      user,
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};

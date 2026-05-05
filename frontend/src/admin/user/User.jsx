@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
+import { toast } from "react-toastify";
 
-import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw } from "react-icons/fi";
+import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiCrown, FiCheck } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function UserList() {
@@ -10,6 +11,7 @@ export default function UserList() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [updatingRole, setUpdatingRole] = useState(null);
 
   useEffect(() => {
     setUsers(adminUsers || []);
@@ -25,6 +27,21 @@ export default function UserList() {
       setUsers(adminUsers || []);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRoleChange = async (userId, newRole) => {
+    setUpdatingRole(userId);
+    try {
+      const { data } = await api.put(`/auth/users/${userId}/role`, { role: newRole });
+      if (data.success) {
+        toast.success(`User role updated to ${newRole}`);
+        setUsers(users.map(u => u._id === userId ? { ...u, role: newRole } : u));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update role");
+    } finally {
+      setUpdatingRole(null);
     }
   };
 
@@ -103,6 +120,7 @@ export default function UserList() {
                   <th className="px-6 py-3">Role</th>
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Joined</th>
+                  <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,6 +161,29 @@ export default function UserList() {
                     </td>
                     <td className="px-6 py-4 text-[#444] text-xs">
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-PK") : "—"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {user.role === "user" ? (
+                          <button
+                            onClick={() => handleRoleChange(user._id, "admin")}
+                            disabled={updatingRole === user._id}
+                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.1)] disabled:opacity-50 transition-all"
+                            title="Make Admin"
+                          >
+                            <FiCrown size={12} /> {updatingRole === user._id ? "..." : "Make Admin"}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleRoleChange(user._id, "user")}
+                            disabled={updatingRole === user._id}
+                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#555]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.05)] disabled:opacity-50 transition-all"
+                            title="Remove Admin"
+                          >
+                            <FiCheck size={12} /> {updatingRole === user._id ? "..." : "Remove Admin"}
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </motion.tr>
                 ))}

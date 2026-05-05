@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 const menu = [
@@ -23,7 +24,7 @@ export default function Sidebar() {
   const { settings } = useSettings();
   const navigate = useNavigate();
   const brandName = settings?.brandName || "URBAN THREAD";
-  const logoImg = settings?.logoImage ? `${API_BASE}${settings.logoImage}` : null;
+  const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
 
   const handleLogout = () => { logout(); navigate("/"); };
 

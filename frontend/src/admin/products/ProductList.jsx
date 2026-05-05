@@ -140,7 +140,7 @@ export default function ProductList() {
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#0a0a0a] border border-[#1a1a1a] flex-shrink-0">
                         {p.images?.length ? (
                           <img
-                            src={`${API_BASE}${p.images[0]}`}
+                            src={getImageUrl(p.images[0])}
                             alt={p.name}
                             className="w-full h-full object-cover"
                             onError={(e) => { e.target.style.display = "none"; }}

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiTrash2, FiPlus, FiMinus, FiArrowRight, FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
@@ -75,7 +76,7 @@ export default function Cart() {
                   <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden flex-shrink-0"
                     style={{ background: "var(--bg-card)" }}>
                     <img
-                      src={`${API_BASE}${item.images?.[0] || item.image}`}
+                      src={getImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
                       className="w-full h-full object-cover"
                       onError={(e) => { e.target.style.display = "none"; }}

@@ -8,6 +8,7 @@ import { useSettings } from "../../context/SettingsContext";
 import fallbackImg from "../../assets/images/slider1.jpg";
 
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 export default function Hero() {
@@ -22,7 +23,7 @@ export default function Hero() {
     const hs = settings?.heroSlides;
     if (hs?.length) {
       return hs.map((s) => ({
-        image: s.image ? `${API_BASE}${s.image}` : fallbackImg,
+        image: s.image ? getImageUrl(s.image) : fallbackImg,
         label: s.label || brandName,
         title: s.title || "Style That\nSpeaks Louder",
         sub: s.subtitle || "Pakistan ka premium streetwear brand.",
@@ -30,7 +31,7 @@ export default function Hero() {
       }));
     }
     const imgs = settings?.heroImages?.length
-      ? settings.heroImages.map((p) => `${API_BASE}${p}`)
+      ? settings.heroImages.map((p) => getImageUrl(p))
       : [fallbackImg];
     return imgs.map((image, i) => ({
       image,

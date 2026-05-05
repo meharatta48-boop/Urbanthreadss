@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 export default function Navbar() {
@@ -26,8 +27,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const brandName = settings?.brandName || "URBAN THREAD";
-  const logoImg = settings?.logoImage ? `${API_BASE}${settings.logoImage}` : null;
-  const logoMobileImg = settings?.logoMobileImage ? `${API_BASE}${settings.logoMobileImage}` : logoImg;
+  const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
+  const logoMobileImg = settings?.logoMobileImage ? getImageUrl(settings.logoMobileImage) : logoImg;
   const navLogoSize = Number(settings?.navLogoSize) || 40;
   const navMobileSize = Number(settings?.navLogoMobileSize) || 36;
   const navTitleSize = Number(settings?.navTitleSize) || 18;

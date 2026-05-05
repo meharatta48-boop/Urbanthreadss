@@ -7,6 +7,7 @@ import { useCart } from "../../context/CartContext";
 import { useSettings } from "../../context/SettingsContext";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
@@ -65,7 +66,7 @@ export default function FeaturedProducts() {
               {/* IMAGE */}
               <div className="relative overflow-hidden aspect-3/4">
                 <img
-                  src={`${API_BASE}${p.images?.[0]}`}
+                  src={getImageUrl(p.images?.[0])}
                   alt={p.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108"
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}

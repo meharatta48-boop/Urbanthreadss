@@ -5,6 +5,7 @@ import {
   forgotPassword,
   resetPassword,
   getAllUsers,
+  updateUserRole,
 } from "../controllers/auth.controller.js";
 import protect from "../middleware/auth.middleware.js";
 import adminOnly from "../middleware/admin.middleware.js";
@@ -28,5 +29,7 @@ router.post("/forgot-password", forgotPasswordValidation, validateRequest, forgo
 router.post("/reset-password", resetPasswordValidation, validateRequest, resetPassword);
 // GET /api/auth/users  — admin only
 router.get("/users", protect, adminOnly, getAllUsers);
+// PUT /api/auth/users/:userId/role — admin only
+router.put("/users/:userId/role", protect, adminOnly, updateUserRole);
 
 export default router;

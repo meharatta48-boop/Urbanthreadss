@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
 
 import { SERVER_URL } from "../services/api";
+import { getImageUrl } from "../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 export default function Footer() {
   const { settings } = useSettings();
 
   const brandName      = settings?.brandName      || "URBAN THREAD";
-  const logoImg        = settings?.logoImage       ? `${API_BASE}${settings.logoImage}`       : null;
+  const logoImg        = settings?.logoImage       ? getImageUrl(settings.logoImage)       : null;
   const footerLogoSize = Number(settings?.footerLogoSize) || 60;
   const showBrandName  = settings?.showBrandName !== false;
   const socialIconSz   = Number(settings?.socialIconSize) || 18;
