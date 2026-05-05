@@ -105,6 +105,10 @@ export default function Checkout() {
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
   const applyCoupon = () => {
+    if (!user) { 
+      toast.error("Coupon sirf login ke baad available hai");
+      return;
+    }
     if (couponApplied) { toast.info("Coupon already applied"); return; }
     if (coupon.trim().toUpperCase() === COUPON_CODE.toUpperCase()) {
       setCouponApplied(true);
@@ -395,31 +399,37 @@ export default function Checkout() {
                 ))}
               </div>
 
-              {/* COUPON */}
-              <div className="flex gap-2 mb-4">
-                <div className="relative flex-1">
-                  <FiTag className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" size={12} />
-                  <input
-                    placeholder="Coupon code"
-                    value={coupon}
-                    onChange={(e) => setCoupon(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
-                    className="lux-input text-sm"
-                    style={{ padding: "10px 12px 10px 32px", fontSize: "0.82rem" }}
-                    disabled={couponApplied}
-                  />
+              {/* COUPON — Only for logged-in users */}
+              {user ? (
+                <div className="flex gap-2 mb-4">
+                  <div className="relative flex-1">
+                    <FiTag className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" size={12} />
+                    <input
+                      placeholder="Coupon code"
+                      value={coupon}
+                      onChange={(e) => setCoupon(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
+                      className="lux-input text-sm"
+                      style={{ padding: "10px 12px 10px 32px", fontSize: "0.82rem" }}
+                      disabled={couponApplied}
+                    />
+                  </div>
+                  <button
+                    onClick={applyCoupon}
+                    disabled={!coupon.trim() || couponApplied}
+                    className={`text-xs font-semibold px-4 rounded-xl border transition-all disabled:opacity-40 ${
+                      couponApplied ? "gold-gradient text-black border-transparent" : "border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.08)]"
+                    }`}
+                    style={{ padding: "10px 14px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
+                  >
+                    {couponApplied ? <FiCheck size={14} /> : "Apply"}
+                  </button>
                 </div>
-                <button
-                  onClick={applyCoupon}
-                  disabled={!coupon.trim() || couponApplied}
-                  className={`text-xs font-semibold px-4 rounded-xl border transition-all disabled:opacity-40 ${
-                    couponApplied ? "gold-gradient text-black border-transparent" : "border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.08)]"
-                  }`}
-                  style={{ padding: "10px 14px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
-                >
-                  {couponApplied ? <FiCheck size={14} /> : "Apply"}
-                </button>
-              </div>
+              ) : (
+                <div className="mb-4 p-3 rounded-xl text-xs text-center" style={{ background: "rgba(201, 168, 76, 0.1)", border: "1px solid rgba(201, 168, 76, 0.3)", color: "var(--text-muted)" }}>
+                  <Link to="/login" className="font-semibold hover:underline" style={{ color: "var(--gold)" }}>Login</Link> ya <Link to="/signup" className="font-semibold hover:underline" style={{ color: "var(--gold)" }}>Sign Up</Link> karke coupon apply karo
+                </div>
+              )}
 
               {/* PRICE BREAKDOWN */}
               <div className="pt-4 space-y-2.5 text-sm" style={{ borderTop: "1px solid var(--border)" }}>
