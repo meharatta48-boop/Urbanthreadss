@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 
 const API_BASE = SERVER_URL;
 
