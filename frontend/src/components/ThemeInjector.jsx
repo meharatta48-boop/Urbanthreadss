@@ -20,18 +20,18 @@ export default function ThemeInjector() {
 
     const {
       // Colors
-      themeGold          = "#c9a84c",
-      themeGoldLight     = "#e8c96a",
-      themeGoldDark      = "#8a6a1a",
-      themeBgDeep        = "#f7f5f0",
-      themeBgSurface     = "#f0ece3",
+      themeGold          = "#d4af37",
+      themeGoldLight     = "#f5d76e",
+      themeGoldDark      = "#aa7c11",
+      themeBgDeep        = "#fcfcfc",
+      themeBgSurface     = "#f3f4f6",
       themeBgCard        = "#ffffff",
-      themeBgElevated    = "#f5f1ea",
-      themeBorder        = "#e2ddd4",
-      themeBorderLight   = "#d4cfc6",
-      themeTextPrimary   = "#1a1410",
-      themeTextSecondary = "#6b6560",
-      themeTextMuted     = "#9e9891",
+      themeBgElevated    = "#fafafa",
+      themeBorder        = "#e5e7eb",
+      themeBorderLight   = "#d1d5db",
+      themeTextPrimary   = "#111827",
+      themeTextSecondary = "#4b5563",
+      themeTextMuted     = "#9ca3af",
       themeFontDisplay   = "Playfair Display",
       themeFontBody      = "Inter",
       themeRadius        = "12",
@@ -180,31 +180,31 @@ export default function ThemeInjector() {
       ══════════════════════════════════ */
       html.dark {
         --bg-deep:     #050505;
-        --bg-surface:  #0c0c0c;
+        --bg-surface:  #0a0a0a;
         --bg-card:     #111111;
-        --bg-elevated: #1a1a1a;
+        --bg-elevated: #161616;
 
-        --border:       #222222;
-        --border-light: #333333;
+        --border:       #1f1f1f;
+        --border-light: #2d2d2d;
 
-        --text-primary:   #f5f0e8;
-        --text-secondary: #9a9a9a;
-        --text-muted:     #555555;
+        --text-primary:   #ffffff;
+        --text-secondary: #a1a1aa;
+        --text-muted:     #52525b;
 
-        --glass-bg:     rgba(17,17,17,0.8);
-        --glass-border: rgba(201,168,76,0.1);
+        --glass-bg:     rgba(10,10,10,0.85);
+        --glass-border: rgba(212,175,55,0.15);
 
         --scrollbar-track: #050505;
-        --scrollbar-thumb: #2a2a2a;
+        --scrollbar-thumb: #2d2d2d;
 
         --nav-bg-scrolled:     rgba(5,5,5,0.96);
-        --nav-border:          #1a1a1a;
-        --nav-text:            #f5f0e8;
-        --nav-text-muted:      #9a9a9a;
-        --nav-item-hover:      #111111;
-        --nav-dropdown-bg:     #0c0c0c;
-        --nav-dropdown-border: #1a1a1a;
-        --drawer-bg:           #080808;
+        --nav-border:          #1f1f1f;
+        --nav-text:            #ffffff;
+        --nav-text-muted:      #a1a1aa;
+        --nav-item-hover:      #161616;
+        --nav-dropdown-bg:     #0a0a0a;
+        --nav-dropdown-border: #1f1f1f;
+        --drawer-bg:           #0a0a0a;
         --drawer-border:       #111111;
       }
 
