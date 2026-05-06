@@ -98,7 +98,17 @@ export default function App() {
   const { settings, loading: settingsLoading } = useSettings();
   const isDark = theme === "dark";
   
-  if (authLoading || settingsLoading) return null;
+  if (authLoading || settingsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-(--bg-deep)">
+        <div className="flex flex-col items-center gap-4 fade-up">
+          <div className="w-12 h-12 border-4 border-(--gold) border-t-transparent rounded-full animate-spin"></div>
+          <p className="font-display text-xl text-(--gold) tracking-widest uppercase">Urban Thread</p>
+          <p className="text-sm text-(--text-muted) animate-pulse">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Maintenance Check
   const isAuthPath = window.location.pathname === "/login" || window.location.pathname === "/signup";

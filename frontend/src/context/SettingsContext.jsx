@@ -23,7 +23,17 @@ export const SettingsProvider = ({ children }) => {
       return cached ? JSON.parse(cached) : null;
     } catch { return null; }
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    try {
+      const storedVer = localStorage.getItem(CACHE_VER_KEY);
+      if (storedVer === CACHE_VERSION && localStorage.getItem(CACHE_KEY)) {
+        return false;
+      }
+    } catch (err) {
+      console.warn("Settings cache read skipped:", err);
+    }
+    return true;
+  });
 
   // Helper: update state + localStorage together
   const save = (newSettings) => {
