@@ -65,6 +65,41 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
+  useEffect(() => {
+    if (!product) return;
+    
+    // Dynamically inject OG tags for crawlers that support JS
+    const upsertMeta = (property, content) => {
+      let el = document.head.querySelector(`meta[property="${property}"]`) || document.head.querySelector(`meta[name="${property}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        if (property.startsWith("og:")) {
+          el.setAttribute("property", property);
+        } else {
+          el.setAttribute("name", property);
+        }
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    const title = `${product.name} - ${brandName}`;
+    const desc = product.description || `Buy ${product.name} online in Pakistan.`;
+    const image = product.images?.length > 0 ? getImageUrl(product.images[0]) : "";
+
+    document.title = title;
+    upsertMeta("description", desc);
+    upsertMeta("og:title", title);
+    upsertMeta("og:description", desc);
+    if (image) upsertMeta("og:image", image);
+    upsertMeta("og:url", window.location.href);
+    upsertMeta("twitter:title", title);
+    upsertMeta("twitter:description", desc);
+    if (image) upsertMeta("twitter:image", image);
+
+  }, [product, brandName]);
+
+
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-deep)" }}>
       <div className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--gold)", borderTopColor: "transparent" }} />

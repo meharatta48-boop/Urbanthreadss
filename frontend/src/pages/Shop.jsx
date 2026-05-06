@@ -158,7 +158,8 @@ export default function Shop() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.5 }}
-                className="product-card group"
+                className="product-card group cursor-pointer"
+                onClick={() => navigate(`/product/${p._id}`)}
               >
                 {/* IMAGE */}
                 <div className="relative overflow-hidden aspect-3/4">

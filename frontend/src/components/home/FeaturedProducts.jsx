@@ -61,7 +61,8 @@ export default function FeaturedProducts() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22,1,0.36,1] }}
-              className="product-card group"
+              className="product-card group cursor-pointer"
+              onClick={() => navigate(`/product/${p._id}`)}
             >
               {/* IMAGE */}
               <div className="relative overflow-hidden aspect-3/4">
