@@ -1,17 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/product/:id",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": ".*(WhatsApp|whatsapp|Facebook|facebook|Twitter|bot|Bot|facebookexternalhit|LinkedIn|Pinterest|Skype|Telegram).*"
-        }
-      ],
-      "destination": "https://urbanthreadss.onrender.com/api/seo/social-preview/product/:id"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
