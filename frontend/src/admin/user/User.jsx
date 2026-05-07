@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 
-import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiAward, FiCheck } from "react-icons/fi";
+import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiAward, FiCheck, FiSlash, FiTrash2 } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function UserList() {
@@ -12,6 +12,8 @@ export default function UserList() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [updatingRole, setUpdatingRole] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [deletingUser, setDeletingUser] = useState(null);
 
   useEffect(() => {
     setUsers(adminUsers || []);
@@ -42,6 +44,38 @@ export default function UserList() {
       toast.error(error.response?.data?.message || "Failed to update role");
     } finally {
       setUpdatingRole(null);
+    }
+  };
+
+  const handleStatusToggle = async (userId, currentStatus) => {
+    setUpdatingStatus(userId);
+    const newStatus = !currentStatus;
+    try {
+      const { data } = await api.put(`/auth/users/${userId}/status`, { isActive: newStatus });
+      if (data.success) {
+        toast.success(`User ${newStatus ? "unblocked" : "blocked"} successfully`);
+        setUsers(users.map(u => u._id === userId ? { ...u, isActive: newStatus } : u));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update status");
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+    setDeletingUser(userId);
+    try {
+      const { data } = await api.delete(`/auth/users/${userId}`);
+      if (data.success) {
+        toast.success("User deleted successfully");
+        setUsers(users.filter(u => u._id !== userId));
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to delete user");
+    } finally {
+      setDeletingUser(null);
     }
   };
 
@@ -171,7 +205,7 @@ export default function UserList() {
                             className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.1)] disabled:opacity-50 transition-all"
                             title="Make Admin"
                           >
-                            <FiAward size={12} /> {updatingRole === user._id ? "..." : "Make Admin"}
+                            <FiAward size={12} /> {updatingRole === user._id ? "..." : "Admin"}
                           </button>
                         ) : (
                           <button
@@ -180,9 +214,31 @@ export default function UserList() {
                             className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#555]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.05)] disabled:opacity-50 transition-all"
                             title="Remove Admin"
                           >
-                            <FiCheck size={12} /> {updatingRole === user._id ? "..." : "Remove Admin"}
+                            <FiCheck size={12} /> {updatingRole === user._id ? "..." : "User"}
                           </button>
                         )}
+
+                        <button
+                          onClick={() => handleStatusToggle(user._id, user.isActive !== false)}
+                          disabled={updatingStatus === user._id}
+                          className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+                            user.isActive !== false 
+                              ? "border-red-500/30 text-red-400 hover:bg-red-500/10" 
+                              : "border-green-500/30 text-green-400 hover:bg-green-500/10"
+                          }`}
+                          title={user.isActive !== false ? "Block User" : "Unblock User"}
+                        >
+                          <FiSlash size={12} /> {updatingStatus === user._id ? "..." : (user.isActive !== false ? "Block" : "Unblock")}
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(user._id)}
+                          disabled={deletingUser === user._id}
+                          className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-all"
+                          title="Delete User"
+                        >
+                          <FiTrash2 size={12} /> {deletingUser === user._id ? "..." : "Delete"}
+                        </button>
                       </div>
                     </td>
                   </motion.tr>

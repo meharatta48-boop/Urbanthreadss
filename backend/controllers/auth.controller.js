@@ -223,3 +223,52 @@ export const updateUserRole = async (req, res) => {
     return sendError(res, error.message);
   }
 };
+
+/* =====================
+   TOGGLE USER STATUS (admin only)
+   PUT /api/auth/users/:userId/status
+===================== */
+export const toggleUserStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isActive } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isActive },
+      { new: true }
+    ).select("name email role isActive createdAt");
+
+    if (!user) {
+      return sendError(res, "User not found", 404);
+    }
+
+    return sendSuccess(res, {
+      message: `User status updated to ${isActive ? "Active" : "Blocked"}`,
+      user,
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   DELETE USER (admin only)
+   DELETE /api/auth/users/:userId
+===================== */
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return sendError(res, "User not found", 404);
+    }
+
+    return sendSuccess(res, {
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};

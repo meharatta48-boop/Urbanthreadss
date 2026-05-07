@@ -97,6 +97,11 @@ export default function FeaturedProducts() {
                 {p.stock < 5 && p.stock > 0 && (
                   <span className="absolute top-3 left-3 badge-gold text-[10px]">Low Stock</span>
                 )}
+                {p.comparePrice > p.price && (
+                  <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
+                    -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
+                  </span>
+                )}
               </div>
 
               {/* INFO */}
@@ -108,9 +113,16 @@ export default function FeaturedProducts() {
                   {p.name}
                 </h3>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="gold-text font-bold text-base font-display">
-                    Rs. {p.price?.toLocaleString()}
-                  </span>
+                  <div className="flex flex-col">
+                    {p.comparePrice > p.price && (
+                      <span className="text-[10px] line-through opacity-50 mb-0.5" style={{ color: "var(--text-muted)" }}>
+                        Rs. {p.comparePrice?.toLocaleString()}
+                      </span>
+                    )}
+                    <span className="gold-text font-bold text-base font-display">
+                      Rs. {p.price?.toLocaleString()}
+                    </span>
+                  </div>
                   <Link
                     to={`/product/${p._id}`}
                     className="text-xs transition-colors"
