@@ -6,7 +6,7 @@ import { useSettings } from "../../context/SettingsContext";
 import {
   FiRefreshCw, FiPhone, FiMail, FiMapPin, FiSearch,
   FiChevronDown, FiChevronUp, FiPackage, FiUser,
-  FiTrash2, FiMessageCircle, FiCheckSquare,
+  FiTrash2, FiMessageCircle, FiPrinter, FiCheckSquare,
   FiSquare
 } from "react-icons/fi";
 
@@ -33,6 +33,157 @@ function StatusBadge({ status }) {
   );
 }
 
+function printInvoice(order) {
+  const name = getName(order);
+  const phone = getPhone(order);
+  const email = getEmail(order);
+  const addr = order.shippingAddress;
+  const invoiceNo = order._id.slice(-10).toUpperCase();
+  const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  const deliveredDate = order.deliveredAt
+    ? new Date(order.deliveredAt).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })
+    : "—";
+
+  const statusColor = {
+    pending: "#f59e0b", processing: "#c9a84c",
+    shipped: "#818cf8", delivered: "#16a34a",
+    cancelled: "#ef4444",
+  }[order.orderStatus] || "#555";
+
+  const itemRows = (order.orderItems || []).map((item, i) => `
+    <tr>
+      <td class="td center muted">${i + 1}</td>
+      <td class="td">
+        <div class="item-name">${item.name}</div>
+        ${item.size ? `<div class="item-meta">Size: ${item.size}</div>` : ""}
+        ${item.color ? `<div class="item-meta">Color: ${item.color}</div>` : ""}
+      </td>
+      <td class="td center">${item.quantity}</td>
+      <td class="td right">Rs. ${item.price.toLocaleString()}</td>
+      <td class="td right bold">Rs. ${(item.price * item.quantity).toLocaleString()}</td>
+    </tr>`).join("");
+
+  const win = window.open("", "_blank", "width=900,height=700");
+  win.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice #${invoiceNo}</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; font-size: 13px; color: #111; background: #f3f4f7; padding: 0; }
+    .page { max-width: 820px; margin: 0 auto; padding: 40px 0; }
+    .invoice-card { background: #fff; border-radius: 28px; overflow: hidden; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08); }
+    .content { padding: 38px 46px; }
+    .header { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; padding-bottom: 28px; border-bottom: 2px solid #000; margin-bottom: 28px; }
+    .brand-name { font-size: 22px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .invoice-title { text-align: right; }
+    .invoice-title h1 { font-size: 30px; font-weight: 700; margin-bottom: 6px; }
+    .invoice-title .inv-no, .invoice-title .inv-date { font-size: 12px; color: #666; line-height: 1.7; }
+    .status-badge { display: inline-block; background: ${statusColor}; color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 8px; }
+    .meta-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+    .meta-box { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 14px 16px; }
+    .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 8px; }
+    .meta-value { font-size: 13px; color: #111; font-weight: 500; line-height: 1.6; }
+    .meta-value a { color: #2563eb; text-decoration: none; }
+    .meta-value .muted { color: #777; font-size: 12px; font-weight: 400; }
+    .table-wrap { margin-bottom: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #111; color: #fff; }
+    thead th { padding: 10px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-align: left; }
+    .td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .item-name { font-weight: 600; font-size: 13px; color: #111; }
+    .item-meta { font-size: 11px; color: #777; margin-top: 2px; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: 700; }
+    .muted { color: #999; }
+    .totals { display: flex; justify-content: flex-end; margin-bottom: 28px; }
+    .totals-box { width: 260px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; }
+    .totals-row { display: flex; justify-content: space-between; padding: 9px 16px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+    .totals-row:last-child { border-bottom: none; background: #111; color: #fff; font-weight: 700; font-size: 14px; }
+    .totals-row.discount { color: #16a34a; }
+    .footer { border-top: 1px solid #eee; padding-top: 20px; text-align: center; font-size: 12px; color: #777; }
+    @media print { body { padding: 0; } .page { padding: 24px 32px; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="invoice-card">
+    <div class="content">
+      <div class="header">
+        <div><div class="brand-name">URBAN THREAD</div></div>
+        <div class="invoice-title">
+          <h1>Invoice</h1>
+          <div class="inv-no"># ${invoiceNo}</div>
+          <div class="inv-date">📅 ${orderDate}</div>
+          <div><span class="status-badge">${order.orderStatus}</span></div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-box">
+          <div class="meta-label">Bill To</div>
+          <div class="meta-value">
+            <strong>${name}</strong><br/>
+            ${phone ? `<a href="tel:${phone}">📞 ${phone}</a><br/>` : ""}
+            ${email ? `<a href="mailto:${email}">✉️ ${email}</a>` : ""}
+          </div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Ship To</div>
+          <div class="meta-value">
+            ${addr ? `<strong>${addr.fullName}</strong><br/>${addr.address}<br/>${addr.city}${addr.province ? ", " + addr.province : ""}<br/><span class="muted">Pakistan 🇵🇰</span>` : "<span class='muted'>No address</span>"}
+          </div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Order Info</div>
+          <div class="meta-value">
+            <strong>Order ID:</strong> #${invoiceNo}<br/>
+            <strong>Date:</strong> ${orderDate}<br/>
+            <strong>Status:</strong> ${order.orderStatus}<br/>
+            <strong>Payment:</strong> ${order.paymentMethod || "COD"}
+          </div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Product</th>
+              <th class="center" style="width:60px">Qty</th>
+              <th class="right" style="width:110px">Unit Price</th>
+              <th class="right" style="width:120px">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemRows}
+          </tbody>
+        </table>
+      </div>
+      <div class="totals">
+        <div class="totals-box">
+          <div class="totals-row"><span>Subtotal</span><span>Rs. ${(order.itemsPrice || 0).toLocaleString()}</span></div>
+          <div class="totals-row"><span>Delivery</span><span>Rs. ${(order.shippingPrice ?? 250).toLocaleString()}</span></div>
+          ${(order.couponDiscount || 0) > 0 ? `<div class="totals-row discount"><span>Discount</span><span>- Rs. ${order.couponDiscount.toLocaleString()}</span></div>` : ""}
+          <div class="totals-row"><span>Grand Total</span><span>Rs. ${(order.totalPrice || 0).toLocaleString()}</span></div>
+        </div>
+      </div>
+      <div class="footer">
+        <p>Thank you for your purchase!</p>
+        <p style="margin-top: 8px; font-size: 11px; color: #999;">Computer-generated invoice • No signature required</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>`);
+  win.document.close();
+}
 
 export default function OrderList() {
   const { settings, fetchSettings } = useSettings();
@@ -337,6 +488,10 @@ export default function OrderList() {
                                       </span>
                                     </div>
                                   </div>
+                                  <button onClick={() => printInvoice(order)}
+                                    className="mt-4 w-full flex items-center justify-center gap-2 bg-[#c9a84c] hover:bg-[#d4b85c] text-black font-bold py-2.5 px-4 rounded-lg transition-all">
+                                    <FiPrinter size={14} /> Print Invoice
+                                  </button>
                                 </div>
 
                                 {/* CUSTOMER & DELIVERY INFO */}
