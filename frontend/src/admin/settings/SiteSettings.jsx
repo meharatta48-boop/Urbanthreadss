@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { useSettings } from "../../context/SettingsContext";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
@@ -27,7 +27,6 @@ const tabs = [
   { id: "pages",      label: "Pages",        icon: <FiFileText />,     desc: "Custom pages create/edit/delete" },
   { id: "shop",       label: "Shop",         icon: <FiShoppingCart />, desc: "Delivery, coupons, contact, social" },
   { id: "appearance", label: "Appearance",   icon: <FiDroplet />,      desc: "Colors, fonts, icons, CSS" },
-  { id: "invoice",    label: "Invoice",      icon: <FiCheckCircle />,  desc: "Invoice branding and text" },
   { id: "reviews",    label: "Reviews",      icon: <FiStar />,         desc: "Customer reviews management" },
   { id: "advanced",   label: "Advanced",     icon: <FiZap />,          desc: "Popup, Maintenance, Scripts, Currency" },
 ];
@@ -312,9 +311,6 @@ export default function SiteSettingsPage() {
             <CustomCSSTab       form={form} set={set} />
           </div>
         )}
-
-        {/* ── Invoice ── */}
-        {activeTab === "invoice" && <InvoiceTab form={form} set={set} />}
 
         {/* ── Reviews ── */}
         {activeTab === "reviews" && <ReviewsTab settings={settings} token={token} fetchSettings={fetchSettings} />}
@@ -1999,177 +1995,3 @@ function ReviewsTab({ settings, token, fetchSettings }) {
 }
 
 
-
-/* ----------------------------------------
-   INVOICE TAB
----------------------------------------- */
-function InvoiceToggle({ field, label, desc, form, set }) {
-  return (
-    <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl">
-      <div>
-        <p className="text-white text-sm">{label}</p>
-        {desc && <p className="text-[#444] text-xs mt-0.5">{desc}</p>}
-      </div>
-      <button
-        onClick={() => set(field, form[field] === false ? true : false)}
-        className="w-12 h-6 rounded-full transition-all relative shrink-0"
-        style={{ background: form[field] !== false ? "#c9a84c" : "#1a1a1a" }}
-      >
-        <span className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
-          style={{ left: form[field] !== false ? "calc(100% - 22px)" : 2, background: form[field] !== false ? "#000" : "#555" }} />
-      </button>
-    </div>
-  );
-}
-
-function InvoiceTab({ form, set }) {
-
-  return (
-    <div className="space-y-5">
-      <Card>
-        <SectionTitle title="Invoice Settings" desc="Invoice par kya dikhana chahte hain � yahan se control karo. Save karo phir print karo." />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <InvoiceToggle field="invoiceShowLogo"    label="Logo dikhao"     desc="Invoice par brand logo print ho" form={form} set={set} />
-          <InvoiceToggle field="invoiceShowAddress" label="Address dikhao"  desc="Brand ka address invoice par" form={form} set={set} />
-          <InvoiceToggle field="invoiceShowPhone"   label="Phone dikhao"    desc="Contact number invoice par" form={form} set={set} />
-          <InvoiceToggle field="invoiceShowEmail"   label="Email dikhao"    desc="Email invoice par dikhao" form={form} set={set} />
-        </div>
-      </Card>
-      <Card>
-        <SectionTitle title="Invoice Text" />
-        <div className="space-y-4">
-          <Field label="Header Tagline" field="invoiceTagline" form={form} set={set} placeholder="Official Invoice / Receipt" hint="Brand name ke neeche" />
-          <Field label="Thank You Message" field="invoiceThankYou" form={form} set={set} placeholder="Shukriya hamse khareedne ka!" hint="Footer mein dikhega" />
-          <Field label="Footer Note" field="invoiceFooterNote" form={form} set={set} placeholder="Yeh computer-generated invoice hai" hint="Bottom mein chhoti line" />
-          <Field label="Terms / Note (optional)" field="invoiceNote" form={form} set={set} rows={3} placeholder="Returns 7 din mein qabool hain..." hint="Yellow box mein dikhega � khali rakhne par box nahi aayega" />
-        </div>
-      </Card>
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5">
-        <p className="text-[#555] text-xs uppercase tracking-wider mb-4">?? Invoice Preview (Sample Data)</p>
-        <div className="bg-white rounded-xl p-5 text-black font-sans text-xs space-y-4">
-
-          {/* HEADER */}
-          <div className="flex justify-between items-start border-b-2 border-gray-900 pb-4">
-            <div className="space-y-0.5">
-              <p className="font-bold text-base tracking-widest uppercase">{form.brandName || "URBAN THREAD"}</p>
-              <p className="text-gray-400 text-[10px]">{form.invoiceTagline || "Official Invoice / Receipt"}</p>
-              {form.invoiceShowPhone   !== false && <p className="text-gray-500 text-[10px]">?? {form.phone || "+92 300 0000000"}</p>}
-              {form.invoiceShowEmail   !== false && <p className="text-gray-500 text-[10px]">?? {form.email || "info@brand.pk"}</p>}
-              {form.invoiceShowAddress !== false && <p className="text-gray-500 text-[10px]">?? {form.address || "Lahore, Pakistan"}</p>}
-            </div>
-            <div className="text-right space-y-0.5">
-              <p className="text-xl font-bold uppercase">Invoice</p>
-              <p className="text-gray-400 text-[10px]"># AB12CD34EF10</p>
-              <p className="text-gray-400 text-[10px]">?? 23 April 2026</p>
-              <span className="inline-block bg-green-600 text-white text-[9px] px-2 py-0.5 rounded-full font-bold mt-1">DELIVERED</span>
-            </div>
-          </div>
-
-          {/* CUSTOMER + SHIP + ORDER INFO */}
-          <div className="grid grid-cols-3 gap-2">
-            <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5 space-y-1">
-              <p className="text-gray-400 text-[8px] uppercase tracking-wider font-bold">Bill To / Customer</p>
-              <p className="font-bold text-[11px]">Ali Hassan</p>
-              <p className="text-blue-500 text-[10px]">?? 0300-1234567</p>
-              <p className="text-blue-500 text-[10px]">?? ali@gmail.com</p>
-              <span className="text-[8px] bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">Registered</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5 space-y-1">
-              <p className="text-gray-400 text-[8px] uppercase tracking-wider font-bold">Ship To / Delivery</p>
-              <p className="font-bold text-[11px]">Ali Hassan</p>
-              <p className="text-gray-600 text-[10px]">House 12, Street 5</p>
-              <p className="text-gray-600 text-[10px]">Gulberg, Lahore</p>
-              <p className="text-gray-600 text-[10px]">Punjab � 54000</p>
-              <p className="text-gray-400 text-[10px]">Pakistan ????</p>
-            </div>
-            <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5 space-y-1">
-              <p className="text-gray-400 text-[8px] uppercase tracking-wider font-bold">Order Details</p>
-              <p className="text-[10px]"><span className="text-gray-400">Order ID:</span> <b>#AB12CD34EF</b></p>
-              <p className="text-[10px]"><span className="text-gray-400">Date:</span> 23 April 2026</p>
-              <p className="text-[10px]"><span className="text-gray-400">Delivered:</span> 25 April 2026</p>
-              <p className="text-[10px]"><span className="text-gray-400">Method:</span> COD</p>
-              <p className="text-[10px] font-bold" style={{color:"#16a34a"}}>? Paid</p>
-            </div>
-          </div>
-
-          {/* ITEMS TABLE */}
-          <div className="border border-gray-100 rounded-lg overflow-hidden">
-            <table className="w-full text-[10px]">
-              <thead className="bg-gray-900 text-white">
-                <tr>
-                  <th className="p-2 text-left w-6">#</th>
-                  <th className="p-2 text-left">Product</th>
-                  <th className="p-2 text-center w-10">Qty</th>
-                  <th className="p-2 text-right w-16">Unit</th>
-                  <th className="p-2 text-right w-16">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-50">
-                  <td className="p-2 text-gray-400">1</td>
-                  <td className="p-2"><div className="font-semibold">Premium Kurta</div><div className="text-gray-400 text-[9px]">Size: M � Color: Navy Blue</div></td>
-                  <td className="p-2 text-center">2</td>
-                  <td className="p-2 text-right">Rs. 1,800</td>
-                  <td className="p-2 text-right font-bold">Rs. 3,600</td>
-                </tr>
-                <tr>
-                  <td className="p-2 text-gray-400">2</td>
-                  <td className="p-2"><div className="font-semibold">Shalwar Trouser</div><div className="text-gray-400 text-[9px]">Size: 34 � Color: Black</div></td>
-                  <td className="p-2 text-center">1</td>
-                  <td className="p-2 text-right">Rs. 1,200</td>
-                  <td className="p-2 text-right font-bold">Rs. 1,200</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* PAYMENT + TOTALS */}
-          <div className="flex gap-3">
-            <div className="flex-1 space-y-2">
-              <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5">
-                <p className="text-gray-400 text-[8px] uppercase tracking-wider font-bold mb-1">Payment</p>
-                <p className="text-[10px] font-semibold">Cash on Delivery (COD)</p>
-                <p className="text-[10px] text-gray-400">Status: <span className="text-green-600 font-bold">paid</span></p>
-                <p className="text-[10px] text-gray-400">Paid on: 25 April 2026</p>
-              </div>
-              <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5">
-                <p className="text-gray-400 text-[8px] uppercase tracking-wider font-bold mb-1">Timeline</p>
-                <p className="text-[10px] text-gray-500">Placed: 23 April 2026</p>
-                <p className="text-[10px] text-gray-500">Delivered: 25 April 2026</p>
-                <p className="text-[10px] text-gray-500">Items: 2 products</p>
-              </div>
-            </div>
-            <div className="w-44 border border-gray-100 rounded-lg overflow-hidden self-start">
-              <div className="flex justify-between px-3 py-1.5 text-[10px] text-gray-500 border-b border-gray-50"><span>Subtotal</span><span>Rs. 4,800</span></div>
-              <div className="flex justify-between px-3 py-1.5 text-[10px] text-gray-500 border-b border-gray-50"><span>Delivery</span><span>Rs. 250</span></div>
-              <div className="flex justify-between px-3 py-1.5 text-[10px] text-green-600 border-b border-gray-50"><span>Discount</span><span>- Rs. 500</span></div>
-              <div className="flex justify-between px-3 py-2 text-[11px] font-bold bg-gray-900 text-white"><span>Grand Total</span><span>Rs. 4,550</span></div>
-            </div>
-          </div>
-
-          {/* NOTE */}
-          {form.invoiceNote && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2.5 text-[10px] text-yellow-800">
-              ?? {form.invoiceNote}
-            </div>
-          )}
-
-          {/* FOOTER */}
-          <div className="border-t border-gray-200 pt-3 flex justify-between items-start text-[10px] text-gray-400">
-            <div>
-              <p className="text-gray-800 font-bold text-[12px]">?? {form.invoiceThankYou || "Shukriya hamse khareedne ka!"}</p>
-              {form.invoiceShowPhone !== false && <p className="mt-0.5">?? {form.phone || "+92 300 0000000"}</p>}
-              {form.invoiceShowEmail !== false && <p>?? {form.email || "info@brand.pk"}</p>}
-            </div>
-            <div className="text-right">
-              <p className="font-bold text-gray-700">{form.brandName || "URBAN THREAD"}</p>
-              <p className="mt-0.5">{form.invoiceFooterNote || "Computer-generated invoice"}</p>
-              <p className="text-gray-300 text-[9px] mt-1">No signature required</p>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
