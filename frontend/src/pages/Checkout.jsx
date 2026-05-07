@@ -11,6 +11,8 @@ import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 import { Link } from "react-router-dom";
 import api, { SERVER_URL } from "../services/api";
+import { getCartImageUrl } from "../utils/cloudinaryOptimized";
+import LazyImage from "../components/LazyImage";
 
 /* ─── ALL PAKISTAN CITIES (100+) ─── */
 const pakistanData = {
@@ -378,11 +380,10 @@ export default function Checkout() {
                 {cart.map((item) => (
                   <div key={item.cartId} className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
-                      <img
-                        src={`${SERVER_URL}${item.images?.[0] || ""}`}
+                      <LazyImage
+                        src={getCartImageUrl(item.images?.[0] || item.image)}
                         alt={item.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = "none"; }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

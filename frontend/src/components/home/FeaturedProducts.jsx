@@ -8,6 +8,8 @@ import { useSettings } from "../../context/SettingsContext";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../../services/api";
 import { getImageUrl } from "../../utils/imageUrl";
+import { getThumbnailUrl, getResponsiveImageSrcSet } from "../../utils/cloudinaryOptimized";
+import LazyImage from "../LazyImage";
 
 const API_BASE = SERVER_URL;
 
@@ -66,12 +68,13 @@ export default function FeaturedProducts() {
             >
               {/* IMAGE */}
               <div className="relative overflow-hidden aspect-3/4">
-                <img
-                  src={getImageUrl(p.images?.[0])}
+                <LazyImage
+                  src={getThumbnailUrl(p.images?.[0])}
+                  srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
                   alt={p.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108"
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}
-                  onError={(e) => { e.target.style.display = "none"; }}
                 />
                 {/* OVERLAY */}
                 <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

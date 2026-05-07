@@ -14,6 +14,8 @@ import {
 } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
+import { getProductImageUrl, getThumbnailUrl, getResponsiveImageSrcSet, preloadImage } from "../utils/cloudinaryOptimized";
+import LazyImage from "../components/LazyImage";
 
 const API_BASE = SERVER_URL;
 
@@ -224,15 +226,21 @@ export default function ProductDetail() {
             <div className="relative aspect-square rounded-2xl overflow-hidden" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
               <AnimatePresence mode="wait">
                 {hasImages ? (
-                  <motion.img
+                  <motion.div
                     key={activeImg}
-                    src={getImageUrl(images[activeImg])}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
-                    onError={(e) => { e.target.style.display = "none"; }}
-                  />
+                    className="w-full h-full"
+                  >
+                    <LazyImage
+                      src={getProductImageUrl(images[activeImg])}
+                      srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      priority={activeImg === 0}
+                    />
+                  </motion.div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <FiPackage size={60} style={{ color: "var(--border-light)" }} />
@@ -276,8 +284,11 @@ export default function ProductDetail() {
                     className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
                       activeImg === i ? "border-[#c9a84c]" : "border-[#1a1a1a] hover:border-[#333]"
                     }`}>
-                    <img src={getImageUrl(img)} alt={`thumb-${i}`} className="w-full h-full object-cover"
-                      onError={(e) => { e.target.style.display = "none"; }} />
+                    <LazyImage 
+                      src={getThumbnailUrl(img)} 
+                      alt={`thumb-${i}`} 
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
