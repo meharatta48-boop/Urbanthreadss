@@ -2,6 +2,7 @@ import {
   BrowserRouter, Routes, Route, Navigate, useLocation,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import "react-toastify/dist/ReactToastify.css";
 
 /* LAYOUT */
@@ -127,6 +128,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <SeoManager />
+      <SpeedInsights />
       <ToastContainer
         theme={isDark ? "dark" : "light"}
         toastStyle={
