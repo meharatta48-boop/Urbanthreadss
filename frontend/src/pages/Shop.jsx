@@ -209,9 +209,14 @@ export default function Shop() {
                     </div>
                   )}
                   {p.comparePrice > p.price && (
-                    <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
-                      -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
-                    </span>
+                    <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
+                      <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
+                        -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
+                      </span>
+                      <span className="bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
+                        Sale
+                      </span>
+                    </div>
                   )}
                 </div>
 
@@ -224,11 +229,11 @@ export default function Shop() {
                   <div className="flex items-center justify-between mt-1.5">
                     <div className="flex flex-col">
                       {p.comparePrice > p.price && (
-                        <span className="text-[10px] line-through opacity-50 mb-0.5" style={{ color: "var(--text-muted)" }}>
+                        <span className="text-[11px] line-through opacity-40 mb-0" style={{ color: "var(--text-muted)" }}>
                           Rs. {p.comparePrice?.toLocaleString()}
                         </span>
                       )}
-                      <span className="gold-text font-bold font-display text-base">
+                      <span className="gold-text font-bold font-display text-lg">
                         Rs. {p.price?.toLocaleString()}
                       </span>
                     </div>

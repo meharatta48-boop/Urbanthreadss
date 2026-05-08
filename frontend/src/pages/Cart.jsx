@@ -94,9 +94,16 @@ export default function Cart() {
                       {item.color && <span className="text-[10px] px-2 py-0.5 rounded-full"
                         style={{ color: "var(--text-muted)", background: "var(--bg-elevated)" }}>Color: {item.color}</span>}
                     </div>
-                    <p className="gold-text font-bold font-display text-base sm:text-lg mt-1.5">
-                      Rs. {item.price?.toLocaleString()}
-                    </p>
+                    <div className="flex flex-col mt-1.5">
+                      {item.comparePrice > item.price && (
+                        <span className="text-[10px] line-through opacity-40 mb-0" style={{ color: "var(--text-muted)" }}>
+                          Rs. {item.comparePrice?.toLocaleString()}
+                        </span>
+                      )}
+                      <p className="gold-text font-bold font-display text-base sm:text-lg">
+                        Rs. {item.price?.toLocaleString()}
+                      </p>
+                    </div>
 
                     <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
                       {/* QTY */}
@@ -159,6 +166,12 @@ export default function Cart() {
                   <span>Subtotal ({cart.length} items)</span>
                   <span>Rs. {subtotal.toLocaleString()}</span>
                 </div>
+                {cart.reduce((s, i) => s + (i.comparePrice > i.price ? (i.comparePrice - i.price) * i.quantity : 0), 0) > 0 && (
+                  <div className="flex justify-between text-green-500">
+                    <span>Discount Savings</span>
+                    <span>- Rs. {cart.reduce((s, i) => s + (i.comparePrice > i.price ? (i.comparePrice - i.price) * i.quantity : 0), 0).toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between" style={{ color: "var(--text-secondary)" }}>
                   <span>Delivery</span>
                   <span>Rs. {DELIVERY}</span>

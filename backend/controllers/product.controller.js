@@ -52,7 +52,7 @@ export const getProducts = async (req, res, next) => {
     const products = await Product.find(query)
       .populate("category", "name")
       .populate("subCategory", "name")
-      .select("name price images category subCategory stock isFeatured isActive createdAt")
+      .select("name price comparePrice images category subCategory stock isFeatured isActive createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
