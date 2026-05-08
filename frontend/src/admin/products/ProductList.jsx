@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { FiPlus, FiEdit, FiTrash2, FiPackage, FiSearch, FiAlertTriangle } from "react-icons/fi";
+import { FiPlus, FiEdit, FiTrash2, FiPackage, FiSearch, FiAlertTriangle, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useProducts } from "../../context/ProductContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
@@ -12,6 +12,8 @@ const API_BASE = SERVER_URL;
 export default function ProductList() {
   const { products, removeProduct, loading } = useProducts();
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   const handleDelete = async (id, name) => {
     if (!window.confirm(`"${name}" delete karein?`)) return;
@@ -27,13 +29,67 @@ export default function ProductList() {
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Pagination logic
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   // products that have no sizes AND no colors
   const needsUpdate = products.filter((p) => !p.sizes?.length && !p.colors?.length);
 
   if (loading) return (
-    <div className="flex items-center justify-center h-64 text-[#333] gap-2">
-      <div className="w-5 h-5 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
-      Loading products...
+    <div className="space-y-5">
+      {/* Header skeleton */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <div className="w-16 h-4 bg-[#111] rounded mb-2 animate-pulse"></div>
+          <div className="w-32 h-8 bg-[#111] rounded animate-pulse"></div>
+        </div>
+        <div className="w-32 h-10 bg-[#111] rounded animate-pulse"></div>
+      </div>
+
+      {/* Stats skeleton */}
+      <div className="grid grid-cols-3 gap-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4 text-center">
+            <div className="w-8 h-6 bg-[#111] rounded mx-auto mb-2 animate-pulse"></div>
+            <div className="w-12 h-3 bg-[#111] rounded mx-auto animate-pulse"></div>
+          </div>
+        ))}
+      </div>
+
+      {/* Search skeleton */}
+      <div className="w-full h-12 bg-[#111] rounded-xl animate-pulse"></div>
+
+      {/* Products list skeleton */}
+      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#111]">
+          <div className="w-32 h-5 bg-[#111] rounded animate-pulse"></div>
+        </div>
+        <div className="divide-y divide-[#111]">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex items-center justify-between px-5 py-4">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-[#111] rounded-xl animate-pulse"></div>
+                <div className="flex-1">
+                  <div className="w-32 h-4 bg-[#111] rounded mb-2 animate-pulse"></div>
+                  <div className="w-24 h-3 bg-[#111] rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-8 h-8 bg-[#111] rounded animate-pulse"></div>
+                <div className="w-8 h-8 bg-[#111] rounded animate-pulse"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -122,9 +178,10 @@ export default function ProductList() {
             <p>Koi product nahi mila</p>
           </div>
         ) : (
-          <div className="divide-y divide-[#111]">
-            <AnimatePresence>
-              {filtered.map((p, i) => {
+          <>
+            <div className="divide-y divide-[#111]">
+              <AnimatePresence>
+                {paginatedProducts.map((p, i) => {
                 const hasSizes = p.sizes?.length > 0;
                 const hasColors = p.colors?.length > 0;
                 const missing = !hasSizes && !hasColors;
@@ -231,6 +288,37 @@ export default function ProductList() {
               })}
             </AnimatePresence>
           </div>
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-[#111] flex items-center justify-between">
+              <div className="text-[#444] text-sm">
+                Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filtered.length)} of {filtered.length} products
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] hover:border-[#c9a84c]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <FiChevronLeft size={16} />
+                </button>
+
+                <span className="text-[#666] text-sm px-3">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] hover:border-[#c9a84c]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <FiChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
         )}
       </div>
     </div>
