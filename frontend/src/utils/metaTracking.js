@@ -3,7 +3,7 @@
  * Handles Facebook/Instagram ads tracking and conversion events
  */
 
-const PIXEL_ID = 'YOUR_PIXEL_ID_HERE'; // Replace with actual Pixel ID
+const PIXEL_ID = process.env.VITE_META_PIXEL_ID || null; // Set in environment variables
 
 class MetaTracker {
   constructor() {

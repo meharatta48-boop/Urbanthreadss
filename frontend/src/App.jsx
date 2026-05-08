@@ -1,11 +1,14 @@
 import {
   BrowserRouter, Routes, Route, Navigate, useLocation,
 } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy, useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
+import { useAuth } from "./context/AuthContext";
+import { useTheme } from "./context/ThemeContext";
+import { useSettings } from "./context/SettingsContext";
 
 /* LAYOUT */
 import Navbar from "./components/Navbar";
@@ -113,15 +116,10 @@ export default function App() {
     // Start keep-alive system for Render backend
     keepAliveManager.start();
 
-    // Initialize Meta Pixel tracking
+    // Initialize Meta Pixel for Facebook/Instagram ads
     metaTracker.init();
-
-    // Cleanup on unmount
-    return () => {
-      keepAliveManager.stop();
-    };
   }, []);
-  
+
   if (authLoading || settingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-(--bg-deep)">
