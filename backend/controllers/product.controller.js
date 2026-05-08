@@ -35,24 +35,46 @@ export const getProducts = async (req, res, next) => {
     const page = parsePositiveInt(req.query.page, 1);
     const limit = Math.min(parsePositiveInt(req.query.limit, 20), MAX_LIMIT);
     const skip = (page - 1) * limit;
+    const search = req.query.search?.trim();
 
-    const total = await Product.countDocuments();
-    const products = await Product.find()
+    // Build query
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const total = await Product.countDocuments(query);
+    const products = await Product.find(query)
       .populate("category", "name")
       .populate("subCategory", "name")
+      .select("name price images category subCategory stock isFeatured isActive createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const pages = Math.max(1, Math.ceil(total / limit));
     res.status(200).json({
       success: true,
       data: products,
-      products,
       total,
       page,
       limit,
       pages,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages,
+        hasNextPage: page < pages,
+        hasPrevPage: page > 1,
+      },
+    });
       pagination: {
         page,
         limit,
@@ -72,7 +94,8 @@ export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id)
       .populate("category", "name")
-      .populate("subCategory", "name");
+      .populate("subCategory", "name")
+      .lean();
     if (!product)
       return res.status(404).json({ success: false, message: "Product not found" });
     res.status(200).json({ success: true, data: product });

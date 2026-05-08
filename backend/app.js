@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import compression from "compression";
 import path from "path";
 import fs from "fs";
 
@@ -47,6 +48,17 @@ app.use(helmet({
       scriptSrc: ["'self'"],
       connectSrc: ["'self'", "https:"],
     },
+  },
+}));
+app.use(compression({
+  level: 6, // Good balance between speed and compression
+  threshold: 1024, // Only compress responses larger than 1KB
+  filter: (req, res) => {
+    // Don't compress images, videos, or already compressed files
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
   },
 }));
 app.use(rateLimit({
