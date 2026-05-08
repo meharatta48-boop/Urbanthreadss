@@ -1,8 +1,12 @@
 import express from "express";
 import cors from "cors";
 import compression from "compression";
+import helmet from "helmet";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
 import errorHandler from "./middleware/error.middleware.js";
 import { requestContext, requestLogger } from "./middleware/requestContext.middleware.js";
@@ -18,6 +22,7 @@ import settingsRoutes from "./routes/settings.routes.js";
 import navLinkRoutes from "./routes/navLink.routes.js";
 import customPageRoutes from "./routes/customPage.routes.js";
 import seoRoutes from "./routes/seo.routes.js";
+import metaRoutes from "./routes/meta.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -72,7 +77,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(requestLogger);
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
+  maxAge: "30d",
+  etag: true,
+  setHeaders: (res) => {
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+  },
+}));
 
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
@@ -85,11 +96,28 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/nav-links", navLinkRoutes);
 app.use("/api/pages", customPageRoutes);
 app.use("/api/seo", seoRoutes);
+app.use("/api/meta", metaRoutes);
 
 // Serve static files from frontend build if available
 const frontendPath = path.join(__dirname, "../frontend/dist");
 if (fs.existsSync(frontendPath)) {
-  app.use(express.static(frontendPath));
+  app.use(express.static(frontendPath, {
+    etag: true,
+    maxAge: "7d",
+    setHeaders: (res, filePath) => {
+      const isHtml = filePath.endsWith(".html");
+      const isHashedAsset = /assets[\\/].+\.[a-f0-9]{8,}\./i.test(filePath);
+      if (isHtml) {
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        return;
+      }
+      if (isHashedAsset) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return;
+      }
+      res.setHeader("Cache-Control", "public, max-age=604800");
+    },
+  }));
 
   // SPA fallback - serve index.html for all non-API routes
   app.get("*", (req, res) => {

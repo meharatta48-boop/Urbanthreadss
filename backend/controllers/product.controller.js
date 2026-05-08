@@ -75,15 +75,6 @@ export const getProducts = async (req, res, next) => {
         hasPrevPage: page > 1,
       },
     });
-      pagination: {
-        page,
-        limit,
-        total,
-        pages,
-        hasNextPage: page < pages,
-        hasPrevPage: page > 1,
-      },
-    });
   } catch (error) {
     next(error);
   }

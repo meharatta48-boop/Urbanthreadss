@@ -96,6 +96,16 @@ function Layout({ children }) {
   );
 }
 
+function RouteObservers() {
+  const location = useLocation();
+
+  useEffect(() => {
+    metaTracker.trackPageView();
+  }, [location.pathname, location.search]);
+
+  return null;
+}
+
 export default function App() {
   const { user, loading: authLoading } = useAuth();
   const { theme } = useTheme();
@@ -118,6 +128,19 @@ export default function App() {
 
     // Initialize Meta Pixel for Facebook/Instagram ads
     metaTracker.init();
+  }, []);
+
+  useEffect(() => {
+    const prefetch = () => {
+      import("./pages/Shop");
+      import("./pages/ProductDetail");
+      import("./pages/Checkout");
+    };
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(prefetch, { timeout: 1200 });
+    } else {
+      setTimeout(prefetch, 800);
+    }
   }, []);
 
   if (authLoading || settingsLoading) {
@@ -148,6 +171,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <RouteObservers />
       <SeoManager />
       <SpeedInsights />
       <ToastContainer

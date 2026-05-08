@@ -6,7 +6,11 @@ const connectDB = async () => {
     mongoose.set("strictQuery", true);
 
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      autoIndex: true,
+      autoIndex: false,
+      maxPoolSize: 20,
+      minPoolSize: 2,
+      serverSelectionTimeoutMS: 8000,
+      socketTimeoutMS: 45000,
     });
 
     console.log(

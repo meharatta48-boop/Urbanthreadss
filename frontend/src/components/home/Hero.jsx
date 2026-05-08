@@ -11,12 +11,20 @@ import { SERVER_URL } from "../../services/api";
 import { getImageUrl } from "../../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
+const shouldReduceMotion = () => {
+  if (typeof window === "undefined") return false;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  return reduce || coarse;
+};
+
 export default function Hero() {
   const { settings } = useSettings();
   const brandName = settings?.brandName || "URBAN THREAD";
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
   const [dir, setDir] = useState(1); // 1=forward, -1=back
+  const [reduceMotion, setReduceMotion] = useState(() => shouldReduceMotion());
 
   // Build slides from heroSlides (new) OR legacy heroImages
   const buildSlides = () => {
@@ -53,12 +61,26 @@ export default function Hero() {
   const prev = useCallback(() => goTo((idx - 1 + slides.length) % slides.length, -1), [idx, slides.length]);
 
   useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReduceMotion(shouldReduceMotion());
+    media.addEventListener?.("change", onChange);
+    return () => media.removeEventListener?.("change", onChange);
+  }, []);
+
+  useEffect(() => {
     if (slides.length <= 1) return;
     const t = setInterval(next, 10000);
     return () => clearInterval(t);
   }, [slides.length, next]);
 
   useEffect(() => { if (idx >= slides.length) setIdx(0); }, [slides.length]);
+  useEffect(() => {
+    if (!slides.length) return;
+    const currentImg = new Image();
+    currentImg.src = slides[idx]?.image;
+    const nextImg = new Image();
+    nextImg.src = slides[(idx + 1) % slides.length]?.image;
+  }, [idx, slides]);
 
   const current = slides[idx] || slides[0];
 
@@ -86,7 +108,7 @@ export default function Hero() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 1.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: reduceMotion ? 0.35 : 1.4, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${current.image})` }}
         />
@@ -117,7 +139,7 @@ export default function Hero() {
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: reduceMotion ? 0.25 : 0.7, ease: [0.22, 1, 0.36, 1] }}
               className="space-y-4 sm:space-y-6"
             >
               {/* BADGE */}
@@ -229,8 +251,8 @@ export default function Hero() {
       {/* ── SCROLL INDICATOR ── */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden lg:flex flex-col items-center gap-2 opacity-40">
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+          animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
+          transition={reduceMotion ? undefined : { repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
           className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center pt-1.5"
         >
           <div className="w-1 h-2 rounded-full bg-white/60" />

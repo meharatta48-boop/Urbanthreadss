@@ -10,11 +10,16 @@ const storage = new CloudinaryStorage({
     if (file.mimetype.startsWith("video/")) {
       resource_type = "video";
     }
-    return {
+    const params = {
       folder: folder,
       resource_type: resource_type,
       allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "avif", "jfif", "mp4", "webm", "ogg"],
     };
+    if (resource_type === "image") {
+      params.quality = "auto:good";
+      params.fetch_format = "auto";
+    }
+    return params;
   },
 });
 

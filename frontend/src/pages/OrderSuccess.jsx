@@ -6,6 +6,7 @@ import {
   FiTruck, FiClock, FiPhone, FiMail
 } from "react-icons/fi";
 import { useSettings } from "../context/SettingsContext";
+import { metaTracker } from "../utils/metaTracking";
 
 export default function OrderSuccess() {
   const location = useLocation();
@@ -21,6 +22,11 @@ export default function OrderSuccess() {
   useEffect(() => {
     if (!orderId) navigate("/shop", { replace: true });
   }, [orderId, navigate]);
+
+  useEffect(() => {
+    if (!orderId || !orderTotal) return;
+    metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+  }, [orderId, orderTotal]);
 
   useEffect(() => {
     const t = setInterval(() => setDots((d) => (d + 1) % 4), 400);

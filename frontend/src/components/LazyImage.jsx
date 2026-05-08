@@ -39,6 +39,12 @@ export default function LazyImage({
     }
 
     // Otherwise, use Intersection Observer for lazy loading
+    if (!("IntersectionObserver" in window)) {
+      img.src = src;
+      if (srcSet) img.srcSet = srcSet;
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !loaded && !error) {
@@ -49,7 +55,7 @@ export default function LazyImage({
       },
       { 
         threshold: 0.01,
-        rootMargin: "50px" // Start loading 50px before visible
+        rootMargin: "300px" // Start loading well before visible
       }
     );
 
@@ -77,6 +83,9 @@ export default function LazyImage({
       ref={imgRef}
       alt={alt}
       sizes={sizes}
+      loading={priority ? "eager" : "lazy"}
+      decoding="async"
+      fetchPriority={priority ? "high" : "auto"}
       className={`${className} transition-all duration-300 ${blur && !error ? "blur-sm" : "blur-none"}`}
       style={{
         objectFit,

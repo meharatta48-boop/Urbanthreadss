@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid"; // ✅ Vite compatible UUID
+import { metaTracker } from "../utils/metaTracking";
 
 const CartContext = createContext();
 
@@ -26,6 +27,8 @@ export const CartProvider = ({ children }) => {
     if (product.colors?.length > 0 && !product.color) {
       return;
     }
+
+    metaTracker.trackAddToCart(product, product.quantity || 1, product.price);
 
     setCart((prev) => {
       const exists = prev.find(

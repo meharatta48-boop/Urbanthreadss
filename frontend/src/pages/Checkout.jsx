@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import api, { SERVER_URL } from "../services/api";
 import { getCartImageUrl } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
+import { metaTracker } from "../utils/metaTracking";
 
 /* ─── ALL PAKISTAN CITIES (100+) ─── */
 const pakistanData = {
@@ -103,6 +104,11 @@ export default function Checkout() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const discount = couponApplied ? COUPON_DISCOUNT : 0;
   const total    = subtotal + DELIVERY - discount;
+
+  useEffect(() => {
+    if (!cart.length) return;
+    metaTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
+  }, []);
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 

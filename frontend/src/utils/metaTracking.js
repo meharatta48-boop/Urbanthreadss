@@ -4,6 +4,7 @@
  */
 
 const PIXEL_ID = process.env.VITE_META_PIXEL_ID || null; // Set in environment variables
+const API_URL = process.env.VITE_API_URL || "https://urbanthreadss.onrender.com/api";
 
 class MetaTracker {
   constructor() {
@@ -15,6 +16,7 @@ class MetaTracker {
   // Initialize Meta Pixel
   init() {
     if (typeof window === 'undefined') return;
+    if (!this.pixelId) return;
 
     // Load Facebook Pixel script
     (function(f, b, e, v, n, t, s) {
@@ -45,8 +47,13 @@ class MetaTracker {
     this.queue = [];
   }
 
+  trackPageView() {
+    this.track("PageView");
+  }
+
   // Track custom events
   track(event, parameters = {}) {
+    if (!this.pixelId) return;
     if (!this.loaded) {
       this.queue.push([event, parameters]);
       return;
@@ -57,28 +64,51 @@ class MetaTracker {
     }
   }
 
+  async trackServerEvent(eventName, payload = {}) {
+    try {
+      await fetch(`${API_URL}/meta/events`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventName,
+          ...payload,
+          eventSourceUrl: typeof window !== "undefined" ? window.location.href : undefined,
+        }),
+      });
+    } catch {
+      // Keep user flow unaffected if CAPI is not available
+    }
+  }
+
   // Track AddToCart
   trackAddToCart(product, quantity = 1, price) {
-    this.track('AddToCart', {
+    const customData = {
       content_name: product.name,
       content_ids: [product._id],
       content_type: 'product',
       value: price,
       currency: 'PKR',
       quantity: quantity
-    });
+    };
+    this.track('AddToCart', customData);
+    this.trackServerEvent("AddToCart", { customData });
   }
 
   // Track Purchase
   trackPurchase(orderId, total, products, currency = 'PKR') {
     const contentIds = products.map(p => p.product?._id || p._id);
 
-    this.track('Purchase', {
+    const customData = {
       content_ids: contentIds,
       content_type: 'product',
       value: total,
       currency: currency,
       order_id: orderId
+    };
+    this.track('Purchase', customData);
+    this.trackServerEvent("Purchase", {
+      eventId: `purchase_${orderId}`,
+      customData,
     });
   }
 
@@ -97,13 +127,15 @@ class MetaTracker {
   trackInitiateCheckout(cartItems, total) {
     const contentIds = cartItems.map(item => item.product?._id);
 
-    this.track('InitiateCheckout', {
+    const customData = {
       content_ids: contentIds,
       content_type: 'product',
       value: total,
       currency: 'PKR',
       num_items: cartItems.length
-    });
+    };
+    this.track('InitiateCheckout', customData);
+    this.trackServerEvent("InitiateCheckout", { customData });
   }
 
   // Track Search

@@ -15,6 +15,7 @@ class KeepAliveManager {
 
   start() {
     if (this.isActive) return;
+    if (typeof window !== "undefined" && window.location.hostname.includes("localhost")) return;
 
     this.isActive = true;
     console.log('🚀 Starting backend keep-alive system');
@@ -40,6 +41,7 @@ class KeepAliveManager {
   }
 
   async ping() {
+    if (typeof document !== "undefined" && document.hidden) return;
     try {
       const response = await axios.get(`${SERVER_URL}/api/health`, {
         timeout: 5000,
