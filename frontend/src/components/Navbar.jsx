@@ -11,7 +11,7 @@ import {
   FiSun, FiMoon, FiUser
 } from "react-icons/fi";
 
-import { SERVER_URL } from "../services/api";
+import api, { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
@@ -47,11 +47,26 @@ export default function Navbar() {
   const handleLogout = () => { logout(); navigate("/"); };
   const isActive = (to) => location.pathname === to;
 
-  const navLinks = [
-    { label: "Home", to: "/" },
-    { label: "Shop", to: "/shop" },
-    { label: "Support", to: "/support" },
-  ];
+  const [dynamicLinks, setDynamicLinks] = useState([]);
+
+  useEffect(() => {
+    api.get("/nav-links").then(res => {
+      if (res.data?.success && res.data?.links?.length > 0) {
+        setDynamicLinks(res.data.links.filter(l => l.isVisible));
+      }
+    }).catch(() => {});
+  }, []);
+
+  const navLinks = dynamicLinks.length > 0 
+    ? dynamicLinks.map(l => ({ label: l.label, to: l.url, isExternal: l.isExternal }))
+    : [
+        { label: "Home", to: "/" },
+        { label: "Shop", to: "/shop" },
+        { label: "About Us", to: "/page/about-us" },
+        { label: "Return Policy", to: "/page/return-exchange-policy" },
+        { label: "Shipping Policy", to: "/page/shipping-policy" },
+        { label: "Contact Us", to: "/support" },
+      ];
 
   const isDark = theme === "dark";
 
