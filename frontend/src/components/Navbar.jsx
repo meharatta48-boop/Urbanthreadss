@@ -64,7 +64,6 @@ export default function Navbar() {
         { label: "Shop", to: "/shop" },
         { label: "About Us", to: "/page/about-us" },
         { label: "Return Policy", to: "/page/return-exchange-policy" },
-        { label: "Shipping Policy", to: "/page/shipping-policy" },
         { label: "Contact Us", to: "/support" },
       ];
 
