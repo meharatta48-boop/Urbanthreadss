@@ -44,6 +44,18 @@ const siteSettingsSchema = new mongoose.Schema(
     brandYear:  { type: String, default: "2020" },
     brandImage: { type: String, default: "" },
 
+    // ── About Us Page ──
+    aboutUsHeroTitle: { type: String, default: "Our Story" },
+    aboutUsHeroSubtitle: { type: String, default: "Redefining Streetwear in Pakistan" },
+    aboutUsHeroImage: { type: String, default: "" },
+    aboutUsStoryTitle: { type: String, default: "How It All Started" },
+    aboutUsStoryText1: { type: String, default: "Urban Thread started with a simple idea: premium streetwear shouldn't be a luxury imported from abroad." },
+    aboutUsStoryText2: { type: String, default: "We wanted to create something that represents the raw, unfiltered energy of our streets, combining global trends with local culture." },
+    aboutUsStoryImage: { type: String, default: "" },
+    aboutUsMissionTitle: { type: String, default: "Our Mission" },
+    aboutUsMissionText: { type: String, default: "To empower the youth with clothing that speaks louder than words. Quality fabrics, bold designs, and zero compromises." },
+    aboutUsMissionImage: { type: String, default: "" },
+
     // ── Business Info ──
     phone:    { type: String, default: "+92 300 1234567" },
     email:    { type: String, default: "info@urbanthread.pk" },

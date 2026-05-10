@@ -24,6 +24,7 @@ import SeoManager from "./components/SeoManager";
 
 /* LAZY LOADED PAGES */
 const Home = lazy(() => import("./pages/Home"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 const Shop = lazy(() => import("./pages/Shop"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
@@ -191,6 +192,7 @@ export default function App() {
           <Routes>
             {/* ═══ PUBLIC PAGES ═══ */}
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />

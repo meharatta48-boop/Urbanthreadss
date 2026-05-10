@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSettings } from "../../context/SettingsContext";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
@@ -23,6 +23,7 @@ const tabs = [
   { id: "general",    label: "General",      icon: <FiGlobe />,        desc: "Brand, site title, favicon, announcement" },
   { id: "media",      label: "Media",        icon: <FiImage />,        desc: "Hero slides, logo, brand image" },
   { id: "content",    label: "Content",      icon: <FiAlignLeft />,    desc: "Hero text, brand story, sections" },
+  { id: "about",      label: "About Page",   icon: <FiFileText />,     desc: "About Us page content & images" },
   { id: "navigation", label: "Navigation",   icon: <FiNavigation />,   desc: "Nav links add, reorder, hide" },
   { id: "pages",      label: "Pages",        icon: <FiFileText />,     desc: "Custom pages create/edit/delete" },
   { id: "shop",       label: "Shop",         icon: <FiShoppingCart />, desc: "Delivery, coupons, contact, social" },
@@ -285,6 +286,11 @@ export default function SiteSettingsPage() {
             <BrandTab form={form} set={set} />
             <SectionsTab form={form} set={set} />
           </div>
+        )}
+
+        {/* ── About Us Page ── */}
+        {activeTab === "about" && (
+          <AboutUsTab form={form} set={set} token={token} settings={settings} fetchSettings={fetchSettings} mediaUrl={mediaUrl} uploadLogo={uploadLogo} deleteSettingImage={deleteSettingImage} />
         )}
 
         {/* ── Navigation: nav links manager ── */}
@@ -1994,4 +2000,163 @@ function ReviewsTab({ settings, token, fetchSettings }) {
   );
 }
 
+
+
+/* ----------------------------------------
+   ABOUT US TAB
+---------------------------------------- */
+function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSettings, mediaUrl }) {
+  const [uploading, setUploading] = useState({ hero: false, story: false, mission: false });
+
+  const handleImageUpload = async (e, field, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(p => ({ ...p, [type]: true }));
+    try {
+      const res = await uploadLogo(file, field);
+      if (res.success) {
+        toast.success("Image uploaded!");
+      }
+    } catch { toast.error("Upload error"); }
+    finally { setUploading(p => ({ ...p, [type]: false })); e.target.value = ""; }
+  };
+
+  const handleDeleteImage = async (field) => {
+    if (!confirm("Remove this image?")) return;
+    try {
+      const res = await deleteSettingImage(field, token);
+      if (res.success) {
+        toast.success("Image removed");
+        fetchSettings?.();
+      }
+    } catch { toast.error("Delete failed"); }
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center gap-3 mb-6">
+        <FiFileText className="text-[#c9a84c]" size={24} />
+        <div>
+          <h2 className="text-xl font-bold text-white">About Us Page</h2>
+          <p className="text-[#555] text-xs">Manage all content and images for your About Us page.</p>
+        </div>
+      </div>
+
+      <Card>
+        <SectionTitle title="Hero Section" desc="Top banner of the About page." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Hero Title</label>
+            <input value={form.aboutUsHeroTitle || ""} onChange={e => set("aboutUsHeroTitle", e.target.value)} className="lux-input w-full" placeholder="Our Story" />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Hero Subtitle</label>
+            <input value={form.aboutUsHeroSubtitle || ""} onChange={e => set("aboutUsHeroSubtitle", e.target.value)} className="lux-input w-full" placeholder="Redefining Streetwear..." />
+          </div>
+        </div>
+        <div className="mt-4">
+          <label className="text-[#555] text-xs mb-1 block">Hero Image</label>
+          <div className="flex gap-4 items-center">
+            {form.aboutUsHeroImage ? (
+              <div className="relative group rounded-xl overflow-hidden" style={{ width: 120, height: 80 }}>
+                <img src={mediaUrl(form.aboutUsHeroImage)} alt="hero" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <button onClick={() => handleDeleteImage("aboutUsHeroImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                </div>
+              </div>
+            ) : (
+              <div className="w-[120px] h-[80px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                <FiImage className="text-[#444]" size={24} />
+              </div>
+            )}
+            <div>
+              <input type="file" id="aboutHeroImg" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "aboutUsHeroImage", "hero")} />
+              <label htmlFor="aboutHeroImg" className="btn-outline cursor-pointer px-4 py-2 text-xs inline-block">
+                {uploading.hero ? "Uploading..." : "Upload Image"}
+              </label>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <SectionTitle title="Brand Story" desc="The main story component detailing your brand origins." />
+        <div className="space-y-4">
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Story Title</label>
+            <input value={form.aboutUsStoryTitle || ""} onChange={e => set("aboutUsStoryTitle", e.target.value)} className="lux-input w-full" placeholder="How It All Started" />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Story Paragraph 1</label>
+            <textarea value={form.aboutUsStoryText1 || ""} onChange={e => set("aboutUsStoryText1", e.target.value)} className="lux-input w-full" rows={3} placeholder="We started with..." />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Story Paragraph 2</label>
+            <textarea value={form.aboutUsStoryText2 || ""} onChange={e => set("aboutUsStoryText2", e.target.value)} className="lux-input w-full" rows={3} placeholder="Our goal is..." />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Story Image</label>
+            <div className="flex gap-4 items-center">
+              {form.aboutUsStoryImage ? (
+                <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
+                  <img src={mediaUrl(form.aboutUsStoryImage)} alt="story" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button onClick={() => handleDeleteImage("aboutUsStoryImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-[100px] h-[100px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                  <FiImage className="text-[#444]" size={24} />
+                </div>
+              )}
+              <div>
+                <input type="file" id="aboutStoryImg" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "aboutUsStoryImage", "story")} />
+                <label htmlFor="aboutStoryImg" className="btn-outline cursor-pointer px-4 py-2 text-xs inline-block">
+                  {uploading.story ? "Uploading..." : "Upload Image"}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <SectionTitle title="Mission & Vision" desc="Your brands core mission and vision statement." />
+        <div className="space-y-4">
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Mission Title</label>
+            <input value={form.aboutUsMissionTitle || ""} onChange={e => set("aboutUsMissionTitle", e.target.value)} className="lux-input w-full" placeholder="Our Mission" />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Mission Text</label>
+            <textarea value={form.aboutUsMissionText || ""} onChange={e => set("aboutUsMissionText", e.target.value)} className="lux-input w-full" rows={3} placeholder="To empower the youth..." />
+          </div>
+          <div>
+            <label className="text-[#555] text-xs mb-1 block">Mission Image</label>
+            <div className="flex gap-4 items-center">
+              {form.aboutUsMissionImage ? (
+                <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
+                  <img src={mediaUrl(form.aboutUsMissionImage)} alt="mission" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button onClick={() => handleDeleteImage("aboutUsMissionImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-[100px] h-[100px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                  <FiImage className="text-[#444]" size={24} />
+                </div>
+              )}
+              <div>
+                <input type="file" id="aboutMissionImg" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "aboutUsMissionImage", "mission")} />
+                <label htmlFor="aboutMissionImg" className="btn-outline cursor-pointer px-4 py-2 text-xs inline-block">
+                  {uploading.mission ? "Uploading..." : "Upload Image"}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
 
