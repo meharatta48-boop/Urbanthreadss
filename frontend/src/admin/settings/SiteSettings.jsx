@@ -2065,7 +2065,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
                 </div>
               </div>
             ) : (
-              <div className="w-[120px] h-[80px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+              <div className="w-30 h-20 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
                 <FiImage className="text-[#444]" size={24} />
               </div>
             )}
@@ -2105,7 +2105,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
                   </div>
                 </div>
               ) : (
-                <div className="w-[100px] h-[100px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                <div className="w-25 h-25 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
                   <FiImage className="text-[#444]" size={24} />
                 </div>
               )}
@@ -2142,7 +2142,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
                   </div>
                 </div>
               ) : (
-                <div className="w-[100px] h-[100px] rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                <div className="w-25 h-25 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
                   <FiImage className="text-[#444]" size={24} />
                 </div>
               )}
@@ -2156,7 +2156,93 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
           </div>
         </div>
       </Card>
+
+      <Card>
+        <SectionTitle title="Meet the Founders" desc="Details about the 2 owners of the brand." />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Founder 1 */}
+          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-[#111]">
+            <p className="text-(--gold) font-bold text-xs uppercase tracking-widest">Founder 1</p>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Full Name</label>
+              <input value={form.founder1Name || ""} onChange={e => set("founder1Name", e.target.value)} className="lux-input w-full" placeholder="Owner Name 1" />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Role / Title</label>
+              <input value={form.founder1Role || "Co-Founder"} onChange={e => set("founder1Role", e.target.value)} className="lux-input w-full" placeholder="Co-Founder" />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Short Bio</label>
+              <textarea value={form.founder1Bio || ""} onChange={e => set("founder1Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 1 journey..." />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Profile Image</label>
+              <div className="flex gap-4 items-center">
+                {form.founder1Image ? (
+                  <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
+                    <img src={mediaUrl(form.founder1Image)} alt="founder1" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button onClick={() => handleDeleteImage("founder1Image")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                    <FiUser className="text-[#444]" size={24} />
+                  </div>
+                )}
+                <div>
+                  <input type="file" id="founder1Img" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "founder1Image", "founder1")} />
+                  <label htmlFor="founder1Img" className="btn-outline cursor-pointer px-3 py-1.5 text-[10px] uppercase tracking-wider inline-block">
+                    Upload
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Founder 2 */}
+          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-[#111]">
+            <p className="text-(--gold) font-bold text-xs uppercase tracking-widest">Founder 2</p>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Full Name</label>
+              <input value={form.founder2Name || ""} onChange={e => set("founder2Name", e.target.value)} className="lux-input w-full" placeholder="Owner Name 2" />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Role / Title</label>
+              <input value={form.founder2Role || "Co-Founder"} onChange={e => set("founder2Role", e.target.value)} className="lux-input w-full" placeholder="Co-Founder" />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Short Bio</label>
+              <textarea value={form.founder2Bio || ""} onChange={e => set("founder2Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 2 journey..." />
+            </div>
+            <div>
+              <label className="text-[#555] text-xs mb-1 block">Profile Image</label>
+              <div className="flex gap-4 items-center">
+                {form.founder2Image ? (
+                  <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
+                    <img src={mediaUrl(form.founder2Image)} alt="founder2" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button onClick={() => handleDeleteImage("founder2Image")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
+                    <FiUser className="text-[#444]" size={24} />
+                  </div>
+                )}
+                <div>
+                  <input type="file" id="founder2Img" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "founder2Image", "founder2")} />
+                  <label htmlFor="founder2Img" className="btn-outline cursor-pointer px-3 py-1.5 text-[10px] uppercase tracking-wider inline-block">
+                    Upload
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
+
 

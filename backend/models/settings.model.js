@@ -56,6 +56,16 @@ const siteSettingsSchema = new mongoose.Schema(
     aboutUsMissionText: { type: String, default: "To empower the youth with clothing that speaks louder than words. Quality fabrics, bold designs, and zero compromises." },
     aboutUsMissionImage: { type: String, default: "" },
 
+    // ── Founders ──
+    founder1Name:  { type: String, default: "" },
+    founder1Role:  { type: String, default: "Co-Founder" },
+    founder1Bio:   { type: String, default: "" },
+    founder1Image: { type: String, default: "" },
+    founder2Name:  { type: String, default: "" },
+    founder2Role:  { type: String, default: "Co-Founder" },
+    founder2Bio:   { type: String, default: "" },
+    founder2Image: { type: String, default: "" },
+
     // ── Business Info ──
     phone:    { type: String, default: "+92 300 1234567" },
     email:    { type: String, default: "info@urbanthread.pk" },

@@ -63,16 +63,16 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-[24px] px-4 py-2 sm:px-6 sm:py-3 border ${scrolled ? 'shadow-lg shadow-black/5 border-[var(--glass-border)]' : 'border-[var(--border-light)] shadow-sm'}`}
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border ${scrolled ? 'shadow-lg shadow-black/5 border-(--glass-border)' : 'border-(--border-light) shadow-sm'}`}
             style={{
               background: 'transparent',
               backdropFilter: scrolled ? 'blur(24px)' : 'none',
             }}
           >
             {/* ── LOGO ── */}
-            <Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0 group">
+            <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0 group">
               {/* Desktop logo */}
-              <div className="hidden sm:flex flex-shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm"
+              <div className="hidden sm:flex shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm"
                 style={{ width: navLogoSize, height: navLogoSize }}>
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-300"
                   style={{ opacity: logoImg ? 0 : 1, pointerEvents: "none" }}>
@@ -89,7 +89,7 @@ export default function Navbar() {
               </div>
 
               {/* Mobile logo */}
-              <div className="flex sm:hidden flex-shrink-0 rounded-xl overflow-hidden items-center justify-center relative shadow-sm"
+              <div className="flex sm:hidden shrink-0 rounded-xl overflow-hidden items-center justify-center relative shadow-sm"
                 style={{ width: navMobileSize, height: navMobileSize }}>
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-300"
                   style={{ opacity: logoMobileImg ? 0 : 1, pointerEvents: "none" }}>
@@ -108,7 +108,7 @@ export default function Navbar() {
               {/* Brand name text */}
               {showBrandName && (
                 <span
-                  className="font-display tracking-[0.1em] font-bold hidden sm:block truncate transition-colors duration-300 group-hover:text-[var(--gold)]"
+                  className="font-display tracking-widest font-bold hidden sm:block truncate transition-colors duration-300 group-hover:text-(--gold)"
                   style={{ fontSize: navTitleSize, color: "var(--text-primary)" }}
                 >
                   {brandName.split(" ")[0]}
@@ -120,7 +120,7 @@ export default function Navbar() {
             </Link>
 
             {/* ── DESKTOP NAV LINKS ── */}
-            <div className="hidden md:flex items-center gap-1.5 bg-[var(--bg-elevated)] p-1.5 rounded-full border border-[var(--border-light)] shadow-inner">
+            <div className="hidden md:flex items-center gap-1.5 bg-(--bg-elevated) p-1.5 rounded-full border border-(--border-light) shadow-inner">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -137,7 +137,7 @@ export default function Navbar() {
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10 transition-colors duration-300 group-hover:text-[var(--text-primary)]"
+                  <span className="relative z-10 transition-colors duration-300 group-hover:text-(--text-primary)"
                     style={{ color: isActive(link.to) ? '#050505' : '' }}>
                     {link.label}
                   </span>
@@ -152,7 +152,7 @@ export default function Navbar() {
               <button
                 onClick={toggleTheme}
                 title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-[var(--gold)]/10"
+                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-(--gold)/10"
                 style={{
                   background: "var(--bg-elevated)",
                   border: "1px solid var(--border-light)",
@@ -184,7 +184,7 @@ export default function Navbar() {
               {/* CART */}
               <Link
                 to="/cart"
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-[var(--gold)]/10"
+                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-(--gold)/10"
                 style={{
                   background: "var(--bg-elevated)",
                   border: "1px solid var(--border-light)",
@@ -206,7 +206,7 @@ export default function Navbar() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black gold-gradient rounded-full flex items-center justify-center shadow-lg shadow-[var(--gold)]/30 border-2 border-[var(--bg-card)]"
+                      className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black gold-gradient rounded-full flex items-center justify-center shadow-lg shadow-(--gold)/30 border-2 border-(--bg-card)"
                       style={{ width: 22, height: 22 }}
                     >
                       {cartCount}
@@ -234,7 +234,7 @@ export default function Navbar() {
                     >
                       Log In
                     </Link>
-                    <Link to="/signup" className="btn-gold !py-2.5 !px-5 !rounded-full shadow-lg shadow-[var(--gold)]/20">
+                    <Link to="/signup" className="btn-gold py-2.5! px-5! rounded-full! shadow-lg shadow-(--gold)/20">
                       Sign Up
                     </Link>
                   </div>
@@ -253,14 +253,14 @@ export default function Navbar() {
                       <div className="w-8 h-8 gold-gradient rounded-full flex items-center justify-center text-black font-extrabold text-xs font-display shadow-inner">
                         {user.name?.charAt(0)?.toUpperCase()}
                       </div>
-                      <span className="text-sm font-semibold hidden lg:block max-w-[90px] truncate transition-colors group-hover:text-[var(--gold)]" style={{ color: "var(--text-primary)" }}>
+                      <span className="text-sm font-semibold hidden lg:block max-w-22.5 truncate transition-colors group-hover:text-(--gold)" style={{ color: "var(--text-primary)" }}>
                         {user.name?.split(" ")[0]}
                       </span>
                       <motion.div
                         animate={{ rotate: accountOpen ? 180 : 0 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                       >
-                        <FiChevronDown size={14} style={{ color: "var(--text-muted)" }} className="group-hover:text-[var(--gold)] transition-colors" />
+                        <FiChevronDown size={14} style={{ color: "var(--text-muted)" }} className="group-hover:text-(--gold) transition-colors" />
                       </motion.div>
                     </button>
 
@@ -276,7 +276,7 @@ export default function Navbar() {
                           <div className="px-5 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
                             <p className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>{user.name}</p>
                             <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>{user.email}</p>
-                            <div className="mt-2 inline-block badge-gold !text-[0.6rem] !px-2 !py-0.5">{user.role}</div>
+                            <div className="mt-2 inline-block badge-gold text-[0.6rem]! px-2! py-0.5!">{user.role}</div>
                           </div>
 
                           <div className="p-2 space-y-1">
@@ -287,7 +287,7 @@ export default function Navbar() {
                               onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-elevated)"; }}
                               onMouseLeave={e => { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "transparent"; }}
                             >
-                              <FiShoppingBag size={15} className="text-[var(--gold)]" /> My Orders
+                              <FiShoppingBag size={15} className="text-(--gold)" /> My Orders
                             </Link>
 
                             {user.role === "admin" && (
@@ -324,7 +324,7 @@ export default function Navbar() {
               {/* MOBILE: Hamburger */}
               <button
                 onClick={() => setOpen(!open)}
-                className="md:hidden p-2.5 rounded-full transition-all bg-[var(--bg-elevated)] border border-[var(--border-light)] hover:border-[var(--gold)] hover:text-[var(--gold)]"
+                className="md:hidden p-2.5 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) hover:border-(--gold) hover:text-(--gold)"
                 style={{ color: "var(--text-secondary)" }}
               >
                 <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
@@ -346,7 +346,7 @@ export default function Navbar() {
               animate={{ opacity: 1, backdropFilter: "blur(8px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[60] md:hidden"
+              className="fixed inset-0 z-60 md:hidden"
               style={{ background: isDark ? "rgba(0,0,0,0.8)" : "rgba(0,0,0,0.4)" }}
               onClick={() => setOpen(false)}
             />
@@ -357,7 +357,7 @@ export default function Navbar() {
               animate={{ x: 0, borderTopLeftRadius: "24px", borderBottomLeftRadius: "24px" }}
               exit={{ x: "100%", borderTopLeftRadius: "100px", borderBottomLeftRadius: "100px" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-2 bottom-2 right-2 w-[85vw] max-w-[340px] z-[70] md:hidden shadow-2xl glass-card overflow-hidden flex flex-col"
+              className="fixed top-2 bottom-2 right-2 w-[85vw] max-w-85 z-70 md:hidden shadow-2xl glass-card overflow-hidden flex flex-col"
               style={{
                 background: "var(--drawer-bg)",
                 border: "1px solid var(--drawer-border)",
@@ -366,7 +366,7 @@ export default function Navbar() {
               {/* Drawer Header */}
               <div className="flex items-center justify-between px-6 py-5 relative z-10" style={{ borderBottom: "1px solid var(--border)" }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
+                  <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 shadow-sm">
                     {logoImg ? (
                       <img src={logoImg} alt={brandName} className="w-full h-full object-contain" />
                     ) : (
@@ -378,7 +378,7 @@ export default function Navbar() {
                   <span className="font-display font-bold text-base tracking-wider" style={{ color: "var(--text-primary)" }}>{brandName}</span>
                 </div>
                 <button onClick={() => setOpen(false)}
-                  className="p-2 rounded-full bg-[var(--bg-elevated)] border border-[var(--border-light)] hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all">
+                  className="p-2 rounded-full bg-(--bg-elevated) border border-(--border-light) hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all">
                   <FiX size={18} />
                 </button>
               </div>
@@ -397,7 +397,7 @@ export default function Navbar() {
                     {isActive(link.to) ? (
                       <motion.div layoutId="mobile-nav-pill" className="absolute inset-0 gold-gradient opacity-100" />
                     ) : (
-                      <div className="absolute inset-0 bg-[var(--bg-elevated)] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-(--bg-elevated) opacity-0 group-hover:opacity-100 transition-opacity" />
                     )}
                     <span className="relative z-10 flex items-center w-full justify-between">
                       {link.label}
@@ -411,36 +411,36 @@ export default function Navbar() {
               <div className="p-4 relative z-10" style={{ borderTop: "1px solid var(--border)", background: "var(--bg-surface)" }}>
                 {!user ? (
                   <div className="flex flex-col gap-3">
-                    <Link to="/login" className="btn-outline w-full !py-3.5 !rounded-xl !text-sm">Log In</Link>
-                    <Link to="/signup" className="btn-gold w-full !py-3.5 !rounded-xl !text-sm shadow-lg shadow-[var(--gold)]/20">Create Account</Link>
+                    <Link to="/login" className="btn-outline w-full py-3.5! rounded-xl! text-sm!">Log In</Link>
+                    <Link to="/signup" className="btn-gold w-full py-3.5! rounded-xl! text-sm! shadow-lg shadow-(--gold)/20">Create Account</Link>
                   </div>
                 ) : (
-                  <div className="bg-[var(--bg-card)] rounded-2xl p-4 border border-[var(--border)] shadow-sm">
+                  <div className="bg-(--bg-card) rounded-2xl p-4 border border-(--border) shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-10 h-10 gold-gradient rounded-xl flex items-center justify-center text-black font-extrabold shadow-inner">
                         {user.name?.charAt(0)?.toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold truncate text-[var(--text-primary)]">{user.name}</p>
-                        <p className="text-[11px] font-medium text-[var(--text-muted)] truncate">{user.email}</p>
+                        <p className="text-sm font-bold truncate text-(--text-primary)">{user.name}</p>
+                        <p className="text-[11px] font-medium text-(--text-muted) truncate">{user.email}</p>
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Link to="/my-orders" className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--bg-elevated)] transition-colors text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] flex items-center justify-center text-[var(--gold)]"><FiShoppingBag size={14} /></div>
+                      <Link to="/my-orders" className="flex items-center gap-3 p-3 rounded-xl hover:bg-(--bg-elevated) transition-colors text-sm font-medium text-(--text-secondary) hover:text-(--text-primary)">
+                        <div className="w-8 h-8 rounded-lg bg-(--bg-surface) flex items-center justify-center text-(--gold)"><FiShoppingBag size={14} /></div>
                         My Orders
                       </Link>
 
                       {user.role === "admin" && (
-                        <Link to="/admin-dashboard" className="flex items-center gap-3 p-3 rounded-xl hover:bg-[rgba(201,168,76,0.08)] transition-colors text-sm font-bold text-[var(--gold)]">
-                          <div className="w-8 h-8 rounded-lg bg-[rgba(201,168,76,0.15)] flex items-center justify-center"><FiSettings size={14} /></div>
+                        <Link to="/admin-dashboard" className="flex items-center gap-3 p-3 rounded-xl hover:bg-(--gold)/10 transition-colors text-sm font-bold text-(--gold)">
+                          <div className="w-8 h-8 rounded-lg bg-(--gold)/15 flex items-center justify-center"><FiSettings size={14} /></div>
                           Admin Panel
                         </Link>
                       )}
 
-                      <button onClick={handleLogout} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors text-sm font-medium text-[var(--text-muted)] hover:text-red-500">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] hover:bg-red-100 dark:hover:bg-red-900/20 flex items-center justify-center"><FiLogOut size={14} /></div>
+                      <button onClick={handleLogout} className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors text-sm font-medium text-(--text-muted) hover:text-red-500">
+                        <div className="w-8 h-8 rounded-lg bg-(--bg-surface) hover:bg-red-100 dark:hover:bg-red-900/20 flex items-center justify-center"><FiLogOut size={14} /></div>
                         Sign Out
                       </button>
                     </div>

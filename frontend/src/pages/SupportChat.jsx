@@ -95,7 +95,7 @@ export default function SupportChat() {
     <div className="flex flex-col" style={{ minHeight: "100dvh", background: "var(--bg-deep)" }}>
 
       {/* Mobile tab switcher */}
-      <div className="lg:hidden flex flex-shrink-0 fixed top-[64px] left-0 right-0 z-30"
+      <div className="lg:hidden flex shrink-0 fixed top-16 left-0 right-0 z-30"
         style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
         {[
           { id: "chat", icon: <FiMessageCircle size={13} />, label: "Chat" },
@@ -125,7 +125,7 @@ export default function SupportChat() {
                 onMouseEnter={e => e.currentTarget.style.borderColor = "var(--border-light)"}
                 onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
               >
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: c.iconBg }}>
                   {c.icon}
                 </div>
@@ -133,7 +133,7 @@ export default function SupportChat() {
                   <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{c.label}</p>
                   <p className="text-xs mt-0.5 truncate" style={{ color: "var(--text-muted)" }}>{c.sub}</p>
                 </div>
-                {c.arrow && <FiChevronRight size={14} style={{ color: "var(--text-muted)", flexShrink: 0 }} />}
+                {c.arrow && <FiChevronRight size={14} style={{ color: "var(--text-muted)", shrink: 0 }} />}
               </div>
             );
             return c.href
@@ -178,9 +178,9 @@ export default function SupportChat() {
           style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", height: "clamp(400px, calc(100dvh - 140px), 720px)" }}
         >
           {/* Chat Header */}
-          <div className="px-4 py-3 flex items-center gap-3 flex-shrink-0"
+          <div className="px-4 py-3 flex items-center gap-3 shrink-0"
             style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-elevated)" }}>
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <div className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-black text-sm"
                 style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
                 {brand.charAt(0)}
@@ -199,7 +199,7 @@ export default function SupportChat() {
             {messages.map((msg, i) => (
               <div key={i} className={`flex gap-2 ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                 {msg.from === "support" && (
-                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 text-xs font-bold text-black"
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1 text-xs font-bold text-black"
                     style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
                     {brand.charAt(0)}
                   </div>
@@ -227,7 +227,7 @@ export default function SupportChat() {
             {/* Typing */}
             {typing && (
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-black flex-shrink-0"
+                <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-black shrink-0"
                   style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
                   {brand.charAt(0)}
                 </div>
@@ -244,10 +244,10 @@ export default function SupportChat() {
           </div>
 
           {/* Quick Chips */}
-          <div className="px-3 sm:px-4 py-2 flex gap-2 overflow-x-auto flex-shrink-0" style={{ scrollbarWidth: "none" }}>
+          <div className="px-3 sm:px-4 py-2 flex gap-2 overflow-x-auto shrink-0" style={{ scrollbarWidth: "none" }}>
             {QUICK_CHIPS.map((chip, i) => (
               <button key={i} onClick={() => send(chip)}
-                className="flex-shrink-0 text-xs px-3 py-1.5 rounded-full transition-all whitespace-nowrap"
+                className="shrink-0 text-xs px-3 py-1.5 rounded-full transition-all whitespace-nowrap"
                 style={{ border: "1px solid var(--gold)", color: "var(--gold)", background: "transparent" }}
                 onMouseEnter={e => { e.currentTarget.style.background = "var(--gold)"; e.currentTarget.style.color = "#000"; }}
                 onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--gold)"; }}>
@@ -257,7 +257,7 @@ export default function SupportChat() {
           </div>
 
           {/* Input Row */}
-          <div className="px-3 sm:px-4 py-3 flex-shrink-0" style={{ borderTop: "1px solid var(--border)" }}>
+          <div className="px-3 sm:px-4 py-3 shrink-0" style={{ borderTop: "1px solid var(--border)" }}>
             <div className="flex items-end gap-2">
               <textarea
                 ref={inputRef}
@@ -283,7 +283,7 @@ export default function SupportChat() {
               <button
                 onClick={() => send()}
                 disabled={!input.trim()}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 transition-all"
                 style={{
                   background: input.trim() ? "linear-gradient(135deg,#c9a84c,#e8c96a)" : "var(--bg-elevated)",
                   color: input.trim() ? "#000" : "var(--text-muted)",

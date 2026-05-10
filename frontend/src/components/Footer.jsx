@@ -64,7 +64,7 @@ export default function Footer() {
             onMouseEnter={e => e.currentTarget.style.background = "rgba(37,211,102,0.1)"}
             onMouseLeave={e => e.currentTarget.style.background = "rgba(37,211,102,0.06)"}
           >
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(37,211,102,0.12)" }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(37,211,102,0.12)" }}>
               <FiMessageCircle size={17} style={{ color: "#25d366" }} />
             </div>
             <div className="min-w-0">
@@ -72,7 +72,7 @@ export default function Footer() {
               <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>+{settings.whatsapp} — Online Support</p>
             </div>
             <span
-              className="ml-auto text-xs border px-2 sm:px-3 py-1.5 rounded-xl transition-all flex-shrink-0 hidden sm:inline-flex"
+              className="ml-auto text-xs border px-2 sm:px-3 py-1.5 rounded-xl transition-all shrink-0 hidden sm:inline-flex"
               style={{ color: "#25d366", borderColor: "rgba(37,211,102,0.2)" }}
             >
               Chat Karein →
@@ -86,7 +86,7 @@ export default function Footer() {
           <div className="col-span-2 sm:col-span-2 space-y-5">
             <div className="flex items-center gap-3">
               {/* Logo — responsive size */}
-              <div className="flex-shrink-0 rounded-xl overflow-hidden relative"
+              <div className="shrink-0 rounded-xl overflow-hidden relative"
                 style={{ width: footerLogoSize, height: footerLogoSize }}>
                 <div className="absolute inset-0 gold-gradient flex items-center justify-center rounded-xl transition-opacity duration-300"
                   style={{ opacity: logoImg ? 0 : 1 }}>
@@ -199,7 +199,7 @@ export default function Footer() {
                     </a>
                   ) : (
                     <span className="flex items-start gap-2.5 text-sm" style={{ color: "var(--text-muted)" }}>
-                      <Icon size={14} style={{ color: "var(--gold)", flexShrink: 0, marginTop: "2px" }} />
+                      <Icon size={14} style={{ color: "var(--gold)", shrink: 0, marginTop: "2px" }} />
                       {label}
                     </span>
                   )}

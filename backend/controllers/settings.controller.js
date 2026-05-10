@@ -37,6 +37,8 @@ const normalizeSettingsMedia = (settings) => {
     aboutUsHeroImage: normalizeStoredImagePath(json.aboutUsHeroImage),
     aboutUsStoryImage: normalizeStoredImagePath(json.aboutUsStoryImage),
     aboutUsMissionImage: normalizeStoredImagePath(json.aboutUsMissionImage),
+    founder1Image: normalizeStoredImagePath(json.founder1Image),
+    founder2Image: normalizeStoredImagePath(json.founder2Image),
     heroSlides,
     heroImages: Array.isArray(json.heroImages)
       ? json.heroImages.map((img) => normalizeStoredImagePath(img)).filter(Boolean)
@@ -168,7 +170,7 @@ export const uploadLogo = async (req, res) => {
     if (!settings) settings = await SiteSettings.create({});
 
     // field param controls which DB field is updated
-    const allowed = ["logoImage", "logoMobileImage", "faviconUrl", "popupImage", "aboutUsHeroImage", "aboutUsStoryImage", "aboutUsMissionImage"];
+    const allowed = ["logoImage", "logoMobileImage", "faviconUrl", "popupImage", "aboutUsHeroImage", "aboutUsStoryImage", "aboutUsMissionImage", "founder1Image", "founder2Image"];
     const field = allowed.includes(req.body.field) ? req.body.field : "logoImage";
 
     if (settings[field]) deleteFile(settings[field]);
@@ -184,7 +186,7 @@ export const uploadLogo = async (req, res) => {
 export const deleteSettingImage = async (req, res) => {
   try {
     const { field } = req.body;
-    const allowed = ["logoImage", "logoMobileImage", "faviconUrl", "brandImage", "popupImage", "aboutUsHeroImage", "aboutUsStoryImage", "aboutUsMissionImage"];
+    const allowed = ["logoImage", "logoMobileImage", "faviconUrl", "brandImage", "popupImage", "aboutUsHeroImage", "aboutUsStoryImage", "aboutUsMissionImage", "founder1Image", "founder2Image"];
     if (!allowed.includes(field))
       return res.status(400).json({ success: false, message: "Invalid field" });
 

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 import { SERVER_URL } from "../services/api";
-import { FiArrowRight, FiCheckCircle } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin } from "react-icons/fi";
 
 export default function AboutUs() {
   const { settings } = useSettings();
@@ -12,151 +12,239 @@ export default function AboutUs() {
 
   if (!settings) return null;
 
+  const founders = [
+    {
+      name: settings.founder1Name || "Founder One",
+      role: settings.founder1Role || "Co-Founder",
+      bio: settings.founder1Bio || "Passionate about bringing authentic Pakistani streetwear to the global stage.",
+      image: settings.founder1Image
+    },
+    {
+      name: settings.founder2Name || "Founder Two",
+      role: settings.founder2Role || "Co-Founder",
+      bio: settings.founder2Bio || "Dedicated to quality craftsmanship and innovative urban designs.",
+      image: settings.founder2Image
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-(--bg-deep) pb-20">
       {/* ── HERO SECTION ── */}
-      <section className="relative w-full h-[60vh] sm:h-[70vh] flex items-center justify-center overflow-hidden">
-        {settings.aboutUsHeroImage && (
+      <section className="relative w-full h-[70vh] sm:h-[85vh] flex items-center justify-center overflow-hidden">
+        {settings.aboutUsHeroImage ? (
           <>
             <div className="absolute inset-0 z-0">
               <img
                 src={getUrl(settings.aboutUsHeroImage)}
                 alt="About Us Hero"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center scale-105"
               />
             </div>
-            {/* Dark overlay for readability */}
-            <div className="absolute inset-0 z-0 bg-black/60" />
+            <div className="absolute inset-0 z-0 bg-linear-to-b from-black/70 via-black/40 to-(--bg-deep)" />
           </>
+        ) : (
+           <div className="absolute inset-0 z-0 bg-linear-to-br from-[#0a0a0a] to-[#1a1a1a]" />
         )}
         
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 1, ease: "easeOut" }}
           >
-            <p className="text-(--gold) font-semibold tracking-[0.2em] uppercase text-sm mb-4">
-              {settings.aboutUsHeroSubtitle || "Redefining Streetwear in Pakistan"}
-            </p>
-            <h1 className="text-white font-display text-5xl sm:text-7xl font-bold leading-tight drop-shadow-lg">
+            <span className="inline-block px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[10px] uppercase tracking-[0.3em] font-bold mb-6 backdrop-blur-sm">
+              Established 2020
+            </span>
+            <h1 className="text-white font-display text-6xl sm:text-8xl font-bold leading-tight mb-6 drop-shadow-2xl">
               {settings.aboutUsHeroTitle || "Our Story"}
             </h1>
+            <p className="text-white/70 text-lg sm:text-xl max-w-2xl mx-auto font-light tracking-wide italic">
+              {settings.aboutUsHeroSubtitle || "A journey of two visionaries redefining the streets of Pakistan."}
+            </p>
           </motion.div>
         </div>
+
+        {/* Scroll Indicator */}
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-(--gold)"
+        >
+          <div className="w-px h-16 bg-linear-to-b from-transparent via-(--gold) to-transparent mx-auto" />
+        </motion.div>
       </section>
 
-      {/* ── BRAND STORY SECTION ── */}
-      <section className="container-custom py-20 sm:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+      {/* ── THE DUO STORY ── */}
+      <section className="container-custom py-24 sm:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="space-y-6"
+            className="lg:col-span-7 space-y-8"
           >
-            <div className="flex items-center gap-4 mb-6">
-              <span className="w-12 h-px bg-(--gold)"></span>
-              <span className="text-(--gold) font-bold tracking-widest uppercase text-xs">The Beginning</span>
+            <div className="space-y-4">
+              <h2 className="text-(--text-primary) font-display text-5xl sm:text-6xl font-bold leading-tight">
+                {settings.aboutUsStoryTitle || "The Vision of Two"}
+              </h2>
+              <div className="w-24 h-1 bg-(--gold) rounded-full" />
             </div>
-            <h2 className="text-(--text-primary) font-display text-4xl sm:text-5xl font-bold leading-tight">
-              {settings.aboutUsStoryTitle || "How It All Started"}
-            </h2>
-            <div className="space-y-4 text-(--text-secondary) text-lg leading-relaxed">
-              <p>{settings.aboutUsStoryText1 || "Urban Thread started with a simple idea: premium streetwear shouldn't be a luxury imported from abroad."}</p>
-              <p>{settings.aboutUsStoryText2 || "We wanted to create something that represents the raw, unfiltered energy of our streets, combining global trends with local culture."}</p>
+            
+            <div className="space-y-6 text-(--text-secondary) text-xl leading-relaxed font-light">
+              <p className="first-letter:text-5xl first-letter:font-display first-letter:text-(--gold) first-letter:mr-3 first-letter:float-left">
+                {settings.aboutUsStoryText1 || "Urban Thread wasn't just built on fabric; it was built on a friendship and a shared obsession for street culture. What started as late-night discussions between two friends in Lahore has now evolved into a movement."}
+              </p>
+              <p>
+                {settings.aboutUsStoryText2 || "We believed that the streets of Pakistan had a story to tell—one that global fashion was missing. Together, we set out to create a brand that speaks the language of the youth, blending high-end craftsmanship with the raw energy of urban life."}
+              </p>
             </div>
-            <div className="pt-6">
-               <Link to="/shop" className="btn-gold inline-flex items-center gap-2 px-8 py-4 text-sm tracking-wider uppercase">
-                 Explore Collection <FiArrowRight />
-               </Link>
+
+            <div className="grid grid-cols-2 gap-8 pt-4">
+               <div>
+                  <p className="text-(--gold) text-4xl font-display font-bold">50k+</p>
+                  <p className="text-(--text-muted) text-sm uppercase tracking-widest mt-1">Happy Customers</p>
+               </div>
+               <div>
+                  <p className="text-(--gold) text-4xl font-display font-bold">100%</p>
+                  <p className="text-(--text-muted) text-sm uppercase tracking-widest mt-1">Made in Pakistan</p>
+               </div>
             </div>
           </motion.div>
 
-          {settings.aboutUsStoryImage && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
-              className="relative"
-            >
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative z-10 border border-(--border)">
-                <img
-                  src={getUrl(settings.aboutUsStoryImage)}
-                  alt="Brand Story"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-8 -left-8 w-64 h-64 bg-(--gold)/10 rounded-full blur-3xl -z-0"></div>
-              <div className="absolute -top-8 -right-8 w-64 h-64 bg-(--gold)/10 rounded-full blur-3xl -z-0"></div>
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="lg:col-span-5 relative"
+          >
+            <div className="relative z-10 aspect-4/5 rounded-4xl overflow-hidden border border-(--border) shadow-2xl group">
+              {settings.aboutUsStoryImage ? (
+                <img src={getUrl(settings.aboutUsStoryImage)} alt="Story" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              ) : (
+                <div className="w-full h-full bg-(--bg-card) flex items-center justify-center text-(--text-muted)">Brand Story Image</div>
+              )}
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
+            </div>
+            {/* Decorative Elements */}
+            <div className="absolute -top-10 -right-10 w-40 h-40 border-t-2 border-r-2 border-(--gold)/30 rounded-tr-[3rem] z-0" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 border-b-2 border-l-2 border-(--gold)/30 rounded-bl-[3rem] z-0" />
+          </motion.div>
         </div>
       </section>
 
-      {/* ── MISSION SECTION ── */}
-      <section className="bg-(--bg-surface) py-20 sm:py-32 relative overflow-hidden">
-         {/* Decorative Background Elements */}
-         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-           <div className="absolute top-[10%] -left-[10%] w-[40%] h-[60%] rounded-full bg-(--gold)/5 blur-[120px]"></div>
-           <div className="absolute bottom-[10%] -right-[10%] w-[40%] h-[60%] rounded-full bg-(--gold)/5 blur-[120px]"></div>
-         </div>
+      {/* ── MEET THE FOUNDERS ── */}
+      <section className="bg-(--bg-surface) py-24 sm:py-32 relative">
+        <div className="container-custom">
+           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+              <h2 className="text-(--text-primary) font-display text-5xl font-bold">Behind The Thread</h2>
+              <p className="text-(--text-secondary) text-lg font-light tracking-wide">Meet the duo driving the creative engine of Urban Thread.</p>
+           </div>
 
-        <div className="container-custom relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-            {settings.aboutUsMissionImage && (
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8 }}
-                className="order-2 lg:order-1"
-              >
-                <div className="aspect-square rounded-full overflow-hidden shadow-2xl border-8 border-(--bg-card) p-2 bg-gradient-to-tr from-(--gold) to-(--bg-deep)">
-                  <img
-                    src={getUrl(settings.aboutUsMissionImage)}
-                    alt="Our Mission"
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6 order-1 lg:order-2"
-            >
-              <div className="flex items-center gap-4 mb-6">
-                <span className="w-12 h-px bg-(--gold)"></span>
-                <span className="text-(--gold) font-bold tracking-widest uppercase text-xs">Our Purpose</span>
-              </div>
-              <h2 className="text-(--text-primary) font-display text-4xl sm:text-5xl font-bold leading-tight">
-                {settings.aboutUsMissionTitle || "Our Mission"}
-              </h2>
-              <p className="text-(--text-secondary) text-xl sm:text-2xl font-light italic leading-relaxed border-l-4 border-(--gold) pl-6 py-2">
-                "{settings.aboutUsMissionText || "To empower the youth with clothing that speaks louder than words. Quality fabrics, bold designs, and zero compromises."}"
-              </p>
-              
-              <ul className="space-y-4 pt-4">
-                {[
-                  "Premium Quality Fabrics",
-                  "Authentic Streetwear Designs",
-                  "Made for the Urban Culture"
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-3 text-(--text-primary) font-medium">
-                    <FiCheckCircle className="text-(--gold) flex-shrink-0" size={20} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+              {founders.map((founder, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.2 }}
+                  className="group"
+                >
+                  <div className="relative mb-8 rounded-[2.5rem] overflow-hidden aspect-4/5 shadow-xl border border-(--border) bg-(--bg-card)">
+                    {founder.image ? (
+                      <img src={getUrl(founder.image)} alt={founder.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-(--bg-elevated) text-(--text-muted)">
+                         <FiUser size={64} className="opacity-20" />
+                      </div>
+                    )}
+                    
+                    {/* Social Overlay */}
+                    <div className="absolute bottom-6 left-6 right-6 flex gap-3 translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
+                       <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all">
+                          <FiInstagram size={18} />
+                       </button>
+                       <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all">
+                          <FiTwitter size={18} />
+                       </button>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center md:text-left space-y-2">
+                    <h3 className="text-2xl font-display font-bold text-(--text-primary)">{founder.name}</h3>
+                    <p className="text-(--gold) text-sm uppercase tracking-[0.2em] font-bold">{founder.role}</p>
+                    <p className="text-(--text-muted) text-base font-light leading-relaxed max-w-sm">
+                      {founder.bio}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+           </div>
         </div>
+      </section>
+
+      {/* ── OUR MISSION ── */}
+      <section className="py-24 sm:py-32 overflow-hidden">
+        <div className="container-custom">
+           <div className="bg-(--bg-card) rounded-[3rem] p-10 sm:p-20 border border-(--border) relative overflow-hidden shadow-2xl">
+              {/* Background gradient */}
+              <div className="absolute top-0 right-0 w-1/2 h-full bg-linear-to-l from-(--gold)/5 to-transparent z-0" />
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+                 <div className="space-y-8">
+                    <div className="space-y-4">
+                       <h2 className="text-(--text-primary) font-display text-4xl sm:text-5xl font-bold">The Mission</h2>
+                       <div className="w-16 h-1 bg-(--gold) rounded-full" />
+                    </div>
+                    <blockquote className="text-(--text-secondary) text-2xl sm:text-3xl font-light italic leading-tight border-l-4 border-(--gold) pl-8 py-4">
+                       "{settings.aboutUsMissionText || "To empower the youth with clothing that speaks louder than words. Quality fabrics, bold designs, and zero compromises."}"
+                    </blockquote>
+                    <div className="pt-4 space-y-4">
+                       {["Uncompromising Quality", "Authentic Expression", "Community Driven"].map((item, idx) => (
+                         <div key={idx} className="flex items-center gap-4 text-(--text-primary) font-medium">
+                            <div className="w-6 h-6 rounded-full bg-(--gold)/20 flex items-center justify-center text-(--gold)">
+                               <FiCheckCircle size={14} />
+                            </div>
+                            {item}
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+
+                 <div className="relative">
+                    <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl border border-(--border)">
+                       {settings.aboutUsMissionImage ? (
+                         <img src={getUrl(settings.aboutUsMissionImage)} alt="Mission" className="w-full h-full object-cover" />
+                       ) : (
+                         <div className="w-full h-full bg-(--bg-elevated) flex items-center justify-center text-(--text-muted)">Mission Image</div>
+                       )}
+                    </div>
+                    {/* Floating badge */}
+                    <div className="absolute -bottom-6 -right-6 bg-(--gold) text-black p-6 rounded-2xl shadow-2xl rotate-3">
+                       <p className="text-xs uppercase tracking-widest font-black">Quality Guaranteed</p>
+                       <p className="text-2xl font-display font-bold">100% Cotton</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* ── CALL TO ACTION ── */}
+      <section className="container-custom py-20 text-center">
+         <motion.div
+           initial={{ opacity: 0, scale: 0.95 }}
+           whileInView={{ opacity: 1, scale: 1 }}
+           viewport={{ once: true }}
+           className="bg-linear-to-br from-[#0f0f0f] to-[#050505] rounded-[2.5rem] py-20 px-8 border border-[#1a1a1a] shadow-2xl"
+         >
+            <h2 className="text-white font-display text-4xl sm:text-6xl font-bold mb-8">Ready to define your style?</h2>
+            <Link to="/shop" className="btn-gold px-12! py-5! text-lg! rounded-full! shadow-2xl shadow-(--gold)/30">
+               Shop the Collection <FiArrowRight className="inline ml-2" />
+            </Link>
+         </motion.div>
       </section>
       
     </div>
