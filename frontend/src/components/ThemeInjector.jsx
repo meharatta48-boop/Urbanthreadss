@@ -9,6 +9,7 @@ const GOOGLE_FONTS = [
 ];
 
 import { SERVER_URL } from "../services/api";
+import { resolveMediaUrl } from "../utils/mediaUrl";
 const API_BASE = SERVER_URL;
 
 export default function ThemeInjector() {
@@ -86,8 +87,8 @@ export default function ThemeInjector() {
 
     // ── 2. Favicon (only update if href actually changed) ──
     const faviconHref = faviconUrl
-      ? `${API_BASE}${faviconUrl}`
-      : "/logo.png";
+      ? resolveMediaUrl(faviconUrl, API_BASE)
+      : "./public/logo.png";
 
     if (lastFaviconHref.current !== faviconHref) {
       lastFaviconHref.current = faviconHref;
