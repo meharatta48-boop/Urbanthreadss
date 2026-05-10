@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 import { SERVER_URL } from "../services/api";
-import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin, FiUser } from "react-icons/fi";
 
 export default function AboutUs() {
   const { settings } = useSettings();

@@ -12,7 +12,7 @@ import {
   FiShoppingCart, FiCheckCircle, FiImage, FiUpload,
   FiTrash2, FiX, FiStar, FiMessageSquare, FiPlus, FiEdit2, FiLayout,
   FiDroplet, FiType, FiEye, FiCode, FiZap, FiToggleLeft, FiToggleRight,
-  FiSearch, FiDownload, FiNavigation, FiFileText, FiSliders,
+  FiSearch, FiDownload, FiNavigation, FiFileText, FiSliders, FiUser,
 } from "react-icons/fi";
 
 import { SERVER_URL } from "../../services/api";
@@ -2022,7 +2022,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
   };
 
   const handleDeleteImage = async (field) => {
-    if (!confirm("Remove this image?")) return;
+    if (!window.confirm("Remove this image?")) return;
     try {
       const res = await deleteSettingImage(field, token);
       if (res.success) {
