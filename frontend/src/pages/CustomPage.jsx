@@ -62,7 +62,7 @@ export default function CustomPage() {
         {/* Content */}
         <div
           className="prose max-w-none leading-relaxed space-y-4"
-          style={{ fontSize: "15px", lineHeight: 1.8, color: "var(--text-secondary)" }}
+          style={{ fontSize: "13.5px", lineHeight: 1.8, color: "var(--text-secondary)" }}
           dangerouslySetInnerHTML={{ __html: page.content }}
         />
 
