@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiTrash2, FiPlus, FiMinus, FiArrowRight, FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
-import { getImageUrl } from "../utils/imageUrl";
 import { getCartImageUrl } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 
@@ -75,7 +74,7 @@ export default function Cart() {
                   style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
                 >
                   {/* IMAGE */}
-                  <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden flex-shrink-0"
+                  <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden shrink-0"
                     style={{ background: "var(--bg-card)" }}>
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
@@ -118,7 +117,7 @@ export default function Cart() {
                         >
                           <FiMinus size={13} />
                         </button>
-                        <span className="px-3 font-medium text-sm min-w-[28px] text-center"
+                        <span className="px-3 font-medium text-sm min-w-7 text-center"
                           style={{ color: "var(--text-primary)" }}>
                           {item.quantity}
                         </span>

@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiArrowRight, FiShoppingCart, FiFilter, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
-import { getImageUrl } from "../utils/imageUrl";
 import { getThumbnailUrl, getResponsiveImageSrcSet } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 

@@ -151,7 +151,7 @@ function printInvoice(order) {
 }
 
 export default function OrderList() {
-  const { settings, fetchSettings } = useSettings();
+  const { fetchSettings } = useSettings();
   const [orders, setOrders]     = useState([]);
   const [loading, setLoading]   = useState(true);
   const [filter, setFilter]     = useState("all");
@@ -161,7 +161,7 @@ export default function OrderList() {
   const [bulkStatus, setBulkStatus] = useState("processing");
 
   // Always fetch fresh settings so invoice fields are up-to-date
-  useEffect(() => { fetchSettings(); }, []);
+  useEffect(() => { fetchSettings(); }, [fetchSettings]);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -358,7 +358,7 @@ export default function OrderList() {
                         {/* CUSTOMER */}
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-full gold-gradient flex items-center justify-center text-black text-xs font-bold flex-shrink-0">
+                            <div className="w-7 h-7 rounded-full gold-gradient flex items-center justify-center text-black text-xs font-bold shrink-0">
                               {name.charAt(0).toUpperCase()}
                             </div>
                             <div>
@@ -407,7 +407,7 @@ export default function OrderList() {
                         <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1.5">
                             {phone && (
-                              <a href={`https://wa.me/${phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Salaam! Aapka order #${order._id.slice(-8).toUpperCase()} ka update dena tha.`)}`}
+                              <a href={`https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "92")}?text=${encodeURIComponent(`Salaam! Aapka order #${order._id.slice(-8).toUpperCase()} ka update dena tha.`)}`}
                                 target="_blank" rel="noopener noreferrer"
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                                 style={{ background: "rgba(37,211,102,0.1)", color: "#25d366" }}

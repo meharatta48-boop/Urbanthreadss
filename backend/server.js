@@ -13,6 +13,16 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`.bgCyan.bold);
 });
 
+// Keep-alive ping system to prevent Render from sleeping
+import https from "https";
+setInterval(() => {
+  https.get("https://urbanthreadss.onrender.com/api/health", (res) => {
+    console.log(`Keep-alive ping: ${res.statusCode}`.green);
+  }).on("error", (e) => {
+    console.log(`Keep-alive ping error: ${e.message}`.red);
+  });
+}, 14 * 60 * 1000); // 14 minutes
+
 /* ── Permanent fix: if port is busy, kill the occupying process & retry ── */
 server.on("error", async (err) => {
   if (err.code === "EADDRINUSE") {
