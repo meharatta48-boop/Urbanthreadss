@@ -32,6 +32,7 @@ export default function Footer() {
   const quickLinks = [
     { label: "Home",      to: "/" },
     { label: "Shop",      to: "/shop" },
+    { label: "About",     to: "/about" },
     { label: "My Orders", to: "/my-orders" },
     { label: "Cart",      to: "/cart" },
     { label: "Support",   to: "/support" },
