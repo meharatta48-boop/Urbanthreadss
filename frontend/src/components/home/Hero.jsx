@@ -163,8 +163,8 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="font-display font-bold text-(--text-primary) dark:text-white leading-[1.04]"
-                style={{ fontSize: "clamp(2rem, 6.5vw, 5.2rem)" }}
+                className="font-display font-bold text-(--text-primary) dark:text-white leading-[1.1] mb-6"
+                style={{ fontSize: "clamp(2.5rem, 8vw, 5.2rem)" }}
               >
                 {(current.title || "").split("\n").map((line, i) => (
                   <span key={i} className="block">

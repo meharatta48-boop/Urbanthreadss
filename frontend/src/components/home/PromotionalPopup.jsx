@@ -37,11 +37,11 @@ export default function PromotionalPopup() {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="relative w-full max-w-lg bg-[#0c0c0c] border border-[#1a1a1a] rounded-3xl overflow-hidden shadow-2xl"
+            className="relative w-full max-w-lg bg-(--bg-card) border border-(--border) rounded-3xl overflow-hidden shadow-2xl"
           >
             <button
               onClick={close}
-              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/80 transition-all"
+              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/20 text-(--text-primary) hover:bg-black/40 transition-all backdrop-blur-sm"
             >
               <FiX size={16} />
             </button>
@@ -53,15 +53,15 @@ export default function PromotionalPopup() {
                   alt="Promo"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-[#0c0c0c] to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-(--bg-card) to-transparent"></div>
               </div>
             )}
 
             <div className={`p-6 sm:p-8 text-center ${!settings?.popupImage ? 'pt-10' : ''}`}>
-              <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
+              <h2 className="text-2xl sm:text-3xl font-display font-bold text-(--text-primary) mb-3">
                 {settings?.popupTitle || "Special Offer!"}
               </h2>
-              <p className="text-[#999] text-sm sm:text-base leading-relaxed mb-6">
+              <p className="text-(--text-secondary) text-sm sm:text-base leading-relaxed mb-6">
                 {settings?.popupText || "Get amazing discounts on our latest collection."}
               </p>
               
@@ -69,8 +69,7 @@ export default function PromotionalPopup() {
                 <Link
                   to={settings.popupCtaLink}
                   onClick={close}
-                  className="inline-block px-8 py-3 rounded-xl font-bold text-black transition-transform active:scale-95"
-                  style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}
+                  className="btn-gold inline-flex items-center justify-center px-10 py-3.5 shadow-xl shadow-(--gold)/20"
                 >
                   {settings.popupCtaText}
                 </Link>

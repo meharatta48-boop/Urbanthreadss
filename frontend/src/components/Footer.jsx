@@ -55,8 +55,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20 items-start">
           
           {/* BRAND INFO */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="flex flex-col gap-6">
+          <div className="lg:col-span-5 space-y-6 sm:space-y-8">
+            <div className="flex flex-col gap-5 sm:gap-6">
               <Link to="/" className="flex items-center gap-4 group w-max">
                 <div className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105"
                   style={{ width: footerLogoSize, height: footerLogoSize }}>
@@ -79,7 +79,7 @@ export default function Footer() {
                   </span>
                 )}
               </Link>
-              <p className="text-lg leading-relaxed text-(--text-secondary) max-w-md font-light italic">
+              <p className="text-base sm:text-lg leading-relaxed text-(--text-secondary) max-w-md font-light italic">
                 {settings?.footerTagline || "Pakistan ka premium streetwear brand. Har piece ek statement hai — apna style define karo."}
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function Footer() {
                   <motion.a 
                     key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -4 }}
-                    className="w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all bg-(--bg-surface) border border-(--border) text-(--text-muted) shadow-xl shadow-black/5"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl sm:rounded-[1.25rem] flex items-center justify-center transition-all bg-(--bg-surface) border border-(--border) text-(--text-muted) shadow-xl shadow-black/5"
                     style={{ "--hover-color": s.color }}
                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${s.color}60`; e.currentTarget.style.color = s.color; e.currentTarget.style.background = `${s.color}05`; }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.color = ""; e.currentTarget.style.background = ""; }}
@@ -110,7 +110,7 @@ export default function Footer() {
               <a
                 href={`https://wa.me/${settings.whatsapp}`}
                 target="_blank" rel="noopener noreferrer"
-                className="group relative block p-8 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-3xl hover:shadow-(--gold)/5"
+                className="group relative block p-6 sm:p-8 rounded-3xl sm:rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-3xl hover:shadow-(--gold)/5"
                 style={{
                   background: "linear-gradient(135deg, rgba(37,211,102,0.08) 0%, rgba(37,211,102,0.02) 100%)",
                   border: "1px solid rgba(37,211,102,0.15)",
@@ -119,23 +119,24 @@ export default function Footer() {
                 <div className="absolute top-0 right-0 w-48 h-48 bg-[#25d366]/10 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2" />
                 
                 <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-3xl bg-[#25d366] flex items-center justify-center shadow-2xl shadow-[#25d366]/30 group-hover:scale-110 transition-transform duration-500">
-                      <FiMessageCircle size={32} className="text-white" />
+                  <div className="flex items-center gap-4 sm:gap-6">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-[#25d366] flex items-center justify-center shadow-2xl shadow-[#25d366]/30 group-hover:scale-110 transition-transform duration-500 shrink-0">
+                      <FiMessageCircle size={24} className="text-white sm:hidden" />
+                      <FiMessageCircle size={32} className="text-white hidden sm:block" />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-(--text-primary) mb-1">WhatsApp Support</h4>
-                      <p className="text-sm text-(--text-muted)">Batain karein hamari team se — Online 24/7</p>
+                      <h4 className="text-lg sm:text-xl font-bold text-(--text-primary) mb-1">WhatsApp Support</h4>
+                      <p className="text-xs sm:text-sm text-(--text-muted)">Batain karein hamari team se — Online 24/7</p>
                       <div className="flex items-center gap-2 mt-2">
                         <span className="w-2 h-2 rounded-full bg-[#25d366] animate-pulse" />
                         <span className="text-[10px] font-bold uppercase tracking-widest text-[#25d366]">Always Live</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-start sm:items-end gap-2">
-                    <span className="text-lg font-display font-bold text-(--text-primary)">+{settings.whatsapp}</span>
-                    <span className="btn-gold group-hover:bg-white group-hover:text-black group-hover:border-white transition-all px-6 py-2.5 rounded-full text-xs shadow-xl">
-                      Start Chat Now
+                  <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
+                    <span className="text-base sm:text-lg font-display font-bold text-(--text-primary)">+{settings.whatsapp}</span>
+                    <span className="btn-gold group-hover:bg-white group-hover:text-black group-hover:border-white transition-all px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[10px] sm:text-xs shadow-xl">
+                      Chat Now
                     </span>
                   </div>
                 </div>

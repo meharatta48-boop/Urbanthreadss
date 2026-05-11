@@ -30,7 +30,7 @@ export default function AboutUs() {
     return (
         <div className="min-h-screen bg-(--bg-deep) pb-20 transition-colors duration-500">
             {/* ── HERO SECTION ── */}
-            <section className="relative w-full h-[50vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
+            <section className="relative w-full h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
                 {settings.aboutUsHeroImage ? (
                     <>
                         <div className="absolute inset-0 z-0">
@@ -41,25 +41,25 @@ export default function AboutUs() {
                             />
                         </div>
                         {/* Adaptive Overlay */}
-                        <div className="absolute inset-0 z-0 bg-linear-to-b from-(--bg-deep)/40 via-(--bg-deep)/20 to-(--bg-deep)" />
+                        <div className="absolute inset-0 z-0 bg-linear-to-b from-(--bg-deep)/60 via-(--bg-deep)/20 to-(--bg-deep)" />
                     </>
                 ) : (
                     <div className="absolute inset-0 z-0 bg-linear-to-br from-(--bg-surface) to-(--bg-deep)" />
                 )}
 
-                <div className="relative z-10 text-center px-3 sm:px-4 max-w-5xl mx-auto">
+                <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-10">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut" }}
                     >
-                        <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-4 sm:mb-6 backdrop-blur-sm">
+                        <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-6 backdrop-blur-sm">
                             Established 2020
                         </span>
-                        <h1 className="text-(--text-primary) font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4 sm:mb-6 drop-shadow-sm dark:drop-shadow-2xl">
+                        <h1 className="text-(--text-primary) font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6 drop-shadow-sm dark:drop-shadow-2xl">
                             {settings.aboutUsHeroTitle || "Our Story"}
                         </h1>
-                        <p className="text-(--text-secondary) text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-2">
+                        <p className="text-(--text-secondary) text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-4">
                             {settings.aboutUsHeroSubtitle || "A journey of two visionaries redefining the streets of Pakistan."}
                         </p>
                     </motion.div>

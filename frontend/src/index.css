@@ -16,48 +16,48 @@
   --gold-light: #e5cf8e;
   --gold-dark: #a68b39;
 
-  /* Light backgrounds - Ultra-clean & Luxury */
+  /* Light backgrounds - Refined for Contrast & Depth */
   --bg-deep:     #ffffff;
-  --bg-surface:  #f9fafb;
+  --bg-surface:  #f8f9fa; /* Slightly more distinct off-white */
   --bg-card:     #ffffff;
-  --bg-elevated: #ffffff;
+  --bg-elevated: #fcfcfc;
 
   /* Light borders - Softer & Elegant */
-  --border:       #f2f2f2;
-  --border-light: #e8e8e8;
+  --border:       #efeff1;
+  --border-light: #e2e4e8;
 
   /* Light text - Perfect Readability & Contrast */
-  --text-primary:   #0a0a0a;
-  --text-secondary: #3d3d3d;
-  --text-muted:     #737373;
+  --text-primary:   #0f1115;
+  --text-secondary: #42464d;
+  --text-muted:     #71767b;
 
   /* Glass card light - Premium Frosted Effect */
-  --glass-bg:     rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(201, 168, 76, 0.15);
+  --glass-bg:     rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(201, 168, 76, 0.18);
 
   /* Scrollbar */
-  --scrollbar-track: #f9fafb;
-  --scrollbar-thumb: #e5e5e5;
+  --scrollbar-track: #f8f9fa;
+  --scrollbar-thumb: #e2e4e8;
 
   /* Navbar */
-  --nav-bg-scrolled: rgba(255, 255, 255, 0.85);
-  --nav-border:      #f2f2f2;
-  --nav-text:        #0a0a0a;
-  --nav-text-muted:  #404040;
-  --nav-item-hover:  #f9fafb;
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.9);
+  --nav-border:      #efeff1;
+  --nav-text:        #0f1115;
+  --nav-text-muted:  #42464d;
+  --nav-item-hover:  #f8f9fa;
   --nav-dropdown-bg: #ffffff;
-  --nav-dropdown-border: #f2f2f2;
+  --nav-dropdown-border: #efeff1;
 
   /* Mobile drawer */
   --drawer-bg:     #ffffff;
-  --drawer-border: #f2f2f2;
+  --drawer-border: #efeff1;
 
-  /* Shadows - Layered for Depth */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.06);
-  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.08);
-  --shadow-gold: 0 10px 30px rgba(201, 168, 76, 0.12);
+  /* Shadows - Refined for Light Mode */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 20px 56px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 28px 72px rgba(0, 0, 0, 0.1);
+  --shadow-gold: 0 10px 30px rgba(201, 168, 76, 0.15);
 
   /* Gold Opacity Helpers */
   --gold-5:  rgba(201, 168, 76, 0.05);

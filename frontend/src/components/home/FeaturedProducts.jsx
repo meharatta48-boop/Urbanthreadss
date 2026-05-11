@@ -27,7 +27,7 @@ export default function FeaturedProducts() {
   if (!products.length) return null;
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6" style={{ background: "var(--bg-deep)" }}>
+    <section className="py-16 sm:py-24 px-4 sm:px-6" style={{ background: "var(--bg-surface)" }}>
       <div className="max-w-7xl mx-auto">
 
         {/* HEADER */}

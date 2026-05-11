@@ -41,13 +41,13 @@ export default function BrandStory() {
               whileInView={{ scale: 1, opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute -bottom-6 -right-6 z-20 backdrop-blur-xl p-6 sm:p-8 rounded-4xl shadow-2xl border border-(--gold)/20 bg-(--bg-surface)/80"
+              className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 z-20 backdrop-blur-xl p-4 sm:p-8 rounded-3xl sm:rounded-4xl shadow-2xl border border-(--gold)/20 bg-(--bg-surface)/80"
             >
               <div className="flex flex-col items-center text-center">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-(--text-muted) mb-1">Since</span>
-                <div className="font-display text-4xl sm:text-5xl font-bold gold-text leading-none">{settings?.brandYear || "2020"}</div>
-                <div className="w-8 h-1 bg-(--gold) rounded-full mt-3 mb-2" />
-                <span className="text-[9px] uppercase tracking-widest text-(--text-secondary) font-bold">Pakistani Roots</span>
+                <span className="text-[8px] sm:text-[10px] uppercase tracking-[0.3em] text-(--text-muted) mb-1">Since</span>
+                <div className="font-display text-3xl sm:text-5xl font-bold gold-text leading-none">{settings?.brandYear || "2020"}</div>
+                <div className="w-6 h-0.5 sm:w-8 sm:h-1 bg-(--gold) rounded-full mt-2 sm:mt-3 mb-1 sm:mb-2" />
+                <span className="text-[7px] sm:text-[9px] uppercase tracking-widest text-(--text-secondary) font-bold">Pakistani Roots</span>
               </div>
             </motion.div>
 
