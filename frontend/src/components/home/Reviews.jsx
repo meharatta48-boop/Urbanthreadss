@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   FiStar, FiChevronLeft, FiChevronRight,
@@ -24,7 +24,7 @@ const COLORS = ["#c9a84c", "#4ade80", "#60a5fa", "#c084fc", "#f59e0b", "#f87171"
 const AvatarCircle = ({ name, size = 44 }) => {
   const color = COLORS[name.charCodeAt(0) % COLORS.length];
   return (
-    <div className="rounded-full flex items-center justify-center font-display font-bold text-black flex-shrink-0"
+    <div className="rounded-full flex items-center justify-center font-display font-bold text-black shrink-0 shadow-lg shadow-black/10"
       style={{ width: size, height: size, background: color, fontSize: size * 0.4 }}>
       {name.charAt(0).toUpperCase()}
     </div>
@@ -32,11 +32,11 @@ const AvatarCircle = ({ name, size = 44 }) => {
 };
 
 const StarRow = ({ rating, size = 14 }) => (
-  <div className="flex gap-0.5">
+  <div className="flex gap-1">
     {[1,2,3,4,5].map((s) => (
       <FiStar key={s} size={size}
         style={{ color: s <= rating ? "#c9a84c" : "var(--border-light)",
-                 fill:  s <= rating ? "#c9a84c" : "var(--border-light)" }} />
+                 fill:  s <= rating ? "#c9a84c" : "transparent" }} />
     ))}
   </div>
 );
@@ -44,25 +44,22 @@ const StarRow = ({ rating, size = 14 }) => (
 const StarInput = ({ value, onChange }) => {
   const [hover, setHover] = useState(0);
   return (
-    <div className="flex gap-1.5">
+    <div className="flex gap-2">
       {[1,2,3,4,5].map((s) => (
         <button key={s} type="button"
           onClick={() => onChange(s)}
           onMouseEnter={() => setHover(s)}
           onMouseLeave={() => setHover(0)}
-          className="transition-transform hover:scale-110"
+          className="transition-transform hover:scale-125"
         >
-          <FiStar size={26}
+          <FiStar size={28}
             style={{
               color: s <= (hover || value) ? "#c9a84c" : "var(--border-light)",
-              fill:  s <= (hover || value) ? "#c9a84c" : "var(--border-light)",
+              fill:  s <= (hover || value) ? "#c9a84c" : "transparent",
             }}
           />
         </button>
       ))}
-      <span className="text-sm ml-1 self-center" style={{ color: "var(--text-muted)" }}>
-        {["", "Bohot bura", "Theek hai", "Acha", "Bohot acha", "Zabardast! ⭐"][hover || value]}
-      </span>
     </div>
   );
 };
@@ -70,8 +67,6 @@ const StarInput = ({ value, onChange }) => {
 /* ── REVIEW SUBMIT MODAL ── */
 function ReviewModal({ onClose, onSuccess, userName }) {
   const { token } = useAuth();
-  const { settings } = useSettings();
-  const brandName = settings?.brandName || "URBAN THREAD";
   const [form, setForm] = useState({ rating: 5, comment: "", city: "" });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -99,7 +94,7 @@ function ReviewModal({ onClose, onSuccess, userName }) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      className="fixed inset-0 z-100 flex items-center justify-center px-4"
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-sm" />
@@ -108,101 +103,78 @@ function ReviewModal({ onClose, onSuccess, userName }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         transition={{ type: "spring", damping: 20, stiffness: 300 }}
-        className="relative w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden"
         style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between px-6 py-5"
-          style={{ borderBottom: "1px solid var(--border)" }}>
+        <div className="flex items-center justify-between px-8 py-6 border-b border-(--border)">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl gold-gradient flex items-center justify-center">
-              <FiEdit3 size={15} className="text-black" />
+            <div className="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center shadow-lg shadow-(--gold)/20">
+              <FiEdit3 size={18} className="text-black" />
             </div>
             <div>
-              <h3 className="font-bold text-base" style={{ color: "var(--text-primary)" }}>Apni Review Likhein</h3>
-              <p className="text-xs" style={{ color: "var(--text-muted)" }}>{userName} ke taraf se</p>
+              <h3 className="font-bold text-lg text-(--text-primary)">Share Your Story</h3>
+              <p className="text-xs text-(--text-muted)">Posting as {userName}</p>
             </div>
           </div>
-          <button onClick={onClose} className="transition-colors p-1.5 rounded-lg"
-            style={{ color: "var(--text-muted)" }}
-            onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-elevated)"; }}
-            onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.background = "transparent"; }}
-          >
-            <FiX size={18} />
+          <button onClick={onClose} className="p-2 rounded-xl text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-all">
+            <FiX size={20} />
           </button>
         </div>
 
         {/* BODY */}
-        <div className="p-6">
+        <div className="p-8">
           {submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6">
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.1 }}
-                className="w-16 h-16 rounded-full gold-gradient flex items-center justify-center mx-auto mb-4">
-                <FiCheck size={28} className="text-black" />
-              </motion.div>
-              <h4 className="font-bold text-lg mb-2" style={{ color: "var(--text-primary)" }}>Shukriya! 🎉</h4>
-              <p className="text-sm mb-1" style={{ color: "var(--text-muted)" }}>Aapki review submit ho gayi hai.</p>
-              <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>Admin approval ke baad homepage pe show hogi.</p>
-              <button onClick={onClose} className="btn-gold" style={{ padding: "12px 32px" }}>Theek Hai</button>
+              <div className="w-20 h-20 rounded-full gold-gradient flex items-center justify-center mx-auto mb-6 shadow-xl shadow-(--gold)/30">
+                <FiCheck size={36} className="text-black" />
+              </div>
+              <h4 className="font-display text-2xl font-bold text-(--text-primary) mb-3">Thank You! 🎉</h4>
+              <p className="text-(--text-muted) mb-8">Aapki review submit ho gayi hai. Admin approval ke baad yeh homepage pe nazar aayegi.</p>
+              <button onClick={onClose} className="btn-gold w-full py-4 rounded-2xl">Excellent</button>
             </motion.div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-xs uppercase tracking-wider mb-3"
-                  style={{ color: "var(--text-muted)" }}>Rating dijiye *</label>
-                <StarInput value={form.rating} onChange={(v) => setForm({ ...form, rating: v })} />
+                <label className="block text-xs uppercase tracking-[0.2em] font-bold text-(--text-muted) mb-4 text-center">Rate Your Experience</label>
+                <div className="flex justify-center">
+                  <StarInput value={form.rating} onChange={(v) => setForm({ ...form, rating: v })} />
+                </div>
+                <p className="text-center text-sm mt-3 font-medium text-(--gold)">
+                  {["", "Disappointing", "Fair", "Good", "Great", "Amazing!"][form.rating]}
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs uppercase tracking-wider mb-2"
-                  style={{ color: "var(--text-muted)" }}>Aapka Sheher</label>
-                <input
-                  type="text" placeholder="Lahore, Karachi, Islamabad..."
-                  value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  className="lux-input" maxLength={50}
-                />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-bold text-(--text-muted) mb-2">City</label>
+                  <input
+                    type="text" placeholder="e.g. Lahore, Karachi, London..."
+                    value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
+                    className="lux-input py-3.5" maxLength={50}
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs uppercase tracking-wider mb-2"
-                  style={{ color: "var(--text-muted)" }}>
-                  Apna Experience Likhein *
-                  <span className="ml-2 normal-case" style={{ color: "var(--text-muted)" }}>
-                    {form.comment.length}/300
-                  </span>
-                </label>
-                <textarea
-                  placeholder={`${brandName} ke baare mein apna feedback share karein — quality, delivery, service...`}
-                  value={form.comment}
-                  onChange={(e) => setForm({ ...form, comment: e.target.value.slice(0, 300) })}
-                  rows={4} className="lux-input resize-none"
-                  style={{ resize: "none" }} required
-                />
-                {form.comment.length > 0 && form.comment.length < 15 && (
-                  <p className="text-orange-400 text-xs mt-1">Thodi zyada detail likhein...</p>
-                )}
-              </div>
-
-              <div className="rounded-xl px-4 py-3 text-xs flex items-start gap-2"
-                style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
-                <FiCheck size={12} style={{ color: "var(--gold)", marginTop: "2px", flexShrink: 0 }} />
-                <span style={{ color: "var(--text-muted)" }}>
-                  Review admin se approve hone ke baad show hogi. Fake ya inappropriate reviews delete ho sakti hain.
-                </span>
+                <div>
+                  <label className="text-xs uppercase tracking-widest font-bold text-(--text-muted) mb-2 flex justify-between">
+                    Your Feedback
+                    <span className="font-normal text-[10px]">{form.comment.length}/300</span>
+                  </label>
+                  <textarea
+                    placeholder={`Tell us about the quality, fit, and delivery...`}
+                    value={form.comment}
+                    onChange={(e) => setForm({ ...form, comment: e.target.value.slice(0, 300) })}
+                    rows={4} className="lux-input resize-none py-4"
+                    required
+                  />
+                </div>
               </div>
 
               <button type="submit" disabled={loading || form.comment.length < 15}
-                className="btn-gold w-full disabled:opacity-40"
-                style={{ width: "100%", padding: "14px" }}>
-                {loading ? (
-                  <span className="flex items-center gap-2 justify-center">
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    Submit ho raha hai...
-                  </span>
-                ) : (
-                  <><FiCheck size={15} /> Review Submit Karein</>
-                )}
+                className="btn-gold w-full py-4 rounded-2xl shadow-xl shadow-(--gold)/20 disabled:opacity-40"
+              >
+                {loading ? "Submitting..." : "Post Review"}
               </button>
             </form>
           )}
@@ -215,7 +187,6 @@ function ReviewModal({ onClose, onSuccess, userName }) {
 /* ── MAIN REVIEWS SECTION ── */
 export default function Reviews() {
   const { settings } = useSettings();
-  const brandName = settings?.brandName || "URBAN THREAD";
   const { token, user } = useAuth();
   const [activeIdx, setActiveIdx] = useState(0);
   const [paused, setPaused]       = useState(false);
@@ -226,20 +197,21 @@ export default function Reviews() {
     : DEFAULT_REVIEWS;
 
   const VISIBLE = 3;
-  const next = () => setActiveIdx((i) => (i + 1) % reviews.length);
+  const next = useCallback(() => setActiveIdx((i) => (i + 1) % reviews.length), [reviews.length]);
   const prev = () => setActiveIdx((i) => (i - 1 + reviews.length) % reviews.length);
 
   useEffect(() => {
     if (paused || showModal) return;
-    const t = setInterval(next, 4500);
+    const t = setInterval(next, 5000);
     return () => clearInterval(t);
-  }, [paused, showModal, reviews.length]);
+  }, [paused, showModal, reviews.length, next]);
 
   const avgRating = reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length;
 
   const getVisible = () => {
     const result = [];
-    for (let i = 0; i < Math.min(VISIBLE, reviews.length); i++) {
+    const len = Math.min(VISIBLE, reviews.length);
+    for (let i = 0; i < len; i++) {
       result.push(reviews[(activeIdx + i) % reviews.length]);
     }
     return result;
@@ -247,64 +219,66 @@ export default function Reviews() {
 
   return (
     <>
-      <section className="py-20 sm:py-24 px-4 sm:px-6" style={{ background: "var(--bg-deep)" }}>
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-(--bg-surface) relative overflow-hidden transition-colors duration-500">
+        {/* Background Accents */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-(--gold)/5 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-(--gold)/5 blur-[120px] rounded-full -translate-x-1/2 translate-y-1/2" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
 
           {/* HEADER */}
-          <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
-            <div>
-              <p className="section-label mb-2">Customer Reviews</p>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
-                Customers Ka <span className="gold-text">Kya Kehna Hai</span>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+            <div className="max-w-2xl">
+              <div className="inline-block px-4 py-1.5 rounded-full border border-(--gold)/20 bg-(--gold)/5 text-(--gold) text-[10px] uppercase tracking-[0.2em] font-bold mb-5 backdrop-blur-sm">
+                Community Stories
+              </div>
+              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-(--text-primary) leading-tight mb-6">
+                Voices Of The <span className="gold-text italic">Urban Thread</span>
               </h2>
-              <div className="flex items-center gap-3 mt-3 flex-wrap">
-                <StarRow rating={Math.round(avgRating)} size={16} />
-                <span className="font-bold font-display text-lg" style={{ color: "var(--gold)" }}>
-                  {avgRating.toFixed(1)}
-                </span>
-                <span className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  ({reviews.length} reviews)
-                </span>
+              
+              <div className="flex flex-col items-center sm:items-start text-center sm:text-left py-6">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-3">
+                    <span className="font-display text-4xl font-bold gold-text leading-none">{avgRating.toFixed(1)}</span>
+                    <StarRow rating={Math.round(avgRating)} size={18} />
+                  </div>
+                  <span className="text-xs uppercase tracking-widest text-(--text-muted) mt-2 font-bold">Based on {reviews.length} Verified Reviews</span>
+                </div>
+
+                <div className="h-10 w-px bg-(--border) hidden sm:block" />
 
                 <button
                   onClick={() => setShowModal(true)}
-                  className="flex items-center gap-2 text-xs px-4 py-2 rounded-xl border transition-all"
-                  style={token
-                    ? { borderColor: "rgba(201,168,76,0.3)", color: "var(--gold)" }
-                    : { borderColor: "var(--border)", color: "var(--text-muted)" }
-                  }
-                  onMouseEnter={e => {
-                    e.currentTarget.style.background = token ? "rgba(201,168,76,0.08)" : "var(--bg-elevated)";
-                  }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+                  className="group flex items-center gap-3 text-sm font-bold px-6 py-3.5 rounded-2xl transition-all bg-(--bg-deep) border border-(--border) hover:border-(--gold)/40 text-(--text-primary) shadow-xl shadow-black/5"
                 >
-                  {token ? <FiEdit3 size={13} /> : <FiLock size={13} />}
-                  {token ? "Review Likhein" : "Login Karein aur Review Dein"}
+                  <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center text-black shadow-lg shadow-(--gold)/20">
+                    {token ? <FiEdit3 size={14} /> : <FiLock size={14} />}
+                  </div>
+                  {token ? "Post Your Story" : "Login to Review"}
                 </button>
               </div>
             </div>
 
             {/* NAV ARROWS */}
             {reviews.length > VISIBLE && (
-              <div className="flex gap-2">
-                {[{ fn: () => { prev(); setPaused(true); }, Icon: FiChevronLeft },
-                  { fn: () => { next(); setPaused(true); }, Icon: FiChevronRight }].map(({ fn, Icon }, i) => (
-                  <button key={i} onClick={fn}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-all"
-                    style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-                    onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
-                  >
-                    <Icon size={18} />
-                  </button>
-                ))}
+              <div className="flex gap-3">
+                <button onClick={() => { prev(); setPaused(true); }}
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all bg-(--bg-deep) border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/40 shadow-xl shadow-black/5 active:scale-95"
+                >
+                  <FiChevronLeft size={24} />
+                </button>
+                <button onClick={() => { next(); setPaused(true); }}
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all bg-(--bg-deep) border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/40 shadow-xl shadow-black/5 active:scale-95"
+                >
+                  <FiChevronRight size={24} />
+                </button>
               </div>
             )}
           </div>
 
-          {/* CARDS */}
+          {/* CARDS GRID */}
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
           >
@@ -313,105 +287,55 @@ export default function Reviews() {
                 <motion.div
                   key={`${review._id}-${activeIdx}-${i}`}
                   layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.07, duration: 0.4 }}
-                  className="rounded-2xl p-5 sm:p-6 flex flex-col gap-4 transition-all"
-                  style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(201,168,76,0.2)"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                  transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative group rounded-[2.5rem] p-8 sm:p-10 flex flex-col gap-6 transition-all duration-500 bg-(--bg-deep) border border-(--border) hover:border-(--gold)/30 shadow-2xl shadow-black/5"
                 >
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.12)" }}>
-                    <FiMessageSquare size={14} style={{ color: "var(--gold)" }} />
+                  <div className="absolute top-8 right-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <FiMessageSquare size={80} className="text-(--gold)" />
                   </div>
 
-                  <StarRow rating={review.rating || 5} size={14} />
+                  <div className="flex items-center justify-between relative z-10">
+                    <StarRow rating={review.rating || 5} size={15} />
+                    <span className="text-[10px] uppercase tracking-widest font-black text-(--gold) px-3 py-1 rounded-full bg-(--gold)/10">Verified ✓</span>
+                  </div>
 
-                  <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--text-secondary)" }}>
+                  <p className="text-base sm:text-lg leading-relaxed flex-1 text-(--text-secondary) font-light italic relative z-10">
                     "{review.comment}"
                   </p>
 
-                  <div className="flex items-center gap-3 pt-2"
-                    style={{ borderTop: "1px solid var(--border)" }}>
-                    <AvatarCircle name={review.name} size={40} />
+                  <div className="flex items-center gap-4 pt-6 border-t border-(--border) relative z-10">
+                    <AvatarCircle name={review.name} size={48} />
                     <div>
-                      <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{review.name}</p>
-                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>{review.city || "Pakistan"}</p>
+                      <p className="font-display font-bold text-base text-(--text-primary)">{review.name}</p>
+                      <p className="text-xs uppercase tracking-widest text-(--text-muted) font-medium">{review.city || "Pakistan"}</p>
                     </div>
-                    <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full"
-                      style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}>
-                      Verified ✓
-                    </span>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
 
-          {/* DOTS */}
+          {/* PAGINATION DOTS */}
           {reviews.length > 1 && (
-            <div className="flex justify-center gap-1.5 mt-8">
+            <div className="flex justify-center gap-2.5 mt-16">
               {reviews.map((_, i) => (
                 <button key={i}
                   onClick={() => { setActiveIdx(i); setPaused(true); }}
-                  className="transition-all duration-400 rounded-full"
+                  className="transition-all duration-500 rounded-full"
                   style={{
-                    width: i === activeIdx ? 24 : 6,
-                    height: 6,
+                    width: i === activeIdx ? 40 : 10,
+                    height: 8,
                     background: i === activeIdx
-                      ? "linear-gradient(90deg, #c9a84c, #e8c56a)"
+                      ? "var(--gold)"
                       : "var(--border)",
                   }}
                 />
               ))}
             </div>
           )}
-
-          {/* LOGIN CTA */}
-          {!token && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              className="mt-8 text-center rounded-2xl px-6 py-6"
-              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
-            >
-              <p className="text-sm mb-3" style={{ color: "var(--text-muted)" }}>
-                🌟 Kya aap {brandName} customer hain?{" "}
-                <strong style={{ color: "var(--text-primary)" }}>Apna feedback share karein!</strong>
-              </p>
-              <div className="flex items-center gap-3 justify-center flex-wrap">
-                <Link to="/login" className="btn-gold" style={{ padding: "10px 24px", fontSize: "0.85rem" }}>
-                  Login Karein
-                </Link>
-                <Link to="/signup" className="btn-outline" style={{ padding: "10px 20px", fontSize: "0.85rem" }}>
-                  Account Banayein
-                </Link>
-              </div>
-            </motion.div>
-          )}
-
-          {/* TRUST STRIP */}
-          <motion.div
-            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-            className="mt-8 rounded-2xl p-5 sm:p-6 flex flex-wrap items-center justify-around gap-6 text-center"
-            style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
-          >
-            {[
-              { val: `${reviews.length}+`, label: "Customer Reviews", icon: "⭐" },
-              { val: `${avgRating.toFixed(1)}/5`, label: "Average Rating", icon: "📊" },
-              { val: "98%", label: "Satisfied Customers", icon: "😊" },
-              { val: "100%", label: "Original Products", icon: "✅" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-xl sm:text-2xl">{s.icon}</div>
-                <div className="font-display text-xl font-bold gold-text mt-1">{s.val}</div>
-                <div className="text-xs mt-0.5 uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
@@ -427,28 +351,24 @@ export default function Reviews() {
           ) : (
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center px-4"
+              className="fixed inset-0 z-100 flex items-center justify-center px-4"
               onClick={() => setShowModal(false)}
             >
               <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-sm" />
               <motion.div
-                initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
-                className="relative rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl"
+                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+                className="relative rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl overflow-hidden"
                 style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="w-14 h-14 rounded-2xl gold-gradient flex items-center justify-center mx-auto mb-4">
-                  <FiLock size={22} className="text-black" />
+                <div className="w-20 h-20 rounded-2xl gold-gradient flex items-center justify-center mx-auto mb-6 shadow-xl shadow-(--gold)/30">
+                  <FiLock size={32} className="text-black" />
                 </div>
-                <h3 className="font-bold text-lg mb-2" style={{ color: "var(--text-primary)" }}>Login Zaroori Hai</h3>
-                <p className="text-sm mb-6" style={{ color: "var(--text-muted)" }}>
-                  Review dene ke liye pehle account mein login karein.
-                </p>
-                <div className="flex gap-3">
-                  <Link to="/login" className="btn-gold flex-1" style={{ padding: "12px" }}
-                    onClick={() => setShowModal(false)}>Login</Link>
-                  <button onClick={() => setShowModal(false)} className="btn-outline flex-1"
-                    style={{ padding: "12px" }}>Cancel</button>
+                <h3 className="font-display text-2xl font-bold text-(--text-primary) mb-3">Login Required</h3>
+                <p className="text-(--text-muted) mb-8">Please sign in to your account to share your experience with the community.</p>
+                <div className="flex flex-col gap-3">
+                  <Link to="/login" className="btn-gold py-4 rounded-2xl" onClick={() => setShowModal(false)}>Sign In</Link>
+                  <button onClick={() => setShowModal(false)} className="text-sm font-bold text-(--text-muted) hover:text-(--text-primary) transition-colors py-2">Close</button>
                 </div>
               </motion.div>
             </motion.div>

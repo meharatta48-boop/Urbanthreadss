@@ -1,7 +1,8 @@
-import { FiInstagram, FiFacebook, FiYoutube, FiMail, FiPhone, FiMapPin, FiMessageCircle } from "react-icons/fi";
+import { FiInstagram, FiFacebook, FiYoutube, FiMail, FiPhone, FiMapPin, FiMessageCircle, FiArrowUp } from "react-icons/fi";
 import { FaTiktok } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useSettings } from "../context/SettingsContext";
+import { motion } from "framer-motion";
 
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
@@ -14,7 +15,7 @@ export default function Footer() {
   const logoImg        = settings?.logoImage       ? getImageUrl(settings.logoImage)       : null;
   const footerLogoSize = Number(settings?.footerLogoSize) || 60;
   const showBrandName  = settings?.showBrandName !== false;
-  const socialIconSz   = Number(settings?.socialIconSize) || 18;
+  const socialIconSz   = Number(settings?.socialIconSize) || 20;
 
   const socials = [
     { Icon: FiInstagram, href: settings?.instagram || "#",  label: "Instagram",  color: "#e1306c" },
@@ -32,126 +33,128 @@ export default function Footer() {
   const quickLinks = [
     { label: "Home",      to: "/" },
     { label: "Shop",      to: "/shop" },
-    { label: "About",     to: "/about" },
+    { label: "About Us",  to: "/about" },
     { label: "My Orders", to: "/my-orders" },
-    { label: "Cart",      to: "/cart" },
-    { label: "Support",   to: "/support" },
+    { label: "Track Order", to: "/track-order" },
   ];
 
-  const categories = [
-    { label: "Summer Collection", to: "/shop?category=summer" },
-    { label: "Winter Collection", to: "/shop?category=winter" },
-    { label: "Men",               to: "/shop?sub=men" },
-    { label: "Women",             to: "/shop?sub=women" },
-    { label: "Kids",              to: "/shop?sub=kids" },
+  const legalLinks = [
+    { label: "Privacy Policy", to: "/privacy" },
+    { label: "Terms of Service", to: "/terms" },
+    { label: "Return Policy", to: "/returns" },
+    { label: "Shipping Info", to: "/shipping" },
   ];
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border)" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-8">
+    <footer className="bg-(--bg-deep) transition-colors duration-500 border-t border-(--border)">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-10">
 
-        {/* WHATSAPP TOP STRIP */}
-        {settings?.whatsapp && (
-          <a
-            href={`https://wa.me/${settings.whatsapp}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 mb-10 rounded-2xl px-4 sm:px-5 py-4 transition-all group"
-            style={{
-              background: "rgba(37,211,102,0.06)",
-              border: "1px solid rgba(37,211,102,0.15)",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(37,211,102,0.1)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(37,211,102,0.06)"}
-          >
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "rgba(37,211,102,0.12)" }}>
-              <FiMessageCircle size={17} style={{ color: "#25d366" }} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>WhatsApp pe Support Hasil Karein</p>
-              <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>+{settings.whatsapp} — Online Support</p>
-            </div>
-            <span
-              className="ml-auto text-xs border px-2 sm:px-3 py-1.5 rounded-xl transition-all shrink-0 hidden sm:inline-flex"
-              style={{ color: "#25d366", borderColor: "rgba(37,211,102,0.2)" }}
-            >
-              Chat Karein →
-            </span>
-          </a>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 mb-12">
-
-          {/* BRAND */}
-          <div className="col-span-2 sm:col-span-2 space-y-5">
-            <div className="flex items-center gap-3">
-              {/* Logo — responsive size */}
-              <div className="shrink-0 rounded-xl overflow-hidden relative"
-                style={{ width: footerLogoSize, height: footerLogoSize }}>
-                <div className="absolute inset-0 gold-gradient flex items-center justify-center rounded-xl transition-opacity duration-300"
-                  style={{ opacity: logoImg ? 0 : 1 }}>
-                  <span className="text-black font-bold font-display"
-                    style={{ fontSize: Math.max(12, footerLogoSize * 0.4) }}>{brandName.charAt(0)}</span>
-                </div>
-                {logoImg && (
-                  <img src={logoImg} alt={brandName} className="w-full h-full object-contain"
-                    onError={(e) => { e.currentTarget.style.opacity = "0"; }} />
-                )}
-              </div>
-
-              {showBrandName && (
-                <span className="font-display tracking-[0.15em] font-bold"
-                  style={{ fontSize: Math.max(14, footerLogoSize * 0.38), color: "var(--text-primary)" }}>
-                  {brandName.split(" ")[0]}
-                  {brandName.split(" ").length > 1 && (
-                    <span className="gold-text"> {brandName.split(" ").slice(1).join(" ")}</span>
+        {/* TOP SECTION: BRAND & WHATSAPP */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20 items-start">
+          
+          {/* BRAND INFO */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="flex flex-col gap-6">
+              <Link to="/" className="flex items-center gap-4 group w-max">
+                <div className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105"
+                  style={{ width: footerLogoSize, height: footerLogoSize }}>
+                  <div className="absolute inset-0 gold-gradient flex items-center justify-center rounded-2xl">
+                    <span className="text-black font-bold font-display"
+                    style={{ fontSize: Math.max(12, footerLogoSize * 0.45) }}>{brandName.charAt(0)}</span>
+                  </div>
+                  {logoImg && (
+                    <img src={logoImg} alt={brandName} className="w-full h-full object-contain relative z-10"
+                      onError={(e) => { e.currentTarget.style.opacity = "0"; }} />
                   )}
-                </span>
-              )}
+                </div>
+                {showBrandName && (
+                  <span className="font-display tracking-[0.2em] font-black text-(--text-primary)"
+                    style={{ fontSize: Math.max(16, footerLogoSize * 0.4) }}>
+                    {brandName.split(" ")[0]}
+                    {brandName.split(" ").length > 1 && (
+                      <span className="gold-text italic"> {brandName.split(" ").slice(1).join(" ")}</span>
+                    )}
+                  </span>
+                )}
+              </Link>
+              <p className="text-lg leading-relaxed text-(--text-secondary) max-w-md font-light italic">
+                {settings?.footerTagline || "Pakistan ka premium streetwear brand. Har piece ek statement hai — apna style define karo."}
+              </p>
             </div>
 
-            <p className="leading-relaxed max-w-xs text-sm" style={{ color: "var(--text-muted)" }}>
-              {settings?.footerTagline || "Pakistan ka premium streetwear brand. Har piece ek statement hai — apna style define karo."}
-            </p>
-
-            {/* SOCIAL ICONS */}
-            <div>
-              <p className="text-xs uppercase tracking-widest mb-3" style={{ color: "var(--text-muted)" }}>Follow Us</p>
-              <div className="flex gap-2">
-                {(socials.length > 0 ? socials : [
-                  { Icon: FiInstagram, href: "#", label: "Instagram", color: "#e1306c" },
-                  { Icon: FiFacebook,  href: "#", label: "Facebook",  color: "#1877f2" },
-                  { Icon: FaTiktok,    href: "#", label: "TikTok",    color: "#69c9d0" },
-                  { Icon: FiYoutube,   href: "#", label: "YouTube",   color: "#ff0000" },
-                ]).map(({ Icon, href, label, color }) => (
-                  <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                    aria-label={label}
-                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:scale-105"
-                    style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${color}40`; e.currentTarget.style.color = color; e.currentTarget.style.background = `${color}10`; }}
+            {/* SOCIAL CONNECT */}
+            <div className="space-y-4">
+              <p className="text-[10px] uppercase tracking-[0.3em] font-black text-(--gold)">Connect With Us</p>
+              <div className="flex flex-wrap gap-3">
+                {socials.map((s) => (
+                  <motion.a 
+                    key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1, y: -4 }}
+                    className="w-12 h-12 rounded-[1.25rem] flex items-center justify-center transition-all bg-(--bg-surface) border border-(--border) text-(--text-muted) shadow-xl shadow-black/5"
+                    style={{ "--hover-color": s.color }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${s.color}60`; e.currentTarget.style.color = s.color; e.currentTarget.style.background = `${s.color}05`; }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.color = ""; e.currentTarget.style.background = ""; }}
                   >
-                    <Icon size={socialIconSz} />
-                  </a>
+                    <s.Icon size={socialIconSz} />
+                  </motion.a>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* QUICK LINKS */}
-          <div>
-            <h4 className="font-semibold mb-4 text-sm tracking-wide" style={{ color: "var(--text-primary)" }}>Quick Links</h4>
-            <ul className="space-y-2.5">
+          {/* WHATSAPP SUPPORT CARD */}
+          <div className="lg:col-span-7">
+            {settings?.whatsapp && (
+              <a
+                href={`https://wa.me/${settings.whatsapp}`}
+                target="_blank" rel="noopener noreferrer"
+                className="group relative block p-8 rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-3xl hover:shadow-(--gold)/5"
+                style={{
+                  background: "linear-gradient(135deg, rgba(37,211,102,0.08) 0%, rgba(37,211,102,0.02) 100%)",
+                  border: "1px solid rgba(37,211,102,0.15)",
+                }}
+              >
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#25d366]/10 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2" />
+                
+                <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                  <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-3xl bg-[#25d366] flex items-center justify-center shadow-2xl shadow-[#25d366]/30 group-hover:scale-110 transition-transform duration-500">
+                      <FiMessageCircle size={32} className="text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-(--text-primary) mb-1">WhatsApp Support</h4>
+                      <p className="text-sm text-(--text-muted)">Batain karein hamari team se — Online 24/7</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="w-2 h-2 rounded-full bg-[#25d366] animate-pulse" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#25d366]">Always Live</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start sm:items-end gap-2">
+                    <span className="text-lg font-display font-bold text-(--text-primary)">+{settings.whatsapp}</span>
+                    <span className="btn-gold group-hover:bg-white group-hover:text-black group-hover:border-white transition-all px-6 py-2.5 rounded-full text-xs shadow-xl">
+                      Start Chat Now
+                    </span>
+                  </div>
+                </div>
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* MIDDLE SECTION: LINKS GRID */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
+          
+          {/* NAVIGATION */}
+          <div className="space-y-6">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-(--text-primary)">Store Navigation</h4>
+            <ul className="space-y-3">
               {quickLinks.map((l) => (
                 <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-sm flex items-center gap-1.5 group transition-colors"
-                    style={{ color: "var(--text-muted)" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
-                    onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
-                  >
-                    <span className="w-1 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "var(--gold)" }} />
+                  <Link to={l.to} className="text-sm text-(--text-muted) hover:text-(--gold) transition-colors flex items-center gap-2 group">
+                    <span className="w-1 h-1 rounded-full bg-(--gold) scale-0 group-hover:scale-100 transition-transform" />
                     {l.label}
                   </Link>
                 </li>
@@ -159,20 +162,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* CATEGORIES */}
-          <div>
-            <h4 className="font-semibold mb-4 text-sm tracking-wide" style={{ color: "var(--text-primary)" }}>Categories</h4>
-            <ul className="space-y-2.5">
-              {categories.map((l) => (
+          {/* LEGAL */}
+          <div className="space-y-6">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-(--text-primary)">Information</h4>
+            <ul className="space-y-3">
+              {legalLinks.map((l) => (
                 <li key={l.to}>
-                  <Link
-                    to={l.to}
-                    className="text-sm flex items-center gap-1.5 group transition-colors"
-                    style={{ color: "var(--text-muted)" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
-                    onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
-                  >
-                    <span className="w-1 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: "var(--gold)" }} />
+                  <Link to={l.to} className="text-sm text-(--text-muted) hover:text-(--gold) transition-colors flex items-center gap-2 group">
+                    <span className="w-1 h-1 rounded-full bg-(--gold) scale-0 group-hover:scale-100 transition-transform" />
                     {l.label}
                   </Link>
                 </li>
@@ -180,54 +177,59 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* CONTACT */}
-          <div>
-            <h4 className="font-semibold mb-4 text-sm tracking-wide" style={{ color: "var(--text-primary)" }}>Contact</h4>
-            <ul className="space-y-3 mb-4">
-              {contacts.map(({ Icon, label, href }) => (
-                <li key={label}>
-                  {href ? (
-                    <a
-                      href={href}
-                      className="flex items-start gap-2.5 text-sm transition-colors"
-                      style={{ color: "var(--text-muted)" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
-                      onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
-                    >
-                      <Icon size={14} style={{ color: "var(--gold)", flexShrink: 0, marginTop: "2px" }} />
-                      {label}
-                    </a>
-                  ) : (
-                    <span className="flex items-start gap-2.5 text-sm" style={{ color: "var(--text-muted)" }}>
-                      <Icon size={14} style={{ color: "var(--gold)", shrink: 0, marginTop: "2px" }} />
-                      {label}
+          {/* CONTACT INFO */}
+          <div className="col-span-2 space-y-8">
+            <h4 className="text-sm font-black uppercase tracking-[0.2em] text-(--text-primary)">Get In Touch</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {contacts.map((c) => (
+                <div key={c.label} className="space-y-2">
+                  <div className="flex items-center gap-2 text-(--gold)">
+                    <c.Icon size={14} />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-black">
+                      {c.label.includes("@") ? "Email Us" : c.label.includes("+") ? "Call Us" : "Visit Us"}
                     </span>
+                  </div>
+                  {c.href ? (
+                    <a href={c.href} className="block text-sm font-medium text-(--text-muted) hover:text-(--text-primary) transition-colors">{c.label}</a>
+                  ) : (
+                    <p className="text-sm font-medium text-(--text-muted)">{c.label}</p>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
-
-            {/* SUPPORT LINK */}
-            <Link to="/support"
-              className="flex items-center gap-2 text-xs rounded-xl px-3 py-2.5 transition-all"
-              style={{ color: "var(--gold)", border: "1px solid rgba(201,168,76,0.2)" }}
-              onMouseEnter={e => e.currentTarget.style.background = "rgba(201,168,76,0.06)"}
-              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            >
-              <FiMessageCircle size={13} /> Live Support
-            </Link>
+            </div>
+            
+            <div className="pt-4">
+              <Link to="/support" className="inline-flex items-center gap-3 text-xs font-bold px-6 py-3 rounded-full border border-(--gold)/20 bg-(--gold)/5 text-(--gold) hover:bg-(--gold) hover:text-black transition-all">
+                <FiMessageCircle size={14} /> Open Support Ticket
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* BOTTOM */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ borderTop: "1px solid var(--border)" }}>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>© {new Date().getFullYear()} {brandName}. All rights reserved.</p>
-          <div className="flex items-center gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
-            <span>🇵🇰 Made in Pakistan</span>
-            <span>· COD Available</span>
-            <span>· Fast Delivery</span>
+        {/* BOTTOM SECTION: COPYRIGHT & SCROLL */}
+        <div className="pt-10 border-t border-(--border) flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-(--text-muted)">
+              © {new Date().getFullYear()} {brandName} Collection. All Rights Reserved.
+            </p>
+            <div className="flex items-center gap-4 text-[9px] uppercase tracking-widest font-black text-(--text-muted)/60">
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-(--gold)" /> Made in Pakistan</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-(--gold)" /> Secure Checkout</span>
+              <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-(--gold)" /> Nationwide Shipping</span>
+            </div>
           </div>
+
+          <button 
+            onClick={scrollToTop}
+            className="group flex flex-col items-center gap-2 transition-all hover:-translate-y-1"
+          >
+            <div className="w-12 h-12 rounded-2xl border border-(--border) flex items-center justify-center text-(--text-muted) group-hover:text-(--gold) group-hover:border-(--gold)/40 bg-(--bg-surface) shadow-xl shadow-black/5">
+              <FiArrowUp size={20} />
+            </div>
+            <span className="text-[9px] uppercase tracking-[0.3em] font-black text-(--text-muted)">Back To Top</span>
+          </button>
         </div>
+
       </div>
     </footer>
   );

@@ -25,7 +25,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const isEdit = pathname.includes("/edit");
   const title = isEdit ? "Edit Product" : (titleMap[pathname] || "Admin");
-  const quickLinks = [
+  const quickLinks = useMemo(() => [
     { label: "Dashboard", to: "/admin-dashboard", keywords: "home stats revenue" },
     { label: "Orders", to: "/admin-dashboard/orders", keywords: "orders shipping pending delivery" },
     { label: "Products", to: "/admin-dashboard/products", keywords: "products catalog stock" },
@@ -34,13 +34,13 @@ export default function AdminLayout() {
     { label: "Sub-Categories", to: "/admin-dashboard/subcategories", keywords: "subcategory" },
     { label: "Users", to: "/admin-dashboard/users", keywords: "customers users" },
     { label: "Site Settings", to: "/admin-dashboard/settings", keywords: "settings design seo popup" },
-  ];
+  ], []);
 
   const filteredQuickLinks = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return quickLinks;
     return quickLinks.filter((item) => `${item.label} ${item.keywords}`.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, quickLinks]);
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -81,11 +81,11 @@ export default function AdminLayout() {
       {/* MAIN COLUMN */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TOPBAR */}
-        <header className="h-[60px] bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-6 flex-shrink-0 transition-colors">
+        <header className="h-15 bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-6 shrink-0 transition-colors">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-(--text-muted) hover:text-(--text-primary) p-1.5 rounded-lg border border-(--border) flex-shrink-0"
+              className="lg:hidden text-(--text-muted) hover:text-(--text-primary) p-1.5 rounded-lg border border-(--border) shrink-0"
             >
               <FiMenu size={17} />
             </button>
@@ -139,7 +139,7 @@ export default function AdminLayout() {
             className="max-w-2xl mx-auto rounded-2xl border border-(--border) bg-(--bg-card) overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-(--border)">
+            <div className="h-15 shrink-0 flex items-center justify-between px-6 border-b border-(--border) bg-(--bg-card)">
               <FiCommand size={15} className="text-(--gold)" />
               <input
                 autoFocus

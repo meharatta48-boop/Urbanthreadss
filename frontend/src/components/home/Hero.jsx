@@ -57,8 +57,8 @@ export default function Hero() {
     setIdx(newIdx);
   }, []);
 
-  const next = useCallback(() => goTo((idx + 1) % slides.length, 1), [idx, slides.length]);
-  const prev = useCallback(() => goTo((idx - 1 + slides.length) % slides.length, -1), [idx, slides.length]);
+  const next = useCallback(() => goTo((idx + 1) % slides.length, 1), [idx, slides.length, goTo]);
+  const prev = useCallback(() => goTo((idx - 1 + slides.length) % slides.length, -1), [idx, slides.length, goTo]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -73,7 +73,7 @@ export default function Hero() {
     return () => clearInterval(t);
   }, [slides.length, next]);
 
-  useEffect(() => { if (idx >= slides.length) setIdx(0); }, [slides.length]);
+  useEffect(() => { if (idx >= slides.length) setIdx(0); }, [idx, slides.length]);
   useEffect(() => {
     if (!slides.length) return;
     const currentImg = new Image();
@@ -128,7 +128,7 @@ export default function Hero() {
       />
       
       {/* Bottom vignette */}
-      <div className="absolute inset-0 bg-gradient-to-t from-(--bg-deep)/80 via-transparent to-(--bg-deep)/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-(--bg-deep)/80 via-transparent to-(--bg-deep)/20 pointer-events-none" />
       
       {/* Mobile-only: slightly darken/lighten center so text is always readable */}
       <div className="absolute inset-0 pointer-events-none sm:hidden bg-white/20 dark:bg-black/35" />

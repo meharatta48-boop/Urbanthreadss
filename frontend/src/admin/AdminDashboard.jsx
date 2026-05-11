@@ -61,7 +61,7 @@ function DonutChart({ data }) {
 
   return (
     <div className="flex items-center gap-4">
-      <svg viewBox="0 0 100 100" className="w-24 h-24 flex-shrink-0">
+      <svg viewBox="0 0 100 100" className="w-24 h-24 shrink-0">
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--bg-elevated)" strokeWidth={stroke} />
         {donutSegments.map((d, i) => (
           <circle key={i} cx={cx} cy={cy} r={r} fill="none"
@@ -77,7 +77,7 @@ function DonutChart({ data }) {
       <div className="space-y-1.5 min-w-0">
         {data.map((d) => (
           <div key={d.label} className="flex items-center gap-2 text-xs">
-            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.color }} />
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: d.color }} />
             <span className="text-(--text-muted)">{d.label}</span>
             <span className="ml-auto font-bold" style={{ color: d.color }}>{d.value}</span>
           </div>
@@ -219,13 +219,13 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {cards.map(({ label, val, sub, sub2, Icon, color, bg, link, urgent }, i) => (
+          {cards.map(({ label, val, sub, sub2, Icon: CIcon, color, bg, link, urgent }, i) => (
             <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
               <Link to={link} className="block">
                 <div className={`bg-(--bg-card) border rounded-2xl p-5 hover:border-(--border-light) transition-all group h-full ${urgent ? "border-[#f59e0b]/30" : "border-(--border)"}`}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg, color }}>
-                      <Icon size={17} />
+                      <CIcon size={17} />
                     </div>
                     {urgent && <span className="text-[9px] font-bold text-[#f59e0b] bg-[rgba(245,158,11,0.1)] border border-[#f59e0b]/20 px-1.5 py-0.5 rounded">URGENT</span>}
                   </div>
@@ -315,7 +315,7 @@ export default function Dashboard() {
                 return (
                   <div key={order._id} className="flex items-center justify-between px-5 py-3.5 hover:bg-(--bg-elevated) transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                         style={{ background: `${st.color}15`, color: st.color }}>
                         <FiShoppingBag size={13} />
                       </div>
@@ -330,7 +330,7 @@ export default function Dashboard() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                       <span className="gold-text font-bold font-display text-sm hidden sm:block">
                         Rs. {order.totalPrice?.toLocaleString()}
                       </span>
@@ -361,9 +361,9 @@ export default function Dashboard() {
                 {data.topProducts.map((p, i) => (
                   <div key={p.id} className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-(--text-muted) text-xs font-bold w-5 flex-shrink-0">#{i + 1}</span>
+                      <span className="text-(--text-muted) text-xs font-bold w-5 shrink-0">#{i + 1}</span>
                       <div className="min-w-0">
-                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-[130px]">{p.name}</p>
+                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-32.5">{p.name}</p>
                         <p className="text-(--text-muted) text-[10px]">{p.qty} sold</p>
                       </div>
                     </div>
@@ -395,7 +395,7 @@ export default function Dashboard() {
                   <Link key={p._id} to={`/admin-dashboard/products/${p._id}/edit`}>
                     <div className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
                       <div className="min-w-0">
-                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-[140px]">{p.name}</p>
+                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-35">{p.name}</p>
                         <p className="text-(--text-muted) text-[10px] capitalize">{p.category?.name}</p>
                       </div>
                       <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
