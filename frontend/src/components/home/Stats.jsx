@@ -55,7 +55,7 @@ export default function Stats() {
     <section
       className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden"
       style={{
-        background: "var(--bg-deep)",
+        background: "var(--bg-surface)",
       }}
     >
       {/* Decorative Glows */}

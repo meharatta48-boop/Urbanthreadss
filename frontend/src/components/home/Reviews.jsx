@@ -219,7 +219,7 @@ export default function Reviews() {
 
   return (
     <>
-      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-(--bg-surface) relative overflow-hidden transition-colors duration-500">
+      <section className="py-24 sm:py-32 px-4 sm:px-6 bg-(--bg-deep) relative overflow-hidden transition-colors duration-500">
         {/* Background Accents */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-(--gold)/5 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-(--gold)/5 blur-[120px] rounded-full -translate-x-1/2 translate-y-1/2" />
