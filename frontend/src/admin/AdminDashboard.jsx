@@ -143,7 +143,7 @@ export default function Dashboard() {
       val: data.totalOrders || 0,
       sub: `${data.conversionRate || 0}% delivery rate`,
       sub2: `${data.ordersByStatus?.delivered || 0} delivered`,
-      Icon: FiShoppingBag, color: "#60a5fa", bg: "rgba(96,165,250,0.08)",
+      Icon: FiShoppingBag, color: "#60a5fa", bg: "rgba(96,165,250,0.12)",
       link: "/admin-dashboard/orders",
     },
     {
@@ -151,7 +151,7 @@ export default function Dashboard() {
       val: data.totalUsers || 0,
       sub: "Registered customers",
       sub2: " ",
-      Icon: FiUsers, color: "#c084fc", bg: "rgba(192,132,252,0.08)",
+      Icon: FiUsers, color: "#c084fc", bg: "rgba(192,132,252,0.12)",
       link: "/admin-dashboard/users",
     },
   ] : [];
@@ -251,9 +251,9 @@ export default function Dashboard() {
             </h3>
           </div>
           {data?.last7Days ? (
-            <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="#c9a84c" />
+            <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="var(--gold)" />
           ) : (
-            <div className="h-20 bg-[#111] rounded-xl animate-pulse" />
+            <div className="h-20 bg-(--bg-elevated) rounded-xl animate-pulse" />
           )}
           <div className="mt-3 flex gap-4 text-xs text-(--text-muted)">
             <span>Orders this week: <span className="text-(--text-primary) font-bold">{data?.last7Days?.reduce((s, d) => s + d.orders, 0) || 0}</span></span>
@@ -299,12 +299,12 @@ export default function Dashboard() {
             </Link>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-[#333] flex items-center justify-center gap-2">
-              <div className="w-5 h-5 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
+            <div className="p-8 text-center text-(--text-muted) flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
               Loading...
             </div>
           ) : orders.length === 0 ? (
-            <div className="p-10 text-center text-[#333]">
+            <div className="p-10 text-center text-(--text-muted)">
               <FiShoppingBag size={28} className="mx-auto mb-2 opacity-30" />
               <p className="text-sm">Koi order nahi abhi tak</p>
             </div>
@@ -385,8 +385,8 @@ export default function Dashboard() {
               <span className="text-xs text-[#f59e0b] font-bold">{lowStock.length} items</span>
             </div>
             {lowStock.length === 0 ? (
-              <div className="p-6 text-center text-[#333]">
-                <FiCheckCircle size={24} className="mx-auto mb-2 text-green-600/40" />
+              <div className="p-6 text-center text-(--text-muted)">
+                <FiCheckCircle size={24} className="mx-auto mb-2 text-green-500/40" />
                 <p className="text-xs">Sab stock theek hai 👍</p>
               </div>
             ) : (

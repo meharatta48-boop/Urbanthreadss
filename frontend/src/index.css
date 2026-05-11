@@ -11,46 +11,52 @@
    LIGHT THEME (Default - Clean & Premium)
 ══════════════════════════════════════════════ */
 :root {
-  /* Premium Vibrant Gold */
-  --gold: #d4af37;
-  --gold-light: #f5d76e;
-  --gold-dark: #aa7c11;
+  /* Premium Vibrant Gold - Refined for Luxury */
+  --gold: #c9a84c;
+  --gold-light: #e5cf8e;
+  --gold-dark: #a68b39;
 
-  /* Light backgrounds - Crisp & Modern */
-  --bg-deep:     #fcfcfc;
-  --bg-surface:  #f3f4f6;
+  /* Light backgrounds - Ultra-clean & Luxury */
+  --bg-deep:     #ffffff;
+  --bg-surface:  #f9fafb;
   --bg-card:     #ffffff;
-  --bg-elevated: #fafafa;
+  --bg-elevated: #ffffff;
 
-  /* Light borders */
-  --border:       #e5e7eb;
-  --border-light: #d1d5db;
+  /* Light borders - Softer & Elegant */
+  --border:       #f2f2f2;
+  --border-light: #e8e8e8;
 
-  /* Light text */
-  --text-primary:   #111827;
-  --text-secondary: #4b5563;
-  --text-muted:     #9ca3af;
+  /* Light text - Perfect Readability & Contrast */
+  --text-primary:   #0a0a0a;
+  --text-secondary: #3d3d3d;
+  --text-muted:     #737373;
 
-  /* Glass card light */
-  --glass-bg:     rgba(255,255,255,0.85);
-  --glass-border: rgba(212,175,55,0.2);
+  /* Glass card light - Premium Frosted Effect */
+  --glass-bg:     rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(201, 168, 76, 0.15);
 
   /* Scrollbar */
-  --scrollbar-track: #f3f4f6;
-  --scrollbar-thumb: #d1d5db;
+  --scrollbar-track: #f9fafb;
+  --scrollbar-thumb: #e5e5e5;
 
   /* Navbar */
-  --nav-bg-scrolled: rgba(255,255,255,0.9);
-  --nav-border:      #e5e7eb;
-  --nav-text:        #111827;
-  --nav-text-muted:  #4b5563;
-  --nav-item-hover:  #f3f4f6;
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.85);
+  --nav-border:      #f2f2f2;
+  --nav-text:        #0a0a0a;
+  --nav-text-muted:  #404040;
+  --nav-item-hover:  #f9fafb;
   --nav-dropdown-bg: #ffffff;
-  --nav-dropdown-border: #e5e7eb;
+  --nav-dropdown-border: #f2f2f2;
 
   /* Mobile drawer */
   --drawer-bg:     #ffffff;
-  --drawer-border: #e5e7eb;
+  --drawer-border: #f2f2f2;
+
+  /* Shadows - Layered for Depth */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.06);
+  --shadow-gold: 0 10px 30px rgba(201, 168, 76, 0.12);
 }
 
 /* ══════════════════════════════════════════════
@@ -70,7 +76,7 @@ html.dark {
   --text-muted:     #52525b;
 
   --glass-bg:     rgba(10,10,10,0.85);
-  --glass-border: rgba(212,175,55,0.15);
+  --glass-border: rgba(201, 168, 76, 0.1);
 
   --scrollbar-track: #050505;
   --scrollbar-thumb: #2d2d2d;
@@ -85,6 +91,11 @@ html.dark {
 
   --drawer-bg:     #0a0a0a;
   --drawer-border: #1f1f1f;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-gold: 0 10px 30px rgba(201, 168, 76, 0.08);
 }
 
 /* ── BASE RESETS ── */
@@ -139,7 +150,7 @@ body {
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  box-shadow: var(--shadow-md);
   border-radius: 20px;
 }
 
@@ -232,8 +243,8 @@ body {
 }
 
 .btn-gold:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4), inset 0 1px 0 rgba(255,255,255,0.6);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: var(--shadow-gold);
 }
 
 .btn-gold:active { transform: translateY(0) scale(0.98); }
@@ -263,8 +274,8 @@ body {
 .btn-outline:hover {
   border-color: var(--gold);
   color: var(--gold);
-  background: rgba(212, 175, 55, 0.05);
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.12);
+  background: rgba(201, 168, 76, 0.04);
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.08);
   transform: translateY(-2px);
 }
 
@@ -333,13 +344,14 @@ html.dark .badge-processing{ color: #c084fc; }
 }
 
 .product-card:hover {
-  border-color: rgba(212, 175, 55, 0.5);
+  border-color: var(--gold-light);
   transform: translateY(-8px);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 40px rgba(212, 175, 55, 0.08);
+  box-shadow: var(--shadow-lg);
 }
 
 html.dark .product-card:hover {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.1);
+  border-color: rgba(201, 168, 76, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 /* ── SECTION LABEL ── */

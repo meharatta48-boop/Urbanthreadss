@@ -48,43 +48,43 @@ export default function ProductList() {
       {/* Header skeleton */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="w-16 h-4 bg-[#111] rounded mb-2 animate-pulse"></div>
-          <div className="w-32 h-8 bg-[#111] rounded animate-pulse"></div>
+          <div className="w-16 h-4 bg-(--bg-elevated) rounded mb-2 animate-pulse"></div>
+          <div className="w-32 h-8 bg-(--bg-elevated) rounded animate-pulse"></div>
         </div>
-        <div className="w-32 h-10 bg-[#111] rounded animate-pulse"></div>
+        <div className="w-32 h-10 bg-(--bg-elevated) rounded animate-pulse"></div>
       </div>
 
       {/* Stats skeleton */}
       <div className="grid grid-cols-3 gap-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4 text-center">
-            <div className="w-8 h-6 bg-[#111] rounded mx-auto mb-2 animate-pulse"></div>
-            <div className="w-12 h-3 bg-[#111] rounded mx-auto animate-pulse"></div>
+          <div key={i} className="bg-(--bg-card) border border-(--border) rounded-xl p-4 text-center">
+            <div className="w-8 h-6 bg-(--bg-elevated) rounded mx-auto mb-2 animate-pulse"></div>
+            <div className="w-12 h-3 bg-(--bg-elevated) rounded mx-auto animate-pulse"></div>
           </div>
         ))}
       </div>
 
       {/* Search skeleton */}
-      <div className="w-full h-12 bg-[#111] rounded-xl animate-pulse"></div>
+      <div className="w-full h-12 bg-(--bg-card) border border-(--border) rounded-xl animate-pulse"></div>
 
       {/* Products list skeleton */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#111]">
-          <div className="w-32 h-5 bg-[#111] rounded animate-pulse"></div>
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-(--border)">
+          <div className="w-32 h-5 bg-(--bg-elevated) rounded animate-pulse"></div>
         </div>
-        <div className="divide-y divide-[#111]">
+        <div className="divide-y divide-(--border)">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-[#111] rounded-xl animate-pulse"></div>
+                <div className="w-14 h-14 bg-(--bg-elevated) rounded-xl animate-pulse"></div>
                 <div className="flex-1">
-                  <div className="w-32 h-4 bg-[#111] rounded mb-2 animate-pulse"></div>
-                  <div className="w-24 h-3 bg-[#111] rounded animate-pulse"></div>
+                  <div className="w-32 h-4 bg-(--bg-elevated) rounded mb-2 animate-pulse"></div>
+                  <div className="w-24 h-3 bg-(--bg-elevated) rounded animate-pulse"></div>
                 </div>
               </div>
               <div className="flex gap-2">
-                <div className="w-8 h-8 bg-[#111] rounded animate-pulse"></div>
-                <div className="w-8 h-8 bg-[#111] rounded animate-pulse"></div>
+                <div className="w-8 h-8 bg-(--bg-elevated) rounded animate-pulse"></div>
+                <div className="w-8 h-8 bg-(--bg-elevated) rounded animate-pulse"></div>
               </div>
             </div>
           ))}
@@ -100,7 +100,7 @@ export default function ProductList() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="section-label mb-1">Manage</p>
-          <h2 className="font-display text-3xl font-bold text-white">Products</h2>
+          <h2 className="font-display text-3xl font-bold text-(--text-primary)">Products</h2>
         </div>
         <Link to="/admin-dashboard/products/new" className="btn-gold" style={{ padding: "12px 20px", fontSize: "0.85rem" }}>
           <FiPlus /> Add Product
@@ -144,16 +144,16 @@ export default function ProductList() {
           { label: "In Stock", val: products.filter((p) => p.stock > 0).length },
           { label: "Out of Stock", val: products.filter((p) => p.stock === 0).length },
         ].map((s) => (
-          <div key={s.label} className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4 text-center">
+          <div key={s.label} className="bg-(--bg-card) border border-(--border) rounded-xl p-4 text-center">
             <div className="font-display text-2xl font-bold gold-text">{s.val}</div>
-            <div className="text-[#444] text-xs mt-1 uppercase tracking-wider">{s.label}</div>
+            <div className="text-(--text-muted) text-xs mt-1 uppercase tracking-wider">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* SEARCH */}
       <div className="relative">
-        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444]" size={15} />
+        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" size={15} />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -164,22 +164,22 @@ export default function ProductList() {
       </div>
 
       {/* LIST */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#111] flex items-center justify-between">
-          <h3 className="text-white font-semibold flex items-center gap-2">
-            <FiPackage size={16} className="text-[#c9a84c]" /> All Products
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-(--border) flex items-center justify-between">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
+            <FiPackage size={16} className="text-(--gold)" /> All Products
           </h3>
           <span className="badge-gold">{filtered.length} items</span>
         </div>
 
         {filtered.length === 0 ? (
-          <div className="p-12 text-center text-[#333]">
+          <div className="p-12 text-center text-(--text-muted)">
             <FiPackage size={36} className="mx-auto mb-3 opacity-30" />
             <p>Koi product nahi mila</p>
           </div>
         ) : (
           <>
-            <div className="divide-y divide-[#111]">
+            <div className="divide-y divide-(--border)">
               <AnimatePresence>
                 {paginatedProducts.map((p, i) => {
                 const hasSizes = p.sizes?.length > 0;
@@ -191,11 +191,11 @@ export default function ProductList() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-[#111] transition-colors"
+                    className="flex items-center justify-between px-5 py-4 hover:bg-(--bg-surface) transition-colors"
                   >
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                       {/* IMAGE */}
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#0a0a0a] border border-[#1a1a1a] shrink-0">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-(--bg-deep) border border-(--border) shrink-0">
                         {p.images?.length ? (
                           <img
                             src={getImageUrl(p.images[0])}
@@ -204,7 +204,7 @@ export default function ProductList() {
                             onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[#222]">
+                          <div className="w-full h-full flex items-center justify-center text-(--text-muted)">
                             <FiPackage size={20} />
                           </div>
                         )}
@@ -213,9 +213,9 @@ export default function ProductList() {
                       {/* INFO */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="text-white font-medium truncate">{p.name}</p>
+                          <p className="text-(--text-primary) font-medium truncate">{p.name}</p>
                           {missing && (
-                            <span className="text-[9px] bg-orange-900/20 text-orange-400 border border-orange-700/20 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0">
+                            <span className="text-[9px] bg-orange-500/10 text-orange-500 border border-orange-500/20 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0">
                               <FiAlertTriangle size={8} /> Size/Color missing
                             </span>
                           )}
@@ -224,7 +224,7 @@ export default function ProductList() {
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
                           <span className="gold-text font-semibold text-sm font-display">Rs. {p.price?.toLocaleString()}</span>
 
-                          <span className="text-[#444] text-xs capitalize">
+                          <span className="text-(--text-muted) text-xs capitalize">
                             {p.category?.name}{p.subCategory?.name ? ` › ${p.subCategory.name}` : ""}
                           </span>
 
@@ -244,7 +244,7 @@ export default function ProductList() {
                           {hasSizes && (
                             <div className="flex gap-1 flex-wrap">
                               {p.sizes.map((s) => (
-                                <span key={s} className="text-[10px] bg-[#1a1a1a] text-[#9a9a9a] px-1.5 py-0.5 rounded">
+                                <span key={s} className="text-[10px] bg-(--bg-surface) text-(--text-muted) px-1.5 py-0.5 rounded border border-(--border)">
                                   {s}
                                 </span>
                               ))}
@@ -253,7 +253,7 @@ export default function ProductList() {
                           {hasColors && (
                             <div className="flex gap-1 flex-wrap">
                               {p.colors.map((c) => (
-                                <span key={c} className="text-[10px] text-[#c9a84c] bg-[rgba(201,168,76,0.08)] border border-[#c9a84c]/15 px-1.5 py-0.5 rounded">
+                                <span key={c} className="text-[10px] text-(--gold) bg-(--gold)/5 border border-(--gold)/15 px-1.5 py-0.5 rounded">
                                   {c}
                                 </span>
                               ))}
@@ -269,8 +269,8 @@ export default function ProductList() {
                         to={`/admin-dashboard/products/${p._id}/edit`}
                         className={`p-2 rounded-lg border transition-all ${
                           missing
-                            ? "border-orange-700/30 text-orange-400 hover:bg-orange-900/10"
-                            : "border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] hover:border-[#c9a84c]/30"
+                            ? "border-orange-500/30 text-orange-500 hover:bg-orange-500/10"
+                            : "border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30"
                         }`}
                         title="Edit product"
                       >
@@ -278,7 +278,7 @@ export default function ProductList() {
                       </Link>
                       <button
                         onClick={() => handleDelete(p._id, p.name)}
-                        className="p-2 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-red-400 hover:border-red-900/30 hover:bg-red-900/10 transition-all"
+                        className="p-2 rounded-lg border border-(--border) text-(--text-muted) hover:text-red-500 hover:border-red-500/30 hover:bg-red-500/10 transition-all"
                       >
                         <FiTrash2 size={15} />
                       </button>
@@ -291,27 +291,27 @@ export default function ProductList() {
 
           {/* PAGINATION */}
           {totalPages > 1 && (
-            <div className="px-6 py-4 border-t border-[#111] flex items-center justify-between">
-              <div className="text-[#444] text-sm">
+            <div className="px-6 py-4 border-t border-(--border) flex items-center justify-between">
+              <div className="text-(--text-muted) text-sm">
                 Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filtered.length)} of {filtered.length} products
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => goToPage(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className="p-2 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] hover:border-[#c9a84c]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="p-2 rounded-lg border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   <FiChevronLeft size={16} />
                 </button>
 
-                <span className="text-[#666] text-sm px-3">
+                <span className="text-(--text-secondary) text-sm px-3">
                   Page {currentPage} of {totalPages}
                 </span>
 
                 <button
                   onClick={() => goToPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className="p-2 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] hover:border-[#c9a84c]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="p-2 rounded-lg border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   <FiChevronRight size={16} />
                 </button>
