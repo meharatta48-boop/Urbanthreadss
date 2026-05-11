@@ -123,15 +123,17 @@
   }
 }
 
-/* ── THEME OVERRIDES ── */
-html.dark {
-  --bg-surface: #0a0a0a;
-  --text-muted: #a1a1aa;
-}
-
-html:not(.dark) {
-  --bg-deep: #ffffff;
-  --bg-surface: #f8f9fa;
+/* ── WHITE THEME ENFORCEMENT ── */
+html, html.dark, html:not(.dark) {
+  --bg-deep: #ffffff !important;
+  --bg-surface: #fafafa !important;
+  --bg-card: #ffffff !important;
+  --bg-elevated: #ffffff !important;
+  --text-primary: #000000 !important;
+  --text-secondary: #333333 !important;
+  --text-muted: #666666 !important;
+  --border: #f0f0f0 !important;
+  --border-light: #e8e8e8 !important;
 }
 
 /* ── REDUCED MOTION FOR PERFORMANCE ── */
@@ -190,6 +192,31 @@ html:not(.dark) {
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 36px;
+  }
+
+  /* Comprehensive overflow handling for mobile */
+  * {
+    overflow-x: hidden !important;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    overflow-y: auto;
+  }
+  
+  .container, .container-custom, section, main, aside, nav, header, footer {
+    overflow-x: hidden !important;
+    max-width: 100%;
+  }
+  
+  .flex, .grid, .row {
+    overflow-x: hidden !important;
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+    overflow: hidden;
   }
 }
 

@@ -96,7 +96,11 @@ export default function Hero() {
   return (
     <section
       className="relative w-full overflow-hidden"
-      style={{ height: "var(--hero-height, 100svh)", minHeight: 560 }}
+      style={{ 
+        height: "var(--hero-height, 100svh)", 
+        minHeight: 560,
+        backgroundColor: 'var(--bg-deep)'
+      }}
     >
       {/* ── BACKGROUND SLIDES ── */}
       <AnimatePresence mode="sync" custom={dir}>
@@ -152,8 +156,19 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
               >
-                <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-(--gold) border border-(--gold)/25 px-3 py-1.5 rounded-full bg-(--gold)/5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-(--gold) animate-pulse" />
+                <span 
+                  className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] px-3 py-1.5 rounded-full"
+                  style={{
+                    color: 'var(--gold)',
+                    borderColor: 'var(--gold)',
+                    borderWidth: '1px',
+                    backgroundColor: 'rgba(201, 168, 76, 0.05)'
+                  }}
+                >
+                  <span 
+                    className="w-1.5 h-1.5 rounded-full animate-pulse"
+                    style={{ backgroundColor: 'var(--gold)' }}
+                  />
                   {current.label}
                 </span>
               </motion.div>
@@ -163,8 +178,11 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="font-display font-bold text-(--text-primary) dark:text-white leading-[1.1] mb-6"
-                style={{ fontSize: "clamp(2.5rem, 8vw, 5.2rem)" }}
+                className="font-display font-bold leading-[1.1] mb-6"
+                style={{ 
+                  fontSize: "clamp(2.5rem, 8vw, 5.2rem)",
+                  color: 'var(--text-primary)'
+                }}
               >
                 {(current.title || "").split("\n").map((line, i) => (
                   <span key={i} className="block">
@@ -182,7 +200,8 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
-                className="text-(--text-secondary) text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
+                className="text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 {current.sub}
               </motion.p>

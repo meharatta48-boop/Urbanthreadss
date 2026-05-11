@@ -205,7 +205,7 @@ export default function ProductDetail() {
   const nextImg = () => setActiveImg((i) => (i + 1) % images.length);
 
   return (
-    <div className="min-h-screen pt-24 sm:pt-28 pb-16 px-4 sm:px-6" style={{ background: "var(--bg-deep)" }}>
+    <div className="min-h-screen overflow-hidden pt-4 pb-20" style={{ backgroundColor: 'var(--bg-deep)' }}>
       <div className="max-w-7xl mx-auto">
 
         {/* BREADCRUMB */}

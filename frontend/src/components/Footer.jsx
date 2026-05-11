@@ -48,30 +48,54 @@ export default function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className="bg-(--bg-deep) transition-colors duration-500 border-t border-(--border)">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-10">
+    <footer 
+      className="transition-colors duration-500 border-t overflow-hidden"
+      style={{
+        backgroundColor: 'var(--bg-deep)',
+        borderTopColor: 'var(--border)'
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-10 overflow-hidden">
 
         {/* TOP SECTION: BRAND & WHATSAPP */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20 items-start overflow-hidden">
           
           {/* BRAND INFO */}
-          <div className="lg:col-span-5 space-y-6 sm:space-y-8">
-            <div className="flex flex-col gap-5 sm:gap-6">
-              <Link to="/" className="flex items-center gap-4 group w-max">
-                <div className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105"
-                  style={{ width: footerLogoSize, height: footerLogoSize }}>
-                  <div className="absolute inset-0 gold-gradient flex items-center justify-center rounded-2xl">
-                    <span className="text-black font-bold font-display"
-                    style={{ fontSize: Math.max(12, footerLogoSize * 0.45) }}>{brandName.charAt(0)}</span>
+          <div className="lg:col-span-5 space-y-6 sm:space-y-8 overflow-hidden">
+            <div className="flex flex-col gap-5 sm:gap-6 overflow-hidden">
+              <Link to="/" className="flex items-center gap-4 group w-max overflow-hidden">
+                <div 
+                  className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105"
+                  style={{ width: footerLogoSize, height: footerLogoSize }}
+                >
+                  <div 
+                    className="absolute inset-0 gold-gradient flex items-center justify-center rounded-2xl"
+                    style={{ backgroundColor: 'var(--gold)' }}
+                  >
+                    <span 
+                      className="text-black font-bold font-display"
+                      style={{ fontSize: Math.max(12, footerLogoSize * 0.45) }}
+                    >
+                      {brandName.charAt(0)}
+                    </span>
                   </div>
                   {logoImg && (
-                    <img src={logoImg} alt={brandName} className="w-full h-full object-contain relative z-10"
-                      onError={(e) => { e.currentTarget.style.opacity = "0"; }} />
+                    <img 
+                      src={logoImg} 
+                      alt={brandName} 
+                      className="w-full h-full object-contain relative z-10"
+                      onError={(e) => { e.currentTarget.style.opacity = "0"; }} 
+                    />
                   )}
                 </div>
                 {showBrandName && (
-                  <span className="font-display tracking-[0.2em] font-black text-(--text-primary)"
-                    style={{ fontSize: Math.max(16, footerLogoSize * 0.4) }}>
+                  <span 
+                    className="font-display tracking-[0.2em] font-black"
+                    style={{ 
+                      fontSize: Math.max(16, footerLogoSize * 0.4),
+                      color: 'var(--text-primary)'
+                    }}
+                  >
                     {brandName.split(" ")[0]}
                     {brandName.split(" ").length > 1 && (
                       <span className="gold-text italic"> {brandName.split(" ").slice(1).join(" ")}</span>
@@ -79,23 +103,48 @@ export default function Footer() {
                   </span>
                 )}
               </Link>
-              <p className="text-base sm:text-lg leading-relaxed text-(--text-secondary) max-w-md font-light italic">
+              <p 
+                className="text-base sm:text-lg leading-relaxed max-w-md font-light italic overflow-hidden"
+                style={{
+                  color: 'var(--text-secondary)'
+                }}
+              >
                 {settings?.footerTagline || "Pakistan ka premium streetwear brand. Har piece ek statement hai — apna style define karo."}
               </p>
             </div>
 
             {/* SOCIAL CONNECT */}
-            <div className="space-y-4">
-              <p className="text-[10px] uppercase tracking-[0.3em] font-black text-(--gold)">Connect With Us</p>
-              <div className="flex flex-wrap gap-3">
+            <div className="space-y-4 overflow-hidden">
+              <p 
+                className="text-[10px] uppercase tracking-[0.3em] font-black overflow-hidden"
+                style={{ color: 'var(--gold)' }}
+              >
+                Connect With Us
+              </p>
+              <div className="flex flex-wrap gap-3 overflow-hidden">
                 {socials.map((s) => (
                   <motion.a 
-                    key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                    key={s.label} 
+                    href={s.href} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                     whileHover={{ scale: 1.1, y: -4 }}
-                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl sm:rounded-[1.25rem] flex items-center justify-center transition-all bg-(--bg-surface) border border-(--border) text-(--text-muted) shadow-xl shadow-black/5"
-                    style={{ "--hover-color": s.color }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = `${s.color}60`; e.currentTarget.style.color = s.color; e.currentTarget.style.background = `${s.color}05`; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = ""; e.currentTarget.style.color = ""; e.currentTarget.style.background = ""; }}
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl sm:rounded-[1.25rem] flex items-center justify-center transition-all shadow-xl shadow-black/5 overflow-hidden"
+                    style={{
+                      backgroundColor: 'var(--bg-surface)',
+                      borderColor: 'var(--border)',
+                      color: 'var(--text-muted)'
+                    }}
+                    onMouseEnter={(e) => { 
+                      e.currentTarget.style.borderColor = `${s.color}60`; 
+                      e.currentTarget.style.color = s.color; 
+                      e.currentTarget.style.background = `${s.color}05`; 
+                    }}
+                    onMouseLeave={(e) => { 
+                      e.currentTarget.style.borderColor = 'var(--border)'; 
+                      e.currentTarget.style.color = 'var(--text-muted)'; 
+                      e.currentTarget.style.background = 'var(--bg-surface)'; 
+                    }}
                   >
                     <s.Icon size={socialIconSz} />
                   </motion.a>

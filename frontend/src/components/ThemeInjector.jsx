@@ -20,19 +20,19 @@ export default function ThemeInjector() {
     if (!settings) return;
 
     const {
-      // Colors
-      themeGold          = "#d4af37",
-      themeGoldLight     = "#f5d76e",
-      themeGoldDark      = "#aa7c11",
-      themeBgDeep        = "#fcfcfc",
-      themeBgSurface     = "#f3f4f6",
+      // Colors - WHITE THEME PRIORITY
+      themeGold          = "#c9a84c",
+      themeGoldLight     = "#e5cf8e",
+      themeGoldDark      = "#a68b39",
+      themeBgDeep        = "#ffffff",
+      themeBgSurface     = "#fafafa",
       themeBgCard        = "#ffffff",
-      themeBgElevated    = "#fafafa",
-      themeBorder        = "#e5e7eb",
-      themeBorderLight   = "#d1d5db",
-      themeTextPrimary   = "#111827",
-      themeTextSecondary = "#4b5563",
-      themeTextMuted     = "#9ca3af",
+      themeBgElevated    = "#ffffff",
+      themeBorder        = "#f0f0f0",
+      themeBorderLight   = "#e8e8e8",
+      themeTextPrimary   = "#000000",
+      themeTextSecondary = "#333333",
+      themeTextMuted     = "#666666",
       themeFontDisplay   = "Playfair Display",
       themeFontBody      = "Inter",
       themeRadius        = "12",
@@ -110,113 +110,114 @@ export default function ThemeInjector() {
     const css = `
       :root {
         /* ── Brand Colors ── */
-        --gold: ${themeGold};
-        --gold-light: ${themeGoldLight};
-        --gold-dark: ${themeGoldDark};
+        --gold: ${themeGold} !important;
+        --gold-light: ${themeGoldLight} !important;
+        --gold-dark: ${themeGoldDark} !important;
 
-        /* ── Admin-set backgrounds (light theme base) ── */
-        --bg-deep:     ${themeBgDeep || "#ffffff"};
-        --bg-surface:  ${themeBgSurface || "#f8f9fa"};
-        --bg-card:     ${themeBgCard || "#ffffff"};
-        --bg-elevated: ${themeBgElevated || "#fcfcfc"};
+        /* ── WHITE THEME ENFORCEMENT (Override all admin settings) ── */
+        --bg-deep:     #ffffff !important;
+        --bg-surface:  #fafafa !important;
+        --bg-card:     #ffffff !important;
+        --bg-elevated: #ffffff !important;
 
-        /* ── Admin-set borders ── */
-        --border:       ${themeBorder || "#efeff1"};
-        --border-light: ${themeBorderLight || "#e2e4e8"};
+        /* ── WHITE THEME BORDERS ── */
+        --border:       #f0f0f0 !important;
+        --border-light: #e8e8e8 !important;
 
-        /* ── Admin-set text (Force dark for light theme) ── */
-        --text-primary:   ${themeTextPrimary === "#ffffff" ? "#0f1115" : (themeTextPrimary || "#0f1115")};
-        --text-secondary: ${themeTextSecondary === "#a1a1aa" ? "#42464d" : (themeTextSecondary || "#42464d")};
-        --text-muted:     ${themeTextMuted === "#52525b" ? "#71767b" : (themeTextMuted || "#71767b")};
+        /* ── WHITE THEME TEXT (Maximum contrast) ── */
+        --text-primary:   #000000 !important;
+        --text-secondary: #333333 !important;
+        --text-muted:     #666666 !important;
 
-        /* ── Glass (derived from admin bg) ── */
-        --glass-bg:     ${themeBgCard}cc;
-        --glass-border: ${themeGold}26;
+        /* ── Glass (White theme) ── */
+        --glass-bg:     rgba(255, 255, 255, 0.95) !important;
+        --glass-border: rgba(201, 168, 76, 0.15) !important;
 
         /* ── Misc ── */
-        --radius: ${themeRadius}px;
-        --shadow: ${themeShadow};
-        --announcement-bg: ${announcementBg};
-        --announcement-color: ${announcementColor};
+        --radius: ${themeRadius}px !important;
+        --shadow: ${themeShadow} !important;
+        --announcement-bg: ${announcementBg} !important;
+        --announcement-color: ${announcementColor} !important;
 
-        /* ── Navbar ── */
-        --nav-bg-scrolled:     ${themeBgDeep}f5;
-        --nav-border:          ${themeBorder};
-        --nav-text:            ${themeTextPrimary};
-        --nav-text-muted:      ${themeTextSecondary};
-        --nav-item-hover:      ${themeBgSurface};
-        --nav-dropdown-bg:     ${themeBgCard};
-        --nav-dropdown-border: ${themeBorder};
-        --drawer-bg:           ${themeBgCard};
-        --drawer-border:       ${themeBorder};
+        /* ── Navbar (White theme) ── */
+        --nav-bg-scrolled:     rgba(255, 255, 255, 0.98) !important;
+        --nav-border:          #f0f0f0 !important;
+        --nav-text:            #000000 !important;
+        --nav-text-muted:      #666666 !important;
+        --nav-item-hover:      #f8f8f8 !important;
+        --nav-dropdown-bg:     #ffffff !important;
+        --nav-dropdown-border: #f0f0f0 !important;
+        --drawer-bg:           #ffffff !important;
+        --drawer-border:       #f0f0f0 !important;
 
-        /* ── Scrollbar ── */
-        --scrollbar-track: ${themeBgSurface};
-        --scrollbar-thumb: ${themeBorderLight};
+        /* ── Scrollbar (White theme) ── */
+        --scrollbar-track: #f8f8f8 !important;
+        --scrollbar-thumb: #d0d0d0 !important;
 
         /* ── Typography ── */
-        --font-size-base:  ${fontSizeBase}px;
-        --font-size-h1:    ${fontSizeH1}px;
-        --font-size-h2:    ${fontSizeH2}px;
-        --font-size-h3:    ${fontSizeH3}px;
-        --font-size-small: ${fontSizeSmall}px;
-        --line-height:     ${lineHeight};
-        --letter-spacing:  ${letterSpacing}em;
+        --font-size-base:  ${fontSizeBase}px !important;
+        --font-size-h1:    ${fontSizeH1}px !important;
+        --font-size-h2:    ${fontSizeH2}px !important;
+        --font-size-h3:    ${fontSizeH3}px !important;
+        --font-size-small: ${fontSizeSmall}px !important;
+        --line-height:     ${lineHeight} !important;
+        --letter-spacing:  ${letterSpacing}em !important;
 
         /* ── Images ── */
-        --product-ratio: ${productCardRatio};
-        --hero-height:   ${heroHeight};
-        --brand-ratio:   ${brandImageRatio};
-        --img-fit:       ${productImgFit};
+        --product-ratio: ${productCardRatio} !important;
+        --hero-height:   ${heroHeight} !important;
+        --brand-ratio:   ${brandImageRatio} !important;
+        --img-fit:       ${productImgFit} !important;
 
         /* ── Icons ── */
-        --social-icon-size: ${socialIconSize}px;
-        --nav-icon-size:    ${navIconSize}px;
+        --social-icon-size: ${socialIconSize}px !important;
+        --nav-icon-size:    ${navIconSize}px !important;
       }
 
       /* ══════════════════════════════════
-         DARK THEME — html.dark
-         NOTE: Gold/accent colors inherit from :root (admin-set)
-         Only bg/text/border override for dark mode
+         DISABLE DARK THEME - FORCE WHITE THEME
+         White theme is enforced across all conditions
       ══════════════════════════════════ */
       html.dark {
-        --bg-deep:     #050505;
-        --bg-surface:  #0a0a0a;
-        --bg-card:     #111111;
-        --bg-elevated: #161616;
+        /* Override dark theme with white theme */
+        --bg-deep:     #ffffff !important;
+        --bg-surface:  #fafafa !important;
+        --bg-card:     #ffffff !important;
+        --bg-elevated: #ffffff !important;
 
-        --border:       #1f1f1f;
-        --border-light: #2d2d2d;
+        --border:       #f0f0f0 !important;
+        --border-light: #e8e8e8 !important;
 
-        --text-primary:   #ffffff;
-        --text-secondary: #a1a1aa;
-        --text-muted:     #52525b;
+        --text-primary:   #000000 !important;
+        --text-secondary: #333333 !important;
+        --text-muted:     #666666 !important;
 
-        --glass-bg:     rgba(10,10,10,0.85);
-        --glass-border: rgba(212,175,55,0.15);
+        --glass-bg:     rgba(255, 255, 255, 0.95) !important;
+        --glass-border: rgba(201, 168, 76, 0.15) !important;
 
-        --scrollbar-track: #050505;
-        --scrollbar-thumb: #2d2d2d;
+        --scrollbar-track: #f8f8f8 !important;
+        --scrollbar-thumb: #d0d0d0 !important;
 
-        --nav-bg-scrolled:     rgba(5,5,5,0.96);
-        --nav-border:          #1f1f1f;
-        --nav-text:            #ffffff;
-        --nav-text-muted:      #a1a1aa;
-        --nav-item-hover:      #161616;
-        --nav-dropdown-bg:     #0a0a0a;
-        --nav-dropdown-border: #1f1f1f;
-        --drawer-bg:           #0a0a0a;
-        --drawer-border:       #111111;
+        --nav-bg-scrolled:     rgba(255, 255, 255, 0.98) !important;
+        --nav-border:          #f0f0f0 !important;
+        --nav-text:            #000000 !important;
+        --nav-text-muted:      #666666 !important;
+        --nav-item-hover:      #f8f8f8 !important;
+        --nav-dropdown-bg:     #ffffff !important;
+        --nav-dropdown-border: #f0f0f0 !important;
+        --drawer-bg:           #ffffff !important;
+        --drawer-border:       #f0f0f0 !important;
       }
 
-      /* ── Base ── */
+      /* ── Base (White theme enforced) ── */
       body {
-        background-color: var(--bg-deep);
-        color: var(--text-primary);
-        font-family: '${themeFontBody}', system-ui, sans-serif;
-        font-size: var(--font-size-base);
-        line-height: var(--line-height);
-        letter-spacing: var(--letter-spacing);
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-family: '${themeFontBody}', system-ui, sans-serif !important;
+        font-size: var(--font-size-base) !important;
+        line-height: var(--line-height) !important;
+        letter-spacing: var(--letter-spacing) !important;
+        overflow-x: hidden !important;
       }
 
       /* ── Font classes ── */

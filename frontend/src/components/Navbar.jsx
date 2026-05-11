@@ -59,12 +59,16 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'}`}
+        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'} overflow-hidden`}
+        style={{ backgroundColor: 'var(--bg-deep)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 overflow-hidden">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border ${scrolled ? 'shadow-lg border-(--nav-border) bg-(--nav-bg-scrolled)' : 'border-(--border-light) shadow-sm'}`}
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border overflow-hidden`}
             style={{
+              backgroundColor: 'var(--nav-bg-scrolled)',
+              borderColor: 'var(--nav-border)',
+              boxShadow: scrolled ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
               backdropFilter: scrolled ? 'blur(24px)' : 'none'
             }}
           >
@@ -119,14 +123,21 @@ export default function Navbar() {
             </Link>
 
             {/* ── DESKTOP NAV LINKS ── */}
-            <div className="hidden md:flex items-center gap-1.5 bg-(--bg-elevated) p-1.5 rounded-full border border-(--border-light) shadow-inner">
+            <div className="hidden md:flex items-center gap-1.5 overflow-hidden"
+              style={{
+                backgroundColor: 'var(--bg-elevated)',
+                padding: '6px',
+                borderRadius: '999px',
+                border: '1px solid var(--border-light)',
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)'
+              }}>
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group"
+                  className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group overflow-hidden"
                   style={{
-                    color: isActive(link.to) ? "var(--bg-deep)" : "var(--text-secondary)",
+                    color: isActive(link.to) ? "#000000" : "var(--text-secondary)",
                   }}
                 >
                   {isActive(link.to) && (
@@ -136,8 +147,8 @@ export default function Navbar() {
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
-                  <span className="relative z-10 transition-colors duration-300 group-hover:text-(--text-primary)"
-                    style={{ color: isActive(link.to) ? 'var(--bg-deep)' : '' }}>
+                  <span className="relative z-10 transition-colors duration-300"
+                    style={{ color: isActive(link.to) ? '#000000' : '' }}>
                     {link.label}
                   </span>
                 </Link>
@@ -150,20 +161,20 @@ export default function Navbar() {
               {/* THEME TOGGLE */}
               <button
                 onClick={toggleTheme}
-                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-(--gold)/10"
+                title="Switch Theme"
+                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden"
                 style={{
-                  background: "var(--bg-elevated)",
-                  border: "1px solid var(--border-light)",
-                  color: "var(--text-secondary)",
+                  backgroundColor: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-light)',
+                  color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = "var(--gold)";
-                  e.currentTarget.style.color = "var(--gold)";
+                  e.currentTarget.style.borderColor = 'var(--gold)';
+                  e.currentTarget.style.color = 'var(--gold)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = "var(--border-light)";
-                  e.currentTarget.style.color = "var(--text-secondary)";
+                  e.currentTarget.style.borderColor = 'var(--border-light)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
               >
                 <AnimatePresence mode="wait" initial={false}>
@@ -183,15 +194,15 @@ export default function Navbar() {
               {/* CART */}
               <Link
                 to="/cart"
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md hover:shadow-(--gold)/10"
+                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden"
                 style={{
-                  background: "var(--bg-elevated)",
-                  border: "1px solid var(--border-light)",
-                  color: "var(--text-secondary)",
+                  backgroundColor: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-light)',
+                  color: 'var(--text-secondary)',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = "var(--gold)";
-                  e.currentTarget.style.color = "var(--text-primary)";
+                  e.currentTarget.style.borderColor = 'var(--gold)';
+                  e.currentTarget.style.color = 'var(--text-primary)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = "var(--border-light)";

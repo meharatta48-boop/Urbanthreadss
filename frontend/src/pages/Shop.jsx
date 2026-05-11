@@ -48,7 +48,7 @@ export default function Shop() {
   const paginated = filteredProducts.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
-    <div className="min-h-screen pt-4 pb-20" style={{ background: "var(--bg-deep)" }}>
+    <div className="min-h-screen overflow-hidden pt-4 pb-20" style={{ backgroundColor: 'var(--bg-deep)' }}>
       {/* PAGE HEADER */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-8 sm:py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
