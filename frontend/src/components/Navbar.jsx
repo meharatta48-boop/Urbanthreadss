@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useSettings } from "../context/SettingsContext";
@@ -24,6 +24,7 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+  const dropdownRef = useRef(null);
 
   const brandName = settings?.brandName || "URBAN THREAD";
   const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
@@ -41,6 +42,23 @@ export default function Navbar() {
 
   // Close menus on route change
   useEffect(() => { setOpen(false); setAccountOpen(false); }, [location]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setAccountOpen(false);
+      }
+    };
+
+    if (accountOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [accountOpen]);
 
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
   const handleLogout = () => { logout(); navigate("/"); };
@@ -182,8 +200,13 @@ export default function Navbar() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
-                      className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black gold-gradient rounded-full flex items-center justify-center shadow-lg shadow-(--gold)/30 border-2 border-(--bg-card)"
-                      style={{ width: 22, height: 22 }}
+                      className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black rounded-full flex items-center justify-center shadow-lg z-10"
+                      style={{ 
+                        width: 22, 
+                        height: 22,
+                        background: 'linear-gradient(135deg, #c9a84c, #e6c75a)',
+                        border: '2px solid var(--bg-card)'
+                      }}
                     >
                       {cartCount}
                     </motion.span>
@@ -215,7 +238,7 @@ export default function Navbar() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="relative">
+                  <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={() => setAccountOpen(!accountOpen)}
                       className="flex items-center gap-2.5 p-1.5 pr-4 rounded-full transition-all duration-300 group shadow-sm hover:shadow-md"
@@ -247,47 +270,102 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
                           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                          className="absolute right-0 top-[calc(100%+12px)] w-56 rounded-2xl shadow-2xl overflow-hidden z-50 glass-card"
+                          className="absolute right-0 top-[calc(100%+12px)] w-64 rounded-2xl shadow-2xl overflow-hidden z-50"
+                          style={{
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border)',
+                            backdropFilter: 'blur(20px)'
+                          }}
                         >
-                          <div className="px-5 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
-                            <p className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>{user.name}</p>
-                            <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>{user.email}</p>
-                            <div className="mt-2 inline-block badge-gold text-[0.6rem]! px-2! py-0.5!">{user.role}</div>
+                          {/* User Info Header */}
+                          <div className="px-5 py-4" style={{ borderBottom: "1px solid var(--border)", background: 'var(--bg-surface)' }}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 gold-gradient rounded-full flex items-center justify-center text-black font-extrabold text-sm shadow-inner">
+                                {user.name?.charAt(0)?.toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>{user.name}</p>
+                                <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>{user.email}</p>
+                              </div>
+                            </div>
+                            <div className="mt-3 inline-block px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider"
+                              style={{ 
+                                background: 'linear-gradient(135deg, #c9a84c, #e6c75a)',
+                                color: '#000'
+                              }}>
+                              {user.role}
+                            </div>
                           </div>
 
+                          {/* Menu Items */}
                           <div className="p-2 space-y-1">
                             <Link
                               to="/my-orders"
-                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
                               style={{ color: "var(--text-secondary)" }}
-                              onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.background = "var(--bg-elevated)"; }}
-                              onMouseLeave={e => { e.currentTarget.style.color = "var(--text-secondary)"; e.currentTarget.style.background = "transparent"; }}
+                              onMouseEnter={e => { 
+                                e.currentTarget.style.color = "var(--text-primary)"; 
+                                e.currentTarget.style.background = "var(--bg-elevated)"; 
+                                e.currentTarget.style.transform = "translateX(2px)";
+                              }}
+                              onMouseLeave={e => { 
+                                e.currentTarget.style.color = "var(--text-secondary)"; 
+                                e.currentTarget.style.background = "transparent";
+                                e.currentTarget.style.transform = "translateX(0)";
+                              }}
                             >
-                              <FiShoppingBag size={15} className="text-(--gold)" /> My Orders
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
+                                style={{ background: 'rgba(201,168,76,0.15)', color: 'var(--gold)' }}>
+                                <FiShoppingBag size={14} />
+                              </div>
+                              <span className="font-medium">My Orders</span>
                             </Link>
 
                             {user.role === "admin" && (
                               <Link
                                 to="/admin-dashboard"
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 group"
                                 style={{ color: "var(--gold)" }}
-                                onMouseEnter={e => e.currentTarget.style.background = "rgba(201,168,76,0.08)"}
-                                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                onMouseEnter={e => { 
+                                  e.currentTarget.style.background = "rgba(201,168,76,0.08)";
+                                  e.currentTarget.style.transform = "translateX(2px)";
+                                }}
+                                onMouseLeave={e => { 
+                                  e.currentTarget.style.background = "transparent";
+                                  e.currentTarget.style.transform = "translateX(0)";
+                                }}
                               >
-                                <FiSettings size={15} /> Admin Panel
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
+                                  style={{ background: 'rgba(201,168,76,0.2)', color: 'var(--gold)' }}>
+                                  <FiSettings size={14} />
+                                </div>
+                                <span>Admin Panel</span>
                               </Link>
                             )}
                           </div>
 
+                          {/* Logout Section */}
                           <div className="p-2" style={{ borderTop: "1px solid var(--border)" }}>
                             <button
                               onClick={handleLogout}
-                              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+                              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
                               style={{ color: "var(--text-muted)" }}
-                              onMouseEnter={e => { e.currentTarget.style.color = "#ef4444"; e.currentTarget.style.background = "rgba(239,68,68,0.08)"; }}
-                              onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.background = "transparent"; }}
+                              onMouseEnter={e => { 
+                                e.currentTarget.style.color = "#ef4444"; 
+                                e.currentTarget.style.background = "rgba(239,68,68,0.08)";
+                                e.currentTarget.style.transform = "translateX(2px)";
+                              }}
+                              onMouseLeave={e => { 
+                                e.currentTarget.style.color = "var(--text-muted)"; 
+                                e.currentTarget.style.background = "transparent";
+                                e.currentTarget.style.transform = "translateX(0)";
+                              }}
                             >
-                              <FiLogOut size={15} /> Sign Out
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
+                                style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>
+                                <FiLogOut size={14} />
+                              </div>
+                              <span className="font-medium">Sign Out</span>
                             </button>
                           </div>
                         </motion.div>

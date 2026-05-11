@@ -66,7 +66,7 @@ export default function FeaturedProducts() {
               onClick={() => navigate(`/product/${p._id}`)}
             >
               {/* IMAGE */}
-              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
+              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep) aspect-3/4">
                 <LazyImage
                   src={getThumbnailUrl(p.images?.[0])}
                   srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}

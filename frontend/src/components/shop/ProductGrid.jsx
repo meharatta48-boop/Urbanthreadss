@@ -49,7 +49,7 @@ export default function ProductGrid({ category }) {
           className="bg-gray-900 p-4 rounded-2xl"
         >
           {/* IMAGE PLACEHOLDER */}
-          <div className="h-56 bg-gray-800 rounded-xl mb-4 flex items-center justify-center">
+          <div className="aspect-3/4 bg-gray-800 rounded-xl mb-4 flex items-center justify-center">
             <span className="text-gray-500">Image</span>
           </div>
 
