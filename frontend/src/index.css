@@ -68,53 +68,6 @@
   --gold-30: rgba(201, 168, 76, 0.3) !important;
 }
 
-/* ══════════════════════════════════════════════
-   DARK THEME (Deep & Luxurious)
-══════════════════════════════════════════════ */
-html.dark {
-  --bg-deep:     #050505;
-  --bg-surface:  #0a0a0a;
-  --bg-card:     #111111;
-  --bg-elevated: #161616;
-
-  --border:       #1f1f1f;
-  --border-light: #2d2d2d;
-
-  --text-primary:   #ffffff;
-  --text-secondary: #a1a1aa;
-  --text-muted:     #52525b;
-
-  --glass-bg:     rgba(10,10,10,0.85);
-  --glass-border: rgba(201, 168, 76, 0.1);
-
-  --scrollbar-track: #050505;
-  --scrollbar-thumb: #2d2d2d;
-
-  --nav-bg-scrolled: rgba(5,5,5,0.9);
-  --nav-border:      #1f1f1f;
-  --nav-text:        #ffffff;
-  --nav-text-muted:  #a1a1aa;
-  --nav-item-hover:  #161616;
-  --nav-dropdown-bg: #0a0a0a;
-  --nav-dropdown-border: #1f1f1f;
-
-  --drawer-bg:     #0a0a0a;
-  --drawer-border: #1f1f1f;
-
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.6);
-  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.8);
-  --shadow-gold: 0 10px 30px rgba(201, 168, 76, 0.08);
-
-  /* Gold Opacity Helpers (Dark) */
-  --gold-5:  rgba(201, 168, 76, 0.03);
-  --gold-8:  rgba(201, 168, 76, 0.05);
-  --gold-10: rgba(201, 168, 76, 0.08);
-  --gold-15: rgba(201, 168, 76, 0.12);
-  --gold-20: rgba(201, 168, 76, 0.15);
-  --gold-30: rgba(201, 168, 76, 0.25);
-}
 
 /* ── BASE RESETS ── */
 * {

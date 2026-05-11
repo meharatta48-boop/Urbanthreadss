@@ -64,30 +64,15 @@ export default function Footer() {
           <div className="lg:col-span-5 space-y-6 sm:space-y-8 overflow-hidden">
             <div className="flex flex-col gap-5 sm:gap-6 overflow-hidden">
               <Link to="/" className="flex items-center gap-4 group w-max overflow-hidden">
-                <div 
-                  className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105"
-                  style={{ width: footerLogoSize, height: footerLogoSize }}
-                >
-                  <div 
-                    className="absolute inset-0 gold-gradient flex items-center justify-center rounded-2xl"
-                    style={{ backgroundColor: 'var(--gold)' }}
-                  >
-                    <span 
-                      className="text-black font-bold font-display"
-                      style={{ fontSize: Math.max(12, footerLogoSize * 0.45) }}
-                    >
-                      {brandName.charAt(0)}
-                    </span>
-                  </div>
-                  {logoImg && (
-                    <img 
-                      src={logoImg} 
-                      alt={brandName} 
-                      className="w-full h-full object-contain relative z-10"
-                      onError={(e) => { e.currentTarget.style.opacity = "0"; }} 
-                    />
-                  )}
-                </div>
+                {logoImg && (
+                  <img 
+                    src={logoImg} 
+                    alt={brandName} 
+                    className="shrink-0 rounded-2xl overflow-hidden relative shadow-2xl transition-transform group-hover:scale-105 object-contain"
+                    style={{ width: footerLogoSize, height: footerLogoSize }}
+                    onError={(e) => { e.currentTarget.style.opacity = "0"; }} 
+                  />
+                )}
                 {showBrandName && (
                   <span 
                     className="font-display tracking-[0.2em] font-black"

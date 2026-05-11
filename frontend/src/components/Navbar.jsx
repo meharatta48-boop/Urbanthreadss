@@ -157,39 +157,6 @@ export default function Navbar() {
             {/* ── RIGHT ACTIONS ── */}
             <div className="flex items-center gap-2 sm:gap-3">
 
-              {/* THEME TOGGLE */}
-              <button
-                onClick={toggleTheme}
-                title="Switch Theme"
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden"
-                style={{
-                  backgroundColor: 'var(--bg-elevated)',
-                  border: '1px solid var(--border-light)',
-                  color: 'var(--text-secondary)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--gold)';
-                  e.currentTarget.style.color = 'var(--gold)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border-light)';
-                  e.currentTarget.style.color = 'var(--text-secondary)';
-                }}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={theme}
-                    initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                    exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                    transition={{ duration: 0.3, ease: "backOut" }}
-                    style={{ display: "flex" }}
-                  >
-                    {isDark ? <FiSun size={17} /> : <FiMoon size={17} />}
-                  </motion.span>
-                </AnimatePresence>
-              </button>
-
               {/* CART */}
               <Link
                 to="/cart"

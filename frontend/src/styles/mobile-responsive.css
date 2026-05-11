@@ -240,32 +240,6 @@
   }
 }
 
-/* ── THEME OVERRIDES FOR MOBILE ── */
-/* Only override dark theme for mobile, keep light theme default */
-html.dark {
-  --bg-deep: #050505 !important;
-  --bg-surface: #0a0a0a !important;
-  --bg-card: #111111 !important;
-  --bg-elevated: #161616 !important;
-  --text-primary: #ffffff !important;
-  --text-secondary: #a1a1aa !important;
-  --text-muted: #52525b !important;
-  --border: #1f1f1f !important;
-  --border-light: #2d2d2d !important;
-  --glass-bg: rgba(10,10,10,0.85) !important;
-  --glass-border: rgba(201, 168, 76, 0.1) !important;
-  --scrollbar-track: #050505 !important;
-  --scrollbar-thumb: #2d2d2d !important;
-  --nav-bg-scrolled: rgba(5,5,5,0.9) !important;
-  --nav-border: #1f1f1f !important;
-  --nav-text: #ffffff !important;
-  --nav-text-muted: #a1a1aa !important;
-  --nav-item-hover: #161616 !important;
-  --nav-dropdown-bg: #0a0a0a !important;
-  --nav-dropdown-border: #1f1f1f !important;
-  --drawer-bg: #0a0a0a !important;
-  --drawer-border: #1f1f1f !important;
-}
 
 /* ── REDUCED MOTION FOR PERFORMANCE ── */
 @media (prefers-reduced-motion: reduce) {
@@ -348,6 +322,43 @@ html.dark {
     max-width: 100%;
     height: auto;
     overflow: hidden;
+  }
+
+  /* Enhanced mobile layout fixes */
+  .max-w-7xl {
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Fix navbar for mobile */
+  nav {
+    padding: 8px 12px !important;
+  }
+
+  /* Fix product cards for mobile */
+  .product-card {
+    min-height: auto !important;
+  }
+
+  /* Fix sections for mobile */
+  section {
+    padding: 32px 0 !important;
+  }
+
+  /* Fix grid layouts */
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Fix text overflow */
+  p, span, div {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
   }
 }
 
