@@ -30,16 +30,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 pt-24 pb-16"
-      style={{ background: "var(--bg-deep)" }}>
-      <div className="w-full max-w-md">
+    <div className="min-h-screen overflow-hidden flex items-center justify-center px-4 pt-24 pb-16"
+      style={{ backgroundColor: "var(--bg-deep)" }}>
+      <div className="w-full max-w-md overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22,1,0.36,1] }}
         >
           {/* HEADER */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 overflow-hidden">
             <div className="w-14 h-14 rounded-xl mx-auto flex items-center justify-center mb-5 overflow-hidden relative">
               <div className={`absolute inset-0 gold-gradient flex items-center justify-center rounded-xl transition-opacity duration-300${logoImg ? ' opacity-0' : ''}`}>
                 <span className="text-black font-display font-bold text-2xl">{brandName.charAt(0)}</span>

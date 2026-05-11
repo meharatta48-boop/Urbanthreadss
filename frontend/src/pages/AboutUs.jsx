@@ -28,12 +28,12 @@ export default function AboutUs() {
     ];
 
     return (
-        <div className="min-h-screen bg-(--bg-deep) pb-20 transition-colors duration-500">
+        <div className="min-h-screen overflow-hidden pb-20 transition-colors duration-500" style={{ backgroundColor: 'var(--bg-deep)' }}>
             {/* ── HERO SECTION ── */}
             <section className="relative w-full h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
                 {settings.aboutUsHeroImage ? (
                     <>
-                        <div className="absolute inset-0 z-0">
+                        <div className="absolute inset-0 z-0 overflow-hidden">
                             <img
                                 src={getUrl(settings.aboutUsHeroImage)}
                                 alt="About Us Hero"
@@ -41,10 +41,20 @@ export default function AboutUs() {
                             />
                         </div>
                         {/* Adaptive Overlay */}
-                        <div className="absolute inset-0 z-0 bg-linear-to-b from-(--bg-deep)/60 via-(--bg-deep)/20 to-(--bg-deep)" />
+                        <div 
+                            className="absolute inset-0 z-0 overflow-hidden"
+                            style={{
+                                background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2), rgba(255,255,255,1))'
+                            }}
+                        />
                     </>
                 ) : (
-                    <div className="absolute inset-0 z-0 bg-linear-to-br from-(--bg-surface) to-(--bg-deep)" />
+                    <div 
+                        className="absolute inset-0 z-0 overflow-hidden"
+                        style={{
+                            background: 'linear-gradient(to bottom right, var(--bg-surface), var(--bg-deep))'
+                        }}
+                    />
                 )}
 
                 <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-10">
@@ -53,14 +63,28 @@ export default function AboutUs() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut" }}
                     >
-                        <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-6 backdrop-blur-sm">
+                        <span 
+                            className="inline-block px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-6 backdrop-blur-sm"
+                            style={{
+                                borderColor: 'var(--gold)',
+                                borderWidth: '1px',
+                                backgroundColor: 'rgba(201, 168, 76, 0.1)',
+                                color: 'var(--gold)'
+                            }}
+                        >
                             Established 2020
                         </span>
-                        <h1 className="text-(--text-primary) font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-6 drop-shadow-sm dark:drop-shadow-2xl">
-                            {settings.aboutUsHeroTitle || "Our Story"}
+                        <h1 
+                            className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 leading-[1.1]"
+                            style={{ color: "var(--text-primary)" }}
+                        >
+                            About <span className="gold-text">Urban Thread</span>
                         </h1>
-                        <p className="text-(--text-secondary) text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-4">
-                            {settings.aboutUsHeroSubtitle || "A journey of two visionaries redefining the streets of Pakistan."}
+                        <p 
+                            className="text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-light"
+                            style={{ color: "var(--text-secondary)" }}
+                        >
+                            {settings.aboutUsHeroText || "We're on a mission to redefine Pakistani streetwear with premium quality, authentic designs, and a commitment to local craftsmanship."}
                         </p>
                     </motion.div>
                 </div>

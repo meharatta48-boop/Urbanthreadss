@@ -45,9 +45,9 @@ export default function MyOrders() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4"
-        style={{ background: "var(--bg-deep)" }}>
-        <div className="text-center space-y-4">
+      <div className="min-h-screen overflow-hidden flex items-center justify-center px-4"
+        style={{ backgroundColor: "var(--bg-deep)" }}>
+        <div className="text-center space-y-4 overflow-hidden">
           <FiAlertCircle size={48} className="mx-auto" style={{ color: "var(--text-muted)" }} />
           <h2 className="font-display text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Login Zaroori Hai</h2>
           <p style={{ color: "var(--text-muted)" }}>Orders dekhne ke liye login karo</p>
@@ -58,21 +58,21 @@ export default function MyOrders() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6"
-      style={{ background: "var(--bg-deep)" }}>
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen overflow-hidden pt-24 pb-16 px-4 sm:px-6"
+      style={{ backgroundColor: "var(--bg-deep)" }}>
+      <div className="max-w-3xl mx-auto overflow-hidden">
 
         {/* HEADER */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-8 overflow-hidden">
           <Link to="/"
-            className="p-2 rounded-xl transition-all"
+            className="p-2 rounded-xl transition-all overflow-hidden"
             style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
             onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
             onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}
           >
             <FiArrowLeft size={18} />
           </Link>
-          <div>
+          <div className="overflow-hidden">
             <p className="section-label mb-0.5">My Account</p>
             <h1 className="font-display text-2xl sm:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>My Orders</h1>
           </div>

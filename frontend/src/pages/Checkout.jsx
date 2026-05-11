@@ -203,11 +203,11 @@ export default function Checkout() {
   const cities = form.province ? (pakistanData[form.province] || []) : [];
 
   return (
-    <div className="min-h-screen py-8 sm:py-14 px-4 sm:px-6 pt-24 sm:pt-28" style={{ background: "var(--bg-deep)" }}>
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen overflow-hidden py-8 sm:py-14 px-4 sm:px-6 pt-24 sm:pt-28" style={{ backgroundColor: "var(--bg-deep)" }}>
+      <div className="max-w-6xl mx-auto overflow-hidden">
 
         {/* HEADER */}
-        <div className="mb-8">
+        <div className="mb-8 overflow-hidden">
           <p className="section-label mb-1">Last Step</p>
           <h1 className="font-display text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>Checkout</h1>
           {/* Guest notice */}
@@ -222,16 +222,16 @@ export default function Checkout() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 overflow-hidden">
 
           {/* ═══ FORMS ═══ */}
-          <div className="lg:col-span-2 space-y-5">
+          <div className="lg:col-span-2 space-y-5 overflow-hidden">
 
             {/* SHIPPING FORM */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl p-5 sm:p-7"
-              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
+              className="rounded-2xl p-5 sm:p-7 overflow-hidden"
+              style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)" }}>
               <h2 className="font-semibold text-lg mb-5 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                 <FiMapPin style={{ color: "var(--gold)" }} /> Delivery Details
               </h2>

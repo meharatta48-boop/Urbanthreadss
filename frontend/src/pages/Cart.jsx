@@ -20,9 +20,9 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 text-center px-4 pt-20"
-        style={{ background: "var(--bg-deep)" }}>
-        <div className="w-20 h-20 rounded-full flex items-center justify-center"
+      <div className="min-h-screen overflow-hidden flex flex-col items-center justify-center gap-6 text-center px-4 pt-20"
+        style={{ backgroundColor: "var(--bg-deep)" }}>
+        <div className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden"
           style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}>
           <FiShoppingCart size={32} />
         </div>
@@ -36,8 +36,8 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6"
-      style={{ background: "var(--bg-deep)" }}>
+    <div className="min-h-screen overflow-hidden pt-24 pb-16 px-4 sm:px-6"
+      style={{ backgroundColor: "var(--bg-deep)" }}>
       <div className="max-w-6xl mx-auto">
 
         {/* HEADER */}
