@@ -80,7 +80,7 @@ export default function Footer() {
           </a>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 mb-12">
 
           {/* BRAND */}
           <div className="col-span-2 sm:col-span-2 space-y-5">

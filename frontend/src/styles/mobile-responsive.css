@@ -1,0 +1,316 @@
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE UTILITIES & OPTIMIZATIONS
+   Focus: Touch targets, text scaling, spacing consistency
+═══════════════════════════════════════════════════════════════ */
+
+/* ── ULTRA SMALL DEVICES (< 375px) ── */
+@media (max-width: 374px) {
+  /* Reduce padding on very narrow screens */
+  .container-custom {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* Button touch target optimization */
+  .btn-gold, .btn-outline {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 20px !important;
+  }
+
+  /* Typography scaling for ultra-small */
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+  h4 { font-size: 1.1rem !important; }
+
+  /* Reduce padding for sections */
+  section {
+    padding: 24px 0 !important;
+  }
+
+  /* Reduce grid gaps */
+  .gap-6 { gap: 12px !important; }
+  .gap-8 { gap: 16px !important; }
+  .gap-12 { gap: 20px !important; }
+  .gap-16 { gap: 24px !important; }
+}
+
+/* ── SMALL DEVICES (375px - 480px) ── */
+@media (min-width: 375px) and (max-width: 480px) {
+  /* Optimize form inputs for mobile */
+  .lux-input, .lux-select {
+    min-height: 44px;
+    padding: 14px 16px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Mobile navigation optimization */
+  nav button {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Responsive image optimization */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ── TOUCH DEVICE OPTIMIZATION ── */
+@media (pointer: coarse) {
+  /* Increase touch targets */
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Reduce hover effects on touch devices */
+  *:hover {
+    transition: none !important;
+  }
+
+  /* Larger text for better readability */
+  body {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* ── MOBILE VIEWPORT OPTIMIZATIONS ── */
+@media (max-height: 600px) and (orientation: portrait) {
+  /* Reduce hero section height on small height devices */
+  section[style*="h-"] {
+    min-height: auto !important;
+  }
+
+  .hero-section {
+    height: 45vh !important;
+  }
+}
+
+/* ── LANDSCAPE MODE OPTIMIZATION ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Reduce vertical padding in landscape */
+  section {
+    padding: 16px 0;
+  }
+
+  h1, h2, h3 {
+    margin-bottom: 8px;
+  }
+
+  .btn-gold, .btn-outline {
+    padding: 8px 16px;
+  }
+}
+
+/* ── HIGH DPI MOBILE SCREENS ── */
+@media (min-width: 390px) and (-webkit-min-device-pixel-ratio: 2) {
+  /* Optimize for high resolution mobile screens */
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Slightly thinner text on high DPI */
+  body {
+    font-weight: 400;
+  }
+}
+
+/* ── DARK MODE ON MOBILE ── */
+@media (prefers-color-scheme: dark) {
+  /* Adjust dark theme for mobile */
+  :root:not(.light) {
+    --bg-surface: #0f0f0f; /* Slightly lighter for better visibility */
+    --text-muted: #b0b0b0; /* Slightly lighter for better contrast */
+  }
+
+  /* Reduce harsh black on small OLED screens */
+  html.dark {
+    background-color: #0f0f0f;
+  }
+}
+
+/* ── SYSTEM LIGHT MODE DETECTION ── */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-deep: #fafafa;
+    --bg-surface: #f5f5f5;
+  }
+}
+
+/* ── REDUCED MOTION FOR PERFORMANCE ── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ── TEXT OPTIMIZATION FOR MOBILE ── */
+@media (max-width: 640px) {
+  /* Ensure readable text on mobile */
+  body {
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+
+  /* Improve line height on mobile */
+  p, li, span {
+    line-height: 1.6;
+  }
+
+  /* Readable heading sizes */
+  h1, .text-4xl {
+    line-height: 1.2;
+    word-break: break-word;
+  }
+}
+
+/* ── MOBILE INPUT OPTIMIZATION ── */
+@media (max-width: 768px) {
+  /* Prevent zoom on input focus (iOS Safari) */
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  /* Better touch padding for inputs */
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  /* Better select styling on mobile */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+}
+
+/* ── MODAL & OVERLAY MOBILE OPTIMIZATION ── */
+@media (max-width: 640px) {
+  [role="dialog"],
+  .modal {
+    width: 95vw;
+    max-width: 100%;
+    border-radius: 16px;
+    margin: auto;
+  }
+
+  .modal-overlay {
+    z-index: 1000;
+  }
+}
+
+/* ── SCROLLBAR OPTIMIZATION ── */
+@media (max-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 2px;
+  }
+}
+
+/* ── STICKY ELEMENT OPTIMIZATION ── */
+@media (max-width: 768px) {
+  /* Ensure sticky elements don't block content on mobile */
+  [position="sticky"] {
+    z-index: 40;
+  }
+
+  /* Nav safe area */
+  @supports (padding: max(0px)) {
+    nav {
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ── RESPONSIVE CONTAINER ── */
+.container-custom {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 640px) {
+  .container-custom {
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-custom {
+    max-width: 1280px;
+    padding: 0 32px;
+  }
+}
+
+/* ── MOBILE-FIRST RESPONSIVE GRID ── */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+
+/* ── TOUCH FRIENDLY SPACING ── */
+.touch-target {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+/* ── RESPONSIVE TYPOGRAPHY SCALE ── */
+@media (max-width: 640px) {
+  :root {
+    --text-scale: 0.9;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --text-scale: 0.95;
+  }
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --text-scale: 1;
+  }
+}
+
