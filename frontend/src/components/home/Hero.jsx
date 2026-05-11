@@ -183,7 +183,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
-                className="text-(--text-secondary) dark:text-[#aaa] text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
+                className="text-(--text-secondary) text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
               >
                 {current.sub}
               </motion.p>
@@ -208,7 +208,7 @@ export default function Hero() {
                 </Link>
 
                 <Link to="/shop"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-[#aaa] hover:text-white border border-[#2a2a2a] hover:border-[#444] px-5 py-3 rounded-2xl transition-all hover:bg-white/5 backdrop-blur-sm"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-(--text-secondary) hover:text-(--text-primary) border border-(--border-light) hover:border-(--gold) px-5 py-3 rounded-2xl transition-all hover:bg-(--bg-elevated) backdrop-blur-sm"
                 >
                   <FiPlay size={13} className="fill-current" />
                   Browse All

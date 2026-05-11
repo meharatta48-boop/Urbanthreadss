@@ -40,8 +40,8 @@ export default function AboutUs() {
                                 className="w-full h-full object-cover object-center scale-105"
                             />
                         </div>
-                        {/* Adaptive Overlay: Darker in dark mode, lighter/transparent-ish in light mode */}
-                        <div className="absolute inset-0 z-0 bg-linear-to-b from-black/60 via-black/30 to-(--bg-deep) dark:from-black/80 dark:via-black/50 dark:to-(--bg-deep)" />
+                        {/* Adaptive Overlay: Lighter/Gold-ish in light mode, Dark/Deep in dark mode */}
+                        <div className="absolute inset-0 z-0 bg-linear-to-b from-white/40 via-white/20 to-(--bg-deep) dark:from-black/80 dark:via-black/50 dark:to-(--bg-deep)" />
                     </>
                 ) : (
                     <div className="absolute inset-0 z-0 bg-linear-to-br from-(--bg-surface) to-(--bg-deep)" />
@@ -56,10 +56,10 @@ export default function AboutUs() {
                         <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-4 sm:mb-6 backdrop-blur-sm">
                             Established 2020
                         </span>
-                        <h1 className="text-white dark:text-white font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4 sm:mb-6 drop-shadow-2xl">
+                        <h1 className="text-(--text-primary) font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4 sm:mb-6 drop-shadow-sm dark:drop-shadow-2xl">
                             {settings.aboutUsHeroTitle || "Our Story"}
                         </h1>
-                        <p className="text-white/80 dark:text-white/70 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-2">
+                        <p className="text-(--text-secondary) text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-2">
                             {settings.aboutUsHeroSubtitle || "A journey of two visionaries redefining the streets of Pakistan."}
                         </p>
                     </motion.div>

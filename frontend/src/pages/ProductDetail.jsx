@@ -250,10 +250,10 @@ export default function ProductDetail() {
 
               {images.length > 1 && (
                 <>
-                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/60 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
+                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
                     <FiChevronLeft size={18} />
                   </button>
-                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/60 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
+                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
                     <FiChevronRight size={18} />
                   </button>
                 </>
@@ -265,8 +265,8 @@ export default function ProductDetail() {
                 </span>
               )}
               {product.stock === 0 && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <span className="text-white font-semibold tracking-widest text-sm uppercase">Out of Stock</span>
+                <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-[1px] flex items-center justify-center">
+                  <span className="text-white font-bold tracking-[0.2em] text-xs uppercase px-4 py-2 border border-white/30 rounded-xl">Out of Stock</span>
                 </div>
               )}
               {images.length > 1 && (
@@ -304,7 +304,7 @@ export default function ProductDetail() {
                 <video
                   src={getImageUrl(product.video)}
                   controls
-                  className="w-full max-h-64 object-contain bg-black"
+                  className="w-full max-h-64 object-contain bg-(--bg-deep)"
                   preload="metadata"
                 />
               </div>
@@ -649,7 +649,7 @@ const StarPicker = ({ value, onChange }) => {
           />
         </button>
       ))}
-      <span className="text-[#555] text-sm ml-1 self-center">
+      <span className="text-(--text-muted) text-sm ml-1 self-center">
         {["","Bura","Theek","Acha","Bahut Acha","Zabardast! ⭐"][hover || value]}
       </span>
     </div>
@@ -839,7 +839,7 @@ function ProductReviews({ product, setProduct }) {
                         <img src={src} alt={`preview-${idx}`} className="w-full h-full object-cover" />
                         <button
                           type="button" onClick={() => removeImage(idx)}
-                          className="absolute inset-0 bg-black/60 hidden group-hover:flex items-center justify-center text-white"
+                          className="absolute inset-0 bg-black/40 dark:bg-black/70 hidden group-hover:flex items-center justify-center text-white transition-colors"
                         >
                           <FiX size={18} />
                         </button>
@@ -867,11 +867,11 @@ function ProductReviews({ product, setProduct }) {
                   </label>
                   <input ref={vidInputRef} type="file" accept="video/*" hidden onChange={handleVideoPick} />
                   {reviewVideoPreview ? (
-                    <div className="relative rounded-xl overflow-hidden border border-[#2a2a2a] bg-black max-w-xs">
+                    <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep) max-w-xs">
                       <video src={reviewVideoPreview} controls className="w-full max-h-48 object-contain" />
                       <button
                         type="button" onClick={removeVideo}
-                        className="absolute top-2 right-2 w-7 h-7 bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                        className="absolute top-2 right-2 w-7 h-7 bg-black/50 dark:bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
                       >
                         <FiX size={14} />
                       </button>

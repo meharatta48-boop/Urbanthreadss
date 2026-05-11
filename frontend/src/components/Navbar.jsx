@@ -127,7 +127,7 @@ export default function Navbar() {
                   to={link.to}
                   className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group"
                   style={{
-                    color: isActive(link.to) ? "#000" : "var(--text-secondary)",
+                    color: isActive(link.to) ? "var(--bg-deep)" : "var(--text-secondary)",
                   }}
                 >
                   {isActive(link.to) && (
@@ -138,7 +138,7 @@ export default function Navbar() {
                     />
                   )}
                   <span className="relative z-10 transition-colors duration-300 group-hover:text-(--text-primary)"
-                    style={{ color: isActive(link.to) ? '#050505' : '' }}>
+                    style={{ color: isActive(link.to) ? 'var(--bg-deep)' : '' }}>
                     {link.label}
                   </span>
                 </Link>
@@ -391,7 +391,7 @@ export default function Navbar() {
                     to={link.to}
                     className="flex items-center py-4 px-5 rounded-2xl text-base font-bold transition-all relative overflow-hidden group"
                     style={{
-                      color: isActive(link.to) ? "#000" : "var(--text-secondary)",
+                      color: isActive(link.to) ? "var(--bg-deep)" : "var(--text-secondary)",
                     }}
                   >
                     {isActive(link.to) ? (
@@ -401,7 +401,7 @@ export default function Navbar() {
                     )}
                     <span className="relative z-10 flex items-center w-full justify-between">
                       {link.label}
-                      {isActive(link.to) && <span className="w-2 h-2 rounded-full bg-black block" />}
+                      {isActive(link.to) && <span className="w-2 h-2 rounded-full bg-(--bg-deep) block" />}
                     </span>
                   </Link>
                 ))}

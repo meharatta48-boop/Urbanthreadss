@@ -174,7 +174,7 @@ export default function Shop() {
                     onMouseEnter={(e) => e.target.style.transform = "scale(1.08)"}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/70 dark:from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <div className="absolute bottom-3 inset-x-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                     <button
@@ -203,8 +203,8 @@ export default function Shop() {
                   </div>
 
                   {p.stock === 0 && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <span className="text-white text-sm font-semibold tracking-wider">OUT OF STOCK</span>
+                    <div className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                      <span className="text-white text-xs font-bold tracking-[0.2em] uppercase px-3 py-1.5 border border-white/30 rounded-lg">OUT OF STOCK</span>
                     </div>
                   )}
                   {p.comparePrice > p.price && (
@@ -212,7 +212,7 @@ export default function Shop() {
                       <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
                         -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
                       </span>
-                      <span className="bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
+                      <span className="bg-black/40 dark:bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
                         Sale
                       </span>
                     </div>

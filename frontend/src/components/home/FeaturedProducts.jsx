@@ -66,7 +66,7 @@ export default function FeaturedProducts() {
               onClick={() => navigate(`/product/${p._id}`)}
             >
               {/* IMAGE */}
-              <div className="relative overflow-hidden aspect-3/4">
+              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
                 <LazyImage
                   src={getThumbnailUrl(p.images?.[0])}
                   srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
@@ -76,7 +76,7 @@ export default function FeaturedProducts() {
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}
                 />
                 {/* OVERLAY */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-black/40 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <button
                   onClick={(e) => { 
@@ -104,7 +104,7 @@ export default function FeaturedProducts() {
                     <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
                       -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
                     </span>
-                    <span className="bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
+                    <span className="bg-black/40 dark:bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
                       Sale
                     </span>
                   </div>

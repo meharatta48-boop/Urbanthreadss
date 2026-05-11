@@ -341,7 +341,7 @@ export default function ProductForm() {
                     >
                       <FiX size={11} />
                     </button>
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-black/40 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -397,7 +397,7 @@ export default function ProductForm() {
 
             {/* Preview / Upload area */}
             {(videoPreview || existingVideo) ? (
-              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-black">
+              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
                 <video
                   src={videoPreview || getImageUrl(existingVideo)}
                   controls

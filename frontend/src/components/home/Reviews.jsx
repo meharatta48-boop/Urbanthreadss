@@ -102,7 +102,7 @@ function ReviewModal({ onClose, onSuccess, userName }) {
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-sm" />
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -430,7 +430,7 @@ export default function Reviews() {
               className="fixed inset-0 z-50 flex items-center justify-center px-4"
               onClick={() => setShowModal(false)}
             >
-              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+              <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-sm" />
               <motion.div
                 initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }}
                 className="relative rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl"
