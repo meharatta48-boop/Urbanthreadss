@@ -80,51 +80,51 @@ export default function PagesTab() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-white font-bold">Custom Pages</h3>
-          <p className="text-[#555] text-xs mt-0.5">Apni marzi se pages banao — About, Privacy Policy, koi bhi</p>
+          <h3 className="text-(--text-primary) font-bold">Custom Pages</h3>
+          <p className="text-(--text-muted) text-xs mt-0.5">Apni marzi se pages banao — About, Privacy Policy, koi bhi</p>
         </div>
         <button onClick={() => setView("edit")}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black"
-          style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black gold-gradient shadow-lg"
+        >
           <FiPlus size={14} /> New Page
         </button>
       </div>
 
       {loading ? (
-        <p className="text-[#555] text-sm text-center py-6">Loading...</p>
+        <p className="text-(--text-muted) text-sm text-center py-6">Loading...</p>
       ) : pages.length === 0 ? (
-        <div className="text-center py-12 text-[#333]">
+        <div className="text-center py-12 text-(--text-muted)">
           <FiFileText size={36} className="mx-auto mb-3 opacity-20" />
           <p className="text-sm">Koi page nahi — "New Page" dabao</p>
         </div>
       ) : (
         <div className="space-y-2">
           {pages.map(page => (
-            <div key={page._id} className="flex items-center gap-3 px-4 py-3 rounded-xl"
-              style={{ background: "#0c0c0c", border: "1px solid #1a1a1a", opacity: page.isVisible ? 1 : 0.45 }}>
-              <FiFileText size={16} className="text-[#c9a84c] flex-shrink-0" />
+            <div key={page._id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-(--bg-card) border border-(--border) shadow-sm"
+              style={{ opacity: page.isVisible ? 1 : 0.45 }}>
+              <FiFileText size={16} className="text-(--gold) flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium">{page.title}
-                  {page.showInNav && <span className="ml-2 text-[9px] bg-[#c9a84c20] text-[#c9a84c] px-1.5 py-0.5 rounded">NAV</span>}
+                <p className="text-(--text-primary) text-sm font-medium">{page.title}
+                  {page.showInNav && <span className="ml-2 text-[9px] bg-(--gold)/10 text-(--gold) px-1.5 py-0.5 rounded border border-(--gold)/20">NAV</span>}
                 </p>
-                <p className="text-[#444] text-xs">/page/{page.slug}</p>
+                <p className="text-(--text-muted) text-xs">/page/{page.slug}</p>
               </div>
               <div className="flex items-center gap-2">
                 <a href={`/page/${page.slug}`} target="_blank" rel="noreferrer"
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#1a1a1a] transition-all">
-                  <FiExternalLink size={13} className="text-[#555]" />
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--bg-elevated) transition-all">
+                  <FiExternalLink size={14} className="text-(--text-muted) hover:text-(--text-primary)" />
                 </a>
                 <button onClick={() => toggleVisible(page)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#1a1a1a] transition-all">
-                  {page.isVisible ? <FiEye size={13} className="text-[#c9a84c]" /> : <FiEyeOff size={13} className="text-[#333]" />}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--bg-elevated) transition-all">
+                  {page.isVisible ? <FiEye size={14} className="text-(--gold)" /> : <FiEyeOff size={14} className="text-(--text-muted)" />}
                 </button>
                 <button onClick={() => startEdit(page)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#1a1a1a] transition-all">
-                  <FiEdit2 size={13} className="text-[#555]" />
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--bg-elevated) transition-all">
+                  <FiEdit2 size={14} className="text-(--text-muted) hover:text-(--text-primary)" />
                 </button>
                 <button onClick={() => del(page._id)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-900/30 transition-all">
-                  <FiTrash2 size={13} className="text-red-500" />
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 transition-all">
+                  <FiTrash2 size={14} className="text-red-500" />
                 </button>
               </div>
             </div>
@@ -139,65 +139,65 @@ export default function PagesTab() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-white font-bold">{editId ? "✏️ Page Edit" : "➕ Naya Page"}</h3>
-          <p className="text-[#555] text-xs mt-0.5">Site par /page/{form.slug || "slug"} par dikhe ga</p>
+          <h3 className="text-(--text-primary) font-bold">{editId ? "✏️ Page Edit" : "➕ Naya Page"}</h3>
+          <p className="text-(--text-muted) text-xs mt-0.5">Site par /page/{form.slug || "slug"} par dikhe ga</p>
         </div>
         <button onClick={resetForm}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#555] hover:text-white transition-all"
-          style={{ border: "1px solid #1a1a1a" }}>
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all border border-(--border) hover:bg-(--bg-elevated)"
+        >
           <FiX size={13} /> Cancel
         </button>
       </div>
 
-      <div className="space-y-4 p-4 rounded-2xl" style={{ background: "#0c0c0c", border: "1px solid #1a1a1a" }}>
+      <div className="space-y-4 p-4 rounded-2xl bg-(--bg-card) border border-(--border) shadow-sm">
         {/* Title + Slug */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Page Title *</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Page Title *</label>
             <input value={form.title} onChange={e => handleTitleChange(e.target.value)}
               placeholder="e.g. About Us, Privacy Policy"
-              className="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none"
-              style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+              className="w-full px-3 py-2.5 rounded-xl text-sm text-(--text-primary) outline-none bg-(--bg-elevated) border border-(--border)"
+            />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">URL Slug</label>
-            <div className="flex items-center rounded-xl overflow-hidden" style={{ border: "1px solid #1a1a1a", background: "#111" }}>
-              <span className="text-[#333] text-xs pl-3">/page/</span>
+            <label className="text-(--text-muted) text-xs mb-1 block">URL Slug</label>
+            <div className="flex items-center rounded-xl overflow-hidden border border-(--border) bg-(--bg-elevated)">
+              <span className="text-(--text-muted) text-xs pl-3 opacity-50">/page/</span>
               <input value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))}
                 placeholder="about-us"
-                className="flex-1 px-2 py-2.5 text-sm text-white outline-none bg-transparent" />
+                className="flex-1 px-2 py-2.5 text-sm text-(--text-primary) outline-none bg-transparent" />
             </div>
           </div>
         </div>
 
         {/* Meta Description */}
         <div>
-          <label className="text-[#555] text-xs mb-1 block">Meta Description (SEO)</label>
+          <label className="text-(--text-muted) text-xs mb-1 block">Meta Description (SEO)</label>
           <input value={form.metaDesc} onChange={e => setForm(f => ({ ...f, metaDesc: e.target.value }))}
             placeholder="Google search mein jo description dikhega..."
-            className="w-full px-3 py-2.5 rounded-xl text-sm text-white outline-none"
-            style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+            className="w-full px-3 py-2.5 rounded-xl text-sm text-(--text-primary) outline-none bg-(--bg-elevated) border border-(--border)"
+          />
         </div>
 
         {/* Content */}
         <div>
-          <label className="text-[#555] text-xs mb-1 block">Page Content</label>
+          <label className="text-(--text-muted) text-xs mb-1 block">Page Content</label>
           <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
             rows={12} placeholder="Page ka content yahan likhein... HTML bhi use kar sakte hain."
-            className="w-full px-3 py-3 rounded-xl text-sm text-white outline-none font-mono resize-y"
-            style={{ background: "#111", border: "1px solid #1a1a1a", lineHeight: 1.6 }} />
-          <p className="text-[#333] text-xs mt-1">Tip: HTML tags use kar sakte hain — &lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt; etc.</p>
+            className="w-full px-3 py-3 rounded-xl text-sm text-(--text-primary) outline-none font-mono resize-y bg-(--bg-elevated) border border-(--border)"
+            style={{ lineHeight: 1.6 }} />
+          <p className="text-(--text-muted) text-[10px] mt-1 opacity-60">Tip: HTML tags use kar sakte hain — &lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt; etc.</p>
         </div>
 
         {/* Toggles */}
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={form.isVisible} onChange={e => setForm(f => ({ ...f, isVisible: e.target.checked }))} />
-            <span className="text-[#888] text-sm">Published (visible)</span>
+            <input type="checkbox" checked={form.isVisible} onChange={e => setForm(f => ({ ...f, isVisible: e.target.checked }))} className="accent-(--gold)" />
+            <span className="text-(--text-muted) text-sm">Published (visible)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.target.checked }))} />
-            <span className="text-[#888] text-sm">Navbar mein dikhao</span>
+            <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.target.checked }))} className="accent-(--gold)" />
+            <span className="text-(--text-muted) text-sm">Navbar mein dikhao</span>
           </label>
         </div>
       </div>
@@ -205,13 +205,13 @@ export default function PagesTab() {
       {/* Save button */}
       <div className="flex gap-3">
         <button onClick={saveForm} disabled={saving}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-black transition-all"
-          style={{ background: saving ? "#555" : "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg ${saving ? "bg-gray-500 text-white opacity-50" : "gold-gradient text-black"}`}
+        >
           <FiSave size={14} /> {saving ? "Saving..." : (editId ? "Update Page" : "Publish Page")}
         </button>
         <button onClick={resetForm}
-          className="px-4 py-2.5 rounded-xl text-sm text-[#555] hover:text-white transition-all"
-          style={{ border: "1px solid #1a1a1a" }}>
+          className="px-4 py-2.5 rounded-xl text-sm text-(--text-muted) hover:text-(--text-primary) transition-all border border-(--border) hover:bg-(--bg-elevated)"
+        >
           Cancel
         </button>
       </div>

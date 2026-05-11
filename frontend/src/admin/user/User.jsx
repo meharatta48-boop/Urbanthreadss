@@ -91,7 +91,7 @@ export default function UserList() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="section-label mb-1">Manage</p>
-          <h2 className="font-display text-3xl font-bold text-white">Users</h2>
+          <h2 className="font-display text-3xl font-bold text-(--text-primary)">Users</h2>
         </div>
         <button
           onClick={fetchUsers}
@@ -109,16 +109,16 @@ export default function UserList() {
           { label: "Active", val: users.filter((u) => u.isActive !== false).length, color: "#4ade80" },
           { label: "Admins", val: users.filter((u) => u.role === "admin").length, color: "#c084fc" },
         ].map((s) => (
-          <div key={s.label} className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4 text-center">
+          <div key={s.label} className="bg-(--bg-card) border border-(--border) rounded-xl p-4 text-center shadow-sm">
             <div className="font-display text-2xl font-bold" style={{ color: s.color }}>{s.val}</div>
-            <div className="text-[#444] text-xs mt-1 uppercase tracking-wider">{s.label}</div>
+            <div className="text-(--text-muted) text-xs mt-1 uppercase tracking-wider">{s.label}</div>
           </div>
         ))}
       </div>
 
       {/* SEARCH */}
       <div className="relative">
-        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#444]" />
+        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -129,18 +129,18 @@ export default function UserList() {
       </div>
 
       {/* TABLE */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#111] flex items-center justify-between">
-          <h3 className="text-white font-semibold flex items-center gap-2">
-            <FiUsers size={16} className="text-[#c9a84c]" /> All Users
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-6 py-4 border-b border-(--border) flex items-center justify-between">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
+            <FiUsers size={16} className="text-(--gold)" /> All Users
           </h3>
           <span className="badge-gold">{filtered.length} users</span>
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-[#333]">Loading users...</div>
+          <div className="p-8 text-center text-(--text-muted)">Loading users...</div>
         ) : filtered.length === 0 ? (
-          <div className="p-8 text-center text-[#333]">
+          <div className="p-8 text-center text-(--text-muted)">
             <FiUsers size={32} className="mx-auto mb-3 opacity-30" />
             <p>No users found</p>
           </div>
@@ -148,7 +148,7 @@ export default function UserList() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[#111] text-[#444] text-xs uppercase tracking-wider">
+                <tr className="bg-(--bg-surface) text-(--text-muted) text-xs uppercase tracking-wider">
                   <th className="px-6 py-3">User</th>
                   <th className="px-6 py-3">Email</th>
                   <th className="px-6 py-3">Role</th>
@@ -164,26 +164,26 @@ export default function UserList() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: i * 0.03 }}
-                    className="border-t border-[#111] hover:bg-[#111] transition-colors"
+                    className="border-t border-(--border) hover:bg-(--bg-elevated)/30 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center text-black font-bold text-xs shrink-0">
                           {user.name?.charAt(0)?.toUpperCase() || "?"}
                         </div>
-                        <span className="text-white font-medium text-sm">{user.name}</span>
+                        <span className="text-(--text-primary) font-medium text-sm">{user.name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-[#9a9a9a] text-sm">
+                      <div className="flex items-center gap-2 text-(--text-secondary) text-sm">
                         <FiMail size={13} /> {user.email}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
                         user.role === "admin"
-                          ? "text-[#c9a84c] bg-[rgba(201,168,76,0.1)] border border-[#c9a84c]/20"
-                          : "text-[#555] bg-[#111] border border-[#1a1a1a]"
+                          ? "text-(--gold) bg-(--gold)/10 border border-(--gold)/20"
+                          : "text-(--text-muted) bg-(--bg-surface) border border-(--border)"
                       }`}>
                         {user.role || "user"}
                       </span>
@@ -193,7 +193,7 @@ export default function UserList() {
                         {user.isActive !== false ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-[#444] text-xs">
+                    <td className="px-6 py-4 text-(--text-muted) text-xs">
                       {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-PK") : "—"}
                     </td>
                     <td className="px-6 py-4">
@@ -202,7 +202,7 @@ export default function UserList() {
                           <button
                             onClick={() => handleRoleChange(user._id, "admin")}
                             disabled={updatingRole === user._id}
-                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.1)] disabled:opacity-50 transition-all"
+                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/10 disabled:opacity-50 transition-all"
                             title="Make Admin"
                           >
                             <FiAward size={12} /> {updatingRole === user._id ? "..." : "Admin"}
@@ -211,7 +211,7 @@ export default function UserList() {
                           <button
                             onClick={() => handleRoleChange(user._id, "user")}
                             disabled={updatingRole === user._id}
-                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-[#555]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.05)] disabled:opacity-50 transition-all"
+                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--border) text-(--gold) hover:bg-(--gold)/5 disabled:opacity-50 transition-all"
                             title="Remove Admin"
                           >
                             <FiCheck size={12} /> {updatingRole === user._id ? "..." : "User"}

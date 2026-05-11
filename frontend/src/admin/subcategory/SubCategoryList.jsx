@@ -35,15 +35,15 @@ function ImagePicker({ current, onFile, onRemove, label = "Image" }) {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs text-[#555] uppercase tracking-wider">{label}</p>
+      <p className="text-xs text-(--text-muted) uppercase tracking-wider">{label}</p>
       {displaySrc ? (
-        <div className="relative group w-24 h-24 rounded-xl overflow-hidden border border-[#1a1a1a] bg-[#0a0a0a]">
+        <div className="relative group w-24 h-24 rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
           <img src={displaySrc} alt="subcat" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
             <button
               type="button"
               onClick={() => ref.current?.click()}
-              className="w-7 h-7 bg-[#c9a84c] rounded-full flex items-center justify-center text-black hover:bg-[#e0be6a] transition-colors"
+              className="w-7 h-7 bg-(--gold) rounded-full flex items-center justify-center text-black hover:bg-(--gold-light) transition-colors"
               title="Image change karo"
             >
               <FiUpload size={12} />
@@ -58,14 +58,14 @@ function ImagePicker({ current, onFile, onRemove, label = "Image" }) {
             </button>
           </div>
           {preview && (
-            <span className="absolute top-1 left-1 text-[8px] bg-[#c9a84c] text-black px-1 rounded font-bold">NEW</span>
+            <span className="absolute top-1 left-1 text-[8px] bg-(--gold) text-black px-1 rounded font-bold">NEW</span>
           )}
         </div>
       ) : (
         <button
           type="button"
           onClick={() => ref.current?.click()}
-          className="w-24 h-24 rounded-xl border-2 border-dashed border-[#222] hover:border-[#c9a84c]/50 flex flex-col items-center justify-center gap-1 text-[#333] hover:text-[#c9a84c] transition-all"
+          className="w-24 h-24 rounded-xl border-2 border-dashed border-(--border) hover:border-(--gold)/50 flex flex-col items-center justify-center gap-1 text-(--text-muted) hover:text-(--gold) transition-all"
         >
           <FiImage size={20} />
           <span className="text-[10px]">Add Image</span>
@@ -177,24 +177,24 @@ export default function SubCategoryList() {
       {/* HEADER */}
       <div>
         <p className="section-label mb-1">Manage</p>
-        <h2 className="font-display text-3xl font-bold text-white">Sub-Categories</h2>
-        <p className="text-[#555] text-sm mt-1">
+        <h2 className="font-display text-3xl font-bold text-(--text-primary)">Sub-Categories</h2>
+        <p className="text-(--text-muted) text-sm mt-1">
           Har season ke andar:{" "}
-          <span className="text-[#c9a84c]">Men</span>,{" "}
-          <span className="text-[#c9a84c]">Women</span>,{" "}
-          <span className="text-[#c9a84c]">Kids</span>
+          <span className="text-(--gold)">Men</span>,{" "}
+          <span className="text-(--gold)">Women</span>,{" "}
+          <span className="text-(--gold)">Kids</span>
         </p>
       </div>
 
       {/* ── ADD FORM ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-6 space-y-4">
-        <h3 className="text-white font-semibold flex items-center gap-2">
-          <FiPlus className="text-[#c9a84c]" /> Nai Sub-Category Add Karo
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-6 space-y-4 shadow-sm">
+        <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
+          <FiPlus className="text-(--gold)" /> Nai Sub-Category Add Karo
         </h3>
 
         {/* CATEGORY SELECT */}
         <div>
-          <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Season / Category Select Karo *</label>
+          <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Season / Category Select Karo *</label>
           <select
             className="lux-select w-full"
             value={category}
@@ -241,7 +241,7 @@ export default function SubCategoryList() {
               </button>
             </div>
             {imageFile && (
-              <p className="text-[#c9a84c] text-xs flex items-center gap-1">
+              <p className="text-(--gold) text-xs flex items-center gap-1">
                 <FiImage size={11} /> {imageFile.name} selected
               </p>
             )}
@@ -251,7 +251,7 @@ export default function SubCategoryList() {
         {/* QUICK ADD */}
         {category && (
           <div>
-            <p className="text-[#333] text-xs mb-2 uppercase tracking-wider">Quick add (bina image):</p>
+            <p className="text-(--text-muted) text-xs mb-2 uppercase tracking-wider">Quick add (bina image):</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTIONS
                 .filter((s) => !subCategories.find((sc) => {
@@ -263,7 +263,7 @@ export default function SubCategoryList() {
                     key={s}
                     onClick={() => handleSubmit(s)}
                     disabled={adding}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-[#1a1a1a] text-[#555] hover:border-[#c9a84c]/50 hover:text-[#c9a84c] transition-all disabled:opacity-40"
+                    className="px-3 py-1.5 text-xs rounded-lg border border-(--border) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--gold) transition-all disabled:opacity-40"
                   >
                     + {s}
                   </button>
@@ -278,7 +278,7 @@ export default function SubCategoryList() {
         <button
           onClick={() => setFilterCat("")}
           className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-            !filterCat ? "gold-gradient text-black" : "border border-[#1a1a1a] text-[#555] hover:text-white"
+            !filterCat ? "gold-gradient text-black shadow-lg" : "border border-(--border) text-(--text-muted) hover:text-(--text-primary)"
           }`}
         >
           All ({subCategories.length})
@@ -293,7 +293,7 @@ export default function SubCategoryList() {
               key={c._id}
               onClick={() => setFilterCat(c._id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-                filterCat === c._id ? "gold-gradient text-black" : "border border-[#1a1a1a] text-[#555] hover:text-white"
+                filterCat === c._id ? "gold-gradient text-black shadow-lg" : "border border-(--border) text-(--text-muted) hover:text-(--text-primary)"
               }`}
             >
               {c.name} ({count})
@@ -303,21 +303,21 @@ export default function SubCategoryList() {
       </div>
 
       {/* ── LIST ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#111] flex items-center justify-between">
-          <h3 className="text-white font-semibold flex items-center gap-2">
-            <FiTag size={16} className="text-[#c9a84c]" /> Sub-Categories
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-6 py-4 border-b border-(--border) flex items-center justify-between">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
+            <FiTag size={16} className="text-(--gold)" /> Sub-Categories
           </h3>
           <span className="badge-gold">{filtered.length}</span>
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-[#333] flex items-center justify-center gap-2">
-            <div className="w-5 h-5 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
+          <div className="p-8 text-center text-(--text-muted) flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
             Loading...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="p-10 text-center text-[#333]">
+          <div className="p-10 text-center text-(--text-muted)">
             <FiTag size={32} className="mx-auto mb-3 opacity-30" />
             <p className="text-sm">
               {subCategories.length === 0
@@ -326,7 +326,7 @@ export default function SubCategoryList() {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-[#111]">
+          <div className="divide-y divide-(--border)">
             <AnimatePresence>
               {filtered.map((sc, i) => (
                 <motion.div
@@ -335,7 +335,7 @@ export default function SubCategoryList() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, height: 0, overflow: "hidden" }}
                   transition={{ delay: i * 0.03 }}
-                  className="px-6 py-4 hover:bg-[#111] transition-colors"
+                  className="px-6 py-4 hover:bg-(--bg-surface) transition-colors"
                 >
                   {editId === sc._id ? (
                     /* ── EDIT MODE ── */
@@ -374,7 +374,7 @@ export default function SubCategoryList() {
                             </button>
                             <button
                               onClick={cancelEdit}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border border-[#222] text-[#555] hover:text-white transition-all"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs border border-(--border) text-(--text-muted) hover:text-(--text-primary) transition-all"
                             >
                               <FiX size={12} /> Cancel
                             </button>
@@ -391,7 +391,7 @@ export default function SubCategoryList() {
                       <div className="flex items-center gap-3">
                         {/* Image or avatar */}
                         {sc.image ? (
-                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-[#1a1a1a] flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-(--border) flex-shrink-0">
                             <img
                               src={`${API_BASE}${sc.image}`}
                               alt={sc.name}
@@ -400,16 +400,16 @@ export default function SubCategoryList() {
                             />
                           </div>
                         ) : (
-                          <div className="w-11 h-11 rounded-xl bg-[rgba(201,168,76,0.08)] border border-[#c9a84c]/20 flex items-center justify-center text-[#c9a84c] text-sm font-bold flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl bg-(--gold)/5 border border-(--gold)/20 flex items-center justify-center text-(--gold) text-sm font-bold flex-shrink-0">
                             {sc.name?.charAt(0)?.toUpperCase()}
                           </div>
                         )}
                         <div>
-                          <p className="text-white font-medium">{sc.name}</p>
-                          <p className="text-[#444] text-xs flex items-center gap-1">
-                            Under: <span className="text-[#c9a84c] capitalize">{sc.category?.name || "—"}</span>
+                          <p className="text-(--text-primary) font-medium">{sc.name}</p>
+                          <p className="text-(--text-muted) text-xs flex items-center gap-1">
+                            Under: <span className="text-(--gold) capitalize">{sc.category?.name || "—"}</span>
                             {sc.image && (
-                              <span className="ml-1 text-[#c9a84c]/60 flex items-center gap-0.5"><FiImage size={9} /> Image</span>
+                              <span className="ml-1 text-(--gold)/60 flex items-center gap-0.5"><FiImage size={9} /> Image</span>
                             )}
                           </p>
                         </div>
@@ -418,14 +418,14 @@ export default function SubCategoryList() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => startEdit(sc)}
-                          className="p-2 rounded-lg text-[#333] hover:text-[#c9a84c] hover:bg-[rgba(201,168,76,0.08)] transition-all"
+                          className="p-2 rounded-lg text-(--text-muted) hover:text-(--gold) hover:bg-(--gold)/10 transition-all"
                           title="Edit"
                         >
                           <FiEdit2 size={14} />
                         </button>
                         <button
                           onClick={() => handleDelete(sc._id, sc.name)}
-                          className="p-2 rounded-lg text-[#333] hover:text-red-400 hover:bg-red-900/10 transition-all"
+                          className="p-2 rounded-lg text-(--text-muted) hover:text-red-500 hover:bg-red-500/10 transition-all"
                           title="Delete"
                         >
                           <FiTrash2 size={14} />

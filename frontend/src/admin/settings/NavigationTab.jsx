@@ -89,13 +89,13 @@ export default function NavigationTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-white font-bold">Navigation Links</h3>
-          <p className="text-[#555] text-xs mt-0.5">Site navbar mein dikhne wale links — add, edit, reorder, hide</p>
+          <h3 className="text-(--text-primary) font-bold">Navigation Links</h3>
+          <p className="text-(--text-muted) text-xs mt-0.5">Site navbar mein dikhne wale links — add, edit, reorder, hide</p>
         </div>
         {!adding && (
           <button onClick={() => setAdding(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black transition-all"
-            style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black transition-all gold-gradient shadow-lg"
+          >
             <FiPlus size={14} /> Add Link
           </button>
         )}
@@ -103,43 +103,43 @@ export default function NavigationTab() {
 
       {/* Add / Edit Form */}
       {adding && (
-        <div className="p-4 rounded-2xl space-y-3" style={{ background: "#0c0c0c", border: "1px solid #1a1a1a" }}>
-          <p className="text-white font-semibold text-sm">{editId ? "✏️ Edit Link" : "➕ New Navigation Link"}</p>
+        <div className="p-4 rounded-2xl space-y-3 bg-(--bg-card) border border-(--border) shadow-sm">
+          <p className="text-(--text-primary) font-semibold text-sm">{editId ? "✏️ Edit Link" : "➕ New Navigation Link"}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Label (Jo dikhega)</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Label (Jo dikhega)</label>
               <input value={form.label} onChange={e => setForm(f => ({ ...f, label: e.target.value }))}
                 placeholder="e.g. Shop, About Us, Contact"
-                className="w-full px-3 py-2 rounded-xl text-sm text-white outline-none"
-                style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+                className="w-full px-3 py-2 rounded-xl text-sm text-(--text-primary) outline-none bg-(--bg-elevated) border border-(--border)"
+              />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">URL</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">URL</label>
               <input value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
                 placeholder="e.g. /shop or https://..."
-                className="w-full px-3 py-2 rounded-xl text-sm text-white outline-none"
-                style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+                className="w-full px-3 py-2 rounded-xl text-sm text-(--text-primary) outline-none bg-(--bg-elevated) border border-(--border)"
+              />
             </div>
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={form.isExternal} onChange={e => setForm(f => ({ ...f, isExternal: e.target.checked }))} />
-              <span className="text-[#888] text-xs flex items-center gap-1"><FiExternalLink size={11} /> New tab mein kholein</span>
+              <input type="checkbox" checked={form.isExternal} onChange={e => setForm(f => ({ ...f, isExternal: e.target.checked }))} className="accent-(--gold)" />
+              <span className="text-(--text-muted) text-xs flex items-center gap-1"><FiExternalLink size={11} /> New tab mein kholein</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={form.isVisible} onChange={e => setForm(f => ({ ...f, isVisible: e.target.checked }))} />
-              <span className="text-[#888] text-xs">Visible</span>
+              <input type="checkbox" checked={form.isVisible} onChange={e => setForm(f => ({ ...f, isVisible: e.target.checked }))} className="accent-(--gold)" />
+              <span className="text-(--text-muted) text-xs">Visible</span>
             </label>
           </div>
           <div className="flex gap-2">
             <button onClick={save}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black"
-              style={{ background: "linear-gradient(135deg,#c9a84c,#e8c96a)" }}>
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black gold-gradient shadow-lg"
+            >
               <FiSave size={13} /> {editId ? "Update" : "Save Link"}
             </button>
             <button onClick={resetForm}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-[#555] hover:text-white transition-all"
-              style={{ border: "1px solid #1a1a1a" }}>
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-(--text-muted) hover:text-(--text-primary) transition-all border border-(--border) hover:bg-(--bg-elevated)"
+            >
               <FiX size={13} /> Cancel
             </button>
           </div>
@@ -148,9 +148,9 @@ export default function NavigationTab() {
 
       {/* Links List */}
       {loading ? (
-        <p className="text-[#555] text-sm text-center py-6">Loading...</p>
+        <p className="text-(--text-muted) text-sm text-center py-6">Loading...</p>
       ) : links.length === 0 ? (
-        <div className="text-center py-10 text-[#333]">
+        <div className="text-center py-10 text-(--text-muted)">
           <FiMenu size={32} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">Koi link nahi — upar "Add Link" dabao</p>
         </div>
@@ -158,35 +158,35 @@ export default function NavigationTab() {
         <div className="space-y-2">
           {links.map((link, i) => (
             <div key={link._id}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl"
-              style={{ background: "#0c0c0c", border: "1px solid #1a1a1a", opacity: link.isVisible ? 1 : 0.45 }}>
+              className="flex items-center gap-3 px-4 py-3 rounded-xl bg-(--bg-card) border border-(--border) shadow-sm"
+              style={{ opacity: link.isVisible ? 1 : 0.45 }}>
               {/* Order buttons */}
               <div className="flex flex-col gap-0.5">
-                <button onClick={() => moveUp(i)} className="text-[#333] hover:text-white text-xs leading-none">▲</button>
-                <button onClick={() => moveDown(i)} className="text-[#333] hover:text-white text-xs leading-none">▼</button>
+                <button onClick={() => moveUp(i)} className="text-(--text-muted) hover:text-(--gold) text-xs leading-none transition-colors">▲</button>
+                <button onClick={() => moveDown(i)} className="text-(--text-muted) hover:text-(--gold) text-xs leading-none transition-colors">▼</button>
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium">{link.label}
-                  {link.isExternal && <FiExternalLink size={10} className="inline ml-1 text-[#555]" />}
+                <p className="text-(--text-primary) text-sm font-medium">{link.label}
+                  {link.isExternal && <FiExternalLink size={10} className="inline ml-1 text-(--text-muted)" />}
                 </p>
-                <p className="text-[#444] text-xs truncate">{link.url}</p>
+                <p className="text-(--text-muted) text-xs truncate">{link.url}</p>
               </div>
 
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleVisible(link)} title={link.isVisible ? "Hide" : "Show"}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg transition-all hover:bg-[#1a1a1a]">
+                  className="w-8 h-8 flex items-center justify-center rounded-lg transition-all hover:bg-(--bg-elevated)">
                   {link.isVisible
-                    ? <FiEye size={13} className="text-[#c9a84c]" />
-                    : <FiEyeOff size={13} className="text-[#333]" />}
+                    ? <FiEye size={14} className="text-(--gold)" />
+                    : <FiEyeOff size={14} className="text-(--text-muted)" />}
                 </button>
                 <button onClick={() => startEdit(link)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#1a1a1a] transition-all">
-                  <FiEdit2 size={13} className="text-[#555]" />
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-(--bg-elevated) transition-all">
+                  <FiEdit2 size={14} className="text-(--text-muted) hover:text-(--text-primary)" />
                 </button>
                 <button onClick={() => del(link._id)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-red-900/30 transition-all">
-                  <FiTrash2 size={13} className="text-red-500" />
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 transition-all">
+                  <FiTrash2 size={14} className="text-red-500" />
                 </button>
               </div>
             </div>
@@ -194,7 +194,7 @@ export default function NavigationTab() {
         </div>
       )}
 
-      <div className="p-3 rounded-xl text-xs text-[#333]" style={{ border: "1px dashed #111" }}>
+      <div className="p-4 rounded-xl text-xs text-(--text-muted) border border-dashed border-(--border) bg-(--bg-surface)/50">
         💡 Reorder karne ke liye ▲ ▼ buttons use karo. Changes site par turant apply ho jaenge.
       </div>
     </div>
