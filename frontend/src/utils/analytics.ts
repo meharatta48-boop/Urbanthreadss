@@ -1,3 +1,10 @@
+// TypeScript declaration for gtag
+declare global {
+  interface Window {
+    gtag?: (command: string, ...args: any[]) => void;
+  }
+}
+
 // Advanced Analytics and Tracking System
 
 interface AnalyticsEvent {

@@ -1,3 +1,10 @@
+// TypeScript declaration for gtag
+declare global {
+  interface Window {
+    gtag?: (command: string, ...args: any[]) => void;
+  }
+}
+
 // SEO and Social Sharing Utilities
 
 interface SEOData {

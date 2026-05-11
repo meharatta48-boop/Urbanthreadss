@@ -1462,9 +1462,6 @@ img {
 }
 
 @media (min-resolution: 2dppx) {
-  img {
-    image-rendering: -webkit-optimize-contrast;
-  }
 }
 
 /* Enhanced Typography */
@@ -1473,7 +1470,6 @@ img {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
 
 /* Enhanced Shadows */
@@ -2001,18 +1997,7 @@ img {
   scroll-snap-align: start;
 }
 
-/* Prefetch Hints */
-.prefetch-critical {
-  prefetch: high;
-}
-
-.prefetch-important {
-  prefetch: medium;
-}
-
-.prefetch-low {
-  prefetch: low;
-}
+/* Prefetch Hints - Use HTML <link rel="prefetch"> in head instead of CSS */
 .admin-layout {
   display: flex;
   height: 100vh;

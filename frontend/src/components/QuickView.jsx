@@ -130,7 +130,7 @@ const QuickView = ({ product, isOpen, onClose }) => {
                       {product.images.map((img, index) => (
                         <div
                           key={index}
-                          className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 border-(--border)"
+                          className="w-20 h-20 rounded-lg overflow-hidden shrink-0 border-2 border-(--border)"
                         >
                           <LazyImage
                             src={getThumbnailUrl(img)}
