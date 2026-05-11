@@ -5,8 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useSettings } from "../context/SettingsContext";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  FiShoppingCart, FiMenu, FiX, FiLogOut,
+import { FiShoppingCart, FiMenu, FiX, FiLogOut,
   FiChevronDown, FiSettings, FiShoppingBag,
   FiSun, FiMoon, FiUser
 } from "react-icons/fi";

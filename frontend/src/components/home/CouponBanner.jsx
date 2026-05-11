@@ -55,6 +55,7 @@ export default function CouponBanner() {
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.35 }}
           className="w-full relative overflow-hidden z-[60]"
+          style={{ marginTop: 0 }}
         >
           <div className="relative overflow-hidden w-full" style={{ background: bg }}>
             {/* Progress bar (coupon only) */}
@@ -65,7 +66,7 @@ export default function CouponBanner() {
               />
             )}
 
-            <div className="py-2 px-4 flex items-center justify-center gap-2 sm:gap-3 text-sm font-semibold relative" style={{ color }}>
+            <div className="py-2 px-4 flex items-center justify-center gap-2 sm:gap-3 text-sm font-semibold relative" style={{ color, paddingTop: '4px', paddingBottom: '4px' }}>
               {!isAnnouncement && <FiTag size={13} className="flex-shrink-0 hidden sm:block" />}
 
               <span className="text-center text-xs sm:text-sm">

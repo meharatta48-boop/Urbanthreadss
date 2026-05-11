@@ -3,14 +3,48 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 import { SERVER_URL } from "../services/api";
-import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin, FiUser } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin, FiUser, FiMail, FiMessageSquare, FiSend } from "react-icons/fi";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function AboutUs() {
     const { settings } = useSettings();
+    const [showForm, setShowForm] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getUrl = (path) => resolveMediaUrl(path, SERVER_URL);
 
     if (!settings) return null;
+
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        
+        try {
+            // Simulate form submission - replace with actual API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            toast.success("Message sent successfully! We'll get back to you soon.");
+            setFormData({ name: '', email: '', message: '' });
+            setShowForm(false);
+        } catch (error) {
+            toast.error("Failed to send message. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const founders = [
         {
@@ -252,6 +286,141 @@ export default function AboutUs() {
                                     <p className="text-xl sm:text-2xl font-display font-bold">100% Cotton</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── CONTACT FORM SECTION ── */}
+            <section className="bg-(--bg-surface) py-16 sm:py-24 md:py-32">
+                <div className="container-custom px-4">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="text-center mb-12 sm:mb-16">
+                            <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
+                            <p className="text-(--text-secondary) text-lg sm:text-xl">Have questions? We'd love to hear from you.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
+                            {/* Contact Info */}
+                            <div className="space-y-8">
+                                <div>
+                                    <h3 className="text-(--text-primary) font-bold text-xl mb-4 flex items-center gap-3">
+                                        <FiMail className="text-(--gold)" /> Email Us
+                                    </h3>
+                                    <p className="text-(--text-muted) mb-2">Drop us a line anytime</p>
+                                    <a href={`mailto:${settings?.email || 'info@urbanthread.pk'}`} 
+                                       className="text-(--gold) hover:text-(--gold-light) transition-colors">
+                                        {settings?.email || 'info@urbanthread.pk'}
+                                    </a>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-(--text-primary) font-bold text-xl mb-4 flex items-center gap-3">
+                                        <FiMessageSquare className="text-(--gold)" /> WhatsApp
+                                    </h3>
+                                    <p className="text-(--text-muted) mb-2">Chat with us instantly</p>
+                                    <a href={`https://wa.me/${settings?.whatsapp || '923001234567'}`} 
+                                       target="_blank" rel="noopener noreferrer"
+                                       className="text-(--gold) hover:text-(--gold-light) transition-colors">
+                                        +{settings?.whatsapp || '923001234567'}
+                                    </a>
+                                </div>
+
+                                <div>
+                                    <h3 className="text-(--text-primary) font-bold text-xl mb-4 flex items-center gap-3">
+                                        <FiArrowRight className="text-(--gold)" /> Quick Response
+                                    </h3>
+                                    <p className="text-(--text-muted)">We typically respond within 24 hours during business days.</p>
+                                </div>
+                            </div>
+
+                            {/* Contact Form */}
+                            <motion.div
+                                initial={{ opacity: 0, x: 20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                className="bg-(--bg-card) rounded-2xl p-6 sm:p-8 border border-(--border) shadow-xl"
+                            >
+                                {!showForm ? (
+                                    <div className="text-center py-8">
+                                        <div className="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-6">
+                                            <FiMessageSquare size={32} className="text-black" />
+                                        </div>
+                                        <h3 className="text-(--text-primary) font-bold text-xl mb-3">Send us a message</h3>
+                                        <p className="text-(--text-muted) mb-6">Fill out our quick contact form and we'll get back to you.</p>
+                                        <button
+                                            onClick={() => setShowForm(true)}
+                                            className="btn-gold px-6 py-3 rounded-full inline-flex items-center gap-2"
+                                        >
+                                            <FiSend size={16} /> Open Contact Form
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleFormSubmit} className="space-y-6">
+                                        <div>
+                                            <label className="block text-(--text-primary) font-medium mb-2">Name *</label>
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
+                                                required
+                                                className="lux-input"
+                                                placeholder="Your full name"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-(--text-primary) font-medium mb-2">Email *</label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                required
+                                                className="lux-input"
+                                                placeholder="your@email.com"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-(--text-primary) font-medium mb-2">Message *</label>
+                                            <textarea
+                                                name="message"
+                                                value={formData.message}
+                                                onChange={handleInputChange}
+                                                required
+                                                rows="4"
+                                                className="lux-input resize-none"
+                                                placeholder="Tell us what's on your mind..."
+                                            />
+                                        </div>
+
+                                        <div className="flex gap-4">
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className="btn-gold flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isSubmitting ? (
+                                                    <>Sending...</>
+                                                ) : (
+                                                    <>
+                                                        <FiSend size={16} /> Send Message
+                                                    </>
+                                                )}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowForm(false)}
+                                                className="btn-outline"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+                            </motion.div>
                         </div>
                     </div>
                 </div>
