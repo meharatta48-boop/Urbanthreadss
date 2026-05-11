@@ -114,24 +114,20 @@ export default function Hero() {
         />
       </AnimatePresence>
 
-      {/* ── OVERLAYS ── */}
-      {/* Adaptive Overlays: Lighter/Gold-ish in light mode, Dark/Deep in dark mode */}
+      {/* Adaptive Overlays */}
       <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
         style={{
-          background: "var(--hero-overlay, linear-gradient(to right, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.1) 100%))",
-        }}
-      />
-      <div className="dark:block hidden absolute inset-0 pointer-events-none"
-        style={{
-          background: "linear-gradient(to right, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.7) 45%, rgba(5,5,5,0.15) 100%)",
+          background: isDark 
+            ? "linear-gradient(to right, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.7) 45%, rgba(5,5,5,0.15) 100%)"
+            : "linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 45%, rgba(255,255,255,0.2) 100%)",
         }}
       />
       
       {/* Bottom vignette */}
-      <div className="absolute inset-0 bg-linear-to-t from-(--bg-deep)/80 via-transparent to-(--bg-deep)/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-(--bg-deep) via-transparent to-transparent pointer-events-none" />
       
       {/* Mobile-only: slightly darken/lighten center so text is always readable */}
-      <div className="absolute inset-0 pointer-events-none sm:hidden bg-white/20 dark:bg-black/35" />
+      <div className="absolute inset-0 pointer-events-none sm:hidden bg-(--bg-deep)/10" />
 
       {/* ── CONTENT ── */}
       <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8  lg:px-10 lg:ml-10  flex items-center">
@@ -153,8 +149,8 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
               >
-                <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-[#c9a84c] border border-[#c9a84c]/25 px-3 py-1.5 rounded-full bg-[rgba(201,168,76,0.06)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#c9a84c] animate-pulse" />
+                <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] text-(--gold) border border-(--gold)/25 px-3 py-1.5 rounded-full bg-(--gold)/5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-(--gold) animate-pulse" />
                   {current.label}
                 </span>
               </motion.div>
@@ -196,11 +192,7 @@ export default function Hero() {
                 className="flex flex-wrap items-center gap-3 pt-2"
               >
                 <Link to="/shop"
-                  className="inline-flex items-center gap-2.5 font-bold text-sm sm:text-base text-black px-6 sm:px-8 py-3 sm:py-3.5 rounded-2xl transition-all hover:scale-105 hover:shadow-xl group"
-                  style={{
-                    background: "linear-gradient(135deg, #c9a84c 0%, #e8c56a 50%, #c9a84c 100%)",
-                    boxShadow: "0 4px 24px rgba(201,168,76,0.35)",
-                  }}
+                  className="inline-flex items-center gap-2.5 font-bold text-sm sm:text-base text-black px-6 sm:px-8 py-3 sm:py-3.5 rounded-2xl transition-all hover:scale-105 hover:shadow-xl group gold-gradient shadow-lg"
                 >
                   <FiShoppingBag size={16} className="transition-transform group-hover:-translate-y-0.5" />
                   {current.cta}
@@ -235,8 +227,9 @@ export default function Hero() {
                   width: i === idx ? 28 : 6,
                   height: 6,
                   background: i === idx
-                    ? "linear-gradient(90deg,#c9a84c,#e8c56a)"
-                    : "rgba(255,255,255,0.2)",
+                    ? "var(--gold)"
+                    : "var(--text-muted)",
+                  opacity: i === idx ? 1 : 0.3
                 }}
               />
             ))}

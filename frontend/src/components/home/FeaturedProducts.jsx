@@ -76,7 +76,7 @@ export default function FeaturedProducts() {
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}
                 />
                 {/* OVERLAY */}
-                <div className="absolute inset-0 bg-black/40 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-(--bg-deep)/40 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <button
                   onClick={(e) => { 
@@ -104,7 +104,7 @@ export default function FeaturedProducts() {
                     <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
                       -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
                     </span>
-                    <span className="bg-black/40 dark:bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
+                    <span className="bg-(--bg-card)/60 backdrop-blur-xs text-(--gold) px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest text-[7px] border border-(--gold)/20">
                       Sale
                     </span>
                   </div>

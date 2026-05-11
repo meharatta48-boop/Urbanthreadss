@@ -63,10 +63,10 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border ${scrolled ? 'shadow-lg shadow-black/5 border-(--glass-border)' : 'border-(--border-light) shadow-sm'}`}
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border ${scrolled ? 'shadow-lg shadow-(--shadow-color) border-(--nav-border) bg-(--nav-bg-scrolled)' : 'border-(--border-light) shadow-sm'}`}
             style={{
-              background: 'transparent',
               backdropFilter: scrolled ? 'blur(24px)' : 'none',
+              '--shadow-color': isDark ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.05)'
             }}
           >
             {/* ── LOGO ── */}

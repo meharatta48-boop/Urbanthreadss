@@ -174,7 +174,7 @@ export default function Shop() {
                     onMouseEnter={(e) => e.target.style.transform = "scale(1.08)"}
                     onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-black/70 dark:from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-linear-to-t from-(--bg-deep)/70 dark:from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <div className="absolute bottom-3 inset-x-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                     <button
@@ -212,7 +212,7 @@ export default function Shop() {
                       <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
                         -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
                       </span>
-                      <span className="bg-black/40 dark:bg-black/60 backdrop-blur-xs text-[7px] text-[#c9a84c] px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest">
+                      <span className="bg-(--bg-card)/60 backdrop-blur-xs text-(--gold) px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest text-[7px] border border-(--gold)/20">
                         Sale
                       </span>
                     </div>

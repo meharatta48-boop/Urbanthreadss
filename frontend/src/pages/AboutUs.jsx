@@ -40,8 +40,8 @@ export default function AboutUs() {
                                 className="w-full h-full object-cover object-center scale-105"
                             />
                         </div>
-                        {/* Adaptive Overlay: Lighter/Gold-ish in light mode, Dark/Deep in dark mode */}
-                        <div className="absolute inset-0 z-0 bg-linear-to-b from-white/40 via-white/20 to-(--bg-deep) dark:from-black/80 dark:via-black/50 dark:to-(--bg-deep)" />
+                        {/* Adaptive Overlay */}
+                        <div className="absolute inset-0 z-0 bg-linear-to-b from-(--bg-deep)/40 via-(--bg-deep)/20 to-(--bg-deep)" />
                     </>
                 ) : (
                     <div className="absolute inset-0 z-0 bg-linear-to-br from-(--bg-surface) to-(--bg-deep)" />
@@ -239,10 +239,10 @@ export default function AboutUs() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="bg-linear-to-br from-(--bg-card) to-(--bg-deep) dark:from-[#0f0f0f] dark:to-[#050505] rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] py-12 sm:py-16 md:py-20 px-4 sm:px-8 border border-(--border) dark:border-[#1a1a1a] shadow-2xl"
+                    className="bg-linear-to-br from-(--bg-card) to-(--bg-deep) rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] py-12 sm:py-16 md:py-20 px-4 sm:px-8 border border-(--border) shadow-2xl"
                 >
-                    <h2 className="text-(--text-primary) dark:text-white font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">Ready to define your style?</h2>
-                    <Link to="/shop" className="btn-gold px-6 sm:px-8 md:px-12! py-3 sm:py-4 md:py-5! text-sm sm:text-base md:text-lg! rounded-full! shadow-2xl shadow-(--gold)/30 inline-flex items-center gap-2">
+                    <h2 className="text-(--text-primary) font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">Ready to define your style?</h2>
+                    <Link to="/shop" className="btn-gold px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg rounded-full shadow-2xl shadow-(--gold)/30 inline-flex items-center gap-2">
                         Shop the Collection <FiArrowRight size={16} className="sm:w-5" />
                     </Link>
                 </motion.div>
