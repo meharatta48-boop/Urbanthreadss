@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { resolveMediaUrl } from "../utils/mediaUrl";
 import { SERVER_URL } from "../services/api";
-import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiUser } from "react-icons/fi";
+import { FiArrowRight, FiCheckCircle, FiInstagram, FiUser } from "react-icons/fi";
 import BrandStory from "../components/home/BrandStory";
 
 export default function AboutUs() {
@@ -119,9 +119,6 @@ export default function AboutUs() {
                                     <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex gap-2 sm:gap-3 translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
                                         <button className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
                                             <FiInstagram size={16} className="sm:w-4.5" />
-                                        </button>
-                                        <button className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
-                                            <FiTwitter size={16} className="sm:w-4.5" />
                                         </button>
                                     </div>
                                 </div>
