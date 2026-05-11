@@ -115,19 +115,19 @@ export default function ThemeInjector() {
         --gold-dark: ${themeGoldDark};
 
         /* ── Admin-set backgrounds (light theme base) ── */
-        --bg-deep:     ${themeBgDeep};
-        --bg-surface:  ${themeBgSurface};
-        --bg-card:     ${themeBgCard};
-        --bg-elevated: ${themeBgElevated};
+        --bg-deep:     ${themeBgDeep || "#ffffff"};
+        --bg-surface:  ${themeBgSurface || "#f8f9fa"};
+        --bg-card:     ${themeBgCard || "#ffffff"};
+        --bg-elevated: ${themeBgElevated || "#fcfcfc"};
 
         /* ── Admin-set borders ── */
-        --border:       ${themeBorder};
-        --border-light: ${themeBorderLight};
+        --border:       ${themeBorder || "#efeff1"};
+        --border-light: ${themeBorderLight || "#e2e4e8"};
 
-        /* ── Admin-set text ── */
-        --text-primary:   ${themeTextPrimary};
-        --text-secondary: ${themeTextSecondary};
-        --text-muted:     ${themeTextMuted};
+        /* ── Admin-set text (Force dark for light theme) ── */
+        --text-primary:   ${themeTextPrimary === "#ffffff" ? "#0f1115" : (themeTextPrimary || "#0f1115")};
+        --text-secondary: ${themeTextSecondary === "#a1a1aa" ? "#42464d" : (themeTextSecondary || "#42464d")};
+        --text-muted:     ${themeTextMuted === "#52525b" ? "#71767b" : (themeTextMuted || "#71767b")};
 
         /* ── Glass (derived from admin bg) ── */
         --glass-bg:     ${themeBgCard}cc;

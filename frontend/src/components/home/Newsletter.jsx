@@ -16,7 +16,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="py-20 sm:py-32 px-4 sm:px-6 bg-(--bg-surface) transition-colors duration-500 overflow-hidden relative">
+    <section className="py-20 sm:py-32 px-4 sm:px-6 bg-(--bg-deep) transition-colors duration-500 overflow-hidden relative">
       {/* Decorative Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-100 bg-(--gold)/5 blur-[120px] rounded-full pointer-events-none" />
 

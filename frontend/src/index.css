@@ -18,7 +18,7 @@
 
   /* Light backgrounds - Refined for Contrast & Depth */
   --bg-deep:     #ffffff;
-  --bg-surface:  #f8f9fa; /* Slightly more distinct off-white */
+  --bg-surface:  #f8f9fa !important; /* Force light surface in light mode */
   --bg-card:     #ffffff;
   --bg-elevated: #fcfcfc;
 
