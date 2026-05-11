@@ -188,7 +188,7 @@ export default function CategoryList() {
           />
 
           {/* Name + Add button */}
-          <div className="flex-1 space-y-3 min-w-[200px]">
+          <div className="flex-1 space-y-3 min-w-50">
             <div className="flex gap-3">
               <input
                 className="lux-input flex-1"
@@ -200,7 +200,7 @@ export default function CategoryList() {
               <button
                 onClick={() => handleAdd()}
                 disabled={!name.trim() || adding}
-                className="btn-gold flex-shrink-0"
+                className="btn-gold shrink-0"
                 style={{ padding: "14px 24px" }}
               >
                 {adding ? (
@@ -284,7 +284,7 @@ export default function CategoryList() {
                           label="Image"
                         />
                         {/* Edit name */}
-                        <div className="flex-1 min-w-[180px] space-y-2">
+                        <div className="flex-1 min-w-45 space-y-2">
                           <input
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
@@ -330,7 +330,7 @@ export default function CategoryList() {
                       <div className="flex items-center gap-3">
                         {/* Image or avatar */}
                         {c.image ? (
-                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-(--border) flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-(--border) shrink-0">
                             <img
                               src={getImageUrl(c.image)}
                               alt={c.name}
@@ -339,7 +339,7 @@ export default function CategoryList() {
                             />
                           </div>
                         ) : (
-                          <div className="w-11 h-11 rounded-xl bg-(--gold)/5 border border-(--gold)/20 flex items-center justify-center text-(--gold) text-sm font-bold flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl bg-(--gold)/5 border border-(--gold)/20 flex items-center justify-center text-(--gold) text-sm font-bold shrink-0">
                             {c.name?.charAt(0)?.toUpperCase()}
                           </div>
                         )}

@@ -5,6 +5,7 @@ import {
   FiArrowRight, FiShoppingBag, FiPlay
 } from "react-icons/fi";
 import { useSettings } from "../../context/SettingsContext";
+import { useTheme } from "../../context/ThemeContext";
 import fallbackImg from "../../assets/images/slider1.jpg";
 
 import { SERVER_URL } from "../../services/api";
@@ -20,6 +21,8 @@ const shouldReduceMotion = () => {
 
 export default function Hero() {
   const { settings } = useSettings();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const brandName = settings?.brandName || "URBAN THREAD";
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);

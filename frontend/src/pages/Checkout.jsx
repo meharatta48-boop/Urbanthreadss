@@ -10,7 +10,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 import { Link } from "react-router-dom";
-import api, { SERVER_URL } from "../services/api";
+import { SERVER_URL } from "../services/api";
 import { getCartImageUrl } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 import { metaTracker } from "../utils/metaTracking";
@@ -96,7 +96,7 @@ export default function Checkout() {
   });
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(form)); } catch {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(form)); } catch (err) { console.error("Storage error:", err); }
   }, [form]);
 
   if (!cart.length) { navigate("/cart"); return null; }
@@ -106,9 +106,10 @@ export default function Checkout() {
   const total    = subtotal + DELIVERY - discount;
 
   useEffect(() => {
-    if (!cart.length) return;
-    metaTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
-  }, []);
+    if (cart.length > 0) {
+      metaTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
+    }
+  }, [cart, subtotal, DELIVERY]);
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
@@ -178,7 +179,7 @@ export default function Checkout() {
       const data = await res.json();
       if (data.success) {
         clearCart();
-        try { localStorage.removeItem(STORAGE_KEY); } catch {}
+        try { localStorage.removeItem(STORAGE_KEY); } catch (err) { console.error("Remove storage error:", err); }
         toast.success("🎉 Order place ho gaya! Jald delivery hogi.");
         navigate("/order-success", {
           replace: true,
@@ -385,7 +386,7 @@ export default function Checkout() {
               <div className="space-y-3 mb-4 max-h-52 overflow-y-auto pr-1">
                 {cart.map((item) => (
                   <div key={item.cartId} className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+                    <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
                       <LazyImage
                         src={getCartImageUrl(item.images?.[0] || item.image)}
                         alt={item.name}

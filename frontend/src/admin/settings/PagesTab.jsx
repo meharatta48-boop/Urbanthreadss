@@ -102,7 +102,7 @@ export default function PagesTab() {
           {pages.map(page => (
             <div key={page._id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-(--bg-card) border border-(--border) shadow-sm"
               style={{ opacity: page.isVisible ? 1 : 0.45 }}>
-              <FiFileText size={16} className="text-(--gold) flex-shrink-0" />
+              <FiFileText size={16} className="text-(--gold) shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-(--text-primary) text-sm font-medium">{page.title}
                   {page.showInNav && <span className="ml-2 text-[9px] bg-(--gold)/10 text-(--gold) px-1.5 py-0.5 rounded border border-(--gold)/20">NAV</span>}

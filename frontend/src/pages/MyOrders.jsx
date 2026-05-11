@@ -23,7 +23,7 @@ const STATUS = {
 const STEPS = ["pending", "processing", "shipped", "delivered"];
 
 export default function MyOrders() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [orders, setOrders]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
@@ -121,7 +121,7 @@ export default function MyOrders() {
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                         style={{ background: status.bg, border: `1px solid ${status.border}` }}
                       >
                         <status.Icon size={18} style={{ color: status.color }} />
@@ -193,7 +193,7 @@ export default function MyOrders() {
                                       >
                                         <s.Icon size={13} color={done || active ? "#000" : "var(--text-muted)"} />
                                       </div>
-                                      <span className="text-[9px] text-center leading-tight max-w-[52px]"
+                                      <span className="text-[9px] text-center leading-tight max-w-13"
                                         style={{ color: done || active ? "var(--text-primary)" : "var(--text-muted)", fontWeight: done || active ? 600 : 400 }}>
                                         {s.label}
                                       </span>
@@ -227,7 +227,7 @@ export default function MyOrders() {
                                 <div key={j} className="flex items-center justify-between rounded-xl px-4 py-3"
                                   style={{ background: "var(--bg-elevated)" }}>
                                   <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
                                       style={{ background: "var(--bg-card)", color: "var(--text-muted)" }}>
                                       <FiPackage size={14} />
                                     </div>

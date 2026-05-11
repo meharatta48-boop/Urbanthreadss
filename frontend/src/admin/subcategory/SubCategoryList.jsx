@@ -218,7 +218,7 @@ export default function SubCategoryList() {
             onRemove={() => setImageFile(null)}
             label="Sub-Category Image (optional)"
           />
-          <div className="flex-1 min-w-[180px] space-y-3">
+          <div className="flex-1 min-w-45 space-y-3">
             <div className="flex gap-3">
               <input
                 className="lux-input flex-1"
@@ -230,7 +230,7 @@ export default function SubCategoryList() {
               <button
                 onClick={() => handleSubmit()}
                 disabled={adding || !name.trim() || !category}
-                className="btn-gold flex-shrink-0 disabled:opacity-50"
+                className="btn-gold shrink-0 disabled:opacity-50"
                 style={{ padding: "14px 20px" }}
               >
                 {adding ? (
@@ -347,7 +347,7 @@ export default function SubCategoryList() {
                           onRemove={() => { setEditImageFile(null); setEditRemoveImage(true); }}
                           label="Image"
                         />
-                        <div className="flex-1 min-w-[160px] space-y-2">
+                        <div className="flex-1 min-w-40 space-y-2">
                           <input
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
@@ -391,7 +391,7 @@ export default function SubCategoryList() {
                       <div className="flex items-center gap-3">
                         {/* Image or avatar */}
                         {sc.image ? (
-                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-(--border) flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl overflow-hidden border border-(--border) shrink-0">
                             <img
                               src={`${API_BASE}${sc.image}`}
                               alt={sc.name}
@@ -400,7 +400,7 @@ export default function SubCategoryList() {
                             />
                           </div>
                         ) : (
-                          <div className="w-11 h-11 rounded-xl bg-(--gold)/5 border border-(--gold)/20 flex items-center justify-center text-(--gold) text-sm font-bold flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl bg-(--gold)/5 border border-(--gold)/20 flex items-center justify-center text-(--gold) text-sm font-bold shrink-0">
                             {sc.name?.charAt(0)?.toUpperCase()}
                           </div>
                         )}

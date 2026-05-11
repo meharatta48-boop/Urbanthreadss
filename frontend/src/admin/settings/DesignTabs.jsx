@@ -24,7 +24,7 @@ function ColorRow({ label, field, form, set, hint }) {
     <div className="flex items-center gap-3 bg-(--bg-card) border border-(--border) rounded-xl p-3 shadow-sm">
       <input type="color" value={form[field] || "#000000"}
         onChange={(e) => set(field, e.target.value)}
-        className="w-10 h-10 rounded-lg cursor-pointer flex-shrink-0" style={{ padding: 0, border: 0 }} />
+        className="w-10 h-10 rounded-lg cursor-pointer shrink-0" style={{ padding: 0, border: 0 }} />
       <div className="flex-1 min-w-0">
         <p className="text-(--text-primary) text-sm font-medium">{label}</p>
         {hint && <p className="text-(--text-muted) text-xs">{hint}</p>}
@@ -158,7 +158,7 @@ function Toggle({ label, field, form, set, desc }) {
         {desc && <p className="text-(--text-muted) text-xs mt-0.5">{desc}</p>}
       </div>
       <button onClick={() => set(field, !val)}
-        className="w-12 h-6 rounded-full transition-all relative flex-shrink-0"
+        className="w-12 h-6 rounded-full transition-all relative shrink-0"
         style={{ background: val ? (form.themeGold || "#c9a84c") : "var(--bg-elevated)" }}>
         <span className="absolute top-0.5 w-5 h-5 rounded-full transition-all shadow-sm"
           style={{ left: val ? "calc(100% - 22px)" : 2, background: val ? "#000" : "var(--text-muted)" }} />
@@ -552,7 +552,7 @@ function IconToggle({ label, field, form, set, desc }) {
         {desc && <p className="text-(--text-muted) text-xs">{desc}</p>}
       </div>
       <button onClick={() => set(field, !val)}
-        className="w-11 h-6 rounded-full transition-all relative flex-shrink-0 shadow-inner"
+        className="w-11 h-6 rounded-full transition-all relative shrink-0 shadow-inner"
         style={{ background: val ? accent : "var(--bg-elevated)" }}>
         <span className="absolute top-0.5 w-5 h-5 rounded-full transition-all shadow-sm"
           style={{ left: val ? "calc(100% - 22px)" : 2, background: val ? "#000" : "var(--text-muted)" }} />
