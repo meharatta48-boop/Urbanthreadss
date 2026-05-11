@@ -76,12 +76,12 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'} overflow-hidden`}
+        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'} nav-overflow-hidden`}
         style={{ backgroundColor: 'var(--bg-deep)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 nav-overflow-hidden">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border overflow-hidden`}
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border nav-overflow-hidden`}
             style={{
               backgroundColor: 'var(--nav-bg-scrolled)',
               borderColor: 'var(--nav-border)',
@@ -89,11 +89,11 @@ export default function Navbar() {
               backdropFilter: scrolled ? 'blur(24px)' : 'none'
             }}
           >
-            {/* ── LOGO ── */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0 group">
+            {/* LOGO */}
+            <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0 group hover-lift">
               {/* Desktop logo */}
-              <div className="hidden sm:flex shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm"
-                style={{ width: navLogoSize, height: navLogoSize }}>
+              <div className="hidden sm:flex shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm hover-glow"
+                style={{ width: navLogoSize, height: navLogoSize, minWidth: navLogoSize, minHeight: navLogoSize }}>
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-300"
                   style={{ opacity: logoImg ? 0 : 1, pointerEvents: "none" }}>
                   <span className="gold-text font-bold font-display leading-none"
@@ -109,8 +109,8 @@ export default function Navbar() {
               </div>
 
               {/* Mobile logo */}
-              <div className="flex sm:hidden shrink-0 rounded-xl overflow-hidden items-center justify-center relative shadow-sm"
-                style={{ width: navMobileSize, height: navMobileSize }}>
+              <div className="flex sm:hidden shrink-0 rounded-xl overflow-hidden items-center justify-center relative shadow-sm hover-glow"
+                style={{ width: navMobileSize, height: navMobileSize, minWidth: navMobileSize, minHeight: navMobileSize }}>
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-300"
                   style={{ opacity: logoMobileImg ? 0 : 1, pointerEvents: "none" }}>
                   <span className="gold-text font-bold font-display leading-none"
@@ -139,8 +139,8 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* ── DESKTOP NAV LINKS ── */}
-            <div className="hidden md:flex items-center gap-1.5 overflow-hidden"
+            {/* DESKTOP NAV LINKS */}
+            <div className="hidden md:flex items-center gap-1.5"
               style={{
                 backgroundColor: 'var(--bg-elevated)',
                 padding: '6px',
@@ -152,9 +152,14 @@ export default function Navbar() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group overflow-hidden"
+                  className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group overflow-hidden hover-lift magnetic"
                   style={{
                     color: isActive(link.to) ? "#000000" : "var(--text-secondary)",
+                    minWidth: '44px',
+                    minHeight: '44px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                 >
                   {isActive(link.to) && (
@@ -172,17 +177,22 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* ── RIGHT ACTIONS ── */}
+            {/* RIGHT ACTIONS */}
             <div className="flex items-center gap-2 sm:gap-3">
 
               {/* CART */}
               <Link
                 to="/cart"
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden"
+                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden hover-lift btn-3d"
                 style={{
                   backgroundColor: 'var(--bg-elevated)',
                   border: '1px solid var(--border-light)',
                   color: 'var(--text-secondary)',
+                  width: '44px',
+                  height: '44px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = 'var(--gold)';
@@ -378,8 +388,15 @@ export default function Navbar() {
               {/* MOBILE: Hamburger */}
               <button
                 onClick={() => setOpen(!open)}
-                className="md:hidden p-2.5 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) hover:border-(--gold) hover:text-(--gold)"
-                style={{ color: "var(--text-secondary)" }}
+                className="md:hidden p-2.5 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) hover:border-(--gold) hover:text-(--gold) hover-lift btn-3d ripple"
+                style={{ 
+                  color: "var(--text-secondary)",
+                  width: '44px',
+                  height: '44px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
                 <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
                   {open ? <FiX size={18} /> : <FiMenu size={18} />}
@@ -411,7 +428,7 @@ export default function Navbar() {
               animate={{ x: 0, borderTopLeftRadius: "24px", borderBottomLeftRadius: "24px" }}
               exit={{ x: "100%", borderTopLeftRadius: "100px", borderBottomLeftRadius: "100px" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-2 bottom-2 right-2 w-[85vw] max-w-85 z-70 md:hidden shadow-2xl glass-card overflow-hidden flex flex-col"
+              className="fixed top-2 bottom-2 right-2 w-[85vw] max-w-85 z-70 md:hidden shadow-2xl glass-card overflow-hidden flex flex-col drawer-overflow-hidden"
               style={{
                 background: "var(--drawer-bg)",
                 border: "1px solid var(--drawer-border)",
@@ -431,8 +448,17 @@ export default function Navbar() {
                   </div>
                   <span className="font-display font-bold text-base tracking-wider" style={{ color: "var(--text-primary)" }}>{brandName}</span>
                 </div>
-                <button onClick={() => setOpen(false)}
-                  className="p-2 rounded-full bg-(--bg-elevated) border border-(--border-light) hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all">
+                <button 
+                  onClick={() => setOpen(false)}
+                  className="p-2 rounded-full bg-(--bg-elevated) border border-(--border-light) hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all"
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
                   <FiX size={18} />
                 </button>
               </div>
@@ -446,6 +472,7 @@ export default function Navbar() {
                     className="flex items-center py-4 px-5 rounded-2xl text-base font-bold transition-all relative overflow-hidden group"
                     style={{
                       color: isActive(link.to) ? "var(--bg-deep)" : "var(--text-secondary)",
+                      minHeight: '44px'
                     }}
                   >
                     {isActive(link.to) ? (

@@ -203,185 +203,157 @@ export default function Checkout() {
   const cities = form.province ? (pakistanData[form.province] || []) : [];
 
   return (
-    <div className="min-h-screen overflow-hidden py-8 sm:py-14 px-4 sm:px-6 pt-24 sm:pt-28" style={{ backgroundColor: "var(--bg-deep)" }}>
-      <div className="max-w-6xl mx-auto overflow-hidden">
-
-        {/* HEADER */}
-        <div className="mb-8 overflow-hidden">
-          <p className="section-label mb-1">Last Step</p>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>Checkout</h1>
-          {/* Guest notice */}
-          {!user && (
-            <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>
-              Guest ke tor par order kar rahe hain —{" "}
-              <Link to="/login" className="hover:underline" style={{ color: "var(--gold)" }}>Login karo</Link>
-              {" "}ya{" "}
-              <Link to="/signup" className="hover:underline" style={{ color: "var(--gold)" }}>Sign Up karo</Link>
-              {" "}orders track karne ke liye
-            </p>
-          )}
+    <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6" style={{ backgroundColor: 'var(--bg-deep)' }}>
+      <div className="max-w-6xl mx-auto">
+        {/* PAGE HEADER */}
+        <div className="text-center mb-8 sm:mb-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <p className="section-label mb-2">Final Step</p>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+              Secure <span className="gold-text">Checkout</span>
+            </h1>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 overflow-hidden">
-
-          {/* ═══ FORMS ═══ */}
-          <div className="lg:col-span-2 space-y-5 overflow-hidden">
-
-            {/* SHIPPING FORM */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl p-5 sm:p-7 overflow-hidden"
-              style={{ backgroundColor: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-              <h2 className="font-semibold text-lg mb-5 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
-                <FiMapPin style={{ color: "var(--gold)" }} /> Delivery Details
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                {/* NAME */}
-                <div className="relative">
-                  <FiUser className="absolute left-4 top-1/2 -translate-y-1/2" size={14} style={{ color: "var(--text-muted)" }} />
-                  <input
-                    placeholder="Apna Pura Naam"
-                    className="lux-input"
-                    style={{ paddingLeft: "40px" }}
-                    value={form.name}
-                    onChange={(e) => set("name", e.target.value)}
-                  />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* MAIN FORM */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="checkout-form">
+              {/* SHIPPING INFORMATION */}
+              <div className="checkout-section">
+                <div className="checkout-section-title">
+                  <div className="checkout-section-icon">
+                    <FiMapPin size={20} />
+                  </div>
+                  <span>Shipping Information</span>
                 </div>
-
-                {/* PHONE */}
-                <div className="relative">
-                  <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2" size={14} style={{ color: "var(--text-muted)" }} />
-                  <input
-                    placeholder="03001234567"
-                    className="lux-input"
-                    style={{ paddingLeft: "40px" }}
-                    value={form.phone}
-                    onChange={(e) => set("phone", e.target.value)}
-                    maxLength={13}
-                  />
-                </div>
-
-                {/* EMAIL — optional for guest */}
-                {!user && (
-                  <div className="relative sm:col-span-2">
-                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2" size={14} style={{ color: "var(--text-muted)" }} />
+                
+                <div className="checkout-form-grid">
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Full Name</label>
                     <input
-                      placeholder="Email (optional — order updates ke liye)"
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
                       className="lux-input"
-                      style={{ paddingLeft: "40px" }}
-                      value={form.email}
-                      onChange={(e) => set("email", e.target.value)}
-                      type="email"
+                      placeholder="Enter your full name"
                     />
                   </div>
-                )}
-
-                {/* PROVINCE */}
-                <select
-                  className="lux-select"
-                  value={form.province}
-                  onChange={(e) => setForm((f) => ({ ...f, province: e.target.value, city: "" }))}
-                >
-                  <option value="">-- Province / State --</option>
-                  {Object.keys(pakistanData).map((p) => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </select>
-
-                {/* CITY */}
-                <select
-                  className="lux-select"
-                  value={form.city}
-                  disabled={!form.province}
-                  onChange={(e) => set("city", e.target.value)}
-                >
-                  <option value="">
-                    {!form.province ? "Pehle province choose karo" : "-- Sheher / City --"}
-                  </option>
-                  {cities.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-
-                {/* ADDRESS */}
-                <div className="sm:col-span-2">
-                  <input
-                    placeholder="Ghar ka pura address — mohalla, gali, makan number"
-                    className="lux-input"
-                    value={form.address}
-                    onChange={(e) => set("address", e.target.value)}
-                  />
-                </div>
-
-                {/* POSTAL */}
-                <input
-                  placeholder="Postal Code (Optional)"
-                  className="lux-input"
-                  value={form.postalCode}
-                  onChange={(e) => set("postalCode", e.target.value)}
-                  maxLength={6}
-                />
-
-                {/* NOTE */}
-                <div className="sm:col-span-2 rounded-xl p-3 text-xs" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
-                  📦 Delivery: <span className="font-semibold" style={{ color: "var(--gold)" }}>Rs. {DELIVERY}</span> &nbsp;|&nbsp;
-                  🚚 COD available poore Pakistan mein &nbsp;|&nbsp;
-                  ⏱️ 2-5 business days
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      required
+                      className="lux-input"
+                      placeholder="03xx-xxxxxxx"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      required
+                      className="lux-input"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Postal Code</label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      value={form.postalCode}
+                      onChange={handleChange}
+                      className="lux-input"
+                      placeholder="00000"
+                    />
+                  </div>
+                  
+                  <div className="lg:col-span-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Complete Address</label>
+                    <textarea
+                      name="address"
+                      value={form.address}
+                      onChange={handleChange}
+                      required
+                      rows={3}
+                      className="lux-input"
+                      placeholder="Enter your complete address"
+                    />
+                  </div>
                 </div>
               </div>
-            </motion.div>
 
-            {/* PAYMENT */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="rounded-2xl p-5 sm:p-7"
-              style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-              <h2 className="font-semibold text-lg mb-5 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
-                <FiCreditCard style={{ color: "var(--gold)" }} /> Payment Method
-              </h2>
-
-              <div className="space-y-3">
-                {[
-                  { id: "COD", icon: <FiTruck />, title: "Cash on Delivery (COD)", desc: "Ghar par milne par payment karo — bilkul safe", available: true },
-                  { id: "Card", icon: <FiCreditCard />, title: "Credit / Debit Card", desc: "Coming soon — jald available hoga", available: false },
-                ].map((opt) => (
-                  <label
-                    key={opt.id}
-                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
-                      paymentMethod === opt.id
-                        ? "border-(--gold)/50 bg-(--gold)/5"
-                        : ""
-                    } ${!opt.available ? "opacity-40 cursor-not-allowed" : ""}`}
-                    style={paymentMethod !== opt.id ? { border: "1px solid var(--border)" } : {}}>
-                    <input type="radio" name="payment" value={opt.id} checked={paymentMethod === opt.id}
-                      disabled={!opt.available} onChange={() => opt.available && setPaymentMethod(opt.id)} className="hidden" />
-                    <div className={`w-10 h-10 rounded-lg border flex items-center justify-center ${
-                      paymentMethod === opt.id ? "border-(--gold) text-(--gold) bg-(--gold)/10" : ""
-                    }`} style={paymentMethod !== opt.id ? { border: "1px solid var(--border)", color: "var(--text-muted)" } : {}}>
-                      {paymentMethod === opt.id ? <FiCheck /> : opt.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>{opt.title}</div>
-                      <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{opt.desc}</div>
-                    </div>
-                    {opt.id === "COD" && <span className="text-xs gold-gradient text-black px-2 py-0.5 rounded font-bold">Recommended</span>}
-                  </label>
-                ))}
+              {/* PAYMENT METHOD */}
+              <div className="checkout-section">
+                <div className="checkout-section-title">
+                  <div className="checkout-section-icon">
+                    <FiCreditCard size={20} />
+                  </div>
+                  <span>Payment Method</span>
+                </div>
+                
+                <div className="checkout-payment-methods">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("COD")}
+                    className={`checkout-payment-method ${paymentMethod === "COD" ? "active" : ""}`}
+                  >
+                    <FiTruck size={20} className="mb-2" />
+                    Cash on Delivery
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("BANK")}
+                    className={`checkout-payment-method ${paymentMethod === "BANK" ? "active" : ""}`}
+                  >
+                    <FiCreditCard size={20} className="mb-2" />
+                    Bank Transfer
+                  </button>
+                </div>
               </div>
-            </motion.div>
+
+              {/* SUBMIT BUTTON */}
+              <div className="pt-6">
+                <button
+                  type="submit"
+                  disabled={loading || cart.length === 0}
+                  className="btn-gold w-full animate-slide-up"
+                  style={{ padding: "18px 24px", fontSize: "1.1rem" }}
+                >
+                  {loading ? (
+                    <>
+                      <FiLoader className="animate-spin" size={20} />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <FiCheck size={20} />
+                      Place Order • Rs. {total.toLocaleString()}
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
 
-          {/* ═══ ORDER SUMMARY ═══ */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-          >
-            <div className="rounded-2xl p-5 sm:p-6 sticky top-24" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-              <h2 className="font-display text-xl font-bold mb-5" style={{ color: "var(--text-primary)" }}>Order Summary</h2>
-
+          {/* ORDER SUMMARY */}
+          <div className="lg:col-span-1">
+            <div className="cart-summary">
+              <h3 className="text-xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Order Summary</h3>
+              
               {/* CART ITEMS */}
               <div className="space-y-3 mb-4 max-h-52 overflow-y-auto pr-1">
                 {cart.map((item) => (
@@ -407,11 +379,11 @@ export default function Checkout() {
                 ))}
               </div>
 
-              {/* COUPON — Only for logged-in users */}
+              {/* COUPON */}
               {user ? (
                 <div className="flex gap-2 mb-4">
                   <div className="relative flex-1">
-                    <FiTag className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" size={12} />
+                    <FiTag className="absolute left-3 top-1/2 -translate-y-1/2" size={12} style={{ color: "var(--text-muted)" }} />
                     <input
                       placeholder="Coupon code"
                       value={coupon}
@@ -425,63 +397,48 @@ export default function Checkout() {
                   <button
                     onClick={applyCoupon}
                     disabled={!coupon.trim() || couponApplied}
-                    className={`text-xs font-semibold px-4 rounded-xl border transition-all disabled:opacity-40 ${
-                      couponApplied ? "gold-gradient text-black border-transparent" : "border-(--gold)/30 text-(--gold) hover:bg-(--gold)/8"
-                    }`}
-                    style={{ padding: "10px 14px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
+                    className="btn-outline text-xs px-4"
                   >
-                    {couponApplied ? <FiCheck size={14} /> : "Apply"}
+                    Apply
                   </button>
                 </div>
-              ) : (
-                <div className="mb-4 p-3 rounded-xl text-xs text-center" style={{ background: "rgba(201, 168, 76, 0.1)", border: "1px solid rgba(201, 168, 76, 0.3)", color: "var(--text-muted)" }}>
-                  <Link to="/login" className="font-semibold hover:underline" style={{ color: "var(--gold)" }}>Login</Link> ya <Link to="/signup" className="font-semibold hover:underline" style={{ color: "var(--gold)" }}>Sign Up</Link> karke coupon apply karo
+              ) : null}
+
+              {/* SUMMARY ROWS */}
+              <div className="cart-summary-row">
+                <span className="cart-summary-label">Subtotal</span>
+                <span className="cart-summary-value">Rs. {subtotal.toLocaleString()}</span>
+              </div>
+              
+              {couponApplied && (
+                <div className="cart-summary-row">
+                  <span className="cart-summary-label">Discount</span>
+                  <span className="cart-summary-value" style={{ color: "#10b981" }}>-Rs. {COUPON_DISCOUNT}</span>
                 </div>
               )}
-
-              {/* PRICE BREAKDOWN */}
-              <div className="pt-4 space-y-2.5 text-sm" style={{ borderTop: "1px solid var(--border)" }}>
-                <div className="flex justify-between" style={{ color: "var(--text-secondary)" }}>
-                  <span>Items Subtotal</span>
-                  <span>Rs. {subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between" style={{ color: "var(--text-secondary)" }}>
-                  <span>Delivery Charges</span>
-                  <span>Rs. {DELIVERY}</span>
-                </div>
-                {couponApplied && (
-                  <div className="flex justify-between text-green-400">
-                    <span>Coupon ({COUPON_CODE})</span>
-                    <span>- Rs. {COUPON_DISCOUNT.toLocaleString()}</span>
-                  </div>
-                )}
+              
+              <div className="cart-summary-row">
+                <span className="cart-summary-label">Delivery</span>
+                <span className="cart-summary-value">Rs. {DELIVERY.toLocaleString()}</span>
               </div>
-
-              <div className="my-4" style={{ borderTop: "1px solid var(--border)" }} />
-              <div className="flex justify-between items-center mb-5">
-                <span className="font-semibold" style={{ color: "var(--text-primary)" }}>Total Payable</span>
-                <span className="gold-text font-display text-2xl font-bold">Rs. {total.toLocaleString()}</span>
+              
+              <div className="cart-summary-row cart-summary-total">
+                <span className="cart-summary-label">Total</span>
+                <span className="cart-summary-value">Rs. {total.toLocaleString()}</span>
               </div>
-
-              <button
-                onClick={placeOrder}
-                disabled={loading}
-                className="btn-gold w-full disabled:opacity-60"
-                style={{ width: "100%", padding: "16px" }}
-              >
-                {loading ? (
-                  <span className="flex items-center gap-2 justify-center">
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                    Order ho raha hai...
-                  </span>
-                ) : (
-                  <>Confirm Order <FiArrowRight /></>
-                )}
-              </button>
-
-              <p className="text-center text-xs mt-3" style={{ color: "var(--text-muted)" }}>🔒 Secure &amp; Safe Checkout</p>
+              
+              <div className="mt-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-xs text-(--text-muted) mb-2">
+                  <FiTruck size={12} />
+                  <span>2-5 business days delivery</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-xs text-(--text-muted)">
+                  <FiShield size={12} />
+                  <span>Secure payment guaranteed</span>
+                </div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

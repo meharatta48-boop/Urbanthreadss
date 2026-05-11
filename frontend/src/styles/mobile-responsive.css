@@ -3,6 +3,30 @@
    Focus: Touch targets, text scaling, spacing consistency
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── RESPONSIVE DESIGN SYSTEM ── */
+:root {
+  --breakpoint-xs: 375px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  
+  /* Touch targets */
+  --touch-target-min: 44px;
+  --touch-target-icon: 32px;
+}
+
 /* ── ULTRA SMALL DEVICES (< 375px) ── */
 @media (max-width: 374px) {
   /* Reduce padding on very narrow screens */
@@ -299,30 +323,25 @@
     padding-right: 36px;
   }
 
-  /* Comprehensive overflow handling for mobile */
-  * {
-    overflow-x: hidden !important;
-  }
-  
-  body {
-    overflow-x: hidden !important;
-    overflow-y: auto;
-  }
-  
-  .container, .container-custom, section, main, aside, nav, header, footer {
-    overflow-x: hidden !important;
-    max-width: 100%;
-  }
-  
-  .flex, .grid, .row {
-    overflow-x: hidden !important;
-  }
-  
-  img {
-    max-width: 100%;
-    height: auto;
-    overflow: hidden;
-  }
+/* ── SMART OVERFLOW CONTROL ── */
+/* Only apply overflow-hidden where actually needed */
+.overflow-hidden { overflow: hidden; }
+.overflow-x-hidden { overflow-x: hidden; }
+.overflow-y-hidden { overflow-y: hidden; }
+.overflow-auto { overflow: auto; }
+.overflow-scroll { overflow: scroll; }
+
+/* Specific component overflow fixes */
+.nav-overflow-hidden { overflow: hidden; }
+.drawer-overflow-hidden { overflow: hidden; }
+.modal-overflow-hidden { overflow: hidden; }
+.hero-overflow-hidden { overflow: hidden; }
+
+/* Remove aggressive global overflow rules */
+body, html {
+  overflow-x: auto;
+  overflow-y: auto;
+}
 
   /* Enhanced mobile layout fixes */
   .max-w-7xl {

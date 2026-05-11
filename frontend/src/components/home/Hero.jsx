@@ -95,7 +95,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative w-full overflow-hidden"
+      className="relative w-full hero-overflow-hidden"
       style={{ 
         height: "var(--hero-height, 100svh)", 
         minHeight: 560,
@@ -137,7 +137,7 @@ export default function Hero() {
       <div className="absolute inset-0 pointer-events-none sm:hidden bg-(--bg-deep)/10" />
 
       {/* ── CONTENT ── */}
-      <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8  lg:px-10 lg:ml-10  flex items-center">
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 lg:ml-10 flex items-center">
         <div className="w-full max-w-xl">
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div
@@ -215,6 +215,7 @@ export default function Hero() {
               >
                 <Link to="/shop"
                   className="inline-flex items-center gap-2.5 font-bold text-sm sm:text-base text-black px-6 sm:px-8 py-3 sm:py-3.5 rounded-2xl transition-all hover:scale-105 hover:shadow-xl group gold-gradient shadow-lg"
+                  style={{ minHeight: '44px' }}
                 >
                   <FiShoppingBag size={16} className="transition-transform group-hover:-translate-y-0.5" />
                   {current.cta}
@@ -223,6 +224,7 @@ export default function Hero() {
 
                 <Link to="/shop"
                   className="inline-flex items-center gap-2 text-sm font-medium text-(--text-secondary) hover:text-(--text-primary) border border-(--border-light) hover:border-(--gold) px-5 py-3 rounded-2xl transition-all hover:bg-(--bg-elevated) backdrop-blur-sm"
+                  style={{ minHeight: '44px' }}
                 >
                   <FiPlay size={13} className="fill-current" />
                   Browse All
@@ -251,7 +253,8 @@ export default function Hero() {
                   background: i === idx
                     ? "var(--gold)"
                     : "var(--text-muted)",
-                  opacity: i === idx ? 1 : 0.3
+                  opacity: i === idx ? 1 : 0.3,
+                  minHeight: '6px'
                 }}
               />
             ))}

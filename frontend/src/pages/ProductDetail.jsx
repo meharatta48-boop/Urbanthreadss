@@ -210,9 +210,25 @@ export default function ProductDetail() {
 
         {/* BREADCRUMB */}
         <div className="flex items-center gap-2 text-xs mb-6 sm:mb-8 overflow-x-auto whitespace-nowrap pb-1" style={{ color: "var(--text-muted)" }}>
-          <button onClick={() => navigate("/")} className="transition-colors shrink-0" style={{ color: "var(--text-muted)" }} onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}>Home</button>
+          <button 
+            onClick={() => navigate("/")} 
+            className="transition-colors shrink-0" 
+            style={{ color: "var(--text-muted)", minHeight: '32px' }} 
+            onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} 
+            onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}
+          >
+            Home
+          </button>
           <span>/</span>
-          <button onClick={() => navigate("/shop")} className="transition-colors shrink-0" style={{ color: "var(--text-muted)" }} onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}>Shop</button>
+          <button 
+            onClick={() => navigate("/shop")} 
+            className="transition-colors shrink-0" 
+            style={{ color: "var(--text-muted)", minHeight: '32px' }} 
+            onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} 
+            onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}
+          >
+            Shop
+          </button>
           {product.category?.name && <><span>/</span><span className="capitalize shrink-0" style={{ color: "var(--text-muted)" }}>{product.category.name}</span></>}
           <span>/</span>
           <span className="truncate max-w-30 sm:max-w-50" style={{ color: "var(--text-secondary)" }}>{product.name}</span>
@@ -223,67 +239,68 @@ export default function ProductDetail() {
           {/* ════ LEFT: IMAGES ════ */}
           <div className="space-y-3">
             {/* MAIN IMAGE */}
-            <div className="relative aspect-square rounded-2xl overflow-hidden" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
-              <AnimatePresence mode="wait">
-                {hasImages ? (
-                  <motion.div
-                    key={activeImg}
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full h-full"
-                  >
-                    <LazyImage
-                      src={getProductImageUrl(images[activeImg])}
-                      srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      priority={activeImg === 0}
-                    />
-                  </motion.div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <FiPackage size={60} style={{ color: "var(--border-light)" }} />
+            <div className="product-gallery">
+              <div className="product-gallery-main">
+                <LazyImage
+                  src={getProductImageUrl(images[activeImg])}
+                  srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Gallery Overlay */}
+                <div className="product-gallery-overlay">
+                  {product.comparePrice > product.price && (
+                    <div className="product-gallery-badge">
+                      -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
+                    </div>
+                  )}
+                </div>
+                
+                {/* Zoom Button */}
+                <div className="product-gallery-zoom">
+                  <FiZoomIn size={20} />
+                </div>
+                
+                {/* Image Counter */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full">
+                    {activeImg + 1} / {images.length}
                   </div>
                 )}
-              </AnimatePresence>
-
-              {images.length > 1 && (
-                <>
-                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-(--bg-deep)/90 dark:hover:bg-black/90 transition-all">
-                    <FiChevronLeft size={18} />
-                  </button>
-                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-(--bg-deep)/90 dark:hover:bg-black/90 transition-all">
-                    <FiChevronRight size={18} />
-                  </button>
-                </>
-              )}
-
-              {discount > 0 && (
-                <span className="absolute top-3 left-3 gold-gradient text-black text-xs font-bold px-2.5 py-1 rounded-lg">
-                  -{discount}% OFF
-                </span>
-              )}
-              {product.stock === 0 && (
-                <div className="absolute inset-0 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur-[1px] flex items-center justify-center">
-                  <span className="text-(--text-primary) dark:text-white font-bold tracking-[0.2em] text-xs uppercase px-4 py-2 border border-(--border) dark:border-white/30 rounded-xl">Out of Stock</span>
-                </div>
-              )}
-              {images.length > 1 && (
-                <span className="absolute bottom-3 right-3 bg-(--bg-card)/60 backdrop-blur-xs text-(--text-primary) text-xs px-2.5 py-1 rounded-full border border-(--border)">
-                  {activeImg + 1}/{images.length}
-                </span>
-              )}
+                
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button 
+                      onClick={prevImg} 
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) hover:bg-(--bg-deep)/90 transition-all"
+                    >
+                      <FiChevronLeft size={18} />
+                    </button>
+                    <button 
+                      onClick={nextImg} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) hover:bg-(--bg-deep)/90 transition-all"
+                    >
+                      <FiChevronRight size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* THUMBNAILS */}
             {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-1">
+              <div className="product-gallery-thumbnails">
                 {images.map((img, i) => (
-                  <button key={i} onClick={() => setActiveImg(i)}
-                    className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                      activeImg === i ? "border-(--gold)" : "border-(--border-light) hover:border-(--gold)/50"
-                    }`}>
+                  <button 
+                    key={i} 
+                    onClick={() => setActiveImg(i)}
+                    className={`product-gallery-thumbnail ${
+                      activeImg === i ? "active" : ""
+                    }`}
+                  >
                     <LazyImage 
                       src={getThumbnailUrl(img)} 
                       alt={`thumb-${i}`} 
@@ -353,126 +370,53 @@ export default function ProductDetail() {
 
             {/* ════ SIZE SELECTOR ════ */}
             {product.sizes?.length > 0 && (
-              <div id="size-selector">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="font-bold text-sm flex items-center gap-1.5" style={{ color: "var(--text-primary)" }}>
-                    Size
-                    {product.sizes.length > 0 && !size && (
-                      <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}>(zaroori)</span>
-                    )}
-                  </label>
-                  {size
-                    ? <span className="text-xs gold-gradient text-black px-3 py-1 rounded-full font-bold">Selected: {size}</span>
-                    : <span className="text-xs" style={{ color: "var(--text-muted)" }}>Ek size choose karo</span>
-                  }
-                </div>
-
-                {/* ERROR BANNER */}
-                <AnimatePresence>
-                  {sizeError && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                      className="mb-3 flex items-center gap-2 text-orange-400 text-xs bg-orange-900/10 border border-orange-700/20 rounded-xl px-3 py-2"
-                    >
-                      <FiAlertCircle size={13} />
-                      Koi bhi size select kiye baghair cart mein nahi ja sakta
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Size</label>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((s) => {
-                    const isSelected = size === s;
-                    return (
-                      <motion.button
-                        key={s}
-                        whileTap={{ scale: 0.92 }}
-                        onClick={() => { setSize(s); setSizeError(false); }}
-                        className={`relative min-w-13 h-12 px-3 rounded-xl text-sm font-bold border-2 transition-all ${
-                          isSelected
-                            ? "gold-gradient text-black border-transparent shadow-lg"
-                            : sizeError
-                            ? "border-orange-700/40 text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
-                            : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
-                        }`}
-                      >
-                        {isSelected && (
-                          <motion.span
-                            initial={{ scale: 0 }} animate={{ scale: 1 }}
-                            className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center"
-                          >
-                            <FiCheck size={9} color="white" />
-                          </motion.span>
-                        )}
-                        {s}
-                      </motion.button>
-                    );
-                  })}
+                  {product.sizes.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setSize(s); setSizeError(false); }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        size === s
+                          ? "bg-(--gold) text-black"
+                          : "border border-(--border-light) text-(--text-secondary) hover:border-(--gold)"
+                      }`}
+                      style={{ minHeight: '44px' }}
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
-
-                {/* SIZE GUIDE */}
-                <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
-                  💡 Size guide: XS=36, S=38, M=40, L=42, XL=44, XXL=46
-                </p>
+                {sizeError && <p className="text-xs text-red-500">Please select a size</p>}
               </div>
             )}
 
             {/* ════ COLOR SELECTOR ════ */}
             {product.colors?.length > 0 && (
-              <div id="color-selector">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="font-bold text-sm flex items-center gap-1.5" style={{ color: "var(--text-primary)" }}>
-                    Color
-                    {!color && <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}>(zaroori)</span>}
-                  </label>
-                  {color
-                    ? <span className="text-xs gold-gradient text-black px-3 py-1 rounded-full font-bold">{color}</span>
-                    : <span className="text-xs" style={{ color: "var(--text-muted)" }}>Ek color choose karo</span>
-                  }
-                </div>
-
-                <AnimatePresence>
-                  {colorError && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                      className="mb-3 flex items-center gap-2 text-orange-400 text-xs bg-orange-900/10 border border-orange-700/20 rounded-xl px-3 py-2"
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Color</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => { setColor(c); setColorError(false); }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        color === c
+                          ? "bg-(--gold) text-black"
+                          : "border border-(--border-light) text-(--text-secondary) hover:border-(--gold)"
+                      }`}
+                      style={{ minHeight: '44px' }}
                     >
-                      <FiAlertCircle size={13} />
-                      Koi bhi color select kiye baghair cart mein nahi ja sakta
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <div className="flex flex-wrap gap-2.5">
-                  {product.colors.map((c) => {
-                    const isSelected = color === c;
-                    const hex = getColorHex(c);
-                    return (
-                      <motion.button
-                        key={c}
-                        whileTap={{ scale: 0.92 }}
-                        onClick={() => { setColor(c); setColorError(false); }}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all ${
-                          isSelected
-                            ? "gold-gradient text-black border-transparent font-bold shadow-lg"
-                            : colorError
-                            ? "border-orange-700/40 text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
-                            : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
-                        }`}
-                      >
-                        {/* COLOR DOT */}
-                        {hex && (
-                          <span
-                            className="w-4 h-4 rounded-full border border-white/20 shrink-0 shadow"
-                            style={{ background: hex }}
-                          />
-                        )}
-                        <span className="text-sm font-medium">{c}</span>
-                        {isSelected && <FiCheck size={12} />}
-                      </motion.button>
-                    );
-                  })}
+                      <span 
+                        className="w-4 h-4 rounded-full border border-(--border-light)"
+                        style={{ backgroundColor: getColorHex(c) || "#ccc" }}
+                      />
+                      {c}
+                    </button>
+                  ))}
                 </div>
+                {colorError && <p className="text-xs text-red-500">Please select a color</p>}
               </div>
             )}
 
@@ -484,31 +428,53 @@ export default function ProductDetail() {
             )}
 
             {/* ════ QUANTITY ════ */}
-            <div>
-              <label className="font-bold text-sm block mb-3" style={{ color: "var(--text-primary)" }}>Quantity</label>
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="flex items-center rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-                  <button onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    className="px-5 py-3 transition-colors text-lg font-light" style={{ color: "var(--text-muted)" }} onMouseEnter={e=>{e.currentTarget.style.color="var(--text-primary)";e.currentTarget.style.background="var(--bg-elevated)";}} onMouseLeave={e=>{e.currentTarget.style.color="var(--text-muted)";e.currentTarget.style.background="transparent";}}>−</button>
-                  <span className="px-5 font-bold min-w-13 text-center text-lg" style={{ color: "var(--text-primary)" }}>{qty}</span>
-                  <button onClick={() => setQty((q) => Math.min(product.stock || 99, q + 1))}
-                    className="px-5 py-3 transition-colors text-lg font-light" style={{ color: "var(--text-muted)" }} onMouseEnter={e=>{e.currentTarget.style.color="var(--text-primary)";e.currentTarget.style.background="var(--bg-elevated)";}} onMouseLeave={e=>{e.currentTarget.style.color="var(--text-muted)";e.currentTarget.style.background="transparent";}}>+</button>
-                </div>
-
-                {/* STOCK STATUS */}
-                {product.stock > 0 && product.stock <= 10 && (
-                  <span className="text-orange-400 text-sm font-medium animate-pulse">
-                    ⚡ Sirf {product.stock} bacha hai!
-                  </span>
-                )}
-                {product.stock > 10 && (
-                  <span className="text-green-400 text-xs">✓ In Stock</span>
-                )}
-                {product.stock === 0 && (
-                  <span className="text-red-400 text-sm font-medium">✗ Out of Stock</span>
-                )}
+            <div className="space-y-3">
+              <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Quantity</label>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  className="w-12 h-12 rounded-lg border border-(--border-light) flex items-center justify-center transition-all hover:border-(--gold)"
+                  style={{ minHeight: '48px' }}
+                >
+                  <FiMinus size={16} style={{ color: "var(--text-secondary)" }} />
+                </button>
+                <input
+                  type="number"
+                  min="1"
+                  max={product.stock || 99}
+                  value={qty}
+                  onChange={(e) => setQty(Math.max(1, Math.min(product.stock || 99, parseInt(e.target.value) || 1)))}
+                  className="w-20 text-center font-semibold"
+                  style={{ 
+                    background: "var(--bg-elevated)", 
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    color: "var(--text-primary)"
+                  }}
+                />
+                <button
+                  onClick={() => setQty(Math.min(product.stock || 99, qty + 1))}
+                  className="w-12 h-12 rounded-lg border border-(--border-light) flex items-center justify-center transition-all hover:border-(--gold)"
+                  style={{ minHeight: '48px' }}
+                >
+                  <FiPlus size={16} style={{ color: "var(--text-secondary)" }} />
+                </button>
               </div>
             </div>
+
+            {/* STOCK STATUS */}
+            {product.stock > 0 && product.stock <= 10 && (
+              <span className="text-orange-400 text-sm font-medium animate-pulse">
+                ⚡ Sirf {product.stock} bacha hai!
+              </span>
+            )}
+            {product.stock > 10 && (
+              <span className="text-green-400 text-xs">✓ In Stock</span>
+            )}
+            {product.stock === 0 && (
+              <span className="text-red-400 text-sm font-medium">✗ Out of Stock</span>
+            )}
 
             {/* ════ ACTION BUTTONS ════ */}
             <div className="flex gap-3 flex-wrap">
@@ -516,7 +482,7 @@ export default function ProductDetail() {
                 whileTap={{ scale: 0.97 }}
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="btn-gold flex-1 min-w-45 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="btn-gold flex-1 min-w-45 disabled:opacity-40 disabled:cursor-not-allowed animate-slide-up"
                 style={{ padding: "16px 24px", fontSize: "1rem" }}
               >
                 <FiShoppingCart size={17} /> Add to Cart
