@@ -171,7 +171,7 @@ export default function ProductDetail() {
         <FiCheck size={16} className="text-green-400 shrink-0" />
         <div>
           <p className="font-semibold text-sm">{product.name}</p>
-          <p className="text-xs text-[#9a9a9a]">
+          <p className="text-xs text-(--text-muted)">
             {[size, color].filter(Boolean).join(" · ")} — Cart mein add ho gaya ✓
           </p>
         </div>
@@ -250,10 +250,10 @@ export default function ProductDetail() {
 
               {images.length > 1 && (
                 <>
-                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
+                  <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-(--bg-deep)/90 dark:hover:bg-black/90 transition-all">
                     <FiChevronLeft size={18} />
                   </button>
-                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-black/90 transition-all">
+                  <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-(--bg-deep)/90 dark:hover:bg-black/90 transition-all">
                     <FiChevronRight size={18} />
                   </button>
                 </>
@@ -265,12 +265,12 @@ export default function ProductDetail() {
                 </span>
               )}
               {product.stock === 0 && (
-                <div className="absolute inset-0 bg-black/40 dark:bg-black/70 backdrop-blur-[1px] flex items-center justify-center">
-                  <span className="text-white font-bold tracking-[0.2em] text-xs uppercase px-4 py-2 border border-white/30 rounded-xl">Out of Stock</span>
+                <div className="absolute inset-0 bg-(--bg-deep)/40 dark:bg-black/70 backdrop-blur-[1px] flex items-center justify-center">
+                  <span className="text-(--text-primary) dark:text-white font-bold tracking-[0.2em] text-xs uppercase px-4 py-2 border border-(--border) dark:border-white/30 rounded-xl">Out of Stock</span>
                 </div>
               )}
               {images.length > 1 && (
-                <span className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-full">
+                <span className="absolute bottom-3 right-3 bg-(--bg-card)/60 backdrop-blur-xs text-(--text-primary) text-xs px-2.5 py-1 rounded-full border border-(--border)">
                   {activeImg + 1}/{images.length}
                 </span>
               )}
@@ -323,7 +323,7 @@ export default function ProductDetail() {
                 </span>
               )}
               {product.isFeatured && (
-                <span className="text-xs text-[#c9a84c] border border-[#c9a84c]/20 px-2 py-0.5 rounded-full">★ Featured</span>
+                <span className="text-xs text-(--gold) border border-(--gold)/20 px-2 py-0.5 rounded-full">★ Featured</span>
               )}
             </div>
 
@@ -392,7 +392,7 @@ export default function ProductDetail() {
                           isSelected
                             ? "gold-gradient text-black border-transparent shadow-lg"
                             : sizeError
-                            ? "border-orange-700/40 text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
+                            ? "border-orange-700/40 text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                             : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                         }`}
                       >
@@ -456,7 +456,7 @@ export default function ProductDetail() {
                           isSelected
                             ? "gold-gradient text-black border-transparent font-bold shadow-lg"
                             : colorError
-                            ? "border-orange-700/40 text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
+                            ? "border-orange-700/40 text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                             : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                         }`}
                       >
@@ -550,7 +550,7 @@ export default function ProductDetail() {
                   onClick={handleShare}
                   className={`p-4 rounded-xl border-2 transition-all ${
                     shareOpen
-                      ? "border-[#c9a84c]/50 bg-[rgba(201,168,76,0.08)] text-[#c9a84c]"
+                      ? "border-(--gold)/50 bg-(--gold)/8 text-(--gold)"
                       : "border-(--border-light) text-(--text-muted) hover:text-(--text-primary) hover:border-(--gold)/50"
                   }`}
                   title="Share karo"
@@ -770,7 +770,7 @@ function ProductReviews({ product, setProduct }) {
                 {[1,2,3,4,5].map((s) => (
                   <FiStar key={s} size={16}
                     style={s <= Math.round(avgRating)
-                      ? { color: "#c9a84c", fill: "#c9a84c" }
+                      ? { color: "var(--gold)", fill: "var(--gold)" }
                       : { color: "var(--border-light)", fill: "var(--border-light)" }}
                   />
                 ))}
@@ -782,7 +782,7 @@ function ProductReviews({ product, setProduct }) {
 
           {token && !hasReviewed && (
             <button onClick={() => setShowForm((v) => !v)}
-              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl border border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.08)] transition-all">
+              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/8 transition-all">
               <FiEdit3 size={14} /> Review Likhein
             </button>
           )}
@@ -805,7 +805,7 @@ function ProductReviews({ product, setProduct }) {
               className="rounded-2xl p-5 sm:p-6 mb-6 overflow-hidden"
               style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
               <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
-                <FiEdit3 size={15} className="text-[#c9a84c]" /> Apni Review Likhein
+                <FiEdit3 size={15} className="text-(--gold)" /> Apni Review Likhein
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -839,7 +839,7 @@ function ProductReviews({ product, setProduct }) {
                         <img src={src} alt={`preview-${idx}`} className="w-full h-full object-cover" />
                         <button
                           type="button" onClick={() => removeImage(idx)}
-                          className="absolute inset-0 bg-black/40 dark:bg-black/70 hidden group-hover:flex items-center justify-center text-white transition-colors"
+                          className="absolute inset-0 bg-(--bg-deep)/40 dark:bg-black/70 hidden group-hover:flex items-center justify-center text-(--text-primary) dark:text-white transition-colors"
                         >
                           <FiX size={18} />
                         </button>
@@ -871,7 +871,7 @@ function ProductReviews({ product, setProduct }) {
                       <video src={reviewVideoPreview} controls className="w-full max-h-48 object-contain" />
                       <button
                         type="button" onClick={removeVideo}
-                        className="absolute top-2 right-2 w-7 h-7 bg-black/50 dark:bg-black/70 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                        className="absolute top-2 right-2 w-7 h-7 bg-(--bg-deep)/50 dark:bg-black/70 rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-red-600 transition-colors"
                       >
                         <FiX size={14} />
                       </button>
@@ -927,7 +927,7 @@ function ProductReviews({ product, setProduct }) {
                     {[1,2,3,4,5].map((s) => (
                       <FiStar key={s} size={13}
                         style={s <= r.rating
-                          ? { color: "#c9a84c", fill: "#c9a84c" }
+                          ? { color: "var(--gold)", fill: "var(--gold)" }
                           : { color: "var(--border-light)", fill: "var(--border-light)" }}
                       />
                     ))}

@@ -13,11 +13,11 @@ import { SERVER_URL } from "../services/api";
 const API_BASE = SERVER_URL;
 
 const STATUS = {
-  pending:    { label: "Order Received",  urdu: "آرڈر مل گیا",     color: "#f59e0b", bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.2)",  Icon: FiClock,        step: 1 },
-  processing: { label: "Packing",         urdu: "پیکنگ ہو رہی ہے", color: "#c9a84c", bg: "rgba(201,168,76,0.1)", border: "rgba(201,168,76,0.2)",  Icon: FiPackage,      step: 2 },
-  shipped:    { label: "On the Way",      urdu: "راستے میں ہے",    color: "#818cf8", bg: "rgba(129,140,248,0.1)",border: "rgba(129,140,248,0.2)", Icon: FiTruck,        step: 3 },
-  delivered:  { label: "Delivered",       urdu: "پہنچ گیا",        color: "#4ade80", bg: "rgba(74,222,128,0.1)", border: "rgba(74,222,128,0.2)",  Icon: FiCheckCircle,  step: 4 },
-  cancelled:  { label: "Cancelled",       urdu: "کینسل ہو گیا",    color: "#f87171", bg: "rgba(248,113,113,0.1)",border: "rgba(248,113,113,0.2)", Icon: FiXCircle,      step: 0 },
+  pending:    { label: "Order Received",  urdu: "آرڈر مل گیا",     color: "#f59e0b", bg: "rgba(245,158,11,0.08)", border: "rgba(245,158,11,0.2)",  Icon: FiClock,        step: 1 },
+  processing: { label: "Packing",         urdu: "پیکنگ ہو رہی ہے", color: "var(--gold)", bg: "var(--gold-8)", border: "var(--gold-20)",  Icon: FiPackage,      step: 2 },
+  shipped:    { label: "On the Way",      urdu: "راستے میں ہے",    color: "#818cf8", bg: "rgba(129,140,248,0.08)",border: "rgba(129,140,248,0.2)", Icon: FiTruck,        step: 3 },
+  delivered:  { label: "Delivered",       urdu: "پہنچ گیا",        color: "#4ade80", bg: "rgba(74,222,128,0.08)", border: "rgba(74,222,128,0.2)",  Icon: FiCheckCircle,  step: 4 },
+  cancelled:  { label: "Cancelled",       urdu: "کینسل ہو گیا",    color: "#f87171", bg: "rgba(248,113,113,0.08)",border: "rgba(248,113,113,0.2)", Icon: FiXCircle,      step: 0 },
 };
 
 const STEPS = ["pending", "processing", "shipped", "delivered"];

@@ -351,14 +351,14 @@ export default function Checkout() {
                     key={opt.id}
                     className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
                       paymentMethod === opt.id
-                        ? "border-[#c9a84c]/50 bg-[rgba(201,168,76,0.05)]"
+                        ? "border-(--gold)/50 bg-(--gold)/5"
                         : ""
                     } ${!opt.available ? "opacity-40 cursor-not-allowed" : ""}`}
                     style={paymentMethod !== opt.id ? { border: "1px solid var(--border)" } : {}}>
                     <input type="radio" name="payment" value={opt.id} checked={paymentMethod === opt.id}
                       disabled={!opt.available} onChange={() => opt.available && setPaymentMethod(opt.id)} className="hidden" />
                     <div className={`w-10 h-10 rounded-lg border flex items-center justify-center ${
-                      paymentMethod === opt.id ? "border-[#c9a84c] text-[#c9a84c] bg-[rgba(201,168,76,0.1)]" : ""
+                      paymentMethod === opt.id ? "border-(--gold) text-(--gold) bg-(--gold)/10" : ""
                     }`} style={paymentMethod !== opt.id ? { border: "1px solid var(--border)", color: "var(--text-muted)" } : {}}>
                       {paymentMethod === opt.id ? <FiCheck /> : opt.icon}
                     </div>
@@ -425,7 +425,7 @@ export default function Checkout() {
                     onClick={applyCoupon}
                     disabled={!coupon.trim() || couponApplied}
                     className={`text-xs font-semibold px-4 rounded-xl border transition-all disabled:opacity-40 ${
-                      couponApplied ? "gold-gradient text-black border-transparent" : "border-[#c9a84c]/30 text-[#c9a84c] hover:bg-[rgba(201,168,76,0.08)]"
+                      couponApplied ? "gold-gradient text-black border-transparent" : "border-(--gold)/30 text-(--gold) hover:bg-(--gold)/8"
                     }`}
                     style={{ padding: "10px 14px", fontSize: "0.78rem", whiteSpace: "nowrap" }}
                   >
