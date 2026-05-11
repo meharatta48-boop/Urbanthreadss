@@ -28,7 +28,7 @@ export default function AboutUs() {
     ];
 
     return (
-        <div className="min-h-screen bg-(--bg-deep) pb-20">
+        <div className="min-h-screen bg-(--bg-deep) pb-20 transition-colors duration-500">
             {/* ── HERO SECTION ── */}
             <section className="relative w-full h-[50vh] sm:h-[65vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
                 {settings.aboutUsHeroImage ? (
@@ -40,10 +40,11 @@ export default function AboutUs() {
                                 className="w-full h-full object-cover object-center scale-105"
                             />
                         </div>
-                        <div className="absolute inset-0 z-0 bg-linear-to-b from-black/70 via-black/40 to-(--bg-deep)" />
+                        {/* Adaptive Overlay: Darker in dark mode, lighter/transparent-ish in light mode */}
+                        <div className="absolute inset-0 z-0 bg-linear-to-b from-black/60 via-black/30 to-(--bg-deep) dark:from-black/80 dark:via-black/50 dark:to-(--bg-deep)" />
                     </>
                 ) : (
-                    <div className="absolute inset-0 z-0 bg-linear-to-br from-[#0a0a0a] to-[#1a1a1a]" />
+                    <div className="absolute inset-0 z-0 bg-linear-to-br from-(--bg-surface) to-(--bg-deep)" />
                 )}
 
                 <div className="relative z-10 text-center px-3 sm:px-4 max-w-5xl mx-auto">
@@ -55,10 +56,10 @@ export default function AboutUs() {
                         <span className="inline-block px-3 sm:px-4 py-1.5 rounded-full border border-(--gold)/30 bg-(--gold)/10 text-(--gold) text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-4 sm:mb-6 backdrop-blur-sm">
                             Established 2020
                         </span>
-                        <h1 className="text-white font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4 sm:mb-6 drop-shadow-2xl">
+                        <h1 className="text-white dark:text-white font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-tight mb-4 sm:mb-6 drop-shadow-2xl">
                             {settings.aboutUsHeroTitle || "Our Story"}
                         </h1>
-                        <p className="text-white/70 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-2">
+                        <p className="text-white/80 dark:text-white/70 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-light tracking-wide italic px-2">
                             {settings.aboutUsHeroSubtitle || "A journey of two visionaries redefining the streets of Pakistan."}
                         </p>
                     </motion.div>
@@ -125,7 +126,7 @@ export default function AboutUs() {
                             ) : (
                                 <div className="w-full h-full bg-(--bg-card) flex items-center justify-center text-(--text-muted) text-sm sm:text-base">Brand Story Image</div>
                             )}
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
+                            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
                         </div>
                         {/* Decorative Elements */}
                         <div className="absolute -top-6 sm:-top-10 -right-6 sm:-right-10 w-24 sm:w-40 h-24 sm:h-40 border-t-2 border-r-2 border-(--gold)/30 rounded-tr-2xl sm:rounded-tr-[3rem] z-0" />
@@ -238,9 +239,9 @@ export default function AboutUs() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="bg-linear-to-br from-[#0f0f0f] to-[#050505] rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] py-12 sm:py-16 md:py-20 px-4 sm:px-8 border border-[#1a1a1a] shadow-2xl"
+                    className="bg-linear-to-br from-(--bg-card) to-(--bg-deep) dark:from-[#0f0f0f] dark:to-[#050505] rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] py-12 sm:py-16 md:py-20 px-4 sm:px-8 border border-(--border) dark:border-[#1a1a1a] shadow-2xl"
                 >
-                    <h2 className="text-white font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">Ready to define your style?</h2>
+                    <h2 className="text-(--text-primary) dark:text-white font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">Ready to define your style?</h2>
                     <Link to="/shop" className="btn-gold px-6 sm:px-8 md:px-12! py-3 sm:py-4 md:py-5! text-sm sm:text-base md:text-lg! rounded-full! shadow-2xl shadow-(--gold)/30 inline-flex items-center gap-2">
                         Shop the Collection <FiArrowRight size={16} className="sm:w-5" />
                     </Link>

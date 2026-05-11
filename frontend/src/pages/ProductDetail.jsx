@@ -282,7 +282,7 @@ export default function ProductDetail() {
                 {images.map((img, i) => (
                   <button key={i} onClick={() => setActiveImg(i)}
                     className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
-                      activeImg === i ? "border-[#c9a84c]" : "border-[#1a1a1a] hover:border-[#333]"
+                      activeImg === i ? "border-(--gold)" : "border-(--border-light) hover:border-(--gold)/50"
                     }`}>
                     <LazyImage 
                       src={getThumbnailUrl(img)} 
@@ -393,7 +393,7 @@ export default function ProductDetail() {
                             ? "gold-gradient text-black border-transparent shadow-lg"
                             : sizeError
                             ? "border-orange-700/40 text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
-                            : "border-[#1a1a1a] text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
+                            : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                         }`}
                       >
                         {isSelected && (
@@ -457,7 +457,7 @@ export default function ProductDetail() {
                             ? "gold-gradient text-black border-transparent font-bold shadow-lg"
                             : colorError
                             ? "border-orange-700/40 text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
-                            : "border-[#1a1a1a] text-[#9a9a9a] hover:border-[#c9a84c]/50 hover:text-white"
+                            : "border-(--border-light) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--text-primary)"
                         }`}
                       >
                         {/* COLOR DOT */}
@@ -537,7 +537,7 @@ export default function ProductDetail() {
                 className={`p-4 rounded-xl border-2 transition-all ${
                   wishlist
                     ? "border-red-400/50 bg-red-900/15 text-red-400"
-                    : "border-[#1a1a1a] text-[#555] hover:text-red-400 hover:border-red-400/30"
+                    : "border-(--border-light) text-(--text-muted) hover:text-red-500 hover:border-red-500/30"
                 }`}
                 title="Wishlist mein add karo"
               >
@@ -551,7 +551,7 @@ export default function ProductDetail() {
                   className={`p-4 rounded-xl border-2 transition-all ${
                     shareOpen
                       ? "border-[#c9a84c]/50 bg-[rgba(201,168,76,0.08)] text-[#c9a84c]"
-                      : "border-[#1a1a1a] text-[#555] hover:text-white hover:border-[#333]"
+                      : "border-(--border-light) text-(--text-muted) hover:text-(--text-primary) hover:border-(--gold)/50"
                   }`}
                   title="Share karo"
                 >
@@ -565,23 +565,23 @@ export default function ProductDetail() {
                       initial={{ opacity: 0, y: 8, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      className="absolute right-0 top-full mt-2 bg-[#0c0c0c] border border-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden z-20 min-w-50"
+                      className="absolute right-0 top-full mt-2 bg-(--bg-card) border border-(--border) rounded-2xl shadow-2xl overflow-hidden z-20 min-w-50"
                     >
-                      <div className="px-4 py-3 border-b border-[#111]">
-                        <p className="text-white text-xs font-semibold">Share Product</p>
-                        <p className="text-[#444] text-[10px] mt-0.5 truncate max-w-40">{product.name}</p>
+                      <div className="px-4 py-3 border-b border-(--border)">
+                        <p className="text-(--text-primary) text-xs font-semibold">Share Product</p>
+                        <p className="text-(--text-muted) text-[10px] mt-0.5 truncate max-w-40">{product.name}</p>
                       </div>
 
                       <button
                         onClick={handleWhatsAppShare}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#9a9a9a] hover:text-white hover:bg-[#111] transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
                       >
                         <span className="text-base">💬</span> WhatsApp pe Share
                       </button>
 
                       <button
                         onClick={handleCopyLink}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#9a9a9a] hover:text-white hover:bg-[#111] transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
                       >
                         {copied
                           ? <><FiCheck size={15} className="text-green-400" /> Link Copy Ho Gaya!</>
@@ -594,7 +594,7 @@ export default function ProductDetail() {
                           window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`);
                           setShareOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#9a9a9a] hover:text-white hover:bg-[#111] transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
                       >
                         <span className="text-base">📘</span> Facebook pe Share
                       </button>
@@ -645,7 +645,7 @@ const StarPicker = ({ value, onChange }) => {
           className="transition-transform hover:scale-110"
         >
           <FiStar size={24}
-            className={s <= (hover || value) ? "fill-[#c9a84c] text-[#c9a84c]" : "text-[#333] fill-[#1a1a1a]"}
+            className={s <= (hover || value) ? "fill-(--gold) text-(--gold)" : "text-(--border-light) fill-(--bg-elevated)"}
           />
         </button>
       ))}

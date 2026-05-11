@@ -148,7 +148,7 @@ export default function SiteSettingsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="section-label mb-1">Pro CMS — WordPress Level</p>
-          <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">Site Settings</h2>
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary)">Site Settings</h2>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Unsaved indicator */}
@@ -167,13 +167,13 @@ export default function SiteSettingsPage() {
           {/* Import */}
           <input ref={fileImportRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
           <button onClick={() => fileImportRef.current?.click()}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-[#555] hover:text-white transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all"
             style={{ border: "1px solid #1a1a1a" }} title="Import settings from JSON">
             <FiDownload size={13} /> Import
           </button>
           {/* Export */}
           <button onClick={handleExport}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-[#555] hover:text-white transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all"
             style={{ border: "1px solid #1a1a1a" }} title="Export settings as JSON backup">
             <FiDownload size={13} style={{ transform: "rotate(180deg)" }} /> Export
           </button>
@@ -193,11 +193,11 @@ export default function SiteSettingsPage() {
         <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444]" />
         <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Tab dhundho... (general, media, navigation, pages...)"
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-white outline-none"
+          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-(--text-primary) outline-none"
           style={{ background: "#0c0c0c", border: "1px solid #1a1a1a" }} />
         {search && (
           <button onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#333] hover:text-white">
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#333] hover:text-(--text-primary)">
             <FiX size={14} />
           </button>
         )}
@@ -208,38 +208,38 @@ export default function SiteSettingsPage() {
         <div>
           <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Brand Name</label>
           <input value={form.brandName || ""} onChange={e => set("brandName", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
             style={{ background: "#111", border: "1px solid #1a1a1a" }} />
         </div>
         <div>
           <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Phone</label>
           <input value={form.phone || ""} onChange={e => set("phone", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
             style={{ background: "#111", border: "1px solid #1a1a1a" }} />
         </div>
         <div>
           <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">WhatsApp</label>
           <input value={form.whatsapp || ""} onChange={e => set("whatsapp", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
             style={{ background: "#111", border: "1px solid #1a1a1a" }} />
         </div>
         <div>
           <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Delivery (Rs.)</label>
           <input type="number" value={form.deliveryCharges || ""} onChange={e => set("deliveryCharges", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-white outline-none"
+            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
             style={{ background: "#111", border: "1px solid #1a1a1a" }} />
         </div>
       </div>
 
       {/* ── TABS ── */}
-      <div className="flex gap-1 flex-wrap border-b border-[#111] pb-0.5 overflow-x-auto">
+      <div className="flex gap-1 flex-wrap border-b border-(--border) pb-0.5 overflow-x-auto">
         {filteredTabs.map((t) => (
           <button key={t.id} onClick={() => { setActiveTab(t.id); setSearch(""); }}
             title={t.desc}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-medium transition-all -mb-px whitespace-nowrap ${
               activeTab === t.id
-                ? "text-[#c9a84c] border border-b-[#0a0a0a] border-[#111] bg-[#0a0a0a]"
-                : "text-[#555] hover:text-white"
+                ? "text-[#c9a84c] border border-b-[#0a0a0a] border-(--border) bg-(--bg-elevated)"
+                : "text-(--text-muted) hover:text-(--text-primary)"
             }`}>
             {t.icon} {t.label}
           </button>
@@ -505,9 +505,9 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
     <div className="space-y-6">
       <Card>
         <SectionTitle title="Control Center" desc="Fast admin operations — one-click presets, quick visibility control, emergency backup." />
-        <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4 mt-3">
+        <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl p-4 mt-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-white text-sm">Setup Completion</p>
+            <p className="text-(--text-primary) text-sm">Setup Completion</p>
             <span className="text-[#c9a84c] font-semibold text-sm">{completionPct}%</span>
           </div>
           <div className="w-full h-2 rounded-full bg-[#1a1a1a] overflow-hidden">
@@ -523,9 +523,9 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
             <button
               key={preset.name}
               onClick={() => applyPreset(preset.patch, preset.name)}
-              className="text-left p-4 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] hover:border-[#c9a84c]/40 transition-all"
+              className="text-left p-4 rounded-xl border border-(--border-light) bg-(--bg-elevated) hover:border-[#c9a84c]/40 transition-all"
             >
-              <p className="text-white font-medium text-sm">{preset.name}</p>
+              <p className="text-(--text-primary) font-medium text-sm">{preset.name}</p>
               <p className="text-[#444] text-xs mt-1">Apply preset</p>
             </button>
           ))}
@@ -538,8 +538,8 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
           {toggleGroups.map((item) => {
             const enabled = form[item.field] !== false;
             return (
-              <div key={item.field} className="flex items-center justify-between p-3 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a]">
-                <p className="text-white text-sm">{item.label}</p>
+              <div key={item.field} className="flex items-center justify-between p-3 rounded-xl border border-(--border-light) bg-(--bg-elevated)">
+                <p className="text-(--text-primary) text-sm">{item.label}</p>
                 <button
                   onClick={() => set(item.field, !enabled)}
                   className="w-12 h-6 rounded-full transition-all relative"
@@ -573,7 +573,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
         <SectionTitle title="Footer Columns Manager" desc="Footer ke columns aur links add/edit/delete yahin se." />
         <div className="space-y-3">
           {footerColumns.map((col, colIdx) => (
-            <div key={colIdx} className="p-3 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] space-y-3">
+            <div key={colIdx} className="p-3 rounded-xl border border-(--border-light) bg-(--bg-elevated) space-y-3">
               <div className="flex gap-2">
                 <input
                   value={col.heading || ""}
@@ -621,7 +621,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
         <SectionTitle title="Section Order Manager" desc="Homepage sections reorder/show/hide + custom section add." />
         <div className="space-y-2">
           {sectionOrder.map((item, idx) => (
-            <div key={`${item.id}-${idx}`} className="p-3 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto_auto_auto] gap-2 items-center">
+            <div key={`${item.id}-${idx}`} className="p-3 rounded-xl border border-(--border-light) bg-(--bg-elevated) grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto_auto_auto] gap-2 items-center">
               <input
                 value={item.id || ""}
                 onChange={(e) => updateSection(idx, { id: e.target.value })}
@@ -773,10 +773,10 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
     <div className="space-y-8">
 
       {/* ── HERO BANNER IMAGES ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#111] flex items-center justify-between flex-wrap gap-3">
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between flex-wrap gap-3">
           <div>
-            <h3 className="text-white font-semibold flex items-center gap-2">
+            <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
               <FiImage className="text-[#c9a84c]" /> Hero Banner Images
             </h3>
             <p className="text-[#444] text-xs mt-0.5">
@@ -798,7 +798,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               className={`relative border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition-all ${
                 heroDragging
                   ? "border-[#c9a84c] bg-[rgba(201,168,76,0.05)]"
-                  : "border-[#1a1a1a] hover:border-[#c9a84c]/40 hover:bg-[rgba(201,168,76,0.02)]"
+                  : "border-(--border-light) hover:border-[#c9a84c]/40 hover:bg-[rgba(201,168,76,0.02)]"
               }`}
             >
               <input
@@ -810,7 +810,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                 onChange={(e) => handleHeroFiles(e.target.files)}
               />
               <div className="flex flex-col items-center gap-3">
-                <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center transition-colors ${heroDragging ? "border-[#c9a84c] text-[#c9a84c]" : "border-[#1a1a1a] text-[#333]"}`}>
+                <div className={`w-16 h-16 rounded-2xl border flex items-center justify-center transition-colors ${heroDragging ? "border-[#c9a84c] text-[#c9a84c]" : "border-(--border-light) text-[#333]"}`}>
                   {heroUploading ? (
                     <div className="w-6 h-6 border-2 border-[#c9a84c] border-t-transparent rounded-full animate-spin" />
                   ) : (
@@ -818,7 +818,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   )}
                 </div>
                 <div>
-                  <p className="text-white font-medium">
+                  <p className="text-(--text-primary) font-medium">
                     {heroUploading ? "Uploading..." : heroDragging ? "Drop here!" : "Click or Drag to Upload"}
                   </p>
                   <p className="text-[#444] text-sm mt-1">PNG, JPG, WebP — Max 5MB each</p>
@@ -838,7 +838,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="group relative rounded-xl overflow-hidden border border-[#1a1a1a] bg-[#0a0a0a]"
+                    className="group relative rounded-xl overflow-hidden border border-(--border-light) bg-(--bg-elevated)"
                   >
                     <div className="aspect-video">
                       <img
@@ -853,7 +853,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => handleDeleteHero(img)}
-                        className="bg-red-600 hover:bg-red-700 text-white rounded-xl px-4 py-2 text-sm flex items-center gap-2 transition-colors"
+                        className="bg-red-600 hover:bg-red-700 text-(--text-primary) rounded-xl px-4 py-2 text-sm flex items-center gap-2 transition-colors"
                       >
                         <FiTrash2 size={14} /> Delete
                       </button>
@@ -866,7 +866,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                           <FiStar size={9} /> Main
                         </span>
                       )}
-                      <span className="bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md">Slide {i + 1}</span>
+                      <span className="bg-black/60 text-(--text-primary) text-[10px] px-2 py-0.5 rounded-md">Slide {i + 1}</span>
                     </div>
                   </motion.div>
                 ))}
@@ -883,9 +883,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
       </div>
 
       {/* ── BRAND STORY IMAGE ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#111]">
-          <h3 className="text-white font-semibold flex items-center gap-2">
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-(--border)">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiImage className="text-[#c9a84c]" /> Brand Story Image
           </h3>
           <p className="text-[#444] text-xs mt-0.5">Homepage ke "Our Story" section mein dikhi hai</p>
@@ -895,8 +895,8 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
             {/* CURRENT */}
             <div>
-              <p className="text-[#555] text-xs uppercase tracking-wider mb-3">Current Image</p>
-              <div className="relative group aspect-4/5 rounded-xl overflow-hidden border border-[#1a1a1a] bg-[#0a0a0a]">
+              <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">Current Image</p>
+              <div className="relative group aspect-4/5 rounded-xl overflow-hidden border border-(--border-light) bg-(--bg-elevated)">
                 {settings?.brandImage ? (
                   <>
                     <img
@@ -909,7 +909,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={handleDeleteBrand}
-                        className="bg-red-600 hover:bg-red-700 text-white rounded-xl px-4 py-2 text-sm flex items-center gap-2"
+                        className="bg-red-600 hover:bg-red-700 text-(--text-primary) rounded-xl px-4 py-2 text-sm flex items-center gap-2"
                       >
                         <FiTrash2 size={14} /> Delete
                       </button>
@@ -925,7 +925,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
             {/* UPLOAD */}
             <div className="space-y-4">
-              <p className="text-[#555] text-xs uppercase tracking-wider">Upload New</p>
+              <p className="text-(--text-muted) text-xs uppercase tracking-wider">Upload New</p>
               <input
                 ref={brandInputRef}
                 type="file"
@@ -951,9 +951,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
       </div>
 
       {/* ── LOGO ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#111]">
-          <h3 className="text-white font-semibold flex items-center gap-2">
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-(--border)">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiImage className="text-[#c9a84c]" /> Logo Settings
           </h3>
           <p className="text-[#444] text-xs mt-0.5">Navbar aur Footer mein dikhi hai — desktop aur mobile ke liye alag logos</p>
@@ -963,9 +963,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
           {/* MAIN LOGO (DESKTOP) */}
           <div>
-            <p className="text-xs text-[#555] uppercase tracking-wider mb-3">🖥️ Desktop / Main Logo</p>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">🖥️ Desktop / Main Logo</p>
             <div className="flex items-center gap-6 flex-wrap">
-              <div className="relative group w-20 h-20 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-center overflow-hidden shrink-0">
+              <div className="relative group w-20 h-20 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.logoImage ? (
                   <>
                     <img src={mediaUrl(settings.logoImage)} alt="Logo"
@@ -974,7 +974,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => handleDeleteLogo("logoImage", "Desktop Logo")}
-                        className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-500"
+                        className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-(--text-primary) hover:bg-red-500"
                         title="Delete logo"
                       >
                         <FiTrash2 size={13} />
@@ -999,11 +999,11 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           </div>
 
           {/* MOBILE LOGO */}
-          <div className="border-t border-[#111] pt-5">
-            <p className="text-xs text-[#555] uppercase tracking-wider mb-1">📱 Mobile Logo <span className="normal-case text-[#333]">(choti screen)</span></p>
+          <div className="border-t border-(--border) pt-5">
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">📱 Mobile Logo <span className="normal-case text-[#333]">(choti screen)</span></p>
             <p className="text-[#333] text-xs mb-3">Khali rakhne par desktop wala hi use hoga</p>
             <div className="flex items-center gap-6 flex-wrap">
-              <div className="relative group w-16 h-16 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-center overflow-hidden shrink-0">
+              <div className="relative group w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.logoMobileImage ? (
                   <>
                     <img src={mediaUrl(settings.logoMobileImage)} alt="Mobile Logo"
@@ -1012,7 +1012,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         onClick={() => handleDeleteLogo("logoMobileImage", "Mobile Logo")}
-                        className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-500"
+                        className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-(--text-primary) hover:bg-red-500"
                         title="Delete mobile logo"
                       >
                         <FiTrash2 size={12} />
@@ -1038,17 +1038,17 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
           {/* LOGO SIZES */}
           {form && set && (
-            <div className="border-t border-[#111] pt-5 space-y-5">
-              <p className="text-xs text-[#555] uppercase tracking-wider">📐 Logo Sizes</p>
+            <div className="border-t border-(--border) pt-5 space-y-5">
+              <p className="text-xs text-(--text-muted) uppercase tracking-wider">📐 Logo Sizes</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { label: "Navbar (Desktop)", field: "navLogoSize",       min: 20, max: 72, def: 36 },
                   { label: "Navbar (Mobile)",  field: "navLogoMobileSize", min: 18, max: 56, def: 32 },
                   { label: "Footer Logo",      field: "footerLogoSize",    min: 24, max: 80, def: 44 },
                 ].map(({ label, field, min, max, def }) => (
-                  <div key={field} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4">
+                  <div key={field} className="bg-(--bg-elevated) border border-(--border-light) rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-white text-sm">{label}</p>
+                      <p className="text-(--text-primary) text-sm">{label}</p>
                       <span className="text-[#c9a84c] font-mono text-sm font-bold">{form[field] || def}px</span>
                     </div>
                     <input type="range" min={min} max={max}
@@ -1064,9 +1064,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
               {/* BRAND NAME */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-4">
+                <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-white text-sm">Nav Title Size</p>
+                    <p className="text-(--text-primary) text-sm">Nav Title Size</p>
                     <span className="text-[#c9a84c] font-mono text-sm font-bold">{form.navTitleSize || 18}px</span>
                   </div>
                   <input type="range" min={12} max={28} value={form.navTitleSize || 18}
@@ -1075,9 +1075,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   <p className="text-[#333] text-xs mt-1">Navbar mein brand name ka font size</p>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-(--bg-elevated) border border-(--border-light) rounded-xl">
                   <div>
-                    <p className="text-white text-sm">Show Brand Name Text</p>
+                    <p className="text-(--text-primary) text-sm">Show Brand Name Text</p>
                     <p className="text-[#444] text-xs mt-0.5">Navbar mein logo ke sath text dikhao</p>
                   </div>
                   <button onClick={() => set("showBrandName", !(form.showBrandName !== false))}
@@ -1091,9 +1091,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               </div>
 
               {/* LIVE PREVIEW */}
-              <div className="bg-[#050505] border border-[#111] rounded-xl p-4">
-                <p className="text-[#555] text-xs uppercase tracking-wider mb-3">👁️ Navbar Preview</p>
-                <div className="flex items-center gap-3 bg-[#0a0a0a] px-4 py-3 rounded-xl border border-[#1a1a1a]">
+              <div className="bg-[#050505] border border-(--border) rounded-xl p-4">
+                <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">👁️ Navbar Preview</p>
+                <div className="flex items-center gap-3 bg-(--bg-elevated) px-4 py-3 rounded-xl border border-(--border-light)">
                   <div className="rounded-lg overflow-hidden bg-[#1a1a1a] flex items-center justify-center shrink-0"
                     style={{ width: form.navLogoSize || 36, height: form.navLogoSize || 36 }}>
                     {settings?.logoImage
@@ -1102,7 +1102,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                           style={{ fontSize: Math.max(10, (form.navLogoSize||36)*0.44) }}>U</span>}
                   </div>
                   {(form.showBrandName !== false) && (
-                    <span className="font-display font-bold text-white tracking-widest"
+                    <span className="font-display font-bold text-(--text-primary) tracking-widest"
                       style={{ fontSize: form.navTitleSize || 18 }}>
                       {(settings?.brandName || "URBAN THREAD").split(" ")[0]}
                       <span className="gold-text"> {(settings?.brandName || "URBAN THREAD").split(" ").slice(1).join(" ")}</span>
@@ -1116,9 +1116,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
       </div>
 
       {/* ── SITE TITLE & FAVICON ── */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#111]">
-          <h3 className="text-white font-semibold flex items-center gap-2">
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-(--border)">
+          <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiGlobe className="text-[#c9a84c]" /> Browser Tab — Title & Icon
           </h3>
           <p className="text-[#444] text-xs mt-0.5">Browser mein tab par jo naam aur icon dikhe — admin se control karo</p>
@@ -1128,7 +1128,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           {/* SITE TITLE */}
           {form && set && (
             <div>
-              <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                 Tab Title (document.title)
               </label>
               <div className="flex items-center gap-3">
@@ -1140,7 +1140,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     className="lux-input pr-24"
                   />
                 </div>
-                <div className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl px-3 py-2 flex items-center gap-2 shrink-0">
+                <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl px-3 py-2 flex items-center gap-2 shrink-0">
                   <span className="text-[#c9a84c] text-xs">🌐</span>
                   <span className="text-[#9a9a9a] text-xs font-mono truncate max-w-30">
                     {form.siteTitle || "URBAN THREAD"}
@@ -1154,13 +1154,13 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           )}
 
           {/* FAVICON */}
-          <div className="border-t border-[#111] pt-5">
-            <p className="text-xs text-[#555] uppercase tracking-wider mb-3">
+          <div className="border-t border-(--border) pt-5">
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">
               🌐 Favicon (Tab Icon)
             </p>
             <div className="flex items-center gap-6 flex-wrap">
               {/* Current favicon preview */}
-              <div className="w-16 h-16 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.faviconUrl ? (
                   <img
                     src={mediaUrl(settings.faviconUrl)}
@@ -1190,7 +1190,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
             </div>
 
             {/* Browser tab mockup */}
-            <div className="mt-4 bg-[#050505] border border-[#111] rounded-xl p-4">
+            <div className="mt-4 bg-[#050505] border border-(--border) rounded-xl p-4">
               <p className="text-[#333] text-xs uppercase tracking-wider mb-3">Preview</p>
               <div className="flex items-center gap-0 max-w-xs">
                 <div className="flex items-center gap-2 bg-[#1a1a1a] border border-[#333] rounded-t-lg px-3 py-2 text-xs text-[#9a9a9a] border-b-transparent">
@@ -1289,8 +1289,8 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
           </button>
         </div>
         {form.isComingSoon && (
-          <div className="mt-4 pt-4 border-t border-[#111]">
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Launch Date & Time</label>
+          <div className="mt-4 pt-4 border-t border-(--border)">
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Launch Date & Time</label>
             <input 
               type="datetime-local" 
               value={form.launchDate ? new Date(form.launchDate).toISOString().slice(0, 16) : ""}
@@ -1308,7 +1308,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
           <Field label="Currency Symbol" field="currencySymbol" form={form} set={set} placeholder="Rs." hint="e.g. Rs., $, £, €" />
           <div>
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Currency Position</label>
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Currency Position</label>
             <select value={form.currencyPosition || "left"} onChange={(e) => set("currencyPosition", e.target.value)} className="lux-select w-full">
               <option value="left">Left (e.g. Rs. 1000)</option>
               <option value="right">Right (e.g. 1000 Rs.)</option>
@@ -1347,7 +1347,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
         </div>
 
         {form.popupEnabled && (
-          <div className="space-y-4 pt-4 border-t border-[#111]">
+          <div className="space-y-4 pt-4 border-t border-(--border)">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Popup Title" field="popupTitle" form={form} set={set} placeholder="Special Offer!" />
               <Field label="Button Link" field="popupCtaLink" form={form} set={set} placeholder="/shop" />
@@ -1357,10 +1357,10 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
               <Field label="Button Text" field="popupCtaText" form={form} set={set} placeholder="Shop Now" />
             </div>
 
-            <div className="border-t border-[#111] pt-4">
-              <p className="text-xs text-[#555] uppercase tracking-wider mb-2">Popup Image (Optional)</p>
+            <div className="border-t border-(--border) pt-4">
+              <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-2">Popup Image (Optional)</p>
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] overflow-hidden shrink-0">
+                <div className="w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) overflow-hidden shrink-0">
                   {settings?.popupImage ? (
                     <img src={mediaUrl(settings.popupImage)} className="w-full h-full object-cover" />
                   ) : (
@@ -1509,7 +1509,7 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
 function Field({ label, field, form, set, type = "text", placeholder, rows, hint }) {
   return (
     <div className="space-y-2">
-      <label className="block text-xs text-[#555] uppercase tracking-wider">{label}</label>
+      <label className="block text-xs text-(--text-muted) uppercase tracking-wider">{label}</label>
       {rows ? (
         <textarea
           value={form[field] || ""}
@@ -1536,7 +1536,7 @@ function Field({ label, field, form, set, type = "text", placeholder, rows, hint
 function SectionTitle({ title, desc }) {
   return (
     <div className="mb-1">
-      <h3 className="text-white font-semibold">{title}</h3>
+      <h3 className="text-(--text-primary) font-semibold">{title}</h3>
       {desc && <p className="text-[#444] text-sm mt-0.5">{desc}</p>}
     </div>
   );
@@ -1544,7 +1544,7 @@ function SectionTitle({ title, desc }) {
 
 function Card({ children }) {
   return (
-    <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-5">
+    <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5">
       {children}
     </div>
   );
@@ -1562,7 +1562,7 @@ function HeroTab({ form, set }) {
         <Field label="Subtitle / Description" field="heroSubtitle" form={form} set={set} rows={3} placeholder="Premium Pakistani streetwear..." />
       </div>
       {/* LIVE PREVIEW */}
-      <div className="bg-[#111] rounded-xl p-5 border border-[#1a1a1a] mt-2">
+      <div className="bg-[#111] rounded-xl p-5 border border-(--border-light) mt-2">
         <p className="text-[#333] text-xs uppercase tracking-wider mb-3">Live Preview</p>
         <span className="section-label text-xs">{form.heroLabel}</span>
         <h3 className="font-display text-2xl font-bold mt-2 whitespace-pre-line">
@@ -1603,7 +1603,7 @@ function ShopTab({ form, set }) {
         <Field label="Coupon Code" field="couponCode" form={form} set={set} placeholder="SAVE10" />
         <Field label="Coupon Discount (Rs.)" field="couponDiscount" form={form} set={set} type="number" placeholder="500" />
       </div>
-      <div className="bg-[#111] rounded-xl p-4 border border-[#1a1a1a] text-sm text-[#555]">
+      <div className="bg-[#111] rounded-xl p-4 border border-(--border-light) text-sm text-(--text-muted)">
         📦 Delivery: <span className="text-[#c9a84c] font-semibold">Rs. {form.deliveryCharges}</span>
         &nbsp;|&nbsp; 🏷️ Code: <span className="text-[#c9a84c] font-semibold">{form.couponCode}</span>
         &nbsp;→&nbsp; saves <span className="text-[#c9a84c] font-semibold">Rs. {form.couponDiscount}</span>
@@ -1714,7 +1714,7 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="text-white font-semibold">Hero Slides — 3 Slides Control</h3>
+          <h3 className="text-(--text-primary) font-semibold">Hero Slides — 3 Slides Control</h3>
           <p className="text-[#444] text-sm mt-0.5">Har slide ka image, title aur text alag se set karo</p>
         </div>
         <button onClick={handleSaveText} disabled={saving} className="btn-gold" style={{ padding: "10px 20px", fontSize: "0.82rem" }}>
@@ -1723,17 +1723,17 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
       </div>
 
       {slides.map((slide, idx) => (
-        <div key={idx} className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#111] flex items-center gap-2">
+        <div key={idx} className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-(--border) flex items-center gap-2">
             <span className="gold-gradient text-black text-xs font-bold px-2.5 py-1 rounded-lg">{idx + 1}</span>
-            <h4 className="text-white font-semibold text-sm">{SLIDE_NAMES[idx]}</h4>
+            <h4 className="text-(--text-primary) font-semibold text-sm">{SLIDE_NAMES[idx]}</h4>
           </div>
 
           <div className="p-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* IMAGE */}
             <div>
-              <p className="text-[#555] text-xs uppercase tracking-wider mb-3">Slide Image</p>
-              <div className="aspect-video rounded-xl overflow-hidden bg-[#0a0a0a] border border-[#1a1a1a] mb-3 relative">
+              <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">Slide Image</p>
+              <div className="aspect-video rounded-xl overflow-hidden bg-(--bg-elevated) border border-(--border-light) mb-3 relative">
                 {slide.image ? (
                   <img src={mediaUrl(slide.image)} alt={`slide-${idx}`} className="w-full h-full object-cover"
                     onError={(e) => { e.target.style.display = "none"; }} />
@@ -1775,30 +1775,30 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
             {/* TEXT FIELDS */}
             <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Badge Label</label>
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Badge Label</label>
                 <input value={slide.label || ""} onChange={(e) => updateSlide(idx, "label", e.target.value)}
                   placeholder="e.g. New Season 2026" className="lux-input" />
               </div>
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Button Text (CTA)</label>
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Button Text (CTA)</label>
                 <input value={slide.cta || ""} onChange={(e) => updateSlide(idx, "cta", e.target.value)}
                   placeholder="e.g. Shop Collection" className="lux-input" />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Title (newline for gold line)</label>
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Title (newline for gold line)</label>
                 <textarea value={slide.title || ""} onChange={(e) => updateSlide(idx, "title", e.target.value)}
                   placeholder={"Style That\nSpeaks Louder"} rows={2}
                   className="lux-input resize-none" style={{ resize: "vertical" }} />
                 <p className="text-[#333] text-xs mt-1">💡 Dusri line automatic gold color mein hogi</p>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Subtitle / Description</label>
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Subtitle / Description</label>
                 <textarea value={slide.subtitle || ""} onChange={(e) => updateSlide(idx, "subtitle", e.target.value)}
                   placeholder="Pakistan ka premium streetwear..." rows={2}
                   className="lux-input resize-none" style={{ resize: "vertical" }} />
               </div>
               {/* MINI PREVIEW */}
-              <div className="sm:col-span-2 bg-[#111] border border-[#1a1a1a] rounded-xl p-3">
+              <div className="sm:col-span-2 bg-[#111] border border-(--border-light) rounded-xl p-3">
                 <p className="text-[#333] text-[10px] uppercase tracking-wider mb-2">Preview</p>
                 <span className="section-label text-[10px]">{slide.label}</span>
                 <h5 className="font-display text-base font-bold mt-1 whitespace-pre-line">
@@ -1806,7 +1806,7 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
                     <span key={i} className="block">{i === 1 ? <span className="gold-text">{line}</span> : line}</span>
                   ))}
                 </h5>
-                <p className="text-[#555] text-xs mt-1">{slide.subtitle}</p>
+                <p className="text-(--text-muted) text-xs mt-1">{slide.subtitle}</p>
                 <div className="mt-2 inline-block gold-gradient text-black text-[10px] font-bold px-2 py-1 rounded">{slide.cta}</div>
               </div>
             </div>
@@ -1882,28 +1882,28 @@ function ReviewsTab({ settings, token, fetchSettings }) {
   return (
     <div className="space-y-5">
       {/* ADD / EDIT FORM */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-4">
-        <h3 className="text-white font-semibold flex items-center gap-2">
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4">
+        <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
           {editId ? <><FiEdit2 size={15} className="text-[#c9a84c]" /> Review Edit Karo</> : <><FiPlus size={15} className="text-[#c9a84c]" /> Naya Review Add Karo</>}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Customer Name *</label>
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Customer Name *</label>
             <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Ahmad Raza" className="lux-input" />
           </div>
           <div>
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">City</label>
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">City</label>
             <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
               placeholder="Lahore" className="lux-input" />
           </div>
           <div>
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Rating</label>
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Rating</label>
             <StarInput value={form.rating} onChange={(v) => setForm({ ...form, rating: v })} />
           </div>
           <div className="sm:col-span-2">
-            <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">Review Comment *</label>
+            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Review Comment *</label>
             <textarea value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })}
               placeholder="Customer ne kya kaha..." rows={3}
               className="lux-input resize-none" style={{ resize: "vertical" }} />
@@ -1923,9 +1923,9 @@ function ReviewsTab({ settings, token, fetchSettings }) {
       </div>
 
       {/* REVIEWS LIST */}
-      <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl overflow-hidden">
-        <div className="px-5 py-4 border-b border-[#111] flex items-center justify-between flex-wrap gap-3">
-          <h3 className="text-white font-semibold">All Reviews</h3>
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between flex-wrap gap-3">
+          <h3 className="text-(--text-primary) font-semibold">All Reviews</h3>
           <div className="flex items-center gap-2">
             {reviews.filter((r) => !r.isActive).length > 0 && (
               <span className="text-xs font-bold text-orange-400 bg-orange-900/15 border border-orange-700/20 px-2.5 py-1 rounded-full">
@@ -1951,7 +1951,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-white font-semibold text-sm">{r.name}</span>
+                    <span className="text-(--text-primary) font-semibold text-sm">{r.name}</span>
                     <span className="text-[#444] text-xs">{r.city}</span>
                     <div className="flex gap-0.5">
                       {[1,2,3,4,5].map((s) => (
@@ -1964,7 +1964,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
                       </span>
                     )}
                   </div>
-                  <p className="text-[#555] text-xs mt-1 line-clamp-2">{r.comment}</p>
+                  <p className="text-(--text-muted) text-xs mt-1 line-clamp-2">{r.comment}</p>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
                   {/* APPROVE button for pending */}
@@ -1984,10 +1984,10 @@ function ReviewsTab({ settings, token, fetchSettings }) {
                       Visible
                     </button>
                   )}
-                  <button onClick={() => startEdit(r)} className="p-1.5 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-[#c9a84c] transition-all">
+                  <button onClick={() => startEdit(r)} className="p-1.5 rounded-lg border border-(--border-light) text-[#444] hover:text-[#c9a84c] transition-all">
                     <FiEdit2 size={12} />
                   </button>
-                  <button onClick={() => handleDelete(r._id)} className="p-1.5 rounded-lg border border-[#1a1a1a] text-[#444] hover:text-red-400 transition-all">
+                  <button onClick={() => handleDelete(r._id)} className="p-1.5 rounded-lg border border-(--border-light) text-[#444] hover:text-red-400 transition-all">
                     <FiTrash2 size={12} />
                   </button>
                 </div>
@@ -2037,8 +2037,8 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
       <div className="flex items-center gap-3 mb-6">
         <FiFileText className="text-[#c9a84c]" size={24} />
         <div>
-          <h2 className="text-xl font-bold text-white">About Us Page</h2>
-          <p className="text-[#555] text-xs">Manage all content and images for your About Us page.</p>
+          <h2 className="text-xl font-bold text-(--text-primary)">About Us Page</h2>
+          <p className="text-(--text-muted) text-xs">Manage all content and images for your About Us page.</p>
         </div>
       </div>
 
@@ -2046,22 +2046,22 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
         <SectionTitle title="Hero Section" desc="Top banner of the About page." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Hero Title</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Hero Title</label>
             <input value={form.aboutUsHeroTitle || ""} onChange={e => set("aboutUsHeroTitle", e.target.value)} className="lux-input w-full" placeholder="Our Story" />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Hero Subtitle</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Hero Subtitle</label>
             <input value={form.aboutUsHeroSubtitle || ""} onChange={e => set("aboutUsHeroSubtitle", e.target.value)} className="lux-input w-full" placeholder="Redefining Streetwear..." />
           </div>
         </div>
         <div className="mt-4">
-          <label className="text-[#555] text-xs mb-1 block">Hero Image</label>
+          <label className="text-(--text-muted) text-xs mb-1 block">Hero Image</label>
           <div className="flex gap-4 items-center">
             {form.aboutUsHeroImage ? (
               <div className="relative group rounded-xl overflow-hidden" style={{ width: 120, height: 80 }}>
                 <img src={mediaUrl(form.aboutUsHeroImage)} alt="hero" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={() => handleDeleteImage("aboutUsHeroImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                  <button onClick={() => handleDeleteImage("aboutUsHeroImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                 </div>
               </div>
             ) : (
@@ -2083,25 +2083,25 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
         <SectionTitle title="Brand Story" desc="The main story component detailing your brand origins." />
         <div className="space-y-4">
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Story Title</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Story Title</label>
             <input value={form.aboutUsStoryTitle || ""} onChange={e => set("aboutUsStoryTitle", e.target.value)} className="lux-input w-full" placeholder="How It All Started" />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Story Paragraph 1</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Story Paragraph 1</label>
             <textarea value={form.aboutUsStoryText1 || ""} onChange={e => set("aboutUsStoryText1", e.target.value)} className="lux-input w-full" rows={3} placeholder="We started with..." />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Story Paragraph 2</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Story Paragraph 2</label>
             <textarea value={form.aboutUsStoryText2 || ""} onChange={e => set("aboutUsStoryText2", e.target.value)} className="lux-input w-full" rows={3} placeholder="Our goal is..." />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Story Image</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Story Image</label>
             <div className="flex gap-4 items-center">
               {form.aboutUsStoryImage ? (
                 <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
                   <img src={mediaUrl(form.aboutUsStoryImage)} alt="story" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button onClick={() => handleDeleteImage("aboutUsStoryImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                    <button onClick={() => handleDeleteImage("aboutUsStoryImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                   </div>
                 </div>
               ) : (
@@ -2124,21 +2124,21 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
         <SectionTitle title="Mission & Vision" desc="Your brands core mission and vision statement." />
         <div className="space-y-4">
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Mission Title</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Mission Title</label>
             <input value={form.aboutUsMissionTitle || ""} onChange={e => set("aboutUsMissionTitle", e.target.value)} className="lux-input w-full" placeholder="Our Mission" />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Mission Text</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Mission Text</label>
             <textarea value={form.aboutUsMissionText || ""} onChange={e => set("aboutUsMissionText", e.target.value)} className="lux-input w-full" rows={3} placeholder="To empower the youth..." />
           </div>
           <div>
-            <label className="text-[#555] text-xs mb-1 block">Mission Image</label>
+            <label className="text-(--text-muted) text-xs mb-1 block">Mission Image</label>
             <div className="flex gap-4 items-center">
               {form.aboutUsMissionImage ? (
                 <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
                   <img src={mediaUrl(form.aboutUsMissionImage)} alt="mission" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button onClick={() => handleDeleteImage("aboutUsMissionImage")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                    <button onClick={() => handleDeleteImage("aboutUsMissionImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                   </div>
                 </div>
               ) : (
@@ -2161,28 +2161,28 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
         <SectionTitle title="Meet the Founders" desc="Details about the 2 owners of the brand." />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Founder 1 */}
-          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-[#111]">
+          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-(--border)">
             <p className="text-(--gold) font-bold text-xs uppercase tracking-widest">Founder 1</p>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Full Name</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Full Name</label>
               <input value={form.founder1Name || ""} onChange={e => set("founder1Name", e.target.value)} className="lux-input w-full" placeholder="Owner Name 1" />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Role / Title</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Role / Title</label>
               <input value={form.founder1Role || "Co-Founder"} onChange={e => set("founder1Role", e.target.value)} className="lux-input w-full" placeholder="Co-Founder" />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Short Bio</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Short Bio</label>
               <textarea value={form.founder1Bio || ""} onChange={e => set("founder1Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 1 journey..." />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Profile Image</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Profile Image</label>
               <div className="flex gap-4 items-center">
                 {form.founder1Image ? (
                   <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
                     <img src={mediaUrl(form.founder1Image)} alt="founder1" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button onClick={() => handleDeleteImage("founder1Image")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                      <button onClick={() => handleDeleteImage("founder1Image")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                     </div>
                   </div>
                 ) : (
@@ -2201,28 +2201,28 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
           </div>
 
           {/* Founder 2 */}
-          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-[#111]">
+          <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-(--border)">
             <p className="text-(--gold) font-bold text-xs uppercase tracking-widest">Founder 2</p>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Full Name</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Full Name</label>
               <input value={form.founder2Name || ""} onChange={e => set("founder2Name", e.target.value)} className="lux-input w-full" placeholder="Owner Name 2" />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Role / Title</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Role / Title</label>
               <input value={form.founder2Role || "Co-Founder"} onChange={e => set("founder2Role", e.target.value)} className="lux-input w-full" placeholder="Co-Founder" />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Short Bio</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Short Bio</label>
               <textarea value={form.founder2Bio || ""} onChange={e => set("founder2Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 2 journey..." />
             </div>
             <div>
-              <label className="text-[#555] text-xs mb-1 block">Profile Image</label>
+              <label className="text-(--text-muted) text-xs mb-1 block">Profile Image</label>
               <div className="flex gap-4 items-center">
                 {form.founder2Image ? (
                   <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
                     <img src={mediaUrl(form.founder2Image)} alt="founder2" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button onClick={() => handleDeleteImage("founder2Image")} className="text-white hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
+                      <button onClick={() => handleDeleteImage("founder2Image")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                     </div>
                   </div>
                 ) : (

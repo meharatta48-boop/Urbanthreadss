@@ -115,18 +115,23 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* ── OVERLAYS ── */}
-      {/* Mobile: dark bottom-up so image visible at top, Desktop: dark left so text readable */}
-      <div className="absolute inset-0 pointer-events-none"
+      {/* Adaptive Overlays: Lighter/Gold-ish in light mode, Dark/Deep in dark mode */}
+      <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
+        style={{
+          background: "var(--hero-overlay, linear-gradient(to right, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.4) 45%, rgba(255,255,255,0.1) 100%))",
+        }}
+      />
+      <div className="dark:block hidden absolute inset-0 pointer-events-none"
         style={{
           background: "linear-gradient(to right, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.7) 45%, rgba(5,5,5,0.15) 100%)",
         }}
       />
+      
       {/* Bottom vignette */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/75 via-transparent to-[#050505]/15 pointer-events-none" />
-      {/* Mobile-only: slightly darken center so text is always readable */}
-      <div className="absolute inset-0 pointer-events-none sm:hidden"
-        style={{ background: "rgba(5,5,5,0.35)" }}
-      />
+      <div className="absolute inset-0 bg-gradient-to-t from-(--bg-deep)/80 via-transparent to-(--bg-deep)/20 pointer-events-none" />
+      
+      {/* Mobile-only: slightly darken/lighten center so text is always readable */}
+      <div className="absolute inset-0 pointer-events-none sm:hidden bg-white/20 dark:bg-black/35" />
 
       {/* ── CONTENT ── */}
       <div className="relative z-10 h-full max-w-7xl mx-auto px-5 sm:px-8  lg:px-10 lg:ml-10  flex items-center">
@@ -159,7 +164,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="font-display font-bold text-white leading-[1.04]"
+                className="font-display font-bold text-(--text-primary) dark:text-white leading-[1.04]"
                 style={{ fontSize: "clamp(2rem, 6.5vw, 5.2rem)" }}
               >
                 {(current.title || "").split("\n").map((line, i) => (
@@ -178,7 +183,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
-                className="text-[#aaa] text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
+                className="text-(--text-secondary) dark:text-[#aaa] text-sm sm:text-base md:text-lg leading-relaxed max-w-sm"
               >
                 {current.sub}
               </motion.p>

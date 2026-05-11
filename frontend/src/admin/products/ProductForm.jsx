@@ -239,13 +239,13 @@ export default function ProductForm() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/admin-dashboard/products")}
-            className="p-2 rounded-xl border border-[#1a1a1a] text-[#555] hover:text-white hover:border-[#333] transition-all"
+            className="p-2 rounded-xl border border-(--border) text-(--text-muted) hover:text-(--text-primary) hover:border-(--border-light) transition-all"
           >
             <FiArrowLeft size={16} />
           </button>
           <div>
             <p className="section-label mb-0.5">{isEdit ? "Edit" : "Create"}</p>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary)">
               {isEdit ? "Update Product" : "Add New Product"}
             </h2>
           </div>
@@ -274,10 +274,10 @@ export default function ProductForm() {
             onClick={() => fileInputRef.current?.click()}
             className={`relative border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
               dragging
-                ? "border-[#c9a84c] bg-[rgba(201,168,76,0.05)]"
+                ? "border-(--gold) bg-(--gold)/5"
                 : errors.images
                 ? "border-red-500/50 bg-red-900/5"
-                : "border-[#222] hover:border-[#c9a84c]/40 hover:bg-[rgba(201,168,76,0.03)]"
+                : "border-(--border) hover:border-(--gold)/40 hover:bg-(--gold)/3"
             }`}
           >
             <input
@@ -289,17 +289,17 @@ export default function ProductForm() {
               onChange={(e) => addFiles(e.target.files)}
             />
             <div className="flex flex-col items-center gap-3">
-              <div className="w-14 h-14 rounded-xl border border-[#1a1a1a] flex items-center justify-center text-[#333]">
-                <FiUpload size={22} className={dragging ? "text-[#c9a84c]" : ""} />
+              <div className="w-14 h-14 rounded-xl border border-(--border) flex items-center justify-center text-(--text-muted)">
+                <FiUpload size={22} className={dragging ? "text-(--gold)" : ""} />
               </div>
               <div>
-                <p className="text-white text-sm font-medium">
+                <p className="text-(--text-primary) text-sm font-medium">
                   {dragging ? "Drop images here!" : "Click or drag images here"}
                 </p>
-                <p className="text-[#444] text-xs mt-1">
+                <p className="text-(--text-muted) text-xs mt-1">
                   PNG, JPG, WebP — Max 5MB each
                 </p>
-                <p className="text-[#333] text-xs mt-0.5">
+                <p className="text-(--text-muted)/60 text-xs mt-0.5">
                   {totalImages}/8 images uploaded
                 </p>
               </div>
@@ -320,7 +320,7 @@ export default function ProductForm() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="relative group aspect-square rounded-xl overflow-hidden border border-[#1a1a1a] bg-[#0c0c0c]"
+                    className="relative group aspect-square rounded-xl overflow-hidden border border-(--border) bg-(--bg-card)"
                   >
                     <img
                       src={getImageUrl(img)}
@@ -354,10 +354,10 @@ export default function ProductForm() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="relative group aspect-square rounded-xl overflow-hidden border border-[#c9a84c]/30 bg-[#0c0c0c]"
+                    className="relative group aspect-square rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card)"
                   >
                     <img src={url} alt={`new-${i}`} className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-[#0c0c0c] text-[#c9a84c] border border-[#c9a84c]/30 px-1.5 py-0.5 rounded font-medium">
+                    <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium">
                       New
                     </span>
                     <button
@@ -376,7 +376,7 @@ export default function ProductForm() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="aspect-square rounded-xl border border-dashed border-[#1a1a1a] hover:border-[#c9a84c]/40 flex flex-col items-center justify-center text-[#333] hover:text-[#c9a84c] transition-all"
+                  className="aspect-square rounded-xl border border-dashed border-(--border) hover:border-(--gold)/40 flex flex-col items-center justify-center text-(--text-muted) hover:text-(--gold) transition-all"
                 >
                   <FiImage size={18} />
                   <span className="text-[10px] mt-1">Add more</span>
@@ -386,10 +386,10 @@ export default function ProductForm() {
           )}
 
           {/* ════ VIDEO UPLOAD CARD ════ */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4 space-y-3">
-            <p className="text-white text-sm font-medium flex items-center gap-2">
-              <FiVideo className="text-[#c9a84c]" /> Product Video
-              <span className="text-[#333] text-xs font-normal">(Optional — max 100MB)</span>
+          <div className="bg-(--bg-card) border border-(--border) rounded-xl p-4 space-y-3">
+            <p className="text-(--text-primary) text-sm font-medium flex items-center gap-2">
+              <FiVideo className="text-(--gold)" /> Product Video
+              <span className="text-(--text-muted) text-xs font-normal">(Optional — max 100MB)</span>
             </p>
 
             {/* Hidden input */}
@@ -397,7 +397,7 @@ export default function ProductForm() {
 
             {/* Preview / Upload area */}
             {(videoPreview || existingVideo) ? (
-              <div className="relative rounded-xl overflow-hidden border border-[#2a2a2a] bg-black">
+              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-black">
                 <video
                   src={videoPreview || getImageUrl(existingVideo)}
                   controls
@@ -408,7 +408,7 @@ export default function ProductForm() {
                   <button
                     type="button"
                     onClick={() => videoInputRef.current?.click()}
-                    className="flex-1 text-xs py-1.5 rounded-lg border border-[#2a2a2a] text-[#555] hover:text-white hover:border-[#444] transition-all"
+                    className="flex-1 text-xs py-1.5 rounded-lg border border-(--border) text-(--text-muted) hover:text-(--text-primary) hover:border-(--border-light) transition-all"
                   >
                     Replace Video
                   </button>
@@ -425,29 +425,29 @@ export default function ProductForm() {
               <button
                 type="button"
                 onClick={() => videoInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-[#1a1a1a] hover:border-[#c9a84c]/40 rounded-xl p-5 flex flex-col items-center gap-2 text-[#444] hover:text-[#c9a84c] transition-all cursor-pointer"
+                className="w-full border-2 border-dashed border-(--border) hover:border-(--gold)/40 rounded-xl p-5 flex flex-col items-center gap-2 text-(--text-muted) hover:text-(--gold) transition-all cursor-pointer"
               >
                 <FiVideo size={24} />
                 <span className="text-sm">Click to upload video</span>
-                <span className="text-xs text-[#333]">MP4, WebM, MOV — Max 100MB</span>
+                <span className="text-xs text-(--text-muted)/60">MP4, WebM, MOV — Max 100MB</span>
               </button>
             )}
           </div>
 
           {/* FEATURED TOGGLE */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4">
+          <div className="bg-(--bg-card) border border-(--border) rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white text-sm font-medium flex items-center gap-2">
-                  <FiStar className="text-[#c9a84c]" /> Featured Product
+                <p className="text-(--text-primary) text-sm font-medium flex items-center gap-2">
+                  <FiStar className="text-(--gold)" /> Featured Product
                 </p>
-                <p className="text-[#444] text-xs mt-0.5">Show in homepage featured section</p>
+                <p className="text-(--text-muted) text-xs mt-0.5">Show in homepage featured section</p>
               </div>
               <button
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, isFeatured: !f.isFeatured }))}
                 className={`w-11 h-6 rounded-full transition-all relative ${
-                  form.isFeatured ? "bg-[#c9a84c]" : "bg-[#1a1a1a]"
+                  form.isFeatured ? "bg-(--gold)" : "bg-(--bg-elevated)"
                 }`}
               >
                 <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${
@@ -458,17 +458,17 @@ export default function ProductForm() {
           </div>
 
           {/* ACTIVE TOGGLE */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-xl p-4">
+          <div className="bg-(--bg-card) border border-(--border) rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white text-sm font-medium">Active / Visible</p>
-                <p className="text-[#444] text-xs mt-0.5">Customers can see this product</p>
+                <p className="text-(--text-primary) text-sm font-medium">Active / Visible</p>
+                <p className="text-(--text-muted) text-xs mt-0.5">Customers can see this product</p>
               </div>
               <button
                 type="button"
                 onClick={() => setForm((f) => ({ ...f, isActive: !f.isActive }))}
                 className={`w-11 h-6 rounded-full transition-all relative ${
-                  form.isActive ? "bg-green-600" : "bg-[#1a1a1a]"
+                  form.isActive ? "bg-green-600" : "bg-(--bg-elevated)"
                 }`}
               >
                 <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${
@@ -483,14 +483,14 @@ export default function ProductForm() {
         <div className="lg:col-span-2 space-y-5">
 
           {/* BASIC INFO */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-5">
-            <h3 className="text-white font-semibold flex items-center gap-2 text-sm">
-              <FiPackage className="text-[#c9a84c]" /> Basic Information
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5">
+            <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+              <FiPackage className="text-(--gold)" /> Basic Information
             </h3>
 
             {/* NAME */}
             <div>
-              <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                 Product Name *
               </label>
               <input
@@ -504,7 +504,7 @@ export default function ProductForm() {
 
             {/* DESCRIPTION */}
             <div>
-              <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                 Description
               </label>
               <textarea
@@ -519,14 +519,14 @@ export default function ProductForm() {
           </div>
 
           {/* PRICING & STOCK */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-5">
-            <h3 className="text-white font-semibold flex items-center gap-2 text-sm">
-              <FiDollarSign className="text-[#c9a84c]" /> Pricing & Inventory
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5">
+            <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+              <FiDollarSign className="text-(--gold)" /> Pricing & Inventory
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                   Sale Price (Rs.) *
                 </label>
                 <input
@@ -541,7 +541,7 @@ export default function ProductForm() {
               </div>
 
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                   Original Price (Rs.)
                 </label>
                 <input
@@ -552,11 +552,11 @@ export default function ProductForm() {
                   placeholder="1999 (optional)"
                   className="lux-input"
                 />
-                <p className="text-[#333] text-xs mt-1">Strikethrough price</p>
+                <p className="text-(--text-muted)/60 text-xs mt-1">Strikethrough price</p>
               </div>
 
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                   Stock Qty *
                 </label>
                 <input
@@ -572,14 +572,14 @@ export default function ProductForm() {
           </div>
 
           {/* CATEGORIES */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-5">
-            <h3 className="text-white font-semibold flex items-center gap-2 text-sm">
-              <FiLayers className="text-[#c9a84c]" /> Categories
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5">
+            <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+              <FiLayers className="text-(--gold)" /> Categories
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                   Season / Category *
                 </label>
                 <select
@@ -596,7 +596,7 @@ export default function ProductForm() {
               </div>
 
               <div>
-                <label className="block text-xs text-[#555] uppercase tracking-wider mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
                   Gender / Sub-Category
                 </label>
                 <select
@@ -621,13 +621,13 @@ export default function ProductForm() {
           </div>
 
           {/* SIZES */}
-          <div className="bg-[#0c0c0c] border border-[#111] rounded-2xl p-5 sm:p-6 space-y-4">
-            <h3 className="text-white font-semibold flex items-center gap-2 text-sm">
-              <FiAlignLeft className="text-[#c9a84c]" /> Sizes & Colors
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4">
+            <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+              <FiAlignLeft className="text-(--gold)" /> Sizes & Colors
             </h3>
 
             <div>
-              <label className="block text-xs text-[#555] uppercase tracking-wider mb-3">
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-3">
                 Available Sizes
               </label>
               <div className="flex flex-wrap gap-2">
@@ -639,7 +639,7 @@ export default function ProductForm() {
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
                       form.sizes.includes(s)
                         ? "gold-gradient text-black border-transparent"
-                        : "border-[#1a1a1a] text-[#555] hover:border-[#333] hover:text-white"
+                        : "border-(--border) text-(--text-muted) hover:border-(--border-light) hover:text-(--text-primary)"
                     }`}
                   >
                     {s}
@@ -647,14 +647,14 @@ export default function ProductForm() {
                 ))}
               </div>
               {form.sizes.length > 0 && (
-                <p className="text-[#c9a84c] text-xs mt-2">
+                <p className="text-(--gold) text-xs mt-2">
                   Selected: {form.sizes.join(", ")}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs text-[#555] uppercase tracking-wider mb-3">
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-3">
                 Available Colors
               </label>
               <div className="flex flex-wrap gap-2 mb-3">
@@ -666,7 +666,7 @@ export default function ProductForm() {
                     className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border ${
                       form.colors.includes(c)
                         ? "gold-gradient text-black border-transparent"
-                        : "border-[#1a1a1a] text-[#555] hover:border-[#333] hover:text-white"
+                        : "border-(--border) text-(--text-muted) hover:border-(--border-light) hover:text-(--text-primary)"
                     }`}
                   >
                     {c}
@@ -685,13 +685,13 @@ export default function ProductForm() {
                 <button
                   type="button"
                   onClick={handleAddCustomColor}
-                  className="px-4 py-2 rounded-xl text-sm font-medium border border-[#1a1a1a] text-[#555] hover:text-white hover:border-[#333] transition-all"
+                  className="px-4 py-2 rounded-xl text-sm font-medium border border-(--border) text-(--text-muted) hover:text-(--text-primary) hover:border-(--border-light) transition-all"
                 >
                   Add
                 </button>
               </div>
               {form.colors.length > 0 && (
-                <p className="text-[#c9a84c] text-xs mt-2">
+                <p className="text-(--gold) text-xs mt-2">
                   Selected: {form.colors.join(", ")}
                 </p>
               )}

@@ -3,9 +3,9 @@ import { createContext, useContext, useEffect, useState } from "react"
 const ThemeContext = createContext()
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(
-    localStorage.getItem("theme") || "light"
-  )
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light"
+  })
 
   useEffect(() => {
     const html = document.documentElement
@@ -18,7 +18,7 @@ export function ThemeProvider({ children }) {
   }, [theme])
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === "dark" ? "light" : "dark"))
+    setTheme(prev => (prev === "light" ? "dark" : "light"))
   }
 
   return (

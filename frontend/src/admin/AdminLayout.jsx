@@ -67,10 +67,10 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-[#050505] text-white overflow-hidden" style={{ paddingTop: 0 }}>
+    <div className="flex h-screen bg-(--bg-deep) text-(--text-primary) overflow-hidden transition-colors duration-500" style={{ paddingTop: 0 }}>
       {/* MOBILE BACKDROP */}
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/70 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 dark:bg-black/80 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* SIDEBAR */}
@@ -81,36 +81,36 @@ export default function AdminLayout() {
       {/* MAIN COLUMN */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* TOPBAR */}
-        <header className="h-[60px] bg-[#080808] border-b border-[#111] flex items-center justify-between px-4 sm:px-6 flex-shrink-0">
+        <header className="h-[60px] bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-6 flex-shrink-0 transition-colors">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden text-[#555] hover:text-white p-1.5 rounded-lg border border-[#111] flex-shrink-0"
+              className="lg:hidden text-(--text-muted) hover:text-(--text-primary) p-1.5 rounded-lg border border-(--border) flex-shrink-0"
             >
               <FiMenu size={17} />
             </button>
-            <h1 className="font-display text-base sm:text-lg font-bold text-white">{title}</h1>
+            <h1 className="font-display text-base sm:text-lg font-bold text-(--text-primary)">{title}</h1>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCommandOpen(true)}
-              className="hidden md:flex items-center gap-2 text-xs text-[#444] hover:text-white transition-colors border border-[#111] rounded-lg px-3 py-1.5"
+              className="hidden md:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--text-primary) transition-colors border border-(--border) rounded-lg px-3 py-1.5"
               title="Quick command palette"
             >
               <FiSearch size={12} />
               Quick Search
-              <span className="text-[10px] text-[#333] border border-[#1a1a1a] rounded px-1">Ctrl+K</span>
+              <span className="text-[10px] text-(--text-muted)/60 border border-(--border) rounded px-1">Ctrl+K</span>
             </button>
             <Link
               to="/"
-              className="hidden sm:flex text-xs text-[#444] hover:text-[#c9a84c] transition-colors border border-[#111] rounded-lg px-3 py-1.5"
+              className="hidden sm:flex text-xs text-(--text-muted) hover:text-(--gold) transition-colors border border-(--border) rounded-lg px-3 py-1.5"
             >
               View Site →
             </Link>
             <Link
               to="/admin-dashboard/settings"
-              className={`p-2 rounded-lg border transition-colors ${pathname === "/admin-dashboard/settings" ? "border-[#c9a84c]/30 text-[#c9a84c]" : "border-[#111] text-[#444] hover:text-[#c9a84c]"}`}
+              className={`p-2 rounded-lg border transition-colors ${pathname === "/admin-dashboard/settings" ? "border-(--gold)/30 text-(--gold)" : "border-(--border) text-(--text-muted) hover:text-(--gold)"}`}
             >
               <FiSettings size={15} />
             </Link>
@@ -120,35 +120,35 @@ export default function AdminLayout() {
                 {user?.name?.charAt(0)?.toUpperCase() || "A"}
               </div>
               <div className="hidden md:block">
-                <div className="text-white text-xs font-medium leading-none">{user?.name || "Admin"}</div>
-                <div className="text-[#444] text-[10px] mt-0.5">{user?.role}</div>
+                <div className="text-(--text-primary) text-xs font-medium leading-none">{user?.name || "Admin"}</div>
+                <div className="text-(--text-muted) text-[10px] mt-0.5">{user?.role}</div>
               </div>
             </div>
           </div>
         </header>
 
         {/* PAGE CONTENT */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-(--bg-deep)">
           <Outlet />
         </main>
       </div>
 
       {commandOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm p-4 sm:p-10" onClick={() => setCommandOpen(false)}>
+        <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm p-4 sm:p-10" onClick={() => setCommandOpen(false)}>
           <div
-            className="max-w-2xl mx-auto rounded-2xl border border-[#1a1a1a] bg-[#080808] overflow-hidden"
+            className="max-w-2xl mx-auto rounded-2xl border border-(--border) bg-(--bg-card) overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-[#111]">
-              <FiCommand size={15} className="text-[#c9a84c]" />
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-(--border)">
+              <FiCommand size={15} className="text-(--gold)" />
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search admin actions... (orders, settings, products)"
-                className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-[#444]"
+                className="flex-1 bg-transparent outline-none text-sm text-(--text-primary) placeholder:text-(--text-muted)"
               />
-              <button onClick={() => setCommandOpen(false)} className="text-[#555] hover:text-white">
+              <button onClick={() => setCommandOpen(false)} className="text-(--text-muted) hover:text-(--text-primary)">
                 <FiX size={15} />
               </button>
             </div>
@@ -157,14 +157,14 @@ export default function AdminLayout() {
                 <button
                   key={item.to}
                   onClick={() => goTo(item.to)}
-                  className="w-full text-left px-4 py-3 border-b border-[#111] hover:bg-[#0f0f0f] transition-colors"
+                  className="w-full text-left px-4 py-3 border-b border-(--border) hover:bg-(--bg-elevated) transition-colors"
                 >
-                  <p className="text-white text-sm">{item.label}</p>
-                  <p className="text-[#444] text-xs">{item.to}</p>
+                  <p className="text-(--text-primary) text-sm">{item.label}</p>
+                  <p className="text-(--text-muted) text-xs">{item.to}</p>
                 </button>
               ))}
               {filteredQuickLinks.length === 0 && (
-                <p className="px-4 py-6 text-sm text-[#555]">No matching command found.</p>
+                <p className="px-4 py-6 text-sm text-(--text-muted)">No matching command found.</p>
               )}
             </div>
           </div>
