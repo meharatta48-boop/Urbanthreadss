@@ -99,8 +99,6 @@ export default function Checkout() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(form)); } catch (err) { console.error("Storage error:", err); }
   }, [form]);
 
-  if (!cart.length) { navigate("/cart"); return null; }
-
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const discount = couponApplied ? COUPON_DISCOUNT : 0;
   const total    = subtotal + DELIVERY - discount;
@@ -111,7 +109,14 @@ export default function Checkout() {
     }
   }, [cart, subtotal, DELIVERY]);
 
+  if (!cart.length) {
+    navigate("/cart");
+    return null;
+  }
+
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
+  const handleChange = (e) => set(e.target.name, e.target.value);
+  const handleSubmit = (e) => { e.preventDefault(); placeOrder(); };
 
   const applyCoupon = () => {
     if (!user) { 

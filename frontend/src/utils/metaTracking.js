@@ -3,8 +3,8 @@
  * Handles Facebook/Instagram ads tracking and conversion events
  */
 
-const PIXEL_ID = process.env.VITE_META_PIXEL_ID || null; // Set in environment variables
-const API_URL = process.env.VITE_API_URL || "https://urbanthreadss.onrender.com/api";
+const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID || null; // Set in environment variables
+const API_URL = import.meta.env.VITE_API_URL || "https://urbanthreadss.onrender.com/api";
 
 class MetaTracker {
   constructor() {

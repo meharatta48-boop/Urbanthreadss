@@ -4,6 +4,7 @@ import { useProducts } from "../context/ProductContext";
 import { useCategories } from "../context/CategoryContext";
 import { useSubCategories } from "../context/SubCategoryContext";
 import { useCart } from "../context/CartContext";
+import { useSettings } from "../context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiArrowRight, FiShoppingCart, FiFilter, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
