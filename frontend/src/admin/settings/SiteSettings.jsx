@@ -167,14 +167,14 @@ export default function SiteSettingsPage() {
           {/* Import */}
           <input ref={fileImportRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
           <button onClick={() => fileImportRef.current?.click()}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all"
-            style={{ border: "1px solid #1a1a1a" }} title="Import settings from JSON">
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) border border-(--border) hover:border-(--border-light) transition-all"
+            title="Import settings from JSON">
             <FiDownload size={13} /> Import
           </button>
           {/* Export */}
           <button onClick={handleExport}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all"
-            style={{ border: "1px solid #1a1a1a" }} title="Export settings as JSON backup">
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) border border-(--border) hover:border-(--border-light) transition-all"
+            title="Export settings as JSON backup">
             <FiDownload size={13} style={{ transform: "rotate(180deg)" }} /> Export
           </button>
           {/* Save */}
@@ -190,44 +190,39 @@ export default function SiteSettingsPage() {
 
       {/* ── SEARCH BAR ── */}
       <div className="relative">
-        <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#444]" />
+        <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted)" />
         <input value={search} onChange={e => setSearch(e.target.value)}
           placeholder="Tab dhundho... (general, media, navigation, pages...)"
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm text-(--text-primary) outline-none"
-          style={{ background: "#0c0c0c", border: "1px solid #1a1a1a" }} />
+          className="lux-input w-full pl-9 pr-8" />
         {search && (
           <button onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#333] hover:text-(--text-primary)">
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-primary)">
             <FiX size={14} />
           </button>
         )}
       </div>
 
       {/* ── QUICK STRIP ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-xl" style={{ background: "#0c0c0c", border: "1px solid #111" }}>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-(--bg-card) border border-(--border)">
         <div>
-          <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Brand Name</label>
+          <label className="text-(--text-muted) text-[10px] uppercase tracking-wider block mb-1">Brand Name</label>
           <input value={form.brandName || ""} onChange={e => set("brandName", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
-            style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+            className="lux-input w-full" style={{ padding: "6px 10px", fontSize: "0.75rem" }} />
         </div>
         <div>
-          <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Phone</label>
+          <label className="text-(--text-muted) text-[10px] uppercase tracking-wider block mb-1">Phone</label>
           <input value={form.phone || ""} onChange={e => set("phone", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
-            style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+            className="lux-input w-full" style={{ padding: "6px 10px", fontSize: "0.75rem" }} />
         </div>
         <div>
-          <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">WhatsApp</label>
+          <label className="text-(--text-muted) text-[10px] uppercase tracking-wider block mb-1">WhatsApp</label>
           <input value={form.whatsapp || ""} onChange={e => set("whatsapp", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
-            style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+            className="lux-input w-full" style={{ padding: "6px 10px", fontSize: "0.75rem" }} />
         </div>
         <div>
-          <label className="text-[#444] text-[10px] uppercase tracking-wider block mb-1">Delivery (Rs.)</label>
+          <label className="text-(--text-muted) text-[10px] uppercase tracking-wider block mb-1">Delivery (Rs.)</label>
           <input type="number" value={form.deliveryCharges || ""} onChange={e => set("deliveryCharges", e.target.value)}
-            className="w-full px-2 py-1.5 rounded-lg text-xs text-(--text-primary) outline-none"
-            style={{ background: "#111", border: "1px solid #1a1a1a" }} />
+            className="lux-input w-full" style={{ padding: "6px 10px", fontSize: "0.75rem" }} />
         </div>
       </div>
 
@@ -238,7 +233,7 @@ export default function SiteSettingsPage() {
             title={t.desc}
             className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-medium transition-all -mb-px whitespace-nowrap ${
               activeTab === t.id
-                ? "text-[#c9a84c] border border-b-[#0a0a0a] border-(--border) bg-(--bg-elevated)"
+                ? "text-(--gold) border border-b-(--bg-deep) border-(--border) bg-(--bg-elevated)"
                 : "text-(--text-muted) hover:text-(--text-primary)"
             }`}>
             {t.icon} {t.label}
@@ -510,7 +505,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
             <p className="text-(--text-primary) text-sm">Setup Completion</p>
             <span className="text-[#c9a84c] font-semibold text-sm">{completionPct}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-[#1a1a1a] overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-(--bg-elevated) overflow-hidden">
             <div className="h-full gold-gradient transition-all" style={{ width: `${completionPct}%` }} />
           </div>
         </div>
@@ -526,7 +521,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
               className="text-left p-4 rounded-xl border border-(--border-light) bg-(--bg-elevated) hover:border-[#c9a84c]/40 transition-all"
             >
               <p className="text-(--text-primary) font-medium text-sm">{preset.name}</p>
-              <p className="text-[#444] text-xs mt-1">Apply preset</p>
+              <p className="text-(--text-muted) text-xs mt-1">Apply preset</p>
             </button>
           ))}
         </div>
@@ -543,11 +538,11 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
                 <button
                   onClick={() => set(item.field, !enabled)}
                   className="w-12 h-6 rounded-full transition-all relative"
-                  style={{ background: enabled ? "#c9a84c" : "#1a1a1a" }}
+                  style={{ background: enabled ? "var(--gold)" : "var(--bg-elevated)" }}
                 >
                   <span
                     className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
-                    style={{ left: enabled ? "calc(100% - 22px)" : 2, background: enabled ? "#000" : "#555" }}
+                    style={{ left: enabled ? "calc(100% - 22px)" : 2, background: enabled ? "#000" : "var(--text-muted)" }}
                   />
                 </button>
               </div>
@@ -566,7 +561,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
             Restore Local Backup
           </button>
         </div>
-        <p className="text-[#444] text-xs">Tip: Backup restore ke baad upar se Save Changes press karna zaroori hai.</p>
+        <p className="text-(--text-muted) text-xs">Tip: Backup restore ke baad upar se Save Changes press karna zaroori hai.</p>
       </Card>
 
       <Card>
@@ -667,7 +662,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
           rows={18}
           spellCheck={false}
           className="w-full text-sm font-mono rounded-2xl"
-          style={{ background: "#050505", border: "1px solid #1a1a1a", padding: 16, outline: "none", resize: "vertical", color: "#60a5fa", lineHeight: 1.55 }}
+          style={{ background: "var(--bg-deep)", border: "1px solid var(--border)", padding: 16, outline: "none", resize: "vertical", color: "#60a5fa", lineHeight: 1.55 }}
         />
         <div className="flex flex-wrap gap-2">
           <button onClick={applyJsonEditor} className="btn-gold" style={{ padding: "10px 16px", fontSize: "0.82rem" }}>Apply JSON to Form</button>
@@ -1490,7 +1485,7 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
       </button>
       {settings?.faviconUrl && (
         <>
-          <span className="text-[#25d366] text-xs">✓ Custom favicon set</span>
+          <span className="text-green-400 text-xs">✓ Custom favicon set</span>
           <button
             onClick={onDelete}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
@@ -1528,7 +1523,7 @@ function Field({ label, field, form, set, type = "text", placeholder, rows, hint
           className="lux-input"
         />
       )}
-      {hint && <p className="text-[#333] text-xs">{hint}</p>}
+      {hint && <p className="text-(--text-muted) text-xs">{hint}</p>}
     </div>
   );
 }
@@ -1537,7 +1532,7 @@ function SectionTitle({ title, desc }) {
   return (
     <div className="mb-1">
       <h3 className="text-(--text-primary) font-semibold">{title}</h3>
-      {desc && <p className="text-[#444] text-sm mt-0.5">{desc}</p>}
+      {desc && <p className="text-(--text-muted) text-sm mt-0.5">{desc}</p>}
     </div>
   );
 }
@@ -1562,8 +1557,8 @@ function HeroTab({ form, set }) {
         <Field label="Subtitle / Description" field="heroSubtitle" form={form} set={set} rows={3} placeholder="Premium Pakistani streetwear..." />
       </div>
       {/* LIVE PREVIEW */}
-      <div className="bg-[#111] rounded-xl p-5 border border-(--border-light) mt-2">
-        <p className="text-[#333] text-xs uppercase tracking-wider mb-3">Live Preview</p>
+      <div className="bg-(--bg-elevated) rounded-xl p-5 border border-(--border) mt-2">
+        <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">Live Preview</p>
         <span className="section-label text-xs">{form.heroLabel}</span>
         <h3 className="font-display text-2xl font-bold mt-2 whitespace-pre-line">
           {(form.heroTitle || "").split("\n").map((line, i) => (
@@ -1572,7 +1567,7 @@ function HeroTab({ form, set }) {
             </span>
           ))}
         </h3>
-        <p className="text-[#9a9a9a] text-sm mt-2">{form.heroSubtitle}</p>
+        <p className="text-(--text-secondary) text-sm mt-2">{form.heroSubtitle}</p>
         <div className="mt-3 inline-block gold-gradient text-black text-xs font-bold px-3 py-1.5 rounded-lg">{form.heroCta}</div>
       </div>
     </Card>
@@ -1603,10 +1598,10 @@ function ShopTab({ form, set }) {
         <Field label="Coupon Code" field="couponCode" form={form} set={set} placeholder="SAVE10" />
         <Field label="Coupon Discount (Rs.)" field="couponDiscount" form={form} set={set} type="number" placeholder="500" />
       </div>
-      <div className="bg-[#111] rounded-xl p-4 border border-(--border-light) text-sm text-(--text-muted)">
-        📦 Delivery: <span className="text-[#c9a84c] font-semibold">Rs. {form.deliveryCharges}</span>
-        &nbsp;|&nbsp; 🏷️ Code: <span className="text-[#c9a84c] font-semibold">{form.couponCode}</span>
-        &nbsp;→&nbsp; saves <span className="text-[#c9a84c] font-semibold">Rs. {form.couponDiscount}</span>
+      <div className="bg-(--bg-elevated) rounded-xl p-4 border border-(--border) text-sm text-(--text-muted)">
+        📦 Delivery: <span className="text-(--gold) font-semibold">Rs. {form.deliveryCharges}</span>
+        &nbsp;|&nbsp; 🏷️ Code: <span className="text-(--gold) font-semibold">{form.couponCode}</span>
+        &nbsp;→&nbsp; saves <span className="text-(--gold) font-semibold">Rs. {form.couponDiscount}</span>
       </div>
     </Card>
   );

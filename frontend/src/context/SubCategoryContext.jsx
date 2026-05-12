@@ -47,7 +47,10 @@ export const SubCategoryProvider = ({ children }) => {
       setSubCategories((prev) => [...prev, populated]);
       return populated;
     } catch (err) {
-      const msg = err.response?.data?.message || "Sub-category add karne mein masla";
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo aur dobara try karo"
+          : err.response?.data?.message || "Sub-category add karne mein masla";
       toast.error(msg);
       throw err;
     }
@@ -75,7 +78,11 @@ export const SubCategoryProvider = ({ children }) => {
       setSubCategories((prev) => prev.map((s) => (s._id === id ? updated : s)));
       return updated;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Update failed");
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo"
+          : err.response?.data?.message || "Sub-category update mein masla hua";
+      toast.error(msg);
       throw err;
     }
   };
@@ -85,7 +92,11 @@ export const SubCategoryProvider = ({ children }) => {
       await api.delete(`/subcategories/${id}`);
       setSubCategories((prev) => prev.filter((s) => s._id !== id));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Delete failed");
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo"
+          : err.response?.data?.message || "Sub-category delete mein masla hua";
+      toast.error(msg);
       throw err;
     }
   };

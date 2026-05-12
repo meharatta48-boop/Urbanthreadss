@@ -40,7 +40,10 @@ export const CategoryProvider = ({ children }) => {
       setCategories((prev) => [...prev, newCat]);
       return newCat;
     } catch (err) {
-      const msg = err.response?.data?.message || "Category add karne mein masla";
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo aur dobara try karo"
+          : err.response?.data?.message || "Category add karne mein masla";
       toast.error(msg);
       throw err;
     }
@@ -69,7 +72,11 @@ export const CategoryProvider = ({ children }) => {
       setCategories((prev) => prev.map((c) => (c._id === id ? updated : c)));
       return updated;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Update failed");
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo aur dobara try karo"
+          : err.response?.data?.message || "Category update mein masla hua";
+      toast.error(msg);
       throw err;
     }
   };
@@ -79,7 +86,11 @@ export const CategoryProvider = ({ children }) => {
       await api.delete(`/categories/${id}`);
       setCategories((prev) => prev.filter((c) => c._id !== id));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Delete failed");
+      const msg =
+        err.code === "ECONNABORTED"
+          ? "Server warm ho raha hai — thora wait karo"
+          : err.response?.data?.message || "Category delete mein masla hua";
+      toast.error(msg);
       throw err;
     }
   };

@@ -227,7 +227,7 @@ export default function CategoryList() {
             label="Category Image (optional)"
           />
 
-          <div className="flex-1 space-y-3 min-w-[180px]">
+          <div className="flex-1 space-y-3 min-w-45">
             <div className="flex gap-2">
               <input
                 className="lux-input flex-1"
@@ -337,7 +337,7 @@ export default function CategoryList() {
                             onRemove={() => { setEditImageFile(null); setEditRemoveImage(true); }}
                             label="Image"
                           />
-                          <div className="flex-1 min-w-[160px] space-y-2">
+                          <div className="flex-1 min-w-40 space-y-2">
                             <input
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}

@@ -7,6 +7,7 @@ import {
 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "./components/NotificationBell";
+import ServerWakeUp from "./components/ServerWakeUp";
 
 const titleMap = {
   "/admin-dashboard": "Dashboard",
@@ -116,7 +117,7 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* ── TOPBAR ── */}
-        <header className="h-[56px] bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-5 shrink-0 transition-colors gap-3">
+        <header className="h-14 bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-5 shrink-0 transition-colors gap-3">
 
           {/* LEFT: Hamburger + Title */}
           <div className="flex items-center gap-3 min-w-0">
@@ -203,6 +204,9 @@ export default function AdminLayout() {
             </div>
           </div>
         </header>
+
+        {/* ── SERVER WAKE-UP BANNER ── */}
+        <ServerWakeUp />
 
         {/* ── PAGE CONTENT ── */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 bg-(--bg-deep)">

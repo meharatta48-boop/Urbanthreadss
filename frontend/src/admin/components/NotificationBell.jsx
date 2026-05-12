@@ -152,14 +152,14 @@ export default function NotificationBell() {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] text-[9px] font-bold text-black gold-gradient rounded-full flex items-center justify-center px-0.5"
+            className="absolute -top-1.5 -right-1.5 min-w-4.5 h-4.5 text-[9px] font-bold text-black gold-gradient rounded-full flex items-center justify-center px-0.5"
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </motion.span>
         )}
         {/* PULSE when new */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] gold-gradient rounded-full animate-ping opacity-30" />
+          <span className="absolute -top-1.5 -right-1.5 w-4.5 h-4.5 gold-gradient rounded-full animate-ping opacity-30" />
         )}
       </button>
 
@@ -217,7 +217,7 @@ export default function NotificationBell() {
                       >
                         {/* ICON */}
                         <div
-                          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
                           style={{ background: n.bg, border: `1px solid ${n.color}30` }}
                         >
                           <n.icon size={15} style={{ color: n.color }} />
@@ -228,7 +228,7 @@ export default function NotificationBell() {
                           <div className="flex items-center gap-2">
                             <p className="text-(--text-primary) text-xs font-semibold">{n.title}</p>
                             {!isRead && (
-                              <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: n.color }} />
+                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: n.color }} />
                             )}
                           </div>
                           <p className="text-(--text-muted) text-[11px] mt-0.5 leading-snug">{n.body}</p>
