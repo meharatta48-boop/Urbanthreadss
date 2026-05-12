@@ -102,15 +102,18 @@ export default function CategoryList() {
   /* ── ADD ── */
   const handleAdd = async (catName) => {
     const n = (catName || name).trim();
-    if (!n) return;
+    if (!n) {
+      toast.error("Category name zaroori hai");
+      return;
+    }
     setAdding(true);
     try {
       await addCategory(n, imageFile || null);
       setName("");
       setImageFile(null);
-      toast.success(`"${n}" category add ho gayi ✓`);
-    } catch {
-      // error shown by context
+      toast.success(`"${n}" category successfully add ho gayi ✓`);
+    } catch (error) {
+      console.error("Add category error:", error);
     } finally {
       setAdding(false);
     }
@@ -121,9 +124,10 @@ export default function CategoryList() {
     if (!window.confirm(`"${catName}" delete karein? Image bhi delete ho jaegi.`)) return;
     try {
       await removeCategory(id);
-      toast.success("Category delete ho gayi");
-    } catch {
-      // error shown by context
+      toast.success(`"${catName}" category successfully delete ho gayi`);
+    } catch (error) {
+      console.error("Delete category error:", error);
+      toast.error("Category delete nahi hui");
     }
   };
 
@@ -136,7 +140,10 @@ export default function CategoryList() {
   };
 
   const handleUpdate = async () => {
-    if (!editName.trim()) return;
+    if (!editName.trim()) {
+      toast.error("Category name zaroori hai");
+      return;
+    }
     setUpdating(true);
     try {
       await updateCategory(editId, {
@@ -144,10 +151,10 @@ export default function CategoryList() {
         imageFile: editImageFile || null,
         removeImage: editRemoveImage,
       });
-      toast.success("Category update ho gayi ✓");
+      toast.success("Category successfully update ho gayi ✓");
       setEditId(null);
-    } catch {
-      // error shown by context
+    } catch (error) {
+      console.error("Update category error:", error);
     } finally {
       setUpdating(false);
     }
@@ -168,7 +175,8 @@ export default function CategoryList() {
         <p className="text-(--text-muted) text-sm mt-1">
           Seasons aur collections banao:{" "}
           <span className="text-(--gold)">Summer</span>,{" "}
-          <span className="text-(--gold)">Winter</span>
+          <span className="text-(--gold)">Winter</span>,{" "}
+          <span className="text-(--gold)">Eid Collection</span>
         </p>
       </div>
 
@@ -232,12 +240,18 @@ export default function CategoryList() {
                   key={s}
                   onClick={() => handleAdd(s)}
                   disabled={adding}
-                  className="px-3 py-1.5 text-xs rounded-lg border border-(--border) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--gold) transition-all disabled:opacity-40"
+                  className="px-3 py-1.5 text-xs rounded-lg border border-(--border) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--gold) hover:bg-(--gold)/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  title={`"${s}" category add karo`}
                 >
                   + {s}
                 </button>
               ))}
           </div>
+          {SUGGESTIONS.filter((s) => categories.find((c) => c.name.toLowerCase() === s.toLowerCase())).length > 0 && (
+            <p className="text-(--text-muted) text-xs mt-2">
+              ✓ {SUGGESTIONS.filter((s) => categories.find((c) => c.name.toLowerCase() === s.toLowerCase())).join(", ")} already added
+            </p>
+          )}
         </div>
       </div>
 
@@ -347,8 +361,10 @@ export default function CategoryList() {
                           <p className="text-(--text-primary) font-medium capitalize">{c.name}</p>
                           <p className="text-(--text-muted) text-xs">
                             {c.image ? (
-                              <span className="text-(--gold)/70 flex items-center gap-1"><FiImage size={9} /> Image hai</span>
-                            ) : "Season / Collection"}
+                              <span className="text-(--gold)/70 flex items-center gap-1"><FiImage size={9} /> Image uploaded</span>
+                            ) : (
+                              <span className="text-(--text-muted)/60">No image - Season / Collection</span>
+                            )}
                           </p>
                         </div>
                       </div>

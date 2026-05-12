@@ -11,12 +11,12 @@ import { getImageUrl } from "../utils/imageUrl";
 const API_BASE = SERVER_URL;
 
 const menu = [
-  { label: "Dashboard", to: "/admin-dashboard", Icon: FiGrid, end: true },
-  { label: "Orders", to: "/admin-dashboard/orders", Icon: FiShoppingBag },
-  { label: "Products", to: "/admin-dashboard/products", Icon: FiPackage },
-  { label: "Categories", to: "/admin-dashboard/categories", Icon: FiLayers },
-  { label: "Sub-Categories", to: "/admin-dashboard/subcategories", Icon: FiTag },
-  { label: "Users", to: "/admin-dashboard/users", Icon: FiUsers },
+  { label: "Dashboard", to: "/admin-dashboard", Icon: FiGrid, end: true, description: "Stats & Overview" },
+  { label: "Orders", to: "/admin-dashboard/orders", Icon: FiShoppingBag, description: "Manage Orders" },
+  { label: "Products", to: "/admin-dashboard/products", Icon: FiPackage, description: "Product Catalog" },
+  { label: "Categories", to: "/admin-dashboard/categories", Icon: FiLayers, description: "Seasons & Collections" },
+  { label: "Sub-Categories", to: "/admin-dashboard/subcategories", Icon: FiTag, description: "Product Types" },
+  { label: "Users", to: "/admin-dashboard/users", Icon: FiUsers, description: "Customer Management" },
 ];
 
 export default function Sidebar() {
@@ -58,18 +58,22 @@ export default function Sidebar() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
+              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group relative ${
                 isActive
-                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20"
-                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent"
+                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20 shadow-sm"
+                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent hover:border-(--border-light)"
               }`
             }
+            title={description}
           >
             <div className="flex items-center gap-2.5">
-              <MIcon size={15} />
-              <span className="text-sm">{label}</span>
+              <MIcon size={15} className="transition-transform group-hover:scale-110" />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{label}</span>
+                <span className="text-[9px] text-(--text-muted)/60">{description}</span>
+              </div>
             </div>
-            <FiChevronRight size={11} className="opacity-0 group-hover:opacity-50 transition-opacity" />
+            <FiChevronRight size={11} className="opacity-0 group-hover:opacity-50 transition-all duration-200" />
           </NavLink>
         ))}
 
@@ -81,13 +85,18 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group ${
                 isActive
-                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20"
-                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent"
+                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20 shadow-sm"
+                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent hover:border-(--border-light)"
               }`
             }
+            title="Site Configuration"
           >
             <div className="flex items-center gap-2.5">
-              <FiSettings size={15} /> Site Settings
+              <FiSettings size={15} className="transition-transform group-hover:rotate-90 duration-200" />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">Site Settings</span>
+                <span className="text-[9px] text-(--text-muted)/60">Configuration</span>
+              </div>
             </div>
           </NavLink>
         </div>
@@ -106,9 +115,11 @@ export default function Sidebar() {
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2.5 px-3 py-2 w-full rounded-xl text-sm text-(--text-muted) hover:text-red-500 hover:bg-red-500/10 transition-all"
+          className="flex items-center gap-2.5 px-3 py-2 w-full rounded-xl text-sm text-(--text-muted) hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 group"
+          title="Logout from admin panel"
         >
-          <FiLogOut size={14} /> Logout
+          <FiLogOut size={14} className="transition-transform group-hover:translate-x-1" />
+          <span>Logout</span>
         </button>
       </div>
     </aside>

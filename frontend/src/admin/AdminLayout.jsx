@@ -95,33 +95,40 @@ export default function AdminLayout() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCommandOpen(true)}
-              className="hidden md:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--text-primary) transition-colors border border-(--border) rounded-lg px-3 py-1.5"
-              title="Quick command palette"
+              className="hidden md:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--text-primary) hover:border-(--border-light) transition-colors border border-(--border) rounded-lg px-3 py-1.5 group"
+              title="Quick command palette (Ctrl+K)"
             >
-              <FiSearch size={12} />
-              Quick Search
-              <span className="text-[10px] text-(--text-muted)/60 border border-(--border) rounded px-1">Ctrl+K</span>
+              <FiSearch size={12} className="transition-transform group-hover:scale-110" />
+              <span>Quick Search</span>
+              <span className="text-[10px] text-(--text-muted)/60 border border-(--border) rounded px-1 bg-(--bg-elevated)">Ctrl+K</span>
             </button>
             <Link
               to="/"
-              className="hidden sm:flex text-xs text-(--text-muted) hover:text-(--gold) transition-colors border border-(--border) rounded-lg px-3 py-1.5"
+              className="hidden sm:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 transition-colors border border-(--border) rounded-lg px-3 py-1.5 group"
+              title="View live website"
             >
-              View Site →
+              <span className="transition-transform group-hover:translate-x-0.5">View Site</span>
+              <span className="text-(--gold)">→</span>
             </Link>
             <Link
               to="/admin-dashboard/settings"
-              className={`p-2 rounded-lg border transition-colors ${pathname === "/admin-dashboard/settings" ? "border-(--gold)/30 text-(--gold)" : "border-(--border) text-(--text-muted) hover:text-(--gold)"}`}
+              className={`p-2 rounded-lg border transition-all group ${
+                pathname === "/admin-dashboard/settings" 
+                  ? "border-(--gold)/30 text-(--gold) bg-(--gold)/5" 
+                  : "border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 hover:bg-(--gold)/5"
+              }`}
+              title="Site Settings"
             >
-              <FiSettings size={15} />
+              <FiSettings size={15} className="transition-transform group-hover:rotate-90 duration-200" />
             </Link>
             <NotificationBell />
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center text-black font-bold text-xs font-display">
+            <div className="flex items-center gap-2 border border-(--border) rounded-lg px-2 py-1.5 group hover:border-(--border-light) transition-colors">
+              <div className="w-7 h-7 rounded-md gold-gradient flex items-center justify-center text-black font-bold text-xs font-display transition-transform group-hover:scale-110">
                 {user?.name?.charAt(0)?.toUpperCase() || "A"}
               </div>
               <div className="hidden md:block">
                 <div className="text-(--text-primary) text-xs font-medium leading-none">{user?.name || "Admin"}</div>
-                <div className="text-(--text-muted) text-[10px] mt-0.5">{user?.role}</div>
+                <div className="text-(--text-muted) text-[9px] mt-0.5">{user?.role || "Admin"}</div>
               </div>
             </div>
           </div>
@@ -135,39 +142,54 @@ export default function AdminLayout() {
 
       {commandOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm p-4 sm:p-10" onClick={() => setCommandOpen(false)}>
-          <div
-            className="max-w-2xl mx-auto rounded-2xl border border-(--border) bg-(--bg-card) overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="h-15 shrink-0 flex items-center justify-between px-6 border-b border-(--border) bg-(--bg-card)">
-              <FiCommand size={15} className="text-(--gold)" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search admin actions... (orders, settings, products)"
-                className="flex-1 bg-transparent outline-none text-sm text-(--text-primary) placeholder:text-(--text-muted)"
-              />
-              <button onClick={() => setCommandOpen(false)} className="text-(--text-muted) hover:text-(--text-primary)">
-                <FiX size={15} />
-              </button>
-            </div>
-            <div className="max-h-[50vh] overflow-y-auto">
-              {filteredQuickLinks.map((item) => (
-                <button
-                  key={item.to}
-                  onClick={() => goTo(item.to)}
-                  className="w-full text-left px-4 py-3 border-b border-(--border) hover:bg-(--bg-elevated) transition-colors"
+            <div
+              className="max-w-2xl mx-auto rounded-2xl border border-(--border) bg-(--bg-card) overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="h-15 shrink-0 flex items-center justify-between px-6 border-b border-(--border) bg-(--bg-card)">
+                <div className="flex items-center gap-2">
+                  <FiCommand size={15} className="text-(--gold)" />
+                  <input
+                    autoFocus
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search admin actions... (orders, settings, products)"
+                    className="flex-1 bg-transparent outline-none text-sm text-(--text-primary) placeholder:text-(--text-muted)"
+                  />
+                </div>
+                <button 
+                  onClick={() => setCommandOpen(false)} 
+                  className="text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) p-1 rounded transition-colors"
+                  title="Close (Escape)"
                 >
-                  <p className="text-(--text-primary) text-sm">{item.label}</p>
-                  <p className="text-(--text-muted) text-xs">{item.to}</p>
+                  <FiX size={15} />
                 </button>
-              ))}
-              {filteredQuickLinks.length === 0 && (
-                <p className="px-4 py-6 text-sm text-(--text-muted)">No matching command found.</p>
-              )}
+              </div>
+              <div className="max-h-[50vh] overflow-y-auto">
+                {filteredQuickLinks.length > 0 ? (
+                  filteredQuickLinks.map((item) => (
+                    <button
+                      key={item.to}
+                      onClick={() => goTo(item.to)}
+                      className="w-full text-left px-4 py-3 border-b border-(--border) hover:bg-(--bg-elevated) transition-colors group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="text-left">
+                          <p className="text-(--text-primary) text-sm font-medium">{item.label}</p>
+                          <p className="text-(--text-muted) text-xs">{item.to}</p>
+                        </div>
+                        <FiChevronRight size={12} className="text-(--text-muted) opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </button>
+                  ))
+                ) : (
+                  <div className="p-6 text-center">
+                    <p className="text-(--text-muted) text-sm">No matching command found.</p>
+                    <p className="text-(--text-muted) text-xs mt-1">Try: orders, products, settings</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
         </div>
       )}
     </div>

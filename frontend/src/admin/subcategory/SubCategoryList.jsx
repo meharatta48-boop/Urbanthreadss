@@ -105,17 +105,23 @@ export default function SubCategoryList() {
   /* ── ADD ── */
   const handleSubmit = async (suggestName) => {
     const n = (suggestName || name).trim();
-    if (!n) { toast.error("Name likhna zaroori hai"); return; }
-    if (!category) { toast.error("Category select karo pehle"); return; }
+    if (!n) {
+      toast.error("Sub-category name zaroori hai");
+      return;
+    }
+    if (!category) {
+      toast.error("Pehle category select karo");
+      return;
+    }
     setAdding(true);
     try {
       const catObj = categories.find((c) => c._id === category);
       await addSubCategory({ name: n, category, imageFile: imageFile || null });
       setName("");
       setImageFile(null);
-      toast.success(`"${n}" → ${catObj?.name || "category"} mein add ho gaya ✓`);
-    } catch {
-      // error shown by context
+      toast.success(`"${n}" → ${catObj?.name || "category"} mein successfully add ho gaya ✓`);
+    } catch (error) {
+      console.error("Add subcategory error:", error);
     } finally {
       setAdding(false);
     }
@@ -126,9 +132,10 @@ export default function SubCategoryList() {
     if (!window.confirm(`"${scName}" delete karein? Image bhi delete ho jaegi.`)) return;
     try {
       await removeSubCategory(id);
-      toast.success("Sub-category delete ho gayi");
-    } catch {
-      // error shown by context
+      toast.success(`"${scName}" sub-category successfully delete ho gayi`);
+    } catch (error) {
+      console.error("Delete subcategory error:", error);
+      toast.error("Sub-category delete nahi hui");
     }
   };
 
@@ -141,7 +148,10 @@ export default function SubCategoryList() {
   };
 
   const handleUpdate = async (sc) => {
-    if (!editName.trim()) return;
+    if (!editName.trim()) {
+      toast.error("Sub-category name zaroori hai");
+      return;
+    }
     setUpdating(true);
     try {
       await updateSubCategory(sc._id, {
@@ -150,10 +160,10 @@ export default function SubCategoryList() {
         imageFile: editImageFile || null,
         removeImage: editRemoveImage,
       });
-      toast.success("Updated ✓");
+      toast.success("Sub-category successfully update ho gayi ✓");
       setEditId(null);
-    } catch {
-      // error shown by context
+    } catch (error) {
+      console.error("Update subcategory error:", error);
     } finally {
       setUpdating(false);
     }
@@ -182,7 +192,8 @@ export default function SubCategoryList() {
           Har season ke andar:{" "}
           <span className="text-(--gold)">Men</span>,{" "}
           <span className="text-(--gold)">Women</span>,{" "}
-          <span className="text-(--gold)">Kids</span>
+          <span className="text-(--gold)">Kids</span>,{" "}
+          <span className="text-(--gold)">Unisex</span>
         </p>
       </div>
 
@@ -206,7 +217,11 @@ export default function SubCategoryList() {
             ))}
           </select>
           {categories.length === 0 && (
-            <p className="text-yellow-500 text-xs mt-2">⚠️ Pehle Categories page pe category banao (Summer / Winter)</p>
+            <div className="bg-yellow-900/10 border border-yellow-700/30 rounded-xl p-3">
+              <p className="text-yellow-400 text-xs flex items-center gap-2">
+                ⚠️ Pehle Categories page pe category banao (Summer / Winter / Eid Collection)
+              </p>
+            </div>
           )}
         </div>
 
@@ -263,7 +278,8 @@ export default function SubCategoryList() {
                     key={s}
                     onClick={() => handleSubmit(s)}
                     disabled={adding}
-                    className="px-3 py-1.5 text-xs rounded-lg border border-(--border) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--gold) transition-all disabled:opacity-40"
+                    className="px-3 py-1.5 text-xs rounded-lg border border-(--border) text-(--text-muted) hover:border-(--gold)/50 hover:text-(--gold) hover:bg-(--gold)/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={`"${s}" sub-category add karo`}
                   >
                     + {s}
                   </button>
@@ -407,9 +423,9 @@ export default function SubCategoryList() {
                         <div>
                           <p className="text-(--text-primary) font-medium">{sc.name}</p>
                           <p className="text-(--text-muted) text-xs flex items-center gap-1">
-                            Under: <span className="text-(--gold) capitalize">{sc.category?.name || "—"}</span>
+                            Under: <span className="text-(--gold) capitalize font-medium">{sc.category?.name || "—"}</span>
                             {sc.image && (
-                              <span className="ml-1 text-(--gold)/60 flex items-center gap-0.5"><FiImage size={9} /> Image</span>
+                              <span className="ml-1 text-(--gold)/60 flex items-center gap-0.5"><FiImage size={9} /> Image uploaded</span>
                             )}
                           </p>
                         </div>
