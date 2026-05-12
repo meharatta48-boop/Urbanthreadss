@@ -22,9 +22,23 @@ api.interceptors.request.use((req) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
+    // 1. Handle Timeout
     if (error.code === "ECONNABORTED" || error.message?.includes("timeout")) {
       console.warn("[API] Request timed out — server may be waking up on Render.com");
     }
+
+    // 2. Handle Unauthorized / Token Invalid
+    if (error.response?.status === 401) {
+      console.error("[API] Unauthorized - Token invalid or expired");
+      localStorage.removeItem("authUser");
+      localStorage.removeItem("authUsersList");
+      
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login?expired=true";
+      }
+    }
+
     return Promise.reject(error);
   }
 );

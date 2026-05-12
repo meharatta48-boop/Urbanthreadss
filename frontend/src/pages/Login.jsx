@@ -1,11 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 import { motion } from "framer-motion";
 import { FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
+import { toast } from "react-toastify";
 
 const API_BASE = SERVER_URL;
 
@@ -15,9 +16,20 @@ export default function Login() {
   const brandName = settings?.brandName || "URBAN THREAD";
   const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Check for expired session
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("expired") === "true") {
+      toast.info("Session expired. Please sign in again.");
+      // Remove the query param from URL without refreshing
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
