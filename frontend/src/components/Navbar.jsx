@@ -5,7 +5,8 @@ import { useCart } from "../context/CartContext";
 import { useSettings } from "../context/SettingsContext";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiShoppingCart, FiMenu, FiX, FiLogOut,
+import {
+  FiShoppingCart, FiMenu, FiX, FiLogOut,
   FiChevronDown, FiSettings, FiShoppingBag,
   FiSun, FiMoon, FiUser
 } from "react-icons/fi";
@@ -79,7 +80,7 @@ export default function Navbar() {
         className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'} nav-overflow-hidden`}
         style={{ backgroundColor: 'var(--bg-deep)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 nav-overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-4 nav-overflow-hidden">
           <nav
             className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border nav-overflow-hidden`}
             style={{
@@ -211,8 +212,8 @@ export default function Navbar() {
                       animate={{ scale: 1 }}
                       exit={{ scale: 0 }}
                       className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black rounded-full flex items-center justify-center shadow-lg z-10"
-                      style={{ 
-                        width: 22, 
+                      style={{
+                        width: 22,
                         height: 22,
                         background: 'linear-gradient(135deg, #c9a84c, #e6c75a)',
                         border: '2px solid var(--bg-card)'
@@ -299,7 +300,7 @@ export default function Navbar() {
                               </div>
                             </div>
                             <div className="mt-3 inline-block px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold uppercase tracking-wider"
-                              style={{ 
+                              style={{
                                 background: 'linear-gradient(135deg, #c9a84c, #e6c75a)',
                                 color: '#000'
                               }}>
@@ -313,13 +314,13 @@ export default function Navbar() {
                               to="/my-orders"
                               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
                               style={{ color: "var(--text-secondary)" }}
-                              onMouseEnter={e => { 
-                                e.currentTarget.style.color = "var(--text-primary)"; 
-                                e.currentTarget.style.background = "var(--bg-elevated)"; 
+                              onMouseEnter={e => {
+                                e.currentTarget.style.color = "var(--text-primary)";
+                                e.currentTarget.style.background = "var(--bg-elevated)";
                                 e.currentTarget.style.transform = "translateX(2px)";
                               }}
-                              onMouseLeave={e => { 
-                                e.currentTarget.style.color = "var(--text-secondary)"; 
+                              onMouseLeave={e => {
+                                e.currentTarget.style.color = "var(--text-secondary)";
                                 e.currentTarget.style.background = "transparent";
                                 e.currentTarget.style.transform = "translateX(0)";
                               }}
@@ -336,11 +337,11 @@ export default function Navbar() {
                                 to="/admin-dashboard"
                                 className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 group"
                                 style={{ color: "var(--gold)" }}
-                                onMouseEnter={e => { 
+                                onMouseEnter={e => {
                                   e.currentTarget.style.background = "rgba(201,168,76,0.08)";
                                   e.currentTarget.style.transform = "translateX(2px)";
                                 }}
-                                onMouseLeave={e => { 
+                                onMouseLeave={e => {
                                   e.currentTarget.style.background = "transparent";
                                   e.currentTarget.style.transform = "translateX(0)";
                                 }}
@@ -360,13 +361,13 @@ export default function Navbar() {
                               onClick={handleLogout}
                               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
                               style={{ color: "var(--text-muted)" }}
-                              onMouseEnter={e => { 
-                                e.currentTarget.style.color = "#ef4444"; 
+                              onMouseEnter={e => {
+                                e.currentTarget.style.color = "#ef4444";
                                 e.currentTarget.style.background = "rgba(239,68,68,0.08)";
                                 e.currentTarget.style.transform = "translateX(2px)";
                               }}
-                              onMouseLeave={e => { 
-                                e.currentTarget.style.color = "var(--text-muted)"; 
+                              onMouseLeave={e => {
+                                e.currentTarget.style.color = "var(--text-muted)";
                                 e.currentTarget.style.background = "transparent";
                                 e.currentTarget.style.transform = "translateX(0)";
                               }}
@@ -389,7 +390,7 @@ export default function Navbar() {
               <button
                 onClick={() => setOpen(!open)}
                 className="md:hidden p-2.5 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) hover:border-(--gold) hover:text-(--gold) hover-lift btn-3d ripple"
-                style={{ 
+                style={{
                   color: "var(--text-secondary)",
                   width: '44px',
                   height: '44px',
@@ -448,7 +449,7 @@ export default function Navbar() {
                   </div>
                   <span className="font-display font-bold text-base tracking-wider" style={{ color: "var(--text-primary)" }}>{brandName}</span>
                 </div>
-                <button 
+                <button
                   onClick={() => setOpen(false)}
                   className="p-2 rounded-full bg-(--bg-elevated) border border-(--border-light) hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all"
                   style={{
