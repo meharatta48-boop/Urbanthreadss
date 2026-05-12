@@ -91,7 +91,7 @@ export default function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group p-6 sm:p-8 rounded-3xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/[0.03] dark:shadow-black/20"
+              className="group p-6 sm:p-8 rounded-3xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/3 dark:shadow-black/20"
             >
               <div className="flex flex-col items-center text-center gap-5">
                 <div
@@ -134,7 +134,7 @@ export default function Stats() {
               key={t.label}
               className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all bg-(--bg-surface) border border-(--border) hover:border-(--gold)/30 text-(--text-muted) hover:text-(--text-primary)"
             >
-              <t.Icon size={13} className="text-(--gold) flex-shrink-0" />
+              <t.Icon size={13} className="text-(--gold) shrink-0" />
               {t.label}
             </div>
           ))}

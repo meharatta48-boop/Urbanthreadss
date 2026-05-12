@@ -14,7 +14,7 @@ import {
 } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
-import { getProductImageUrl, getThumbnailUrl, getResponsiveImageSrcSet, preloadImage } from "../utils/cloudinaryOptimized";
+import { getProductImageUrl, getThumbnailUrl, getResponsiveImageSrcSet } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 
 const API_BASE = SERVER_URL;
@@ -117,7 +117,6 @@ export default function ProductDetail() {
   );
 
   const images = product.images?.length ? product.images : [];
-  const hasImages = images.length > 0;
   const discount = product.comparePrice > product.price
     ? Math.round((1 - product.price / product.comparePrice) * 100) : 0;
 

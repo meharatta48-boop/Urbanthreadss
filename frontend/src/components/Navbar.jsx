@@ -21,7 +21,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const { cart } = useCart();
   const { settings } = useSettings();
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const dropdownRef = useRef(null);

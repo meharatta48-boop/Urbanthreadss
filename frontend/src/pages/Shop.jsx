@@ -163,7 +163,7 @@ export default function Shop() {
           </div>
 
           {/* Controls row */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {/* Sort */}
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="lux-select flex-1 sm:flex-none"
               style={{ padding: "10px 36px 10px 12px", minWidth: '130px' }}>

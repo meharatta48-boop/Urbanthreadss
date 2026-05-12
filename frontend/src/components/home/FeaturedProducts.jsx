@@ -89,7 +89,7 @@ export default function FeaturedProducts() {
                       toast.success("Added to cart!"); 
                     }
                   }}
-                  className="absolute bottom-3 left-2 right-2 mx-auto btn-gold opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-xl text-xs"
+                  className="absolute bottom-3 left-2 right-2 mx-auto btn-gold opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-xl text-xs"
                   style={{ padding: "8px 14px", zIndex: 20 }}
                 >
                   <FiShoppingCart size={12} /> Quick Add
