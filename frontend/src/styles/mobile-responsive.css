@@ -337,9 +337,9 @@
 .modal-overflow-hidden { overflow: hidden; }
 .hero-overflow-hidden { overflow: hidden; }
 
-/* Remove aggressive global overflow rules */
+/* Prevent horizontal scroll on page */
 body, html {
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -351,8 +351,8 @@ body, html {
   }
 
   /* Fix navbar for mobile */
-  nav {
-    padding: 8px 12px !important;
+  .navbar-inner {
+    padding: 8px 12px;
   }
 
   /* Fix product cards for mobile */
@@ -374,10 +374,10 @@ body, html {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 
-  /* Fix text overflow */
-  p, span, div {
-    word-wrap: break-word !important;
-    overflow-wrap: break-word !important;
+  /* Fix text overflow - only on actual text elements, not divs */
+  p, h1, h2, h3, h4, h5, h6, span {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
 

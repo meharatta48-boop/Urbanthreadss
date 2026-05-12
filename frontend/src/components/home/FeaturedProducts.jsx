@@ -54,7 +54,7 @@ export default function FeaturedProducts() {
         </div>
 
         {/* GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
           {products.map((p, i) => (
             <motion.div
               key={p._id}
@@ -89,10 +89,10 @@ export default function FeaturedProducts() {
                       toast.success("Added to cart!"); 
                     }
                   }}
-                  className="absolute bottom-8 left-0 right-0 mx-auto w-max btn-gold opacity-0 group-hover:opacity-100 transition-opacity duration-400 whitespace-nowrap shadow-xl"
-                  style={{ padding: "10px 20px", fontSize: "0.75rem", zIndex: 20 }}
+                  className="absolute bottom-3 left-2 right-2 mx-auto btn-gold opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-xl text-xs"
+                  style={{ padding: "8px 14px", zIndex: 20 }}
                 >
-                  <FiShoppingCart size={14} /> Quick Add
+                  <FiShoppingCart size={12} /> Quick Add
                 </button>
 
                 {/* STOCK BADGE */}

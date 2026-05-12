@@ -53,7 +53,7 @@ export default function Stats() {
 
   return (
     <section
-      className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden"
+      className="py-14 sm:py-20 lg:py-24 px-4 sm:px-6 relative overflow-hidden"
       style={{
         background: "var(--bg-deep)",
       }}
@@ -74,7 +74,7 @@ export default function Stats() {
           <div className="inline-block px-4 py-1.5 rounded-full border border-(--gold)/20 bg-(--gold)/5 text-(--gold) text-[10px] uppercase tracking-[0.2em] font-bold mb-4 backdrop-blur-sm">
             {settings?.statsSubLabel || "Our Impact"}
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold" style={{ color: "var(--text-primary)" }}>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold" style={{ color: "var(--text-primary)" }}>
             {(settings?.statsTitle || "Pakistan Ke Bharose Ka").split(" ").slice(0,-1).join(" ")}{" "}
             <span className="gold-text">
               {(settings?.statsTitle || "Pakistan Ke Bharose Ka Nishaana").split(" ").slice(-1)[0]}
@@ -91,7 +91,7 @@ export default function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group p-8 rounded-4xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/[0.03] dark:shadow-black/20"
+              className="group p-6 sm:p-8 rounded-3xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/[0.03] dark:shadow-black/20"
             >
               <div className="flex flex-col items-center text-center gap-5">
                 <div
@@ -127,14 +127,14 @@ export default function Stats() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+          className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4"
         >
           {trust.map((t) => (
             <div
               key={t.label}
-              className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-widest px-5 py-3 rounded-2xl transition-all bg-(--bg-surface) border border-(--border) hover:border-(--gold)/30 text-(--text-muted) hover:text-(--text-primary)"
+              className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl transition-all bg-(--bg-surface) border border-(--border) hover:border-(--gold)/30 text-(--text-muted) hover:text-(--text-primary)"
             >
-              <t.Icon size={14} className="text-(--gold)" />
+              <t.Icon size={13} className="text-(--gold) flex-shrink-0" />
               {t.label}
             </div>
           ))}

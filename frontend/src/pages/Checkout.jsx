@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import {
   FiTruck, FiCreditCard, FiCheck, FiArrowRight,
-  FiMapPin, FiPhone, FiUser, FiTag, FiMail,
+  FiMapPin, FiPhone, FiUser, FiTag, FiMail, FiShield, FiLoader,
 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
@@ -267,7 +267,6 @@ export default function Checkout() {
                       name="email"
                       value={form.email}
                       onChange={handleChange}
-                      required
                       className="lux-input"
                       placeholder="your@email.com"
                     />
@@ -284,8 +283,41 @@ export default function Checkout() {
                       placeholder="00000"
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Province *</label>
+                    <select
+                      name="province"
+                      value={form.province}
+                      onChange={(e) => { set("province", e.target.value); set("city", ""); }}
+                      required
+                      className="lux-select"
+                    >
+                      <option value="">Select Province</option>
+                      {Object.keys(pakistanData).map((prov) => (
+                        <option key={prov} value={prov}>{prov}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>City *</label>
+                    <select
+                      name="city"
+                      value={form.city}
+                      onChange={(e) => set("city", e.target.value)}
+                      required
+                      disabled={!form.province}
+                      className="lux-select"
+                    >
+                      <option value="">Select City</option>
+                      {cities.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
                   
-                  <div className="lg:col-span-2">
+                  <div className="checkout-form-col-full">
                     <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Complete Address</label>
                     <textarea
                       name="address"
@@ -294,7 +326,7 @@ export default function Checkout() {
                       required
                       rows={3}
                       className="lux-input"
-                      placeholder="Enter your complete address"
+                      placeholder="Street, House No., Area"
                     />
                   </div>
                 </div>

@@ -10,7 +10,7 @@ import {
   FiShoppingCart, FiArrowLeft, FiChevronLeft, FiChevronRight,
   FiPackage, FiHeart, FiShare2, FiCheck, FiAlertCircle,
   FiLink, FiMessageCircle, FiStar, FiEdit3, FiTrash2, FiLock,
-  FiCamera, FiVideo, FiX, FiPlay
+  FiCamera, FiVideo, FiX, FiPlay, FiZoomIn, FiMinus, FiPlus
 } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
@@ -206,7 +206,7 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen overflow-hidden pt-4 pb-20" style={{ backgroundColor: 'var(--bg-deep)' }}>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
         {/* BREADCRUMB */}
         <div className="flex items-center gap-2 text-xs mb-6 sm:mb-8 overflow-x-auto whitespace-nowrap pb-1" style={{ color: "var(--text-muted)" }}>

@@ -26,7 +26,7 @@ export default function Newsletter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="bg-(--bg-card) border border-(--border) rounded-[3rem] p-10 sm:p-20 text-center shadow-3xl shadow-black/[0.03] dark:shadow-black/20"
+          className="bg-(--bg-card) border border-(--border) rounded-3xl sm:rounded-[3rem] p-6 sm:p-10 md:p-20 text-center shadow-3xl shadow-black/[0.03] dark:shadow-black/20"
         >
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-(--gold)/20 bg-(--gold)/5 text-(--gold) text-[10px] uppercase tracking-[0.2em] font-bold">
@@ -34,7 +34,7 @@ export default function Newsletter() {
             </div>
 
             <div className="space-y-4">
-              <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
                 {(settings?.newsletterTitle || "Get Exclusive Deals First").replace(/ (\w+)$/, "")}{" "}
                 <span className="gold-text italic">
                   {(settings?.newsletterTitle || "Get Exclusive Deals First").match(/\w+$/)?.[0]}

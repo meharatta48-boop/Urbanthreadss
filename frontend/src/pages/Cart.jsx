@@ -1,8 +1,8 @@
 import { useCart } from "../context/CartContext";
 import { useSettings } from "../context/SettingsContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiTrash2, FiPlus, FiMinus, FiArrowRight, FiShoppingCart, FiArrowLeft } from "react-icons/fi";
+import { FiTrash2, FiPlus, FiMinus, FiArrowRight, FiShoppingCart, FiArrowLeft, FiTruck, FiShield } from "react-icons/fi";
 import { SERVER_URL } from "../services/api";
 import { getCartImageUrl } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
