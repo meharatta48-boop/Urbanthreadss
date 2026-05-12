@@ -28,7 +28,7 @@ export default function CouponBanner() {
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [settings?.couponCode, settings?.announcementText]);
+  }, [settings?.couponCode, settings?.announcementText, hasCoupon, isAnnouncement]);
 
   if (!visible || (!isAnnouncement && !hasCoupon)) return null;
 
@@ -54,20 +54,20 @@ export default function CouponBanner() {
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.35 }}
-          className="w-full relative overflow-hidden z-[60]"
+          className="w-full relative overflow-hidden z-60"
           style={{ marginTop: 0, paddingTop: '2px', paddingBottom: '2px' }}
         >
           <div className="relative overflow-hidden w-full" style={{ background: bg }}>
             {/* Progress bar (coupon only) */}
             {!isAnnouncement && (
-              <motion.div className="absolute bottom-0 left-0 h-[2px]"
+              <motion.div className="absolute bottom-0 left-0 h-0.5"
                 style={{ background: "rgba(0,0,0,0.2)", width: `${progress}%` }}
                 transition={{ duration: 0.9, ease: "linear" }}
               />
             )}
 
             <div className="py-2 px-4 flex items-center justify-center gap-2 sm:gap-3 text-sm font-semibold relative" style={{ color, paddingTop: '4px', paddingBottom: '4px' }}>
-              {!isAnnouncement && <FiTag size={13} className="flex-shrink-0 hidden sm:block" />}
+              {!isAnnouncement && <FiTag size={13} className="shrink-0 hidden sm:block" />}
 
               <span className="text-center text-xs sm:text-sm">
                 {isAnnouncement
@@ -79,12 +79,12 @@ export default function CouponBanner() {
               {!isAnnouncement && (
                 <>
                   <button onClick={handleCopy}
-                    className="flex items-center gap-1 bg-black/20 hover:bg-black/30 font-bold px-2.5 py-1 rounded-lg text-xs transition-all border border-black/10 flex-shrink-0"
+                    className="flex items-center gap-1 bg-black/20 hover:bg-black/30 font-bold px-2.5 py-1 rounded-lg text-xs transition-all border border-black/10 shrink-0"
                     style={{ color }}>
                     <FiCopy size={11} />
                     <span className="hidden sm:inline">{copied ? "Copied!" : "Copy"}</span>
                   </button>
-                  <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold bg-black/15 px-2 py-0.5 rounded-full flex-shrink-0" style={{ color }}>
+                  <span className="hidden sm:flex items-center gap-1 text-[10px] font-bold bg-black/15 px-2 py-0.5 rounded-full shrink-0" style={{ color }}>
                     <FiClock size={9} />{timeLeft}s
                   </span>
                 </>
