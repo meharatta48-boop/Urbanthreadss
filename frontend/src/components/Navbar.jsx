@@ -77,21 +77,20 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'md:py-2 py-0' : 'md:py-4 py-0'} nav-overflow-hidden`}
-        style={{ backgroundColor: scrolled ? 'transparent' : 'var(--bg-deep)' }}
+        className={`sticky top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out ${scrolled ? 'md:py-2 py-0' : 'md:py-3 py-0'} nav-overflow-hidden`}
       >
         <div className="max-w-7xl mx-auto md:px-4 px-0 nav-overflow-hidden">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-none md:rounded-3xl px-4 py-3 md:px-6 md:py-4 border-x-0 border-t-0 md:border-x md:border-t border-b nav-overflow-hidden`}
+            className={`flex items-center justify-between transition-all duration-300 ease-in-out rounded-none md:rounded-3xl px-4 py-1.5 md:px-6 md:py-3.5 border-x-0 border-t-0 md:border-x md:border-t border-b nav-overflow-hidden`}
             style={{
-              backgroundColor: 'var(--nav-bg-scrolled)',
+              backgroundColor: scrolled ? 'var(--nav-bg-scrolled)' : 'var(--bg-deep)',
               borderColor: 'var(--nav-border)',
-              boxShadow: scrolled ? 'var(--shadow-lg)' : 'none',
-              backdropFilter: 'blur(24px)'
+              boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
+              backdropFilter: scrolled ? 'blur(20px)' : 'none'
             }}
           >
             {/* LOGO */}
-            <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0 group hover-lift">
+            <Link to="/" className="flex items-center gap-1.5 sm:gap-3 shrink-0 min-w-0 group">
               {/* Desktop logo */}
               <div className="hidden sm:flex shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm hover-glow"
                 style={{ width: navLogoSize, height: navLogoSize, minWidth: navLogoSize, minHeight: navLogoSize }}>
@@ -126,15 +125,18 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Brand name text */}
+              {/* Brand name text - Hidden on Mobile */}
               {showBrandName && (
                 <span
-                  className="font-display tracking-wider md:tracking-widest font-bold truncate transition-colors duration-300 group-hover:text-(--gold)"
-                  style={{ fontSize: window.innerWidth < 640 ? Math.min(16, navTitleSize) : navTitleSize, color: "var(--text-primary)" }}
+                  className="font-display tracking-widest font-bold hidden sm:block truncate transition-colors duration-300 group-hover:text-(--gold)"
+                  style={{ 
+                    fontSize: navTitleSize,
+                    color: "var(--text-primary)" 
+                  }}
                 >
                   {brandName.split(" ")[0]}
                   {brandName.split(" ").length > 1 && (
-                    <span className="gold-text ml-1.5 hidden xs:inline">{brandName.split(" ").slice(1).join(" ")}</span>
+                    <span className="gold-text ml-1.5">{brandName.split(" ").slice(1).join(" ")}</span>
                   )}
                 </span>
               )}
@@ -190,7 +192,7 @@ export default function Navbar() {
                   justifyContent: 'center'
                 }}
               >
-                <FiShoppingCart size={20} className="group-hover:text-(--gold) transition-colors" />
+                <FiShoppingBag size={22} className="group-hover:text-(--gold) transition-colors" />
                 <AnimatePresence>
                   {cartCount > 0 && (
                     <motion.span
