@@ -77,21 +77,21 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'py-1' : 'py-1'} nav-overflow-hidden`}
-        style={{ backgroundColor: 'var(--bg-deep)' }}
+        className={`sticky top-0 left-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'md:py-2 py-0' : 'md:py-4 py-0'} nav-overflow-hidden`}
+        style={{ backgroundColor: scrolled ? 'transparent' : 'var(--bg-deep)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-4 nav-overflow-hidden">
+        <div className="max-w-7xl mx-auto md:px-4 px-0 nav-overflow-hidden">
           <nav
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-2xl md:rounded-3xl px-4 py-2 sm:px-6 sm:py-3 border nav-overflow-hidden`}
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out rounded-none md:rounded-3xl px-4 py-3 md:px-6 md:py-4 border-x-0 border-t-0 md:border-x md:border-t border-b nav-overflow-hidden`}
             style={{
               backgroundColor: 'var(--nav-bg-scrolled)',
               borderColor: 'var(--nav-border)',
-              boxShadow: scrolled ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
-              backdropFilter: scrolled ? 'blur(24px)' : 'none'
+              boxShadow: scrolled ? 'var(--shadow-lg)' : 'none',
+              backdropFilter: 'blur(24px)'
             }}
           >
             {/* LOGO */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0 group hover-lift">
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0 group hover-lift">
               {/* Desktop logo */}
               <div className="hidden sm:flex shrink-0 rounded-xl overflow-hidden items-center justify-center relative transition-transform duration-500 group-hover:scale-105 shadow-sm hover-glow"
                 style={{ width: navLogoSize, height: navLogoSize, minWidth: navLogoSize, minHeight: navLogoSize }}>
@@ -110,9 +110,9 @@ export default function Navbar() {
               </div>
 
               {/* Mobile logo */}
-              <div className="flex sm:hidden shrink-0 rounded-xl overflow-hidden items-center justify-center relative shadow-sm hover-glow"
+              <div className="flex sm:hidden shrink-0 rounded-lg overflow-hidden items-center justify-center relative shadow-sm"
                 style={{ width: navMobileSize, height: navMobileSize, minWidth: navMobileSize, minHeight: navMobileSize }}>
-                <div className="absolute inset-0 flex items-center justify-center rounded-xl transition-opacity duration-300"
+                <div className="absolute inset-0 flex items-center justify-center rounded-lg transition-opacity duration-300"
                   style={{ opacity: logoMobileImg ? 0 : 1, pointerEvents: "none" }}>
                   <span className="gold-text font-bold font-display leading-none"
                     style={{ fontSize: Math.max(14, navMobileSize * 0.6) }}>
@@ -129,44 +129,38 @@ export default function Navbar() {
               {/* Brand name text */}
               {showBrandName && (
                 <span
-                  className="font-display tracking-widest font-bold hidden sm:block truncate transition-colors duration-300 group-hover:text-(--gold)"
-                  style={{ fontSize: navTitleSize, color: "var(--text-primary)" }}
+                  className="font-display tracking-wider md:tracking-widest font-bold truncate transition-colors duration-300 group-hover:text-(--gold)"
+                  style={{ fontSize: window.innerWidth < 640 ? Math.min(16, navTitleSize) : navTitleSize, color: "var(--text-primary)" }}
                 >
                   {brandName.split(" ")[0]}
                   {brandName.split(" ").length > 1 && (
-                    <span className="gold-text ml-1.5">{brandName.split(" ").slice(1).join(" ")}</span>
+                    <span className="gold-text ml-1.5 hidden xs:inline">{brandName.split(" ").slice(1).join(" ")}</span>
                   )}
                 </span>
               )}
             </Link>
 
             {/* DESKTOP NAV LINKS */}
-            <div className="hidden md:flex items-center gap-1.5"
+            <div className="hidden md:flex items-center gap-1"
               style={{
-                backgroundColor: 'var(--bg-elevated)',
-                padding: '6px',
+                backgroundColor: 'var(--bg-surface)',
+                padding: '4px',
                 borderRadius: '999px',
                 border: '1px solid var(--border-light)',
-                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)'
               }}>
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative px-5 py-2 text-[0.85rem] font-semibold tracking-wide rounded-full transition-all duration-300 group overflow-hidden hover-lift magnetic"
+                  className="relative px-6 py-2 text-[0.82rem] font-bold tracking-wide rounded-full transition-all duration-300 group overflow-hidden"
                   style={{
                     color: isActive(link.to) ? "#000000" : "var(--text-secondary)",
-                    minWidth: '44px',
-                    minHeight: '44px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
                   }}
                 >
                   {isActive(link.to) && (
                     <motion.div
                       layoutId="nav-pill"
-                      className="absolute inset-0 gold-gradient rounded-full shadow-md"
+                      className="absolute inset-0 gold-gradient rounded-full shadow-sm"
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -179,44 +173,35 @@ export default function Navbar() {
             </div>
 
             {/* RIGHT ACTIONS */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
 
               {/* CART */}
               <Link
                 to="/cart"
-                className="relative p-2.5 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden hover-lift btn-3d"
+                className="relative p-2 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 group"
                 style={{
                   backgroundColor: 'var(--bg-elevated)',
                   border: '1px solid var(--border-light)',
-                  color: 'var(--text-secondary)',
+                  color: 'var(--text-primary)',
                   width: '44px',
                   height: '44px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = 'var(--gold)';
-                  e.currentTarget.style.color = 'var(--text-primary)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = "var(--border-light)";
-                  e.currentTarget.style.color = "var(--text-secondary)";
-                }}
               >
-                <FiShoppingCart size={17} />
+                <FiShoppingCart size={20} className="group-hover:text-(--gold) transition-colors" />
                 <AnimatePresence>
                   {cartCount > 0 && (
                     <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="absolute -top-1.5 -right-1.5 text-[10px] font-extrabold text-black rounded-full flex items-center justify-center shadow-lg z-10"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0, opacity: 0 }}
+                      className="absolute -top-1 -right-1 text-[10px] font-black text-black rounded-full flex items-center justify-center shadow-md z-10 ring-2 ring-(--bg-card)"
                       style={{
                         width: 22,
                         height: 22,
-                        background: 'linear-gradient(135deg, #c9a84c, #e6c75a)',
-                        border: '2px solid var(--bg-card)'
+                        background: 'var(--gradient-premium)',
                       }}
                     >
                       {cartCount}
@@ -226,26 +211,18 @@ export default function Navbar() {
               </Link>
 
               {/* DESKTOP: USER MENU or LOGIN */}
-              <div className="hidden md:flex items-center ml-1">
+              <div className="hidden md:flex items-center">
                 {!user ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <Link
                       to="/login"
-                      className="text-sm font-bold px-4 py-2.5 rounded-full transition-all duration-300"
+                      className="text-xs font-bold px-4 py-2.5 rounded-full transition-all duration-300 hover:bg-(--bg-elevated)"
                       style={{ color: "var(--text-secondary)" }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.color = "var(--text-primary)";
-                        e.currentTarget.style.background = "var(--bg-elevated)";
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.color = "var(--text-secondary)";
-                        e.currentTarget.style.background = "transparent";
-                      }}
                     >
                       Log In
                     </Link>
-                    <Link to="/signup" className="btn-gold py-2.5! px-5! rounded-full! shadow-lg shadow-(--gold)/20">
-                      Sign Up
+                    <Link to="/signup" className="btn-gold py-2! px-5! rounded-full! text-[0.75rem]! shadow-lg shadow-(--gold)/20">
+                      Join
                     </Link>
                   </div>
                 ) : (
@@ -257,8 +234,6 @@ export default function Navbar() {
                         background: "var(--bg-elevated)",
                         border: "1px solid var(--border-light)"
                       }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = "var(--gold)"}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border-light)"}
                     >
                       <div className="w-8 h-8 gold-gradient rounded-full flex items-center justify-center text-black font-extrabold text-xs font-display shadow-inner">
                         {user.name?.charAt(0)?.toUpperCase()}
@@ -312,18 +287,8 @@ export default function Navbar() {
                           <div className="p-2 space-y-1">
                             <Link
                               to="/my-orders"
-                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group hover:bg-(--bg-elevated) hover:translate-x-1"
                               style={{ color: "var(--text-secondary)" }}
-                              onMouseEnter={e => {
-                                e.currentTarget.style.color = "var(--text-primary)";
-                                e.currentTarget.style.background = "var(--bg-elevated)";
-                                e.currentTarget.style.transform = "translateX(2px)";
-                              }}
-                              onMouseLeave={e => {
-                                e.currentTarget.style.color = "var(--text-secondary)";
-                                e.currentTarget.style.background = "transparent";
-                                e.currentTarget.style.transform = "translateX(0)";
-                              }}
                             >
                               <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
                                 style={{ background: 'rgba(201,168,76,0.15)', color: 'var(--gold)' }}>
@@ -335,16 +300,8 @@ export default function Navbar() {
                             {user.role === "admin" && (
                               <Link
                                 to="/admin-dashboard"
-                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 group"
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 group hover:bg-(--gold)/10 hover:translate-x-1"
                                 style={{ color: "var(--gold)" }}
-                                onMouseEnter={e => {
-                                  e.currentTarget.style.background = "rgba(201,168,76,0.08)";
-                                  e.currentTarget.style.transform = "translateX(2px)";
-                                }}
-                                onMouseLeave={e => {
-                                  e.currentTarget.style.background = "transparent";
-                                  e.currentTarget.style.transform = "translateX(0)";
-                                }}
                               >
                                 <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
                                   style={{ background: 'rgba(201,168,76,0.2)', color: 'var(--gold)' }}>
@@ -359,18 +316,8 @@ export default function Navbar() {
                           <div className="p-2" style={{ borderTop: "1px solid var(--border)" }}>
                             <button
                               onClick={handleLogout}
-                              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group"
+                              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group hover:bg-red-500/10 hover:text-red-500 hover:translate-x-1"
                               style={{ color: "var(--text-muted)" }}
-                              onMouseEnter={e => {
-                                e.currentTarget.style.color = "#ef4444";
-                                e.currentTarget.style.background = "rgba(239,68,68,0.08)";
-                                e.currentTarget.style.transform = "translateX(2px)";
-                              }}
-                              onMouseLeave={e => {
-                                e.currentTarget.style.color = "var(--text-muted)";
-                                e.currentTarget.style.background = "transparent";
-                                e.currentTarget.style.transform = "translateX(0)";
-                              }}
                             >
                               <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 group-hover:scale-110"
                                 style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444' }}>
@@ -389,9 +336,9 @@ export default function Navbar() {
               {/* MOBILE: Hamburger */}
               <button
                 onClick={() => setOpen(!open)}
-                className="md:hidden p-2.5 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) hover:border-(--gold) hover:text-(--gold) hover-lift btn-3d ripple"
+                className="md:hidden p-2 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) active:scale-90"
                 style={{
-                  color: "var(--text-secondary)",
+                  color: "var(--text-primary)",
                   width: '44px',
                   height: '44px',
                   display: 'flex',
@@ -400,7 +347,7 @@ export default function Navbar() {
                 }}
               >
                 <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-                  {open ? <FiX size={18} /> : <FiMenu size={18} />}
+                  {open ? <FiX size={22} /> : <FiMenu size={22} />}
                 </motion.div>
               </button>
             </div>
@@ -429,7 +376,7 @@ export default function Navbar() {
               animate={{ x: 0, borderTopLeftRadius: "24px", borderBottomLeftRadius: "24px" }}
               exit={{ x: "100%", borderTopLeftRadius: "100px", borderBottomLeftRadius: "100px" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-2 bottom-2 right-2 w-[85vw] max-w-85 z-70 md:hidden shadow-2xl glass-card overflow-hidden flex flex-col drawer-overflow-hidden"
+              className="fixed top-0 bottom-0 right-0 w-[85vw] max-w-85 z-70 md:hidden shadow-2xl glass-card overflow-hidden flex flex-col drawer-overflow-hidden"
               style={{
                 background: "var(--drawer-bg)",
                 border: "1px solid var(--drawer-border)",
