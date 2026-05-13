@@ -55,9 +55,9 @@ export default function CouponBanner() {
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.35 }}
           className="w-full relative overflow-hidden z-60"
-          style={{ marginTop: 0, paddingTop: '2px', paddingBottom: '2px' }}
+          style={{ margin: 0, padding: 0 }}
         >
-          <div className="relative overflow-hidden w-full" style={{ background: bg }}>
+          <div className="relative overflow-hidden w-full" style={{ background: bg, margin: 0 }}>
             {/* Progress bar (coupon only) */}
             {!isAnnouncement && (
               <motion.div className="absolute bottom-0 left-0 h-0.5"

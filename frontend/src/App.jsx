@@ -74,11 +74,11 @@ function Layout({ children }) {
     <>
       <ThemeInjector />
       {!isAdmin && (
-        <>
+        <header className="sticky top-0 z-50 w-full bg-(--bg-deep)" style={{ marginTop: 0, paddingTop: 0 }}>
           {/* Gold coupon banner above navbar */}
           <CouponBanner />
           <Navbar />
-        </>
+        </header>
       )}
 
       {/* Page content */}

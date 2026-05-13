@@ -77,7 +77,7 @@ export default function Navbar() {
   return (
     <>
       <div
-        className="sticky top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out nav-overflow-hidden"
+        className="relative w-full transition-all duration-300 ease-in-out nav-overflow-hidden"
         style={{
           paddingTop: 0,
           paddingBottom: 0,
