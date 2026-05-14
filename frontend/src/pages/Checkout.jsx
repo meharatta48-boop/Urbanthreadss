@@ -67,24 +67,24 @@ export default function Checkout() {
   const { settings } = useSettings();
   const navigate = useNavigate();
 
-  const DELIVERY        = settings?.deliveryCharges ?? 250;
-  const COUPON_CODE     = settings?.couponCode     || "SAVE10";
+  const DELIVERY = settings?.deliveryCharges ?? 250;
+  const COUPON_CODE = settings?.couponCode || "SAVE10";
   const COUPON_DISCOUNT = settings?.couponDiscount ?? 500;
 
-  const [coupon, setCoupon]             = useState("");
+  const [coupon, setCoupon] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [loading, setLoading]           = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const STORAGE_KEY = "ut_checkout_form";
   const [form, setForm] = useState(() => {
     const defaults = {
-      name:       user?.name  || "",
-      phone:      user?.phone || "",
-      email:      user?.email || "",
-      province:   "",
-      city:       "",
-      address:    "",
+      name: user?.name || "",
+      phone: user?.phone || "",
+      email: user?.email || "",
+      province: "",
+      city: "",
+      address: "",
       postalCode: "",
     };
     try {
@@ -101,7 +101,7 @@ export default function Checkout() {
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const discount = couponApplied ? COUPON_DISCOUNT : 0;
-  const total    = subtotal + DELIVERY - discount;
+  const total = subtotal + DELIVERY - discount;
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -119,7 +119,7 @@ export default function Checkout() {
   const handleSubmit = (e) => { e.preventDefault(); placeOrder(); };
 
   const applyCoupon = () => {
-    if (!user) { 
+    if (!user) {
       toast.error("Coupon sirf login ke baad available hai");
       return;
     }
@@ -133,12 +133,12 @@ export default function Checkout() {
   };
 
   const validate = () => {
-    if (!form.name.trim())  { toast.error("Naam likhna zaroori hai");    return false; }
+    if (!form.name.trim()) { toast.error("Naam likhna zaroori hai"); return false; }
     if (!form.phone.trim()) { toast.error("Phone number likhna zaroori hai"); return false; }
     const phoneOk = /^(((\+92)?(0092)?(92)?(0)?)(3\d{9}))$/.test(form.phone.replace(/\s|-/g, ""));
     if (!phoneOk) { toast.error("Valid Pakistani number daalo (e.g. 03001234567)"); return false; }
-    if (!form.province)     { toast.error("Province select karo");       return false; }
-    if (!form.city)         { toast.error("City select karo");            return false; }
+    if (!form.province) { toast.error("Province select karo"); return false; }
+    if (!form.city) { toast.error("City select karo"); return false; }
     if (!form.address.trim()) { toast.error("Address likhna zaroori hai"); return false; }
     return true;
   };
@@ -155,28 +155,28 @@ export default function Checkout() {
         headers,
         body: JSON.stringify({
           orderItems: cart.map((i) => ({
-            product:  i._id,
+            product: i._id,
             quantity: i.quantity,
-            size:     i.size  || "",
-            color:    i.color || "",
+            size: i.size || "",
+            color: i.color || "",
           })),
           shippingAddress: {
-            fullName:   form.name,
-            address:    form.address,
-            city:       form.city,
-            province:   form.province,
+            fullName: form.name,
+            address: form.address,
+            city: form.city,
+            province: form.province,
             postalCode: form.postalCode || "00000",
-            phone:      form.phone,
-            country:    "Pakistan",
+            phone: form.phone,
+            country: "Pakistan",
           },
           paymentMethod,
-          itemsPrice:     subtotal,
-          shippingPrice:  DELIVERY,
-          totalPrice:     total,
-          couponCode:     couponApplied ? COUPON_CODE : "",
+          itemsPrice: subtotal,
+          shippingPrice: DELIVERY,
+          totalPrice: total,
+          couponCode: couponApplied ? COUPON_CODE : "",
           couponDiscount: couponApplied ? COUPON_DISCOUNT : 0,
           // Guest info (ignored if user logged in)
-          guestName:  form.name,
+          guestName: form.name,
           guestEmail: form.email,
         }),
       });
@@ -189,10 +189,10 @@ export default function Checkout() {
         navigate("/order-success", {
           replace: true,
           state: {
-            orderId:  data.order._id,
-            total:    total,
-            isGuest:  !user,
-            name:     form.name,
+            orderId: data.order._id,
+            total: total,
+            isGuest: !user,
+            name: form.name,
           },
         });
       } else {
@@ -232,10 +232,12 @@ export default function Checkout() {
                   </div>
                   <span>Shipping Information</span>
                 </div>
-                
+
                 <div className="checkout-form-grid">
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Full Name</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       name="name"
@@ -246,9 +248,11 @@ export default function Checkout() {
                       placeholder="Enter your full name"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Phone Number</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="tel"
                       name="phone"
@@ -259,9 +263,11 @@ export default function Checkout() {
                       placeholder="03xx-xxxxxxx"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Email Address</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Email Address
+                    </label>
                     <input
                       type="email"
                       name="email"
@@ -271,21 +277,25 @@ export default function Checkout() {
                       placeholder="your@email.com"
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Postal Code</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Postal Code <span className="text-xs font-normal opacity-70 ml-1">(Optional)</span>
+                    </label>
                     <input
                       type="text"
                       name="postalCode"
                       value={form.postalCode}
                       onChange={handleChange}
                       className="lux-input"
-                      placeholder="00000"
+                      placeholder="e.g. 54000"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Province *</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Province <span className="text-red-500">*</span>
+                    </label>
                     <select
                       name="province"
                       value={form.province}
@@ -301,7 +311,9 @@ export default function Checkout() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>City *</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      City <span className="text-red-500">*</span>
+                    </label>
                     <select
                       name="city"
                       value={form.city}
@@ -316,9 +328,11 @@ export default function Checkout() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="checkout-form-col-full">
-                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>Complete Address</label>
+                    <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
+                      Complete Address <span className="text-red-500">*</span>
+                    </label>
                     <textarea
                       name="address"
                       value={form.address}
@@ -340,24 +354,29 @@ export default function Checkout() {
                   </div>
                   <span>Payment Method</span>
                 </div>
-                
+
                 <div className="checkout-payment-methods">
+                  {/* COD BUTTON */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("COD")}
                     className={`checkout-payment-method ${paymentMethod === "COD" ? "active" : ""}`}
                   >
                     <FiTruck size={20} className="mb-2" />
-                    Cash on Delivery
+                    <span>Cash on Delivery</span>
                   </button>
-                  
+
+                  {/* BANK TRANSFER BUTTON (DISABLED) */}
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("BANK")}
-                    className={`checkout-payment-method ${paymentMethod === "BANK" ? "active" : ""}`}
+                    disabled
+                    className="checkout-payment-method opacity-50 cursor-not-allowed flex flex-col items-center justify-center relative"
                   >
                     <FiCreditCard size={20} className="mb-2" />
-                    Bank Transfer
+                    <span>Bank Transfer</span>
+                    <span className="text-[10px] mt-1 font-semibold text-yellow-500 uppercase tracking-wide">
+                      (Coming Soon)
+                    </span>
                   </button>
                 </div>
               </div>
@@ -390,7 +409,7 @@ export default function Checkout() {
           <div className="lg:col-span-1">
             <div className="cart-summary">
               <h3 className="text-xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Order Summary</h3>
-              
+
               {/* CART ITEMS */}
               <div className="space-y-3 mb-4 max-h-52 overflow-y-auto pr-1">
                 {cart.map((item) => (
@@ -446,32 +465,32 @@ export default function Checkout() {
                 <span className="cart-summary-label">Subtotal</span>
                 <span className="cart-summary-value">Rs. {subtotal.toLocaleString()}</span>
               </div>
-              
+
               {couponApplied && (
                 <div className="cart-summary-row">
                   <span className="cart-summary-label">Discount</span>
                   <span className="cart-summary-value" style={{ color: "#10b981" }}>-Rs. {COUPON_DISCOUNT}</span>
                 </div>
               )}
-              
+
               <div className="cart-summary-row">
                 <span className="cart-summary-label">Delivery</span>
                 <span className="cart-summary-value">Rs. {DELIVERY.toLocaleString()}</span>
               </div>
-              
+
               <div className="cart-summary-row cart-summary-total">
                 <span className="cart-summary-label">Total</span>
                 <span className="cart-summary-value">Rs. {total.toLocaleString()}</span>
               </div>
-              
+
               <div className="mt-4 text-center">
                 <div className="flex items-center justify-center gap-2 text-xs text-(--text-muted) mb-2">
-                  <FiTruck size={12} />
-                  <span>2-5 business days delivery</span>
+                  <FiTruck size={12} style={{ color: "var(--text-muted)" }} />
+                  <span style={{ color: "var(--text-muted)" }}>2-5 business days delivery</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 text-xs text-(--text-muted)">
-                  <FiShield size={12} />
-                  <span>Secure payment guaranteed</span>
+                  <FiShield size={12} style={{ color: "var(--text-muted)" }} />
+                  <span style={{ color: "var(--text-muted)" }}>Secure payment guaranteed</span>
                 </div>
               </div>
             </div>
