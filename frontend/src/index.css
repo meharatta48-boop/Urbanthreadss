@@ -2490,13 +2490,18 @@ n::selection {
   .product-card .product-actions {
     opacity: 1;
     transform: translateY(0);
-    position: static;
-    padding: 8px 10px 10px;
-    background: var(--bg-card);
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 0;
+    background: transparent;
   }
 
   .product-card .product-overlay {
-    display: none;
+    display: block;
+    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
   }
 }
 

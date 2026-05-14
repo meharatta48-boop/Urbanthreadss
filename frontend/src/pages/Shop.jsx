@@ -139,7 +139,7 @@ export default function Shop() {
               onBlur={() => setTimeout(() => setShowSearchSuggestions(false), 200)}
               placeholder="Search products..."
               className="lux-input w-full"
-              style={{ paddingLeft: "38px", paddingTop: "10px", paddingBottom: "10px" }}
+              style={{ paddingLeft: "38px" }}
             />
             {showSearchSuggestions && searchSuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-lg z-20 overflow-hidden"
@@ -160,7 +160,7 @@ export default function Shop() {
           <div className="flex items-center gap-2 shrink-0">
             {/* Sort */}
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="lux-select flex-1 sm:flex-none"
-              style={{ padding: "10px 36px 10px 12px", minWidth: '130px' }}>
+              style={{ paddingLeft: "12px", paddingRight: "36px", minWidth: '130px' }}>
               <option value="featured">Featured</option>
               <option value="price-low">Price ↑</option>
               <option value="price-high">Price ↓</option>
@@ -227,7 +227,7 @@ export default function Shop() {
                 <select value={category}
                   onChange={(e) => { setCategory(e.target.value); setSubCategory(""); setPage(1); }}
                   className="lux-select flex-1"
-                  style={{ padding: '10px 36px 10px 12px', minWidth: '140px', maxWidth: '200px' }}>
+                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '140px', maxWidth: '200px' }}>
                   <option value="">All Categories</option>
                   {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
                 </select>
@@ -236,7 +236,7 @@ export default function Shop() {
                 <select value={subCategory}
                   onChange={(e) => { setSubCategory(e.target.value); setPage(1); }}
                   className="lux-select flex-1"
-                  style={{ padding: '10px 36px 10px 12px', minWidth: '140px', maxWidth: '200px' }}>
+                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '140px', maxWidth: '200px' }}>
                   <option value="">All Types</option>
                   {subCategories
                     .filter(s => !category || s.category?._id === category)
@@ -248,11 +248,11 @@ export default function Shop() {
                   <span className="text-xs whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>Rs.</span>
                   <input type="number" value={priceRange[0]}
                     onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-                    className="lux-input text-sm" style={{ padding: '10px 8px', width: '80px' }} placeholder="Min" />
+                    className="lux-input text-sm" style={{ paddingLeft: '8px', paddingRight: '8px', width: '80px' }} placeholder="Min" />
                   <span className="text-xs" style={{ color: 'var(--text-muted)' }}>–</span>
                   <input type="number" value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 10000])}
-                    className="lux-input text-sm" style={{ padding: '10px 8px', width: '80px' }} placeholder="Max" />
+                    className="lux-input text-sm" style={{ paddingLeft: '8px', paddingRight: '8px', width: '80px' }} placeholder="Max" />
                 </div>
 
                 {/* Stock */}
@@ -374,7 +374,7 @@ export default function Shop() {
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-14">
+          <div className="flex flex-wrap justify-center gap-2 mt-14">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
