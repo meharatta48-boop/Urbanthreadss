@@ -159,7 +159,7 @@ export default function Navbar() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="relative px-6 py-2 text-[0.82rem] font-bold tracking-wide rounded-full transition-all duration-300 group overflow-hidden"
+                  className="relative px-6 py-2 text-[0.82rem] font-bold tracking-wide rounded-full transition-all z-50 duration-300 group overflow-hidden"
                   style={{
                     color: isActive(link.to) ? "#000000" : "var(--text-secondary)",
                   }}
