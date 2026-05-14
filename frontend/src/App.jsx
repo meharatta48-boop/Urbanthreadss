@@ -114,7 +114,7 @@ export default function App() {
   const { theme } = useTheme();
   const { settings, loading: settingsLoading } = useSettings();
 
-  const isDark = theme === "dark";
+  // const isDark = theme === "dark";
 
   useEffect(() => {
     registerImageCache();
