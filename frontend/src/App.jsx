@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy, useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useAuth } from "./context/AuthContext";
-import { useTheme } from "./context/ThemeContext";
+// import { useTheme } from "./context/ThemeContext";
 import { useSettings } from "./context/SettingsContext";
 
 /* LAYOUT */
@@ -111,7 +111,7 @@ function RouteObservers() {
 
 export default function App() {
   const { user, loading: authLoading } = useAuth();
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
   const { settings, loading: settingsLoading } = useSettings();
 
   // const isDark = theme === "dark";
