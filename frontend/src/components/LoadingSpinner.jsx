@@ -6,7 +6,7 @@ export default function LoadingSpinner({ size = "md", message = "Loading..." }) 
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 p-4">
+    <div className="flex flex-col items-center justify-center gap-3 p-4 bg-white">
       <div className={`${sizeClasses[size]} border-4 border-(--gold) border-t-transparent rounded-full animate-spin`}></div>
       {message && <p className="text-sm text-(--text-muted) animate-pulse">{message}</p>}
     </div>

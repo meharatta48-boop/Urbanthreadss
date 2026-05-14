@@ -96,9 +96,7 @@ export default function Navbar() {
           <nav
             className="flex items-center justify-between px-4 md:px-6 py-3 md:py-3.5 border-b md:border-x md:border-t rounded-none md:rounded-3xl relative overflow-visible transition-all duration-300 ease-in-out"
             style={{
-              backgroundColor: scrolled
-                ? "var(--nav-bg-scrolled)"
-                : "var(--bg-deep)",
+              backgroundColor: "#ffffff",
               borderColor: "var(--nav-border)",
               boxShadow: scrolled ? "var(--shadow-md)" : "none",
               backdropFilter: scrolled ? "blur(20px)" : "none",
@@ -316,7 +314,7 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 z-9998 backdrop-blur-[2px]"
+              className="fixed inset-0 bg-black/30 z-9998 backdrop-blur-[2px]"
               onClick={() => setOpen(false)}
             />
 
@@ -326,7 +324,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 w-[85vw] max-w-sm h-full bg-(--bg-deep) z-9999 shadow-2xl flex flex-col"
+              className="fixed top-0 right-0 w-[85vw] max-w-sm h-full bg-white z-9999 shadow-2xl flex flex-col"
             >
               <div className="p-6 flex items-center justify-between border-b border-(--border)">
                 <span className="font-display font-bold tracking-widest text-lg text-(--text-primary)">
