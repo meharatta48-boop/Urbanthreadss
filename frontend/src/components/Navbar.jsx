@@ -94,7 +94,7 @@ export default function Navbar() {
       <div className="w-full relative z-999 m-0 p-0 overflow-visible">
         <div className="max-w-7xl mx-auto px-0 md:px-4 overflow-visible">
           <nav
-            className="flex items-center justify-between px-4 md:px-6 py-3 md:py-3.5 border-b md:border-x md:border-t rounded-none md:rounded-3xl relative overflow-visible transition-all duration-300 ease-in-out"
+            className="flex items-center justify-between px-4 md:px-6 py-5 md:py-3.5 border-b md:border-x md:border-t rounded-none md:rounded-3xl relative overflow-visible transition-all duration-300 ease-in-out"
             style={{
               backgroundColor: "#ffffff",
               borderColor: "var(--nav-border)",
