@@ -20,163 +20,174 @@ export default function Cart() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6 pt-20"
         style={{ backgroundColor: "var(--bg-deep)" }}>
-        <div className="w-24 h-24 rounded-full flex items-center justify-center bg-opacity-10 bg-gray-500"
-          style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}>
-          <FiShoppingCart size={40} />
+        <div className="w-20 h-20 rounded-full flex items-center justify-center bg-white/5 border border-white/10 text-(--text-muted)">
+          <FiShoppingCart size={32} />
         </div>
         <div>
-          <h2 className="font-display text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>Cart Is Empty</h2>
-          <p className="text-sm opacity-70" style={{ color: "var(--text-muted)" }}>Kuch bhi add nahi kiya abhi tak</p>
+          <h2 className="font-display text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Cart Is Empty</h2>
+          <p className="text-sm opacity-50" style={{ color: "var(--text-muted)" }}>Abhi tak koi item add nahi kiya gaya.</p>
         </div>
         <button 
           onClick={() => navigate("/shop")} 
-          className="btn-gold px-8 py-3 rounded-full flex items-center gap-2 transition-transform active:scale-95"
+          className="btn-gold px-8 py-3 rounded-full flex items-center gap-2 text-sm font-bold transition-transform active:scale-95"
         >
-          <FiShoppingCart size={18} /> Start Shopping
+          Start Shopping
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-24 sm:pb-16 px-4 sm:px-6"
+    <div className="min-h-screen pt-24 pb-28 sm:pb-20 px-4 sm:px-6"
       style={{ backgroundColor: "var(--bg-deep)" }}>
       <div className="max-w-6xl mx-auto">
 
-        {/* HEADER - Mobile Optimized */}
+        {/* HEADER */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="section-label text-xs uppercase tracking-widest opacity-70 mb-1">Your Selection</p>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+            <p className="section-label text-[10px] uppercase tracking-[0.2em] opacity-50 mb-1">Review Items</p>
+            <h1 className="font-display text-3xl sm:text-5xl font-bold" style={{ color: "var(--text-primary)" }}>
               Shopping <span className="gold-text">Cart</span>
             </h1>
           </div>
           <button 
             onClick={clearCart}
-            className="text-xs font-medium flex items-center gap-1 opacity-60 hover:opacity-100 transition-opacity pb-1"
-            style={{ color: "var(--text-muted)" }}
+            className="flex items-center gap-1.5 text-xs font-medium text-red-400/70 hover:text-red-400 transition-colors pb-1"
           >
-            <FiTrash2 size={14} /> <span className="hidden sm:inline">Clear All</span>
+            <FiTrash2 size={14} /> <span>Clear All</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* CART ITEMS */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          
+          {/* ITEMS LIST */}
           <div className="lg:col-span-2 space-y-4">
-            <AnimatePresence mode='popLayout'>
+            <AnimatePresence mode="popLayout">
               {cart.map((item) => (
                 <motion.div
                   key={item.cartId}
                   layout
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="cart-item relative flex gap-3 p-3 sm:p-4 rounded-2xl border border-(--border-light)"
-                  style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="group relative flex gap-4 p-3 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors"
                 >
-                  {/* IMAGE - Responsive Size */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden bg-black/20">
+                  {/* IMAGE - Fixed Ratio for better fit */}
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover" // Ensure image fills container without distortion
                     />
                   </div>
 
                   {/* DETAILS */}
-                  <div className="flex flex-col justify-between grow py-1">
-                    <div>
-                      <h3 className="text-sm sm:text-base font-semibold line-clamp-1" style={{ color: "var(--text-primary)" }}>
+                  <div className="flex flex-col justify-between grow min-w-0 py-1">
+                    <div className="relative pr-8">
+                      <h3 className="text-sm sm:text-lg font-bold truncate pr-2" style={{ color: "var(--text-primary)" }}>
                         {item.name}
                       </h3>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {item.size  && <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-(--text-muted)">Size: {item.size}</span>}
-                        {item.color && <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-(--text-muted)">Color: {item.color}</span>}
+                      
+                      {/* Individual Trash Button - Positioned consistently */}
+                      <button
+                        onClick={() => removeFromCart(item.cartId)}
+                        className="absolute top-0 right-0 p-1 text-white/20 hover:text-red-400 transition-colors"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
+
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {item.size && (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
+                            Size: {item.size}
+                          </span>
+                        )}
+                        {item.color && (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
+                            Color: {item.color}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-end justify-between mt-2">
+                    <div className="flex items-center justify-between mt-auto">
                       <div className="flex flex-col">
+                        <span className="text-base sm:text-xl font-bold gold-text">
+                          Rs. {item.price?.toLocaleString()}
+                        </span>
                         {item.comparePrice > item.price && (
-                          <span className="text-[10px] sm:text-xs line-through opacity-50">
+                          <span className="text-[10px] sm:text-xs line-through opacity-30">
                             Rs. {item.comparePrice?.toLocaleString()}
                           </span>
                         )}
-                        <span className="text-sm sm:text-lg font-bold gold-text">
-                          Rs. {item.price?.toLocaleString()}
-                        </span>
                       </div>
 
-                      {/* QUANTITY CONTROLS - Better Touch Targets */}
-                      <div className="flex items-center bg-black/20 rounded-lg border border-white/10 overflow-hidden">
+                      {/* QUANTITY */}
+                      <div className="flex items-center bg-black/40 rounded-lg border border-white/10 p-0.5">
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
-                          className="p-2 hover:bg-white/5 transition-colors"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-white/5 rounded transition-colors"
+                          disabled={item.quantity <= 1}
                         >
-                          <FiMinus size={14} />
+                          <FiMinus size={12} className={item.quantity <= 1 ? "opacity-20" : "opacity-100"} />
                         </button>
-                        <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
+                        <span className="w-8 text-center text-xs font-bold font-mono">
+                          {item.quantity}
+                        </span>
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
-                          className="p-2 hover:bg-white/5 transition-colors"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-white/5 rounded transition-colors"
                         >
-                          <FiPlus size={14} />
+                          <FiPlus size={12} />
                         </button>
                       </div>
                     </div>
                   </div>
-
-                  {/* ABSOLUTE REMOVE FOR CLEANER UX */}
-                  <button
-                    onClick={() => removeFromCart(item.cartId)}
-                    className="absolute top-2 right-2 p-2 text-white/30 hover:text-red-400 transition-colors"
-                  >
-                    <FiTrash2 size={16} />
-                  </button>
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
 
-          {/* SUMMARY - Mobile Sticky Support */}
-          <div className="lg:col-span-1">
-            <div className="cart-summary sticky top-24 p-6 rounded-2xl border border-(--border-light) bg-white/2">
-              <h3 className="text-xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Order Summary</h3>
+          {/* SUMMARY SIDEBAR */}
+          <div className="lg:col-span-1 lg:sticky lg:top-24">
+            <div className="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-md shadow-2xl">
+              <h3 className="text-lg font-bold mb-6 text-(--text-primary)">Summary</h3>
               
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-sm opacity-80">
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-sm opacity-60">
                   <span>Subtotal</span>
                   <span>Rs. {subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm opacity-80">
+                <div className="flex justify-between text-sm opacity-60">
                   <span>Delivery</span>
                   <span>Rs. {DELIVERY.toLocaleString()}</span>
                 </div>
-                <div className="pt-3 border-t border-white/10 flex justify-between items-center">
+                <div className="h-px bg-white/10 my-2" />
+                <div className="flex justify-between items-center">
                   <span className="font-bold">Total</span>
-                  <span className="text-xl font-bold gold-text">Rs. {total.toLocaleString()}</span>
+                  <span className="text-2xl font-bold gold-text">Rs. {total.toLocaleString()}</span>
                 </div>
-              </div>
-              
-              {/* Desktop Buttons */}
-              <div className="hidden sm:flex flex-col gap-3">
-                <Link to="/checkout" className="btn-gold w-full py-4 rounded-xl flex items-center justify-center gap-2 font-bold shadow-lg shadow-gold/20">
-                  Proceed to Checkout <FiArrowRight />
-                </Link>
-                <Link to="/shop" className="text-center text-sm opacity-60 hover:opacity-100 transition-opacity">
-                  Continue Shopping
-                </Link>
               </div>
 
-              {/* Trust Badges */}
+              {/* Desktop CTA */}
+              <div className="hidden sm:block space-y-3">
+                <Link to="/checkout" className="btn-gold w-full py-4 rounded-xl flex items-center justify-center gap-2 font-bold shadow-lg shadow-gold/10">
+                  Checkout Now <FiArrowRight />
+                </Link>
+                <button onClick={() => navigate("/shop")} className="w-full text-xs opacity-40 hover:opacity-100 transition-opacity">
+                  Continue Shopping
+                </button>
+              </div>
+
+              {/* Badges */}
               <div className="mt-8 pt-6 border-t border-white/5 space-y-3">
-                <div className="flex items-center gap-3 text-[11px] opacity-50 uppercase tracking-wider">
+                <div className="flex items-center gap-3 text-[10px] opacity-40 uppercase tracking-widest">
                   <FiTruck size={16} className="gold-text" />
-                  <span>Free delivery above Rs. 5000</span>
+                  <span>Express Delivery</span>
                 </div>
-                <div className="flex items-center gap-3 text-[11px] opacity-50 uppercase tracking-wider">
+                <div className="flex items-center gap-3 text-[10px] opacity-40 uppercase tracking-widest">
                   <FiShield size={16} className="gold-text" />
-                  <span>Secure Checkout</span>
+                  <span>Secure Payments</span>
                 </div>
               </div>
             </div>
@@ -184,15 +195,15 @@ export default function Cart() {
         </div>
       </div>
 
-      {/* MOBILE FLOATING ACTION BAR - This is huge for UX */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-(--bg-deep) border-t border-white/10 sm:hidden z-50">
-        <div className="flex items-center justify-between gap-4">
+      {/* MOBILE STICKY FOOTER */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-(--bg-deep)/90 backdrop-blur-xl border-t border-white/10 sm:hidden z-50 shadow-2xl">
+        <div className="max-w-md mx-auto flex items-center justify-between gap-6">
           <div className="flex flex-col">
-            <span className="text-[10px] opacity-60 uppercase">Total Amount</span>
-            <span className="text-lg font-bold gold-text leading-none">Rs. {total.toLocaleString()}</span>
+            <span className="text-[10px] opacity-40 uppercase font-bold tracking-tighter">Total Payable</span>
+            <span className="text-xl font-bold gold-text leading-tight">Rs. {total.toLocaleString()}</span>
           </div>
-          <Link to="/checkout" className="btn-gold grow py-3 px-6 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl">
-            Checkout <FiArrowRight />
+          <Link to="/checkout" className="btn-gold grow py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl transition-transform active:scale-95">
+            Checkout <FiArrowRight size={18} />
           </Link>
         </div>
       </div>
