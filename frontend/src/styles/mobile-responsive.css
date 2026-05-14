@@ -75,7 +75,7 @@ img, video {
   /* Prevent brand name blowout */
   .font-display.tracking-widest {
     font-size: clamp(10px, 3.5vw, 16px) !important;
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 130px;
