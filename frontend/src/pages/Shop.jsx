@@ -145,7 +145,7 @@ export default function Shop() {
         <div className="flex flex-col sm:flex-row flex-wrap gap-3">
 
           {/* SEARCH */}
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-50">
             <FiSearch
               className="absolute left-3 top-1/2 -translate-y-1/2"
               style={{ color: "var(--text-muted)" }}
@@ -273,7 +273,7 @@ export default function Shop() {
                     setSubCategory("");
                     setPage(1);
                   }}
-                  className="lux-select flex-1 min-w-[140px]"
+                  className="lux-select flex-1 min-w-35"
                 >
                   <option value="">All Categories</option>
                   {categories.map((c) => (
@@ -289,7 +289,7 @@ export default function Shop() {
                     setSubCategory(e.target.value);
                     setPage(1);
                   }}
-                  className="lux-select flex-1 min-w-[140px]"
+                  className="lux-select flex-1 min-w-35"
                 >
                   <option value="">All Types</option>
                   {subCategories
@@ -311,7 +311,7 @@ export default function Shop() {
                         priceRange[1],
                       ])
                     }
-                    className="lux-input w-[80px]"
+                    className="lux-input w-20"
                     placeholder="Min"
                   />
 
@@ -324,7 +324,7 @@ export default function Shop() {
                         parseInt(e.target.value) || 10000,
                       ])
                     }
-                    className="lux-input w-[80px]"
+                    className="lux-input w-20"
                     placeholder="Max"
                   />
                 </div>
@@ -364,7 +364,7 @@ export default function Shop() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
 
             {paginated.map((p) => (
               <motion.div
@@ -374,41 +374,78 @@ export default function Shop() {
                 className="product-card group cursor-pointer"
                 onClick={() => navigate(`/product/${p._id}`)}
               >
+                {/* IMAGE */}
                 <div className="product-image-container">
                   <LazyImage
                     src={getThumbnailUrl(p.images?.[0])}
                     srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     alt={p.name}
                     className="absolute inset-0 w-full h-full object-cover object-top"
                   />
+                  <div className="product-overlay" />
 
+                  {/* ACTIONS */}
                   <div className="product-actions">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        addToCart(p);
-                        toast.success(
-                          `${p.name} cart mein add ho gaya!`
-                        );
+                        if (p.sizes?.length > 0 || p.colors?.length > 0) {
+                          navigate(`/product/${p._id}`);
+                        } else {
+                          addToCart(p);
+                          toast.success(`${p.name} added!`);
+                        }
                       }}
-                      className="btn-gold flex-1"
-                      style={{ minHeight: "40px" }}
+                      className="btn-gold flex-1 text-xs"
+                      style={{ minHeight: "36px", padding: "6px 10px" }}
                     >
-                      <FiShoppingCart size={12} /> Add
+                      <FiShoppingCart size={11} /> Add
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/product/${p._id}`); }}
+                      className="btn-outline text-xs"
+                      style={{ minHeight: "36px", padding: "6px 10px" }}
+                    >
+                      <FiArrowRight size={11} />
                     </button>
                   </div>
+
+                  {/* OUT OF STOCK */}
+                  {p.stock === 0 && (
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center">
+                      <span className="text-white text-[9px] sm:text-[10px] font-bold tracking-widest uppercase px-2 py-1 border border-white/30 rounded-lg">
+                        Out of Stock
+                      </span>
+                    </div>
+                  )}
+
+                  {/* DISCOUNT BADGE */}
+                  {p.comparePrice > p.price && (
+                    <div className="absolute top-2 right-2 flex flex-col items-end gap-0.5">
+                      <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase">
+                        -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
+                      </span>
+                    </div>
+                  )}
+
+                  {/* LOW STOCK BADGE */}
+                  {p.stock > 0 && p.stock < 5 && (
+                    <span className="absolute top-2 left-2 badge-gold text-[8px]">Low</span>
+                  )}
                 </div>
 
+                {/* INFO */}
                 <div className="product-info">
-                  <p className="product-category">
-                    {p.category?.name}
-                  </p>
-                  <h3 className="product-name truncate">
-                    {p.name}
-                  </h3>
-
+                  <p className="product-category">{p.category?.name}</p>
+                  <h3 className="product-name truncate">{p.name}</h3>
                   <div className="product-price">
-                    Rs. {p.price?.toLocaleString()}
+                    <div className="flex flex-col">
+                      {p.comparePrice > p.price && (
+                        <span className="product-price-original">Rs. {p.comparePrice?.toLocaleString()}</span>
+                      )}
+                      <span className="product-price-current">Rs. {p.price?.toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>

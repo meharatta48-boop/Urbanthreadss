@@ -2552,3 +2552,222 @@ html.dark {
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
   --shadow-gold: 0 8px 24px rgba(201, 168, 76, 0.2);
 }
+
+/* ═══════════════════════════════════════════════════════
+   COMPREHENSIVE RESPONSIVE OVERRIDES  300px → Desktop
+═══════════════════════════════════════════════════════ */
+
+/* ── PRODUCT CARD: Mobile ── */
+@media (max-width: 639px) {
+  .product-card {
+    border-radius: 14px;
+  }
+
+  .product-card .product-info {
+    padding: 10px;
+  }
+
+  .product-card .product-name {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .product-card .product-category {
+    font-size: 9px;
+  }
+
+  .product-card .product-price-current {
+    font-size: 14px;
+  }
+
+  /* Always show actions on touch */
+  .product-card .product-actions {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .product-card .product-overlay {
+    display: block;
+    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.55), transparent);
+  }
+
+  /* No transform on mobile (performance) */
+  .product-card:hover {
+    transform: none;
+  }
+}
+
+/* ── PRODUCT CARD: 300px-374px ── */
+@media (max-width: 374px) {
+  .product-card .product-info {
+    padding: 8px;
+  }
+
+  .product-card .product-name {
+    font-size: 11px;
+  }
+
+  .product-card .product-price-current {
+    font-size: 12px;
+  }
+
+  .product-card .product-actions .btn-gold {
+    font-size: 10px !important;
+    padding: 6px 8px !important;
+    min-height: 34px !important;
+  }
+}
+
+/* ── CART ITEM: Mobile ── */
+@media (max-width: 639px) {
+  .cart-item {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .cart-item-image {
+    width: 72px !important;
+    height: 90px !important;
+    border-radius: 10px;
+  }
+
+  .cart-item-name {
+    font-size: 13px;
+  }
+
+  .cart-item-price {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 374px) {
+  .cart-item {
+    padding: 10px;
+    gap: 8px !important;
+  }
+
+  .cart-item-image {
+    width: 58px !important;
+    height: 72px !important;
+  }
+
+  .cart-item-name {
+    font-size: 12px;
+  }
+}
+
+/* ── LUX INPUT / SELECT: Prevent iOS zoom ── */
+@media (max-width: 767px) {
+  .lux-input,
+  .lux-select,
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  .lux-input {
+    min-height: 44px;
+  }
+
+  .lux-select {
+    min-height: 44px;
+  }
+}
+
+/* ── CHECKOUT LAYOUT: Mobile ── */
+@media (max-width: 1023px) {
+  .checkout-grid {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .checkout-grid {
+    gap: 16px !important;
+  }
+
+  /* Address textarea full width */
+  .checkout-form-col-full {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ── SECTION / PAGE PADDING ── */
+@media (max-width: 639px) {
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .px-6 { padding-left: 12px !important; padding-right: 12px !important; }
+  .px-8 { padding-left: 16px !important; padding-right: 16px !important; }
+}
+
+@media (max-width: 374px) {
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+/* ── FEATURED SECTION: Mobile ── */
+@media (max-width: 639px) {
+  /* Header row: stack */
+  .featured-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  /* "View All" link always visible */
+  .featured-view-all {
+    display: flex !important;
+  }
+}
+
+/* ── HERO SECTION ADJUSTMENTS ── */
+@media (max-width: 639px) {
+  /* Dot indicators */
+  .hero-dots {
+    gap: 4px;
+  }
+
+  .hero-dots button {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  /* Prev/Next buttons smaller */
+  .hero-nav-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+
+/* ── GLOBAL TEXT FLOW ── */
+@media (max-width: 639px) {
+  p, h1, h2, h3, h4, h5, h6, span, a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Prevent badge overflow */
+  .badge-gold, .badge-red {
+    white-space: nowrap;
+    font-size: 9px !important;
+  }
+}
