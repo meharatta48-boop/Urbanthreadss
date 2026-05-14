@@ -227,7 +227,7 @@ export default function Shop() {
                 <select value={category}
                   onChange={(e) => { setCategory(e.target.value); setSubCategory(""); setPage(1); }}
                   className="lux-select flex-1"
-                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '140px', maxWidth: '200px' }}>
+                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '110px', maxWidth: '200px' }}>
                   <option value="">All Categories</option>
                   {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
                 </select>
@@ -236,7 +236,7 @@ export default function Shop() {
                 <select value={subCategory}
                   onChange={(e) => { setSubCategory(e.target.value); setPage(1); }}
                   className="lux-select flex-1"
-                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '140px', maxWidth: '200px' }}>
+                  style={{ paddingLeft: '12px', paddingRight: '36px', minWidth: '110px', maxWidth: '200px' }}>
                   <option value="">All Types</option>
                   {subCategories
                     .filter(s => !category || s.category?._id === category)

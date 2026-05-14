@@ -481,7 +481,7 @@ export default function ProductDetail() {
                 whileTap={{ scale: 0.97 }}
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="btn-gold flex-1 min-w-45 disabled:opacity-40 disabled:cursor-not-allowed animate-slide-up"
+                className="btn-gold flex-1 min-w-32.5 disabled:opacity-40 disabled:cursor-not-allowed animate-slide-up"
                 style={{ padding: "16px 24px", fontSize: "1rem" }}
               >
                 <FiShoppingCart size={17} /> Add to Cart
@@ -491,7 +491,7 @@ export default function ProductDetail() {
                 whileTap={{ scale: 0.97 }}
                 onClick={handleBuyNow}
                 disabled={product.stock === 0}
-                className="btn-outline flex-1 min-w-45 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="btn-outline flex-1 min-w-32.5 disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{ padding: "16px 24px", fontSize: "1rem" }}
               >
                 Buy Now
