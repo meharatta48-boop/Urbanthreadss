@@ -606,7 +606,7 @@ img, video {
   .pt-32 { padding-top: 88px  !important; }
   .pb-20 { padding-bottom: 60px !important; }
 
-  section { padding-top: 40px !important; padding-bottom: 40px !important; }
+  /* section { padding-top: 40px !important; padding-bottom: 40px !important; } */
 }
 
 @media (max-width: 374px) {
