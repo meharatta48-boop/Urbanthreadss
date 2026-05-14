@@ -66,7 +66,7 @@ export default function FeaturedProducts() {
               onClick={() => navigate(`/product/${p._id}`)}
             >
               {/* IMAGE */}
-              <div className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep) aspect-3/4">
+              <div className="product-image-container rounded-xl border border-(--border)">
                 <LazyImage
                   src={getThumbnailUrl(p.images?.[0])}
                   srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
@@ -75,8 +75,7 @@ export default function FeaturedProducts() {
                   className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-108"
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}
                 />
-                {/* OVERLAY */}
-                <div className="absolute inset-0 bg-(--bg-deep)/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="product-overlay rounded-xl" />
 
                 <button
                   onClick={(e) => { 
