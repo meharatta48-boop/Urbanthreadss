@@ -32,7 +32,7 @@ export default function AboutUs() {
             toast.success("Message sent successfully! We'll get back to you soon.");
             setFormData({ name: '', email: '', message: '' });
             setShowForm(false);
-        } catch (error) {
+        } catch {
             toast.error("Failed to send message. Please try again.");
         } finally {
             setIsSubmitting(false);

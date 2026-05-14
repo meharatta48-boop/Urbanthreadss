@@ -80,6 +80,12 @@
   --ease-sharp: cubic-bezier(0.4, 0, 0.6, 1);
 }
 
+body {
+  background-color: var(--bg-deep, #ffffff);
+  color: var(--text-primary, #000000);
+  margin: 0;
+}
+
 :root {
   /* Premium Vibrant Gold - Refined for Luxury */
   --gold: #c9a84c;
