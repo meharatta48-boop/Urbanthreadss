@@ -137,8 +137,12 @@ export default function ProductDetail() {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
-    toast.success("Link copy ho gaya! 🔗");
-    setTimeout(() => { setCopied(false); setShareOpen(false); }, 2000);
+    toast.success('Link copy ho gaya! 🔗');
+
+    setTimeout(() => {
+      setCopied(false);
+      setShareOpen(false);
+    }, 2000);
   };
 
   const handleWhatsAppShare = () => {
@@ -146,58 +150,49 @@ export default function ProductDetail() {
     setShareOpen(false);
   };
 
-  /* ── ADD TO CART ── */
-  const handleAddToCart = () => {
-    // Require size selection if product has sizes
+  /* ── VALIDATION & CART ── */
+  const validateSelections = () => {
     if (product.sizes?.length > 0 && !size) {
       setSizeError(true);
-      toast.error("⚠️ Pehle size choose karo!");
-      document.getElementById("size-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
+      toast.error('⚠️ Pehle size choose karo!');
+      return false;
     }
-    // Require color selection if product has colors
+
     if (product.colors?.length > 0 && !color) {
       setColorError(true);
-      toast.error("⚠️ Pehle color choose karo!");
-      document.getElementById("color-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
+      toast.error('⚠️ Pehle color choose karo!');
+      return false;
     }
-    setSizeError(false);
-    setColorError(false);
-    addToCart({ ...product, size, color, quantity: qty });
-    toast.success(
-      <div className="flex items-center gap-2">
-        <FiCheck size={16} className="text-green-400 shrink-0" />
-        <div>
-          <p className="font-semibold text-sm">{product.name}</p>
-          <p className="text-xs text-(--text-muted)">
-            {[size, color].filter(Boolean).join(" · ")} — Cart mein add ho gaya ✓
-          </p>
-        </div>
-      </div>
-    );
-    navigate("/cart");
+
+    return true;
+  };
+
+  const handleAddToCart = () => {
+    if (!validateSelections()) return;
+
+    addToCart({
+      ...product,
+      size,
+      color,
+      quantity: qty,
+    });
+
+    toast.success('Cart mein add ho gaya ✓');
+
+    navigate('/cart');
   };
 
   const handleBuyNow = () => {
-    // Require size selection if product has sizes
-    if (product.sizes?.length > 0 && !size) {
-      setSizeError(true);
-      toast.error("⚠️ Pehle size choose karo!");
-      document.getElementById("size-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    // Require color selection if product has colors
-    if (product.colors?.length > 0 && !color) {
-      setColorError(true);
-      toast.error("⚠️ Pehle color choose karo!");
-      document.getElementById("color-selector")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    setSizeError(false);
-    setColorError(false);
-    addToCart({ ...product, size, color, quantity: qty });
-    setTimeout(() => navigate("/checkout"), 100);
+    if (!validateSelections()) return;
+
+    addToCart({
+      ...product,
+      size,
+      color,
+      quantity: qty,
+    });
+
+    setTimeout(() => navigate('/checkout'), 100);
   };
 
   const prevImg = () => setActiveImg((i) => (i - 1 + images.length) % images.length);
@@ -399,17 +394,20 @@ export default function ProductDetail() {
                   {product.colors.map((c) => (
                     <button
                       key={c}
-                      onClick={() => { setColor(c); setColorError(false); }}
-                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      onClick={() => {
+                        setColor(c);
+                        setColorError(false);
+                      }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                         color === c
                           ? "bg-(--gold) text-black"
                           : "border border-(--border-light) text-(--text-secondary) hover:border-(--gold)"
                       }`}
                       style={{ minHeight: '44px' }}
                     >
-                      <span 
+                      <span
                         className="w-4 h-4 rounded-full border border-(--border-light)"
-                        style={{ backgroundColor: getColorHex(c) || "#ccc" }}
+                        style={{ backgroundColor: getColorHex(c) || '#ccc' }}
                       />
                       {c}
                     </button>
@@ -801,7 +799,11 @@ function ProductReviews({ product, setProduct }) {
                     {reviewImagePreviews.map((src, idx) => (
                       <div key={idx} className="relative w-20 h-20 rounded-xl overflow-hidden group"
                         style={{ border: "1px solid var(--border)" }}>
-                        <img src={src} alt={`preview-${idx}`} className="w-full h-full object-cover" />
+                        <img
+                          src={src}
+                          alt={`preview-${idx}`}
+                          className="w-full h-full object-cover"
+                        />
                         <button
                           type="button" onClick={() => removeImage(idx)}
                           className="absolute inset-0 bg-(--bg-deep)/40 dark:bg-black/70 hidden group-hover:flex items-center justify-center text-(--text-primary) dark:text-white transition-colors"
