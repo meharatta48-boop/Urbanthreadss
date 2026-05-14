@@ -226,30 +226,30 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {cards.map(({ label, val, sub, sub2, Icon: CIcon, color, bg, link, urgent }, i) => (
-            <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-              <Link to={link} className="block h-full relative group">
+          {cards.map((card, i) => (
+            <motion.div key={card.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+              <Link to={card.link} className="block h-full relative group">
                 {/* Glow effect behind the card */}
-                <div className={`absolute -inset-0.5 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500`} style={{ background: color }} />
+                <div className={`absolute -inset-0.5 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500`} style={{ background: card.color }} />
                 
-                <div className={`relative bg-(--bg-card) backdrop-blur-xl border rounded-2xl p-5 transition-all h-full flex flex-col justify-between ${urgent ? "border-[#f59e0b]/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]" : "border-(--border) hover:border-(--border-light) hover:shadow-lg"}`}>
+                <div className={`relative bg-(--bg-card) backdrop-blur-xl border rounded-2xl p-5 transition-all h-full flex flex-col justify-between ${card.urgent ? "border-[#f59e0b]/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]" : "border-(--border) hover:border-(--border-light) hover:shadow-lg"}`}>
                   <div className="flex items-start justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner" style={{ background: bg, color, border: `1px solid ${color}30` }}>
-                      <CIcon size={18} />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner" style={{ background: card.bg, color: card.color, border: `1px solid ${card.color}30` }}>
+                      <card.Icon size={18} />
                     </div>
-                    {urgent && (
+                    {card.urgent && (
                       <span className="text-[9px] font-bold text-[#f59e0b] bg-[rgba(245,158,11,0.15)] border border-[#f59e0b]/30 px-2 py-1 rounded-md animate-pulse shadow-sm">
                         URGENT
                       </span>
                     )}
                   </div>
                   <div>
-                    <div className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary) tracking-tight">{val}</div>
-                    <div className="text-(--text-muted) text-[11px] mt-1 uppercase tracking-widest font-semibold">{label}</div>
+                    <div className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary) tracking-tight">{card.val}</div>
+                    <div className="text-(--text-muted) text-[11px] mt-1 uppercase tracking-widest font-semibold">{card.label}</div>
                   </div>
                   <div className="mt-3 pt-3 border-t border-(--border-light) flex flex-col gap-1">
-                    <div className="text-(--text-muted)/80 text-[10px] leading-snug">{sub}</div>
-                    {sub2 && sub2.trim() !== "" && <div className="text-(--gold) text-[10px] font-medium leading-snug">{sub2}</div>}
+                    <div className="text-(--text-muted)/80 text-[10px] leading-snug">{card.sub}</div>
+                    {card.sub2 && card.sub2.trim() !== "" && <div className="text-(--gold) text-[10px] font-medium leading-snug">{card.sub2}</div>}
                   </div>
                 </div>
               </Link>
