@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import api from "../services/api";
 import {
   FiShoppingCart, FiArrowLeft, FiChevronLeft, FiChevronRight,
-  FiPackage, FiHeart, FiShare2, FiCheck, FiAlertCircle,
+  FiPackage, FiShare2, FiCheck, FiAlertCircle,
   FiLink, FiMessageCircle, FiStar, FiEdit3, FiTrash2, FiLock,
   FiCamera, FiVideo, FiX, FiPlay, FiZoomIn, FiMinus, FiPlus
 } from "react-icons/fi";
