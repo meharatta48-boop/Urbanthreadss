@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
+import { toast } from "react-toastify";
 import {
   FiUsers, FiPackage, FiDollarSign, FiShoppingBag,
   FiTrendingUp, FiAlertTriangle, FiClock, FiCheckCircle,
@@ -110,6 +111,7 @@ export default function Dashboard() {
       setRefresh(new Date());
     } catch (e) {
       console.error("Dashboard load error:", e);
+      toast.error("Dashboard data load nahi ho saka");
     } finally {
       setLoading(false);
     }

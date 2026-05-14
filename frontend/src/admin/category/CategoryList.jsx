@@ -146,6 +146,7 @@ export default function CategoryList() {
       toast.success(`"${n}" category added ✓`);
     } catch (error) {
       console.error("Add category error:", error);
+      toast.error("Category add nahi ho saki");
     } finally {
       setAdding(false);
     }
@@ -188,6 +189,7 @@ export default function CategoryList() {
       setEditId(null);
     } catch (error) {
       console.error("Update category error:", error);
+      toast.error("Category update nahi ho saki");
     } finally {
       setUpdating(false);
     }

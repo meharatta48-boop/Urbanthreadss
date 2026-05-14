@@ -176,7 +176,7 @@ export default function App() {
       <SpeedInsights />
 
       <ToastContainer
-        theme="light"
+        theme="dark"
         position="top-right"
       />
 

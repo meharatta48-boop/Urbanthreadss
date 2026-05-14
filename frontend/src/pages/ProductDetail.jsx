@@ -58,7 +58,9 @@ export default function ProductDetail() {
         // Auto-select first if only 1 option
         if (p?.sizes?.length === 1) setSize(p.sizes[0]);
         if (p?.colors?.length === 1) setColor(p.colors[0]);
-      } catch {
+      } catch (err) {
+        console.error("fetchProduct error:", err);
+        toast.error("Product load nahi ho saka");
         setProduct(null);
       } finally {
         setLoading(false);

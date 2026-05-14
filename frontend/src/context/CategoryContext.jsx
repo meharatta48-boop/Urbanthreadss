@@ -15,6 +15,7 @@ export const CategoryProvider = ({ children }) => {
       setCategories(res.data.data || res.data.categories || []);
     } catch (err) {
       console.error("fetchCategories error:", err);
+      toast.error("Categories load nahi ho sakeen");
       setCategories([]);
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import LazyImage from './LazyImage';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { getThumbnailUrl, getProductImageUrl } from '../utils/cloudinaryOptimized';
+import { toast } from 'react-toastify';
 
 const QuickView = ({ product, isOpen, onClose }) => {
   const { addToCart } = useCart();
@@ -19,7 +20,7 @@ const QuickView = ({ product, isOpen, onClose }) => {
 
   const handleAddToCart = async () => {
     if (!user) {
-      alert('Please login to add items to cart');
+      toast.error('Please login to add items to cart');
       return;
     }
 

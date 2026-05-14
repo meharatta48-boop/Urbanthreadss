@@ -15,6 +15,7 @@ export const SubCategoryProvider = ({ children }) => {
       setSubCategories(res.data.data || res.data.subCategories || []);
     } catch (err) {
       console.error("fetchSubCategories error:", err);
+      toast.error("Sub-categories load nahi ho sakeen");
       setSubCategories([]);
     } finally {
       setLoading(false);

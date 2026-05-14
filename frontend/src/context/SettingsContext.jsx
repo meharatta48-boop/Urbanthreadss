@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import api, { SERVER_URL } from "../services/api";
 import { resolveMediaUrl } from "../utils/mediaUrl";
+import { toast } from "react-toastify";
 
 const CACHE_KEY = "ut_settings_cache";
 // Increment this whenever new fields are added to the settings model
@@ -53,6 +54,7 @@ export const SettingsProvider = ({ children }) => {
       if (data.success) save(data.settings);
     } catch (err) {
       console.error("Settings load failed", err);
+      toast.error("Site settings load nahi ho sakeen");
     } finally {
       setLoading(false);
     }

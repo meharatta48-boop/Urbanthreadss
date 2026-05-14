@@ -8,6 +8,7 @@ import {
   FiXCircle, FiChevronDown, FiChevronUp, FiArrowLeft,
   FiAlertCircle
 } from "react-icons/fi";
+import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
 
 const API_BASE = SERVER_URL;
@@ -35,6 +36,7 @@ export default function MyOrders() {
         setOrders(res.data.orders || []);
       } catch (err) {
         console.error("MyOrders error:", err);
+        toast.error("Orders load karne mein masla hua");
       } finally {
         setLoading(false);
       }

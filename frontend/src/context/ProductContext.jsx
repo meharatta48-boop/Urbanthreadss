@@ -15,6 +15,7 @@ export const ProductProvider = ({ children }) => {
       setProducts(res.data.data || []);
     } catch (err) {
       console.error("[ProductContext] fetchProducts error:", err);
+      toast.error("Products load nahi ho sakay — network check karo");
       setProducts([]);
     } finally {
       setLoading(false);
