@@ -1312,6 +1312,10 @@ html.dark .badge-processing{ color: #c084fc; }
   gap: 20px;
 }
 
+.checkout-form-col-full {
+  grid-column: 1 / -1;
+}
+
 .checkout-payment-methods {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
