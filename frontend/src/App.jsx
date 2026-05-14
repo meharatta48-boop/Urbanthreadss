@@ -22,7 +22,7 @@ import LaunchTimer from "./components/home/LaunchTimer";
 import PromotionalPopup from "./components/home/PromotionalPopup";
 import SeoManager from "./components/SeoManager";
 
-/* LAZY LOADED PAGES */
+/* LAZY PAGES */
 const Home = lazy(() => import("./pages/Home"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
 const Shop = lazy(() => import("./pages/Shop"));
@@ -98,6 +98,7 @@ function Layout({ children }) {
   );
 }
 
+/* ROUTE TRACKER */
 function RouteObservers() {
   const location = useLocation();
 
@@ -113,15 +114,11 @@ export default function App() {
   const { theme } = useTheme();
   const { settings, loading: settingsLoading } = useSettings();
 
-  const location = useLocation(); // ✅ FIX ADDED
-
   const isDark = theme === "dark";
 
   useEffect(() => {
     registerImageCache();
-
-    preloadCriticalImages(['/logo.png']);
-
+    preloadCriticalImages(["/logo.png"]);
     keepAliveManager.start();
     metaTracker.init();
   }, []);
@@ -144,17 +141,18 @@ export default function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-(--bg-deep)">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-(--gold) border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-(--gold) border-t-transparent rounded-full animate-spin" />
           <p className="text-(--gold)">Loading...</p>
         </div>
       </div>
     );
   }
 
-  /* ✅ FIXED: no window.location anymore */
-  const isAuthPath =
-    location.pathname === "/login" || location.pathname === "/signup";
-  const isAdminPath = location.pathname.startsWith("/admin");
+  /* ✅ SAFE PATH LOGIC (NO useLocation crash) */
+  const path = window.location.pathname;
+
+  const isAuthPath = path === "/login" || path === "/signup";
+  const isAdminPath = path.startsWith("/admin");
 
   const isMaintenance =
     settings?.maintenanceMode &&
@@ -221,6 +219,7 @@ export default function App() {
 
             {/* ADMIN */}
             <Route path="/admin" element={<Navigate to="/admin-dashboard" />} />
+
             <Route
               path="/admin-dashboard"
               element={
