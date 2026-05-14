@@ -70,10 +70,10 @@ export default function Cart() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="group relative flex gap-4 p-3 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                  className="group relative flex gap-4 p-3 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors"
                 >
                   {/* IMAGE - Fixed Ratio for better fit */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
@@ -82,7 +82,7 @@ export default function Cart() {
                   </div>
 
                   {/* DETAILS */}
-                  <div className="flex flex-col justify-between flex-grow min-w-0 py-1">
+                  <div className="flex flex-col justify-between grow min-w-0 py-1">
                     <div className="relative pr-8">
                       <h3 className="text-sm sm:text-lg font-bold truncate pr-2" style={{ color: "var(--text-primary)" }}>
                         {item.name}
@@ -150,7 +150,7 @@ export default function Cart() {
 
           {/* SUMMARY SIDEBAR */}
           <div className="lg:col-span-1 lg:sticky lg:top-24">
-            <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 backdrop-blur-md shadow-2xl">
+            <div className="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-md shadow-2xl">
               <h3 className="text-lg font-bold mb-6 text-(--text-primary)">Summary</h3>
               
               <div className="space-y-4 mb-6">
@@ -202,7 +202,7 @@ export default function Cart() {
             <span className="text-[10px] opacity-40 uppercase font-bold tracking-tighter">Total Payable</span>
             <span className="text-xl font-bold gold-text leading-tight">Rs. {total.toLocaleString()}</span>
           </div>
-          <Link to="/checkout" className="btn-gold flex-grow py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl transition-transform active:scale-95">
+          <Link to="/checkout" className="btn-gold grow py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl transition-transform active:scale-95">
             Checkout <FiArrowRight size={18} />
           </Link>
         </div>
