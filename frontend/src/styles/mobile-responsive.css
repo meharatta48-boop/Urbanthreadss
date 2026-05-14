@@ -88,15 +88,6 @@ img, video {
     padding-left: 8px !important;
     padding-right: 8px !important;
   }
-
-  /* Logo size clamp */
-  nav a img,
-  nav a div[style*="width"] {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    min-height: 28px !important;
-  }
 }
 
 /* ── 6. HERO SECTION ───────────────────────────────────── */

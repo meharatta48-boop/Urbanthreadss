@@ -77,16 +77,16 @@ export default function Navbar() {
   return (
     <>
       <div
-        className="relative w-full transition-all duration-300 ease-in-out nav-overflow-hidden"
+        className="relative w-full transition-all duration-300 ease-in-out z-50"
         style={{
           paddingTop: 0,
           paddingBottom: 0,
           marginTop: 0
         }}
       >
-        <div className="max-w-7xl mx-auto md:px-4 px-0 nav-overflow-hidden">
+        <div className="max-w-7xl mx-auto md:px-4 px-0">
           <nav
-            className={`flex items-center justify-between transition-all duration-300 ease-in-out rounded-none md:rounded-3xl px-4 md:px-6 py-3 md:py-3.5 border-x-0 border-t-0 md:border-x md:border-t border-b nav-overflow-hidden`}
+            className={`flex items-center justify-between transition-all duration-300 ease-in-out rounded-none md:rounded-3xl px-4 md:px-6 py-3 md:py-3.5 border-x-0 border-t-0 md:border-x md:border-t border-b`}
             style={{
               backgroundColor: scrolled ? 'var(--nav-bg-scrolled)' : 'var(--bg-deep)',
               borderColor: 'var(--nav-border)',
