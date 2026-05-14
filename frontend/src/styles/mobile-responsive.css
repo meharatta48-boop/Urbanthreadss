@@ -692,6 +692,6 @@ img, video {
   }
 
   nav {
-    padding-top: max(0px, env(safe-area-inset-top));
+    padding-top: 0;
   }
 }
