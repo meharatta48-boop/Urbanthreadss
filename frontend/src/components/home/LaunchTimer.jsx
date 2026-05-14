@@ -31,7 +31,7 @@ export default function LaunchTimer({ launchDate }) {
   return (
     <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-(--bg-deep) text-(--text-primary) overflow-hidden p-4 transition-colors duration-500">
       {/* Background glow */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 dark:opacity-20 transition-opacity duration-1000">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10 transition-opacity duration-1000">
         <div className="w-[60vw] h-[60vw] rounded-full bg-(--gold) blur-[150px]"></div>
       </div>
 

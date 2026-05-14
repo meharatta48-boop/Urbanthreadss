@@ -62,6 +62,13 @@
 </head>
 
 <body>
+  <script>
+    // Force light theme - prevent dark mode
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+    document.body.style.backgroundColor = '#ffffff';
+    document.body.style.color = '#000000';
+  </script>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

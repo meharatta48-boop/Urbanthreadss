@@ -806,7 +806,7 @@ function ProductReviews({ product, setProduct }) {
                         />
                         <button
                           type="button" onClick={() => removeImage(idx)}
-                          className="absolute inset-0 bg-(--bg-deep)/40 dark:bg-black/70 hidden group-hover:flex items-center justify-center text-(--text-primary) dark:text-white transition-colors"
+                          className="absolute inset-0 bg-(--bg-deep)/40 hidden group-hover:flex items-center justify-center text-(--text-primary) transition-colors"
                         >
                           <FiX size={18} />
                         </button>
@@ -838,7 +838,7 @@ function ProductReviews({ product, setProduct }) {
                       <video src={reviewVideoPreview} controls className="w-full max-h-48 object-contain" />
                       <button
                         type="button" onClick={removeVideo}
-                        className="absolute top-2 right-2 w-7 h-7 bg-(--bg-deep)/50 dark:bg-black/70 rounded-full flex items-center justify-center text-(--text-primary) dark:text-white hover:bg-red-600 transition-colors"
+                        className="absolute top-2 right-2 w-7 h-7 bg-(--bg-deep)/50 rounded-full flex items-center justify-center text-(--text-primary) hover:bg-red-600 transition-colors"
                       >
                         <FiX size={14} />
                       </button>

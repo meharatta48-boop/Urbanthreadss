@@ -91,7 +91,7 @@ export default function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="group p-6 sm:p-8 rounded-3xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/3 dark:shadow-black/20"
+              className="group p-6 sm:p-8 rounded-3xl bg-(--bg-card) border border-(--border) hover:border-(--gold)/30 transition-all duration-500 shadow-xl shadow-black/3"
             >
               <div className="flex flex-col items-center text-center gap-5">
                 <div

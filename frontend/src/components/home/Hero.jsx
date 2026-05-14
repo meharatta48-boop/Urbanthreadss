@@ -5,7 +5,6 @@ import {
   FiArrowRight, FiShoppingBag, FiPlay
 } from "react-icons/fi";
 import { useSettings } from "../../context/SettingsContext";
-import { useTheme } from "../../context/ThemeContext";
 import fallbackImg from "../../assets/images/slider1.jpg";
 
 import { SERVER_URL } from "../../services/api";
@@ -21,8 +20,6 @@ const shouldReduceMotion = () => {
 
 export default function Hero() {
   const { settings } = useSettings();
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
   const brandName = settings?.brandName || "URBAN THREAD";
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -124,9 +121,7 @@ export default function Hero() {
       {/* Adaptive Overlays */}
       <div className="absolute inset-0 pointer-events-none transition-opacity duration-1000"
         style={{
-          background: isDark 
-            ? "linear-gradient(to right, rgba(5,5,5,0.92) 0%, rgba(5,5,5,0.7) 45%, rgba(5,5,5,0.15) 100%)"
-            : "linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 45%, rgba(255,255,255,0.2) 100%)",
+          background: "linear-gradient(to right, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 45%, rgba(255,255,255,0.2) 100%)",
         }}
       />
       

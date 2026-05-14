@@ -253,8 +253,6 @@ export default function ThemeInjector() {
       .product-card {
         border-radius: var(--radius) !important;
       }
-      html.dark .product-card {
-      }
 
       /* ── Product card images ── */
       .product-card .aspect-\\[3\\/4\\] {

@@ -18,7 +18,7 @@ export default function MaintenanceMode() {
         </div>
       </div>
       {/* Background Decorative Glow */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 dark:opacity-20 transition-opacity duration-1000">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 transition-opacity duration-1000">
         <div className="w-[60vw] h-[60vw] rounded-full bg-(--gold) blur-[150px]"></div>
       </div>
     </div>
