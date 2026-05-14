@@ -343,14 +343,11 @@ export default function Navbar() {
               {/* MOBILE: Hamburger */}
               <button
                 onClick={() => setOpen(!open)}
-                className="md:hidden p-2 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) active:scale-90"
+                className="md:hidden flex items-center justify-center p-2 rounded-full transition-all bg-(--bg-elevated) border border-(--border-light) active:scale-90"
                 style={{
                   color: "var(--text-primary)",
                   width: '44px',
                   height: '44px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
                 }}
               >
                 <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>

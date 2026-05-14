@@ -958,10 +958,19 @@ html.dark .badge-processing{ color: #c084fc; }
 .product-card .product-image-container {
   position: relative;
   aspect-ratio: 3/4;
+  width: 100%;
   overflow: hidden;
+  background: var(--bg-surface);
 }
 
-.product-card .product-image-container img {
+.product-card .product-image-container img,
+.product-card .product-image-container > div > img,
+.product-card .product-image-container [data-lazy-image] {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top;
+  display: block;
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1033,6 +1042,14 @@ html.dark .badge-processing{ color: #c084fc; }
   font-weight: 700;
   color: var(--gold);
   font-family: 'Playfair Display', serif;
+}
+
+.product-card .product-price-original {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 
 /* ── PREMIUM CART & CHECKOUT COMPONENTS ── */

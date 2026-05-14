@@ -201,11 +201,12 @@
 
 /* ── TOUCH DEVICE OPTIMIZATION ── */
 @media (pointer: coarse) {
-  /* Increase touch targets */
-  button, a, [role="button"] {
+  /* Increase touch targets - but not for hidden elements */
+  button:not(.hidden):not([style*="display: none"]),
+  a:not(.hidden):not([style*="display: none"]),
+  [role="button"]:not(.hidden) {
     min-height: 44px;
     min-width: 44px;
-    padding: 12px 16px;
   }
 
   /* Reduce hover effects on touch devices */

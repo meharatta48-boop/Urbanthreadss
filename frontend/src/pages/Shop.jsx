@@ -4,28 +4,22 @@ import { useProducts } from "../context/ProductContext";
 import { useCategories } from "../context/CategoryContext";
 import { useSubCategories } from "../context/SubCategoryContext";
 import { useCart } from "../context/CartContext";
-import { useSettings } from "../context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiSearch, FiArrowRight, FiShoppingCart, FiFilter, FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
-import { SERVER_URL } from "../services/api";
 import { getThumbnailUrl, getResponsiveImageSrcSet } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 
-const API_BASE = SERVER_URL;
-
 export default function Shop() {
-  const { products, loading: productsLoading } = useProducts();
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { subCategories, loading: subCategoriesLoading } = useSubCategories();
+  const { products } = useProducts();
+  const { categories } = useCategories();
+  const { subCategories } = useSubCategories();
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { settings } = useSettings();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
-  const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 10000]);
@@ -306,7 +300,7 @@ export default function Shop() {
                     srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     alt={p.name}
-                    className="w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover object-top"
                   />
                   <div className="product-overlay" />
                   
