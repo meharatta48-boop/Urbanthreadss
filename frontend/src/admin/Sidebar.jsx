@@ -66,10 +66,10 @@ export default function Sidebar() {
             end={end}
             title={description}
             className={({ isActive }) =>
-              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative ${
+              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 group relative ${
                 isActive
-                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20 shadow-sm"
-                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent hover:border-(--border-light)"
+                  ? "bg-linear-to-r from-(--gold)/20 to-transparent text-(--gold) border border-(--gold)/30 shadow-[0_0_12px_rgba(201,168,76,0.15)]"
+                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated)/80 border border-transparent hover:border-(--border-light)"
               }`
             }
           >
@@ -77,22 +77,24 @@ export default function Sidebar() {
               <>
                 {/* Active indicator bar */}
                 {isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-(--gold) rounded-r-full" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-(--gold) rounded-r-full shadow-[0_0_8px_var(--gold)]" />
                 )}
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <MIcon
-                    size={15}
-                    className={`shrink-0 transition-transform duration-200 ${isActive ? "" : "group-hover:scale-110"}`}
-                  />
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors ${isActive ? "bg-(--gold)/10" : ""}`}>
+                    <MIcon
+                      size={15}
+                      className={`shrink-0 transition-transform duration-300 ${isActive ? "" : "group-hover:scale-110 group-hover:text-(--text-primary)"}`}
+                    />
+                  </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-medium truncate">{label}</span>
-                    <span className="text-[9px] text-(--text-muted)/60 truncate">{description}</span>
+                    <span className={`text-sm font-semibold truncate transition-colors ${isActive ? "text-(--gold)" : "group-hover:text-(--text-primary)"}`}>{label}</span>
+                    <span className="text-[9px] text-(--text-muted)/70 truncate group-hover:text-(--text-muted)">{description}</span>
                   </div>
                 </div>
                 <FiChevronRight
-                  size={11}
-                  className={`shrink-0 transition-all duration-200 ${
-                    isActive ? "opacity-60" : "opacity-0 group-hover:opacity-40"
+                  size={12}
+                  className={`shrink-0 transition-all duration-300 ${
+                    isActive ? "opacity-100 text-(--gold)" : "opacity-0 -translate-x-2 group-hover:opacity-40 group-hover:translate-x-0"
                   }`}
                 />
               </>
@@ -101,16 +103,16 @@ export default function Sidebar() {
         ))}
 
         {/* ── CONFIG SECTION ── */}
-        <div className="pt-4 pb-1">
+        <div className="pt-5 pb-1">
           <p className="text-[9px] text-(--text-muted)/60 uppercase tracking-widest px-3 mb-2 font-semibold">Config</p>
           <NavLink
             to="/admin-dashboard/settings"
             title="Site Configuration"
             className={({ isActive }) =>
-              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative ${
+              `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 group relative ${
                 isActive
-                  ? "bg-(--gold)/10 text-(--gold) border border-(--gold)/20 shadow-sm"
-                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated) border border-transparent hover:border-(--border-light)"
+                  ? "bg-linear-to-r from-(--gold)/20 to-transparent text-(--gold) border border-(--gold)/30 shadow-[0_0_12px_rgba(201,168,76,0.15)]"
+                  : "text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-elevated)/80 border border-transparent hover:border-(--border-light)"
               }`
             }
           >
@@ -153,22 +155,22 @@ export default function Sidebar() {
       </div>
 
       {/* ── USER + LOGOUT ── */}
-      <div className="px-3 py-3 border-t border-(--border) space-y-1">
-        <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-(--bg-elevated) border border-(--border)">
-          <div className="w-7 h-7 gold-gradient rounded-lg flex items-center justify-center text-black font-bold text-xs shrink-0 shadow-sm">
+      <div className="px-4 py-4 border-t border-(--border) space-y-2 bg-(--bg-surface)/50 backdrop-blur-sm">
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-(--bg-elevated) border border-(--border) shadow-inner">
+          <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center text-black font-bold text-xs shrink-0 shadow-[0_0_10px_rgba(201,168,76,0.3)]">
             {user?.name?.charAt(0)?.toUpperCase() || "A"}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-(--text-primary) text-xs font-semibold truncate">{user?.name || "Admin"}</p>
-            <p className="text-(--text-muted) text-[9px] capitalize">{user?.role || "Administrator"}</p>
+            <p className="text-(--gold) text-[9px] font-medium tracking-wide uppercase">{user?.role || "Administrator"}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2.5 px-3 py-2 w-full rounded-xl text-sm text-(--text-muted) hover:text-red-500 hover:bg-red-500/8 transition-all border border-transparent hover:border-red-500/20 group"
+          className="flex items-center justify-center gap-2.5 px-3 py-2.5 w-full rounded-xl text-sm font-medium text-(--text-muted) hover:text-red-400 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/30 group shadow-sm hover:shadow-[0_0_10px_rgba(239,68,68,0.1)]"
           title="Logout from admin panel"
         >
-          <FiLogOut size={14} className="transition-transform group-hover:translate-x-0.5" />
+          <FiLogOut size={15} className="transition-transform group-hover:-translate-x-1" />
           <span>Logout</span>
         </button>
       </div>

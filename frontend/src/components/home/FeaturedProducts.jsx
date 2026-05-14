@@ -72,7 +72,7 @@ export default function FeaturedProducts() {
                   srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
                   alt={p.name}
-                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-108"
+                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                   style={{ transition: "transform 0.7s cubic-bezier(0.22,1,0.36,1)" }}
                 />
                 <div className="product-overlay rounded-xl" />

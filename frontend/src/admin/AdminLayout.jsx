@@ -117,72 +117,74 @@ export default function AdminLayout() {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* ── TOPBAR ── */}
-        <header className="h-14 bg-(--bg-surface) border-b border-(--border) flex items-center justify-between px-4 sm:px-5 shrink-0 transition-colors gap-3">
+        <header className="h-16 bg-(--bg-surface)/80 backdrop-blur-xl border-b border-(--border) flex items-center justify-between px-4 sm:px-6 shrink-0 transition-colors gap-3 z-10 shadow-sm sticky top-0">
 
           {/* LEFT: Hamburger + Title */}
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-4 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-xl border border-(--border) text-(--text-muted) hover:text-(--text-primary) hover:border-(--border-light) transition-all active:scale-95"
+              className="lg:hidden p-2 rounded-xl border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 hover:bg-(--gold)/5 transition-all active:scale-95"
               aria-label="Open sidebar"
             >
-              <FiMenu size={16} />
+              <FiMenu size={18} />
             </button>
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-sm hidden sm:inline">{pageIcon}</span>
-              <h1 className="font-display text-sm sm:text-base font-bold text-(--text-primary) truncate">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="text-base hidden sm:flex w-8 h-8 items-center justify-center bg-(--bg-elevated) border border-(--border) rounded-lg shadow-inner">{pageIcon}</span>
+              <h1 className="font-display text-base sm:text-lg font-bold text-(--text-primary) tracking-wide truncate">
                 {title}
               </h1>
             </div>
           </div>
 
           {/* RIGHT: Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
 
             {/* Search / Command Palette */}
             <button
               onClick={() => setCommandOpen(true)}
-              className="hidden sm:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--text-primary) transition-all border border-(--border) hover:border-(--border-light) rounded-xl px-3 py-1.5 group bg-(--bg-elevated) hover:bg-(--bg-card)"
+              className="hidden sm:flex items-center gap-3 text-xs text-(--text-muted) hover:text-(--gold) transition-all border border-(--border) hover:border-(--gold)/30 rounded-xl px-4 py-2 group bg-(--bg-elevated)/50 hover:bg-(--gold)/5 shadow-inner w-48 lg:w-64 justify-between"
               title="Quick Search (Ctrl+K)"
             >
-              <FiSearch size={12} className="transition-transform group-hover:scale-110" />
-              <span className="hidden md:inline">Quick Search</span>
-              <span className="hidden lg:inline text-[10px] text-(--text-muted)/50 border border-(--border) rounded-md px-1 py-0.5 bg-(--bg-surface)">
-                Ctrl+K
+              <div className="flex items-center gap-2">
+                <FiSearch size={14} className="transition-transform group-hover:scale-110" />
+                <span className="hidden md:inline font-medium">Quick Search...</span>
+              </div>
+              <span className="hidden lg:flex items-center text-[10px] text-(--text-muted)/70 border border-(--border) rounded-md px-1.5 py-0.5 bg-(--bg-surface) shadow-sm group-hover:border-(--gold)/20 group-hover:text-(--gold)">
+                <FiCommand size={10} className="mr-0.5" /> K
               </span>
             </button>
 
             {/* Mobile search icon only */}
             <button
               onClick={() => setCommandOpen(true)}
-              className="sm:hidden p-2 rounded-xl border border-(--border) text-(--text-muted) hover:text-(--text-primary) transition-all"
+              className="sm:hidden p-2 rounded-xl border border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 hover:bg-(--gold)/5 transition-all shadow-inner"
               title="Search"
             >
-              <FiSearch size={15} />
+              <FiSearch size={16} />
             </button>
 
             {/* View Site */}
             <Link
               to="/"
               target="_blank"
-              className="hidden md:flex items-center gap-1.5 text-xs text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 transition-all border border-(--border) rounded-xl px-3 py-1.5 group"
+              className="hidden md:flex items-center gap-2 text-xs text-(--text-muted) hover:text-(--gold) hover:bg-(--gold)/5 hover:border-(--gold)/30 transition-all border border-(--border) rounded-xl px-3.5 py-2 group shadow-sm hover:shadow-[0_0_10px_rgba(201,168,76,0.15)]"
               title="View live website"
             >
-              <span>View Site</span>
-              <span className="text-(--gold) transition-transform group-hover:translate-x-0.5">→</span>
+              <span className="font-medium">View Store</span>
+              <span className="text-(--gold) transition-transform group-hover:translate-x-1 group-hover:scale-110">→</span>
             </Link>
 
             {/* Settings */}
             <Link
               to="/admin-dashboard/settings"
-              className={`p-2 rounded-xl border transition-all group ${
+              className={`p-2 sm:p-2.5 rounded-xl border transition-all duration-300 group shadow-sm ${
                 pathname === "/admin-dashboard/settings"
-                  ? "border-(--gold)/30 text-(--gold) bg-(--gold)/5"
-                  : "border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/30 hover:bg-(--gold)/5"
+                  ? "border-(--gold)/50 text-(--gold) bg-(--gold)/10 shadow-[0_0_10px_rgba(201,168,76,0.2)]"
+                  : "border-(--border) text-(--text-muted) hover:text-(--gold) hover:border-(--gold)/40 hover:bg-(--gold)/5 hover:shadow-[0_0_10px_rgba(201,168,76,0.15)]"
               }`}
               title="Site Settings"
             >
-              <FiSettings size={15} className="transition-transform group-hover:rotate-90 duration-300" />
+              <FiSettings size={16} className="transition-transform group-hover:rotate-90 duration-500" />
             </Link>
 
             {/* Notifications */}
