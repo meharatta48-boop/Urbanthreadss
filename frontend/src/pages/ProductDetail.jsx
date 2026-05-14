@@ -199,272 +199,389 @@ export default function ProductDetail() {
   const nextImg = () => setActiveImg((i) => (i + 1) % images.length);
 
   return (
-    <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 text-white bg-(--bg-deep)">
+    <div className="min-h-screen overflow-hidden pt-4 pb-20" style={{ backgroundColor: 'var(--bg-deep)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
-        <nav className="flex items-center gap-2 text-[10px] uppercase tracking-widest opacity-40 mb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          <Link to="/" className="hover:text-(--gold) transition-colors">Home</Link>
+        {/* BREADCRUMB */}
+        <div className="flex items-center gap-2 text-xs mb-6 sm:mb-8 overflow-x-auto whitespace-nowrap pb-1" style={{ color: "var(--text-muted)" }}>
+          <button 
+            onClick={() => navigate("/")} 
+            className="transition-colors shrink-0" 
+            style={{ color: "var(--text-muted)", minHeight: '32px' }} 
+            onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} 
+            onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}
+          >
+            Home
+          </button>
           <span>/</span>
-          <Link to="/shop" className="hover:text-(--gold) transition-colors">Shop</Link>
-          {product.category?.name && (
-            <>
-              <span>/</span>
-              <span className="capitalize">{product.category.name}</span>
-            </>
-          )}
+          <button 
+            onClick={() => navigate("/shop")} 
+            className="transition-colors shrink-0" 
+            style={{ color: "var(--text-muted)", minHeight: '32px' }} 
+            onMouseEnter={e=>e.currentTarget.style.color="var(--text-primary)"} 
+            onMouseLeave={e=>e.currentTarget.style.color="var(--text-muted)"}
+          >
+            Shop
+          </button>
+          {product.category?.name && <><span>/</span><span className="capitalize shrink-0" style={{ color: "var(--text-muted)" }}>{product.category.name}</span></>}
           <span>/</span>
-          <span className="text-(--gold) font-bold truncate">{product.name}</span>
-        </nav>
+          <span className="truncate max-w-30 sm:max-w-50" style={{ color: "var(--text-secondary)" }}>{product.name}</span>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
 
-          <div className="space-y-4">
-            <div className="relative aspect-square rounded-3xl overflow-hidden bg-black/40 border border-white/5 group">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeImg}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                  className="w-full h-full"
-                >
-                  <LazyImage
-                    src={getProductImageUrl(images[activeImg])}
-                    srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                    alt={product.name}
-                    className="w-full h-full object-contain p-4"
-                  />
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Badges */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
-                {discount > 0 && (
-                  <div className="bg-(--gold) text-black text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">
-                    {discount}% OFF
+          {/* ════ LEFT: IMAGES ════ */}
+          <div className="space-y-3">
+            {/* MAIN IMAGE */}
+            <div className="product-gallery">
+              <div className="product-gallery-main">
+                <LazyImage
+                  src={getProductImageUrl(images[activeImg])}
+                  srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Gallery Overlay */}
+                <div className="product-gallery-overlay">
+                  {product.comparePrice > product.price && (
+                    <div className="product-gallery-badge">
+                      -{Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
+                    </div>
+                  )}
+                </div>
+                
+                {/* Zoom Button */}
+                <div className="product-gallery-zoom">
+                  <FiZoomIn size={20} />
+                </div>
+                
+                {/* Image Counter */}
+                {images.length > 1 && (
+                  <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white text-xs px-3 py-1.5 rounded-full">
+                    {activeImg + 1} / {images.length}
                   </div>
                 )}
-                {product.isFeatured && (
-                  <div className="bg-white/10 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full border border-white/10">
-                    ★ FEATURED
-                  </div>
+                
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button 
+                      onClick={prevImg} 
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) hover:bg-(--bg-deep)/90 transition-all"
+                    >
+                      <FiChevronLeft size={18} />
+                    </button>
+                    <button 
+                      onClick={nextImg} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-(--bg-deep)/40 backdrop-blur rounded-full flex items-center justify-center text-(--text-primary) hover:bg-(--bg-deep)/90 transition-all"
+                    >
+                      <FiChevronRight size={18} />
+                    </button>
+                  </>
                 )}
               </div>
-
-              {images.length > 1 && (
-                <div className="absolute inset-0 flex items-center justify-between px-4 pointer-events-none">
-                  <button 
-                    onClick={prevImg}
-                    className="w-10 h-10 rounded-full bg-black/50 text-white pointer-events-auto hover:bg-(--gold) hover:text-black flex items-center justify-center transition-all backdrop-blur-sm"
-                  >
-                    <FiChevronLeft size={24} />
-                  </button>
-                  <button 
-                    onClick={nextImg}
-                    className="w-10 h-10 rounded-full bg-black/50 text-white pointer-events-auto hover:bg-(--gold) hover:text-black flex items-center justify-center transition-all backdrop-blur-sm"
-                  >
-                    <FiChevronRight size={24} />
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* THUMBNAILS */}
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImg(i)}
-                  className={`w-20 h-20 shrink-0 rounded-xl overflow-hidden border-2 transition-all ${activeImg === i ? "border-(--gold) opacity-100" : "border-transparent opacity-40 hover:opacity-70"}`}
-                >
-                  <img src={getThumbnailUrl(img)} className="w-full h-full object-cover" alt="" />
-                </button>
-              ))}
-            </div>
+            {images.length > 1 && (
+              <div className="product-gallery-thumbnails">
+                {images.map((img, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => setActiveImg(i)}
+                    className={`product-gallery-thumbnail ${
+                      activeImg === i ? "active" : ""
+                    }`}
+                  >
+                    <LazyImage 
+                      src={getThumbnailUrl(img)} 
+                      alt={`thumb-${i}`} 
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* PRODUCT VIDEO */}
             {product.video && (
-              <div className="rounded-2xl overflow-hidden border border-white/5 bg-white/2">
+              <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--bg-surface)" }}>
                 <div className="px-4 pt-3 pb-2 flex items-center gap-2">
-                  <FiPlay size={13} className="text-(--gold)" />
-                  <span className="text-[10px] uppercase tracking-widest opacity-40 font-bold">Product Video</span>
+                  <FiPlay size={13} style={{ color: "var(--gold)" }} />
+                  <span className="text-xs uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Product Video</span>
                 </div>
                 <video
                   src={getImageUrl(product.video)}
                   controls
-                  className="w-full max-h-64 object-contain bg-black/40"
+                  className="w-full max-h-64 object-contain bg-(--bg-deep)"
                   preload="metadata"
                 />
               </div>
             )}
           </div>
 
-          <div className="flex flex-col gap-6 lg:gap-8">
+          {/* ════ RIGHT: DETAILS ════ */}
+          <div className="space-y-5">
+
+            {/* BADGES */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {product.category?.name && <span className="badge-gold capitalize">{product.category.name}</span>}
+              {product.subCategory?.name && (
+                <span className="text-xs px-2 py-0.5 rounded-full capitalize" style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+                  {product.subCategory.name}
+                </span>
+              )}
+              {product.isFeatured && (
+                <span className="text-xs text-(--gold) border border-(--gold)/20 px-2 py-0.5 rounded-full">★ Featured</span>
+              )}
+            </div>
+
+            {/* NAME & PRICE */}
             <div>
-              <h1 className="text-3xl sm:text-5xl font-display font-bold leading-tight mb-4" style={{ color: "var(--text-primary)" }}>
+              <h1 className="font-display text-2xl sm:text-4xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
                 {product.name}
               </h1>
-              <div className="flex items-center gap-4">
-                <span className="text-3xl sm:text-4xl font-bold gold-text">Rs. {product.price?.toLocaleString()}</span>
+              <div className="flex items-baseline gap-3 mt-3 flex-wrap">
+                <span className="font-display text-3xl sm:text-4xl font-bold gold-text">
+                  Rs. {product.price?.toLocaleString()}
+                </span>
                 {product.comparePrice > product.price && (
-                  <span className="text-xl line-through opacity-30">Rs. {product.comparePrice?.toLocaleString()}</span>
+                  <span className="text-lg line-through" style={{ color: "var(--text-muted)" }}>Rs. {product.comparePrice?.toLocaleString()}</span>
+                )}
+                {discount > 0 && (
+                  <span className="text-green-400 text-sm font-semibold">{discount}% off</span>
                 )}
               </div>
             </div>
 
             {product.description && (
-              <p className="text-sm sm:text-base opacity-60 leading-relaxed max-w-xl">{product.description}</p>
+              <p className="leading-relaxed text-sm sm:text-base" style={{ color: "var(--text-secondary)" }}>{product.description}</p>
             )}
 
-            {/* SIZE */}
+            <div className="border-t" style={{ borderColor: "var(--border)" }} />
+
+            {/* ════ SIZE SELECTOR ════ */}
             {product.sizes?.length > 0 && (
-              <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Select Size</label>
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Size</label>
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map(s => (
-                    <button 
-                      key={s} 
-                      onClick={() => {setSize(s); setSizeError(false)}} 
-                      className={`px-6 py-2.5 rounded-xl font-bold border transition-all ${size === s ? "bg-(--gold) text-black border-(--gold)" : "border-white/10 opacity-60 hover:border-(--gold) hover:opacity-100"}`}
+                  {product.sizes.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setSize(s); setSizeError(false); }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        size === s
+                          ? "bg-(--gold) text-black"
+                          : "border border-(--border-light) text-(--text-secondary) hover:border-(--gold)"
+                      }`}
+                      style={{ minHeight: '44px' }}
                     >
                       {s}
                     </button>
                   ))}
                 </div>
-                {sizeError && <p className="text-xs text-red-500 font-medium">⚠️ Please select a size</p>}
+                {sizeError && <p className="text-xs text-red-500">Please select a size</p>}
               </div>
             )}
 
-            {/* COLOR */}
+            {/* ════ COLOR SELECTOR ════ */}
             {product.colors?.length > 0 && (
-              <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Select Color</label>
-                <div className="flex flex-wrap gap-3">
-                  {product.colors.map(c => (
-                    <button 
-                      key={c} 
-                      onClick={() => {setColor(c); setColorError(false)}} 
-                      className={`flex items-center gap-3 px-5 py-2.5 rounded-full border transition-all ${color === c ? "border-(--gold) bg-(--gold)/10 text-(--gold)" : "border-white/10 opacity-60 hover:border-(--gold) hover:opacity-100"}`}
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Color</label>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => {
+                        setColor(c);
+                        setColorError(false);
+                      }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                        color === c
+                          ? "bg-(--gold) text-black"
+                          : "border border-(--border-light) text-(--text-secondary) hover:border-(--gold)"
+                      }`}
+                      style={{ minHeight: '44px' }}
                     >
-                      <span className="w-4 h-4 rounded-full shadow-inner" style={{ background: getColorHex(c) || '#444' }} />
-                      <span className="text-xs font-bold uppercase tracking-wider">{c}</span>
+                      <span
+                        className="w-4 h-4 rounded-full border border-(--border-light)"
+                        style={{ backgroundColor: getColorHex(c) || '#ccc' }}
+                      />
+                      {c}
                     </button>
                   ))}
                 </div>
-                {colorError && <p className="text-xs text-red-500 font-medium">⚠️ Please select a color</p>}
+                {colorError && <p className="text-xs text-red-500">Please select a color</p>}
               </div>
             )}
 
-            {/* ACTION BAR */}
-            <div className="space-y-4 pt-4">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center bg-white/5 border border-white/10 rounded-2xl h-14 overflow-hidden">
-                  <button 
-                    onClick={() => setQty(Math.max(1, qty - 1))} 
-                    className="w-12 h-full flex items-center justify-center hover:bg-white/10 transition-colors"
-                  >
-                    <FiMinus />
-                  </button>
-                  <span className="w-12 text-center font-bold text-lg">{qty}</span>
-                  <button 
-                    onClick={() => setQty(Math.min(product.stock || 99, qty + 1))} 
-                    className="w-12 h-full flex items-center justify-center hover:bg-white/10 transition-colors"
-                  >
-                    <FiPlus />
-                  </button>
-                </div>
-                
-                <button 
-                  onClick={handleAddToCart} 
-                  disabled={product.stock === 0} 
-                  className="btn-gold flex-1 h-14 rounded-2xl font-bold text-lg shadow-xl shadow-gold/10 flex items-center justify-center gap-3"
-                >
-                  <FiShoppingCart /> Add to Cart
-                </button>
-
-                <button
-                  onClick={() => setWishlist(!wishlist)}
-                  className={`w-14 h-14 flex items-center justify-center rounded-2xl border-2 transition-all ${
-                    wishlist
-                      ? "border-red-500/50 bg-red-500/10 text-red-500"
-                      : "border-white/10 text-white/20 hover:text-red-500 hover:border-red-500/30"
-                  }`}
-                >
-                  <FiHeart size={20} className={wishlist ? "fill-red-500" : ""} />
-                </button>
+            {/* No sizes/colors — just a note */}
+            {(!product.sizes?.length && !product.colors?.length) && (
+              <div className="rounded-xl px-4 py-3 text-xs" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-muted)" }}>
+                📦 Yeh product ek standard size/color mein available hai
               </div>
+            )}
 
-              <div className="flex gap-3">
-                <button 
-                  onClick={handleBuyNow} 
-                  disabled={product.stock === 0} 
-                  className="flex-1 py-4 rounded-2xl border border-white/10 font-bold hover:bg-white/5 transition-all active:scale-95 text-sm uppercase tracking-widest"
+            {/* ════ QUANTITY ════ */}
+            <div className="space-y-3">
+              <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Quantity</label>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setQty(Math.max(1, qty - 1))}
+                  className="w-12 h-12 rounded-lg border border-(--border-light) flex items-center justify-center transition-all hover:border-(--gold)"
+                  style={{ minHeight: '48px' }}
                 >
-                  Buy Now
+                  <FiMinus size={16} style={{ color: "var(--text-secondary)" }} />
                 </button>
-                
-                <div className="relative">
-                  <button
-                    onClick={handleShare}
-                    className={`w-14 h-full flex items-center justify-center rounded-2xl border border-white/10 transition-all ${
-                      shareOpen ? "bg-white/10 border-white/20" : "hover:bg-white/5"
-                    }`}
-                  >
-                    <FiShare2 size={20} />
-                  </button>
-
-                  <AnimatePresence>
-                    {shareOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 bottom-full mb-4 bg-(--bg-card) border border-(--border) rounded-2xl shadow-2xl overflow-hidden z-20 min-w-50 backdrop-blur-xl"
-                      >
-                        <button onClick={handleWhatsAppShare} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                          <span className="text-base">💬</span> WhatsApp
-                        </button>
-                        <button onClick={handleCopyLink} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                          {copied ? <><FiCheck size={15} className="text-green-400" /> Copied!</> : <><FiLink size={15} /> Copy Link</>}
-                        </button>
-                        <button onClick={() => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`); setShareOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                          <span className="text-base">📘</span> Facebook
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                <input
+                  type="number"
+                  min="1"
+                  max={product.stock || 99}
+                  value={qty}
+                  onChange={(e) => setQty(Math.max(1, Math.min(product.stock || 99, parseInt(e.target.value) || 1)))}
+                  className="w-20 text-center font-semibold"
+                  style={{ 
+                    background: "var(--bg-elevated)", 
+                    border: "1px solid var(--border-light)",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    color: "var(--text-primary)"
+                  }}
+                />
+                <button
+                  onClick={() => setQty(Math.min(product.stock || 99, qty + 1))}
+                  className="w-12 h-12 rounded-lg border border-(--border-light) flex items-center justify-center transition-all hover:border-(--gold)"
+                  style={{ minHeight: '48px' }}
+                >
+                  <FiPlus size={16} style={{ color: "var(--text-secondary)" }} />
+                </button>
               </div>
             </div>
 
             {/* STOCK STATUS */}
-            <div className="flex items-center gap-2">
-              {product.stock > 0 ? (
-                <div className="flex items-center gap-1.5 text-green-400 text-xs font-bold">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                  In Stock {product.stock <= 10 && `(Only ${product.stock} left!)`}
-                </div>
-              ) : (
-                <div className="text-red-400 text-xs font-bold">✗ Out of Stock</div>
-              )}
+            {product.stock > 0 && product.stock <= 10 && (
+              <span className="text-orange-400 text-sm font-medium animate-pulse">
+                ⚡ Sirf {product.stock} bacha hai!
+              </span>
+            )}
+            {product.stock > 10 && (
+              <span className="text-green-400 text-xs">✓ In Stock</span>
+            )}
+            {product.stock === 0 && (
+              <span className="text-red-400 text-sm font-medium">✗ Out of Stock</span>
+            )}
+
+            {/* ════ ACTION BUTTONS ════ */}
+            <div className="flex gap-3 flex-wrap">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAddToCart}
+                disabled={product.stock === 0}
+                className="btn-gold flex-1 min-w-32.5 disabled:opacity-40 disabled:cursor-not-allowed animate-slide-up"
+                style={{ padding: "16px 24px", fontSize: "1rem" }}
+              >
+                <FiShoppingCart size={17} /> Add to Cart
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleBuyNow}
+                disabled={product.stock === 0}
+                className="btn-outline flex-1 min-w-32.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ padding: "16px 24px", fontSize: "1rem" }}
+              >
+                Buy Now
+              </motion.button>
+
+              <button
+                onClick={() => setWishlist(!wishlist)}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  wishlist
+                    ? "border-red-400/50 bg-red-900/15 text-red-400"
+                    : "border-(--border-light) text-(--text-muted) hover:text-red-500 hover:border-red-500/30"
+                }`}
+                title="Wishlist mein add karo"
+              >
+                <FiHeart size={18} className={wishlist ? "fill-red-400" : ""} />
+              </button>
+
+              {/* SHARE BUTTON */}
+              <div className="relative">
+                <button
+                  onClick={handleShare}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    shareOpen
+                      ? "border-(--gold)/50 bg-(--gold)/8 text-(--gold)"
+                      : "border-(--border-light) text-(--text-muted) hover:text-(--text-primary) hover:border-(--gold)/50"
+                  }`}
+                  title="Share karo"
+                >
+                  <FiShare2 size={18} />
+                </button>
+
+                {/* SHARE DROPDOWN */}
+                <AnimatePresence>
+                  {shareOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-2 bg-(--bg-card) border border-(--border) rounded-2xl shadow-2xl overflow-hidden z-20 min-w-50"
+                    >
+                      <div className="px-4 py-3 border-b border-(--border)">
+                        <p className="text-(--text-primary) text-xs font-semibold">Share Product</p>
+                        <p className="text-(--text-muted) text-[10px] mt-0.5 truncate max-w-40">{product.name}</p>
+                      </div>
+
+                      <button
+                        onClick={handleWhatsAppShare}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
+                      >
+                        <span className="text-base">💬</span> WhatsApp pe Share
+                      </button>
+
+                      <button
+                        onClick={handleCopyLink}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
+                      >
+                        {copied
+                          ? <><FiCheck size={15} className="text-green-400" /> Link Copy Ho Gaya!</>
+                          : <><FiLink size={15} /> Link Copy Karo</>
+                        }
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`);
+                          setShareOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
+                      >
+                        <span className="text-base">📘</span> Facebook pe Share
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* GUARANTEES */}
-            <div className="grid grid-cols-3 gap-3 pt-6 border-t border-white/5">
+            {/* ════ GUARANTEES ════ */}
+            <div className="grid grid-cols-3 gap-2">
               {[
-                { icon: "🚚", title: "Free Delivery", sub: "Above Rs. 2000" },
-                { icon: "✅", title: "Original", sub: "100% Guaranteed" },
-                { icon: "↩️", title: "Easy Return", sub: "7 Day Policy" },
+                { icon: "🚚", title: "Free Delivery", sub: "Rs. 2000+ orders" },
+                { icon: "✅", title: "100% Original", sub: "Guaranteed quality" },
+                { icon: "↩️", title: "Easy Return", sub: "7 din mein" },
               ].map((g) => (
-                <div key={g.title} className="flex flex-col items-center text-center gap-1.5 p-3 rounded-2xl bg-white/2 border border-white/5">
+                <div key={g.title} className="flex flex-col items-center text-center gap-1 rounded-xl p-3" style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
                   <span className="text-xl">{g.icon}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-white/90">{g.title}</span>
-                  <span className="text-[9px] opacity-40">{g.sub}</span>
+                  <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{g.title}</span>
+                  <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>{g.sub}</span>
                 </div>
               ))}
             </div>
+
           </div>
         </div>
 
@@ -606,34 +723,39 @@ function ProductReviews({ product, setProduct }) {
       <div className="max-w-7xl mx-auto px-0">
 
         {/* HEADER */}
-        <div className="flex items-center justify-between gap-4 mb-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className="font-display text-3xl font-bold">Reviews <span className="opacity-30 ml-2">{reviews.length}</span></h2>
-            <div className="flex items-center gap-4 mt-2">
-              <div className="flex gap-1 text-(--gold)">
+            <h2 className="font-display text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+              Customer Reviews
+            </h2>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex gap-0.5">
                 {[1,2,3,4,5].map((s) => (
-                  <FiStar key={s} size={14} className={s <= Math.round(avgRating) ? "fill-current" : "opacity-20"} />
+                  <FiStar key={s} size={16}
+                    style={s <= Math.round(avgRating)
+                      ? { color: "var(--gold)", fill: "var(--gold)" }
+                      : { color: "var(--border-light)", fill: "var(--border-light)" }}
+                  />
                 ))}
               </div>
-              <span className="text-sm font-bold opacity-60">{avgRating.toFixed(1)} Average</span>
+              <span className="text-[#c9a84c] font-bold font-display">{avgRating.toFixed(1)}</span>
+              <span className="text-sm" style={{ color: "var(--text-muted)" }}>({reviews.length} reviews)</span>
             </div>
           </div>
 
-          {token && !hasReviewed && !showForm && (
-            <button 
-              onClick={() => setShowForm(true)}
-              className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-all flex items-center gap-2"
-            >
-              <FiEdit3 size={16} /> Write Review
+          {token && !hasReviewed && (
+            <button onClick={() => setShowForm((v) => !v)}
+              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/8 transition-all">
+              <FiEdit3 size={14} /> Review Likhein
             </button>
           )}
-
           {!token && (
-            <Link 
-              to="/login"
-              className="px-6 py-3 rounded-xl border border-white/10 text-xs font-bold opacity-40 hover:opacity-100 transition-all flex items-center gap-2"
-            >
-              <FiLock size={14} /> Login to Review
+            <Link to="/login"
+              className="flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl transition-all"
+              style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+              onMouseEnter={e => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "var(--border-light)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; e.currentTarget.style.borderColor = "var(--border)"; }}>
+              <FiLock size={14} /> Login Kar ke Review Dein
             </Link>
           )}
         </div>
@@ -755,63 +877,91 @@ function ProductReviews({ product, setProduct }) {
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>Koi review nahi abhi — pehle review dein!</p>
           </div>
         ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {reviews.map((r) => {
-            const isOwn = r.user === user?.id || r.user?._id === user?.id || (r.user && r.user.toString() === user?.id);
-            const hasMedia = (r.images?.length > 0) || r.video;
-            return (
-              <motion.div 
-                key={r._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/2 border border-white/5 rounded-3xl p-6 flex flex-col gap-4 hover:bg-white/3 transition-colors group relative"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-(--gold) text-black flex items-center justify-center font-bold text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {reviews.map((r) => {
+              const isOwn = r.user === user?.id || r.user?._id === user?.id || (r.user && r.user.toString() === user?.id);
+              const colors = ["#c9a84c","#4ade80","#60a5fa","#c084fc","#f59e0b","#f87171"];
+              const color = colors[(r.name?.charCodeAt(0) || 0) % colors.length];
+              const hasMedia = (r.images?.length > 0) || r.video;
+              return (
+                <motion.div key={r._id}
+                  initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl p-5 flex flex-col gap-3 transition-all"
+                  style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(201,168,76,0.15)"}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}>
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map((s) => (
+                      <FiStar key={s} size={13}
+                        style={s <= r.rating
+                          ? { color: "var(--gold)", fill: "var(--gold)" }
+                          : { color: "var(--border-light)", fill: "var(--border-light)" }}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm leading-relaxed flex-1" style={{ color: "var(--text-secondary)" }}>"{ r.comment}"</p>
+
+                  {/* ─── REVIEW IMAGES ─── */}
+                  {r.images?.length > 0 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {r.images.map((img, i) => (
+                        <a key={i} href={getImageUrl(img)} target="_blank" rel="noreferrer"
+                          className="shrink-0 w-16 h-16 rounded-xl overflow-hidden transition-all"
+                          style={{ border: "1px solid var(--border)" }}
+                          onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"}
+                          onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}>
+                          <img src={getImageUrl(img)} alt={`review-img-${i}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display="none"; }}
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* ─── REVIEW VIDEO ─── */}
+                  {r.video && (
+                    <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)", background: "var(--bg-elevated)" }}>
+                      <video
+                        src={getImageUrl(r.video)}
+                        controls
+                        className="w-full max-h-40 object-contain"
+                        preload="metadata"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2.5 pt-2" style={{ borderTop: "1px solid var(--border)" }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-black font-bold font-display text-xs shrink-0"
+                      style={{ background: color }}>
                       {r.name?.charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <h4 className="text-sm font-bold">{r.name}</h4>
-                      <p className="text-[10px] opacity-40 uppercase tracking-widest">{new Date(r.createdAt).toLocaleDateString()}</p>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>{r.name}</p>
+                      <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>
+                        {new Date(r.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
                     </div>
-                  </div>
-                  <div className="flex gap-0.5 text-(--gold)">
-                    {[1,2,3,4,5].map((s) => (
-                      <FiStar key={s} size={12} className={s <= r.rating ? "fill-current" : "opacity-20"} />
-                    ))}
-                  </div>
-                </div>
-
-                <p className="text-sm opacity-70 leading-relaxed italic">"{r.comment}"</p>
-
-                {hasMedia && (
-                  <div className="flex gap-2 mt-2 overflow-x-auto pb-2 scrollbar-hide">
-                    {r.images?.map((img, i) => (
-                      <a key={i} href={getImageUrl(img)} target="_blank" rel="noreferrer" className="w-20 h-20 rounded-xl overflow-hidden border border-white/5 shrink-0">
-                        <img src={getImageUrl(img)} className="w-full h-full object-cover" alt="" />
-                      </a>
-                    ))}
-                    {r.video && (
-                      <div className="w-32 h-20 rounded-xl overflow-hidden border border-white/5 bg-black shrink-0">
-                        <video src={getImageUrl(r.video)} className="w-full h-full object-cover" />
-                      </div>
+                    {hasMedia && (
+                      <span className="text-[9px] flex items-center gap-1" style={{ color: "var(--text-muted)" }}>
+                        {r.images?.length > 0 && <><FiCamera size={9}/> {r.images.length}</>}
+                        {r.video && <FiVideo size={9} className="ml-1"/>}
+                      </span>
+                    )}
+                    {(isOwn || user?.role === "admin") && (
+                      <button onClick={() => handleDelete(r._id)}
+                        className="p-1.5 rounded-lg transition-colors"
+                        style={{ color: "var(--text-muted)" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
+                        onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}>
+                        <FiTrash2 size={12} />
+                      </button>
                     )}
                   </div>
-                )}
-
-                {(isOwn || user?.role === "admin") && (
-                  <button 
-                    onClick={() => handleDelete(r._id)}
-                    className="absolute top-6 right-6 p-2 text-white/0 group-hover:text-red-400 transition-all hover:bg-red-400/10 rounded-lg"
-                  >
-                    <FiTrash2 size={16} />
-                  </button>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
