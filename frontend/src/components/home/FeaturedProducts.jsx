@@ -77,34 +77,41 @@ export default function FeaturedProducts() {
                 />
                 <div className="product-overlay rounded-xl" />
 
-                <button
-                  onClick={(e) => { 
-                    e.preventDefault(); 
-                    e.stopPropagation(); 
-                    if (p.sizes?.length > 0 || p.colors?.length > 0) {
-                      navigate(`/product/${p._id}`);
-                    } else {
-                      addToCart(p); 
-                      toast.success("Added to cart!"); 
-                    }
-                  }}
-                  className="absolute bottom-3 left-2 right-2 mx-auto btn-gold opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 pointer-coarse:opacity-100 transition-opacity duration-300 whitespace-nowrap shadow-xl text-xs"
-                  style={{ padding: "8px 14px", zIndex: 20 }}
-                >
-                  <FiShoppingCart size={12} /> Quick Add
-                </button>
+                {/* ADD TO CART */}
+                <div className="product-actions">
+                  <button
+                    onClick={(e) => { 
+                      e.preventDefault(); 
+                      e.stopPropagation(); 
+                      if (p.sizes?.length > 0 || p.colors?.length > 0) {
+                        navigate(`/product/${p._id}`);
+                      } else {
+                        addToCart(p); 
+                        toast.success("Added to cart!"); 
+                      }
+                    }}
+                    className="btn-gold flex-1 text-xs whitespace-nowrap shadow-xl"
+                    style={{ padding: "8px 10px", minHeight: "36px" }}
+                  >
+                    <FiShoppingCart size={12} /> Add to Cart
+                  </button>
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/product/${p._id}`); }}
+                    className="btn-outline text-xs"
+                    style={{ padding: "8px 10px", minHeight: "36px" }}
+                  >
+                    <FiArrowRight size={12} />
+                  </button>
+                </div>
 
                 {/* STOCK BADGE */}
                 {p.stock < 5 && p.stock > 0 && (
-                  <span className="absolute top-3 left-3 badge-gold text-[10px]">Low Stock</span>
+                  <span className="absolute top-2 left-2 badge-gold text-[9px]">Low Stock</span>
                 )}
                 {p.comparePrice > p.price && (
-                  <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
-                    <span className="bg-red-600 text-white text-[9px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-tighter">
+                  <div className="absolute top-2 right-2 flex flex-col items-end gap-0.5">
+                    <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded shadow-lg uppercase">
                       -{Math.round(((p.comparePrice - p.price) / p.comparePrice) * 100)}%
-                    </span>
-                    <span className="bg-(--bg-card)/60 backdrop-blur-xs text-(--gold) px-1.5 py-0.5 rounded-sm font-bold uppercase tracking-widest text-[7px] border border-(--gold)/20">
-                      Sale
                     </span>
                   </div>
                 )}

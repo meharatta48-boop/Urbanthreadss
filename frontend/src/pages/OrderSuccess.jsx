@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FiCheck, FiShoppingBag, FiHome, FiPackage,
-  FiTruck, FiClock, FiPhone, FiMail
+  FiTruck, FiClock, FiPhone
 } from "react-icons/fi";
 import { useSettings } from "../context/SettingsContext";
 import { metaTracker } from "../utils/metaTracking";
@@ -12,7 +12,6 @@ export default function OrderSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
   const { settings } = useSettings();
-  const [dots, setDots] = useState(0);
 
   const orderId    = location.state?.orderId;
   const orderTotal = location.state?.total;
@@ -28,10 +27,6 @@ export default function OrderSuccess() {
     metaTracker.trackPurchase(orderId, Number(orderTotal), []);
   }, [orderId, orderTotal]);
 
-  useEffect(() => {
-    const t = setInterval(() => setDots((d) => (d + 1) % 4), 400);
-    return () => clearInterval(t);
-  }, []);
 
   if (!orderId) return null;
 
@@ -51,7 +46,7 @@ export default function OrderSuccess() {
 
       {/* AMBIENT GLOW */}
       <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none"
+        className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-96 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%)" }}
       />
 
