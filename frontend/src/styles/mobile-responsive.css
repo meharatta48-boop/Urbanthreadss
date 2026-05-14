@@ -614,7 +614,7 @@ img, video {
   .pt-28 { padding-top: 72px  !important; }
   .pt-32 { padding-top: 80px  !important; }
 
-  section { padding-top: 28px !important; padding-bottom: 28px !important; }
+  /* section { padding-top: 28px !important; padding-bottom: 28px !important; } */
 }
 
 /* ── 20. INPUTS & FORMS (iOS zoom prevention) ───────────── */
