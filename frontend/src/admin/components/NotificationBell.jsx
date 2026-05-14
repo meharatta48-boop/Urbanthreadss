@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,7 +34,7 @@ export default function NotificationBell() {
   });
   const ref = useRef(null);
 
-  const fetchNotifications = useCallback(async () => {
+  const fetchNotifications = async () => {
     if (!token) return;
     try {
       const [ordersRes, productsRes] = await Promise.all([
@@ -103,13 +103,13 @@ export default function NotificationBell() {
     } catch (err) {
       console.error("Notifications:", err);
     }
-  }, [token, navigate]);
+  };
 
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30000); // refresh every 30 sec
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, [token]);
 
   // Click outside to close
   useEffect(() => {
@@ -171,11 +171,11 @@ export default function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.18 }}
-            className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-(--bg-card)/95 backdrop-blur-xl border border-(--border-light) rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] z-50 overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-(--bg-card) border border-(--border) rounded-2xl shadow-2xl z-50 overflow-hidden"
             style={{ maxHeight: "80vh" }}
           >
             {/* HEADER */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-(--border) bg-(--bg-elevated)/30">
+            <div className="flex items-center justify-between px-4 py-3.5 border-b border-(--border)">
               <div className="flex items-center gap-2">
                 <FiBell size={15} className="text-[#c9a84c]" />
                 <span className="text-(--text-primary) font-semibold text-sm">Notifications</span>
@@ -198,45 +198,42 @@ export default function NotificationBell() {
             {/* NOTIFICATIONS LIST */}
             <div className="overflow-y-auto" style={{ maxHeight: "60vh" }}>
               {notifications.length === 0 ? (
-                <div className="py-12 text-center text-(--text-muted) flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-(--bg-elevated) flex items-center justify-center mb-4 border border-(--border)">
-                    <FiBell size={24} className="opacity-40 text-(--gold)" />
-                  </div>
-                  <p className="text-sm font-medium">Koi notification nahi</p>
-                  <p className="text-xs mt-1 opacity-60">Jab kuch hoga toh yahan dikhega</p>
+                <div className="py-10 text-center text-(--text-muted)">
+                  <FiBell size={28} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">Koi notification nahi</p>
                 </div>
               ) : (
-                <div className="divide-y divide-(--border-light)">
+                <div className="divide-y divide-(--border)">
                   {notifications.map((n) => {
                     const isRead = readIds.includes(n.id);
                     return (
                       <motion.button
                         key={n.id}
                         onClick={() => handleClick(n)}
-                        whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
-                        className={`w-full flex items-start gap-4 px-5 py-4 text-left transition-colors ${
-                          isRead ? "opacity-60 hover:opacity-100" : "bg-(--gold)/5"
+                        whileHover={{ backgroundColor: "rgba(0,0,0,0.02)" }}
+                        className={`w-full flex items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-(--bg-elevated) ${
+                          isRead ? "opacity-50" : ""
                         }`}
                       >
                         {/* ICON */}
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-inner"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
                           style={{ background: n.bg, border: `1px solid ${n.color}30` }}
                         >
-                          <n.icon size={16} style={{ color: n.color }} />
+                          <n.icon size={15} style={{ color: n.color }} />
                         </div>
 
                         {/* TEXT */}
-                        <div className="flex-1 min-w-0 pt-0.5">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className={`text-xs font-semibold ${isRead ? "text-(--text-primary)" : "text-(--gold)"}`}>{n.title}</p>
+                            <p className="text-(--text-primary) text-xs font-semibold">{n.title}</p>
                             {!isRead && (
-                              <span className="w-1.5 h-1.5 rounded-full shrink-0 shadow-[0_0_5px_currentColor]" style={{ background: n.color, color: n.color }} />
+                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: n.color }} />
                             )}
                           </div>
-                          <p className="text-(--text-muted) text-[11px] mt-1 leading-relaxed">{n.body}</p>
-                          <p className="text-(--text-muted)/50 text-[10px] mt-1.5 flex items-center gap-1.5 font-medium tracking-wide">
-                            <FiClock size={10} /> {timeAgo(n.time)}
+                          <p className="text-(--text-muted) text-[11px] mt-0.5 leading-snug">{n.body}</p>
+                          <p className="text-(--text-muted)/60 text-[10px] mt-1 flex items-center gap-1">
+                            <FiClock size={9} /> {timeAgo(n.time)}
                           </p>
                         </div>
                       </motion.button>
@@ -247,12 +244,12 @@ export default function NotificationBell() {
             </div>
 
             {/* FOOTER */}
-            <div className="border-t border-(--border-light) px-5 py-3.5 bg-(--bg-elevated)/30">
+            <div className="border-t border-(--border) px-4 py-3">
               <button
                 onClick={() => { setOpen(false); navigate("/admin-dashboard/orders"); }}
-                className="w-full text-center text-xs font-medium text-(--text-muted) hover:text-(--gold) transition-colors flex items-center justify-center gap-2"
+                className="w-full text-center text-xs text-(--text-muted) hover:text-(--gold) transition-colors"
               >
-                Sare Orders dekho <span className="text-(--gold)">→</span>
+                Sare Orders dekho →
               </button>
             </div>
           </motion.div>

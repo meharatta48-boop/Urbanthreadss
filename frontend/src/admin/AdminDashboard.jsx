@@ -7,7 +7,7 @@ import {
   FiUsers, FiPackage, FiDollarSign, FiShoppingBag,
   FiTrendingUp, FiAlertTriangle, FiClock, FiCheckCircle,
   FiTruck, FiPlus, FiEye, FiRefreshCw, FiXCircle,
-  FiArrowUp, FiArrowDown, FiBarChart2, FiArrowRight
+  FiArrowUp, FiArrowDown, FiBarChart2
 } from "react-icons/fi";
 
 /* ── Status config ── */
@@ -190,67 +190,49 @@ export default function Dashboard() {
       {/* PENDING BANNER */}
       {data && (data.ordersByStatus?.pending || 0) > 0 && (
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-r from-[#f59e0b]/50 to-[#c9a84c]/50 rounded-2xl blur-md opacity-30 animate-pulse pointer-events-none" />
-          <div className="relative bg-linear-to-r from-[rgba(245,158,11,0.1)] to-[rgba(201,168,76,0.05)] border border-[#f59e0b]/30 rounded-2xl px-6 py-5 flex items-center justify-between gap-4 flex-wrap backdrop-blur-xl shadow-lg">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[rgba(245,158,11,0.15)] flex items-center justify-center border border-[#f59e0b]/20 shadow-inner">
-                <FiClock size={20} className="text-[#f59e0b] animate-pulse" />
-              </div>
-              <div>
-                <p className="text-[#f59e0b] font-display font-bold text-base sm:text-lg tracking-wide flex items-center gap-2">
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f59e0b] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#f59e0b]"></span>
-                  </span>
-                  {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""}
-                </p>
-                <p className="text-[#f59e0b]/70 text-xs mt-0.5 font-medium">Customer wait kar raha hai, jaldi process karein!</p>
-              </div>
+          className="bg-[rgba(245,158,11,0.06)] border border-[#f59e0b]/20 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[rgba(245,158,11,0.12)] flex items-center justify-center">
+              <FiClock size={16} className="text-[#f59e0b]" />
             </div>
-            <Link to="/admin-dashboard/orders"
-              className="text-xs font-bold px-5 py-2.5 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95 shadow-md flex items-center gap-2"
-              style={{ background: "rgba(245,158,11,0.2)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)" }}>
-              Orders Dekho <FiArrowRight size={12} />
-            </Link>
+            <div>
+              <p className="text-[#f59e0b] font-bold text-sm">
+                ⚡ {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""} — Process karo!
+              </p>
+              <p className="text-[#f59e0b]/50 text-xs">Customer wait kar raha hai</p>
+            </div>
           </div>
+          <Link to="/admin-dashboard/orders"
+            className="text-xs font-semibold px-4 py-2 rounded-xl"
+            style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}>
+            Orders Dekho →
+          </Link>
         </motion.div>
       )}
 
       {/* STAT CARDS */}
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-32 animate-pulse shadow-sm" />
+            <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-32 animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {cards.map((card, i) => (
-            <motion.div key={card.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-              <Link to={card.link} className="block h-full relative group">
-                {/* Glow effect behind the card */}
-                <div className={`absolute -inset-0.5 rounded-2xl blur opacity-0 group-hover:opacity-30 transition duration-500`} style={{ background: card.color }} />
-                
-                <div className={`relative bg-(--bg-card) backdrop-blur-xl border rounded-2xl p-5 transition-all h-full flex flex-col justify-between ${card.urgent ? "border-[#f59e0b]/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]" : "border-(--border) hover:border-(--border-light) hover:shadow-lg"}`}>
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner" style={{ background: card.bg, color: card.color, border: `1px solid ${card.color}30` }}>
-                      <card.Icon size={18} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {cards.map(({ label, val, sub, sub2, Icon: CIcon, color, bg, link, urgent }, i) => (
+            <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+              <Link to={link} className="block">
+                <div className={`bg-(--bg-card) border rounded-2xl p-5 hover:border-(--border-light) transition-all group h-full ${urgent ? "border-[#f59e0b]/30" : "border-(--border)"}`}>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg, color }}>
+                      <CIcon size={17} />
                     </div>
-                    {card.urgent && (
-                      <span className="text-[9px] font-bold text-[#f59e0b] bg-[rgba(245,158,11,0.15)] border border-[#f59e0b]/30 px-2 py-1 rounded-md animate-pulse shadow-sm">
-                        URGENT
-                      </span>
-                    )}
+                    {urgent && <span className="text-[9px] font-bold text-[#f59e0b] bg-[rgba(245,158,11,0.1)] border border-[#f59e0b]/20 px-1.5 py-0.5 rounded">URGENT</span>}
                   </div>
-                  <div>
-                    <div className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary) tracking-tight">{card.val}</div>
-                    <div className="text-(--text-muted) text-[11px] mt-1 uppercase tracking-widest font-semibold">{card.label}</div>
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-(--border-light) flex flex-col gap-1">
-                    <div className="text-(--text-muted)/80 text-[10px] leading-snug">{card.sub}</div>
-                    {card.sub2 && card.sub2.trim() !== "" && <div className="text-(--gold) text-[10px] font-medium leading-snug">{card.sub2}</div>}
-                  </div>
+                  <div className="font-display text-xl sm:text-2xl font-bold text-(--text-primary)">{val}</div>
+                  <div className="text-(--text-muted) text-[10px] mt-1 uppercase tracking-wider">{label}</div>
+                  <div className="text-(--text-muted)/60 text-[10px] mt-0.5">{sub}</div>
+                  <div className="text-(--gold) text-[10px] mt-0.5">{sub2}</div>
                 </div>
               </Link>
             </motion.div>
@@ -259,225 +241,175 @@ export default function Dashboard() {
       )}
 
       {/* CHARTS ROW */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 sm:gap-6 mt-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
         {/* WEEKLY REVENUE CHART */}
-        <div className="xl:col-span-2 relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-br from-(--gold)/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-          <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl p-6 h-full flex flex-col backdrop-blur-md">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-(--text-primary) font-semibold text-sm sm:text-base flex items-center gap-2">
-                <FiBarChart2 size={16} className="text-(--gold)" /> 7-Day Revenue 
-                <span className="text-[10px] text-(--text-muted) font-normal border border-(--border) px-2 py-0.5 rounded-full ml-2 hidden sm:inline-block">Delivered Only</span>
-              </h3>
-            </div>
-            <div className="flex-1">
-              {data?.last7Days ? (
-                <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="var(--gold)" />
-              ) : (
-                <div className="h-24 bg-(--bg-elevated) rounded-xl animate-pulse" />
-              )}
-            </div>
-            <div className="mt-5 pt-4 border-t border-(--border-light) flex flex-wrap gap-4 sm:gap-8 text-xs text-(--text-muted)">
-              <div className="flex flex-col">
-                <span className="opacity-70 text-[10px] uppercase tracking-wider mb-1">Orders This Week</span>
-                <span className="text-(--text-primary) font-bold text-sm">{data?.last7Days?.reduce((s, d) => s + d.orders, 0) || 0}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="opacity-70 text-[10px] uppercase tracking-wider mb-1">Total Revenue</span>
-                <span className="text-(--gold) font-bold font-display text-sm">Rs. {(data?.last7Days?.reduce((s, d) => s + d.revenue, 0) || 0).toLocaleString()}</span>
-              </div>
-            </div>
+        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
+              <FiBarChart2 size={14} className="text-(--gold)" /> 7-Day Revenue (Delivered)
+            </h3>
+          </div>
+          {data?.last7Days ? (
+            <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="var(--gold)" />
+          ) : (
+            <div className="h-20 bg-(--bg-elevated) rounded-xl animate-pulse" />
+          )}
+          <div className="mt-3 flex gap-4 text-xs text-(--text-muted)">
+            <span>Orders this week: <span className="text-(--text-primary) font-bold">{data?.last7Days?.reduce((s, d) => s + d.orders, 0) || 0}</span></span>
+            <span>Revenue: <span className="text-(--gold) font-bold">Rs. {(data?.last7Days?.reduce((s, d) => s + d.revenue, 0) || 0).toLocaleString()}</span></span>
           </div>
         </div>
 
         {/* ORDER STATUS DONUT */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-br from-[#4ade80]/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-          <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl p-6 h-full flex flex-col backdrop-blur-md">
-            <h3 className="text-(--text-primary) font-semibold text-sm sm:text-base mb-6 flex items-center gap-2">
-              <FiTrendingUp size={16} className="text-(--gold)" /> Order Status
-            </h3>
-            <div className="flex-1 flex items-center justify-center">
-              {data ? <DonutChart data={donutData} /> : <div className="w-full h-32 bg-(--bg-elevated) rounded-xl animate-pulse" />}
+        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5">
+          <h3 className="text-(--text-primary) font-semibold text-sm mb-4 flex items-center gap-2">
+            <FiTrendingUp size={14} className="text-(--gold)" /> Order Status
+          </h3>
+          {data ? <DonutChart data={donutData} /> : <div className="h-24 bg-(--bg-elevated) rounded-xl animate-pulse" />}
+          {data && (
+            <div className="mt-3 pt-3 border-t border-(--border) text-xs text-(--text-muted)">
+              Conversion rate: <span className="text-[#4ade80] font-bold">{data.conversionRate || 0}%</span>
             </div>
-            {data && (
-              <div className="mt-5 pt-4 border-t border-(--border-light) flex justify-between items-center text-xs text-(--text-muted)">
-                <span className="uppercase tracking-widest text-[10px]">Conversion Rate</span>
-                <span className="text-[#4ade80] font-bold bg-[#4ade80]/10 px-2.5 py-1 rounded-md border border-[#4ade80]/20">{data.conversionRate || 0}%</span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
 
       {/* MONTHLY REVENUE CHART */}
       {data?.last6Months && (
-        <div className="relative group mt-6">
-          <div className="absolute -inset-0.5 bg-linear-to-br from-[#818cf8]/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-          <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl p-6 backdrop-blur-md">
-            <h3 className="text-(--text-primary) font-semibold text-sm sm:text-base mb-6 flex items-center gap-2">
-              <FiTrendingUp size={16} className="text-[#818cf8]" /> 6-Month Revenue Trend 
-              <span className="text-[10px] text-(--text-muted) font-normal border border-(--border) px-2 py-0.5 rounded-full ml-2 hidden sm:inline-block">Delivered Only</span>
-            </h3>
-            <div className="mt-4">
-              <BarChart data={data.last6Months} valueKey="revenue" labelKey="month" color="#818cf8" />
-            </div>
-          </div>
+        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5">
+          <h3 className="text-(--text-primary) font-semibold text-sm mb-4 flex items-center gap-2">
+            <FiTrendingUp size={14} className="text-(--gold)" /> 6-Month Revenue Trend (Delivered Orders Only)
+          </h3>
+          <BarChart data={data.last6Months} valueKey="revenue" labelKey="month" color="#818cf8" />
         </div>
       )}
 
       {/* BOTTOM ROW */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5 sm:gap-6 mt-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
         {/* RECENT ORDERS */}
-        <div className="xl:col-span-2 relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-br from-(--gold)/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-          <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden h-full flex flex-col">
-            <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between bg-(--bg-elevated)/50 backdrop-blur-md">
-              <h3 className="font-display text-base sm:text-lg font-bold text-(--text-primary) flex items-center gap-2">
-                <FiShoppingBag className="text-(--gold)" size={16} /> Recent Orders
-              </h3>
-              <Link to="/admin-dashboard/orders" className="text-xs text-(--gold) hover:text-white transition-colors bg-(--gold)/10 px-3 py-1.5 rounded-full border border-(--gold)/20 hover:bg-(--gold)/30">
-                Sab dekho →
-              </Link>
+        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between">
+            <h3 className="font-display text-base font-bold text-(--text-primary) flex items-center gap-2">
+              <FiShoppingBag className="text-(--gold)" size={15} /> Recent Orders
+            </h3>
+            <Link to="/admin-dashboard/orders" className="text-xs text-(--text-muted) hover:text-(--gold) transition-colors">
+              Sab dekho →
+            </Link>
+          </div>
+          {loading ? (
+            <div className="p-8 text-center text-(--text-muted) flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
+              Loading...
             </div>
-            {loading ? (
-              <div className="p-10 text-center text-(--text-muted) flex flex-col items-center justify-center gap-3 h-full">
-                <div className="w-6 h-6 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
-                <span className="text-xs tracking-widest uppercase">Loading orders...</span>
-              </div>
-            ) : orders.length === 0 ? (
-              <div className="p-12 text-center text-(--text-muted) h-full flex flex-col justify-center items-center">
-                <div className="w-16 h-16 rounded-full bg-(--bg-elevated) flex items-center justify-center mb-4 border border-(--border)">
-                  <FiShoppingBag size={24} className="opacity-40 text-(--gold)" />
-                </div>
-                <p className="text-sm font-medium">Koi order nahi abhi tak</p>
-                <p className="text-xs mt-1 opacity-60">Jab naye orders aayenge yahan show honge</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-(--border) flex-1">
-                {orders.map((order) => {
-                  const st = STATUS[order.orderStatus] || STATUS.pending;
-                  return (
-                    <div key={order._id} className="flex items-center justify-between px-6 py-4 hover:bg-(--bg-elevated) transition-all duration-300 group/item">
-                      <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-inner transition-transform group-hover/item:scale-110"
-                          style={{ background: `${st.color}15`, color: st.color, border: `1px solid ${st.color}30` }}>
-                          <FiShoppingBag size={14} />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-(--text-primary) text-xs sm:text-sm font-semibold flex items-center gap-2">
-                            <span className="opacity-50 font-normal">#</span>{order._id.slice(-8).toUpperCase()}
-                            <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-(--border)" />
-                            <span className="text-(--text-muted) font-normal truncate">{order.user?.name || order.guestInfo?.name || "Guest"}</span>
-                          </p>
-                          <p className="text-(--text-muted)/70 text-[10px] sm:text-xs mt-1 font-medium tracking-wide">
-                            {new Date(order.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                            <span className="mx-2 opacity-30">|</span>
-                            {order.orderItems?.length || 0} item{order.orderItems?.length !== 1 ? 's' : ''}
-                          </p>
-                        </div>
+          ) : orders.length === 0 ? (
+            <div className="p-10 text-center text-(--text-muted)">
+              <FiShoppingBag size={28} className="mx-auto mb-2 opacity-30" />
+              <p className="text-sm">Koi order nahi abhi tak</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-(--border)">
+              {orders.map((order) => {
+                const st = STATUS[order.orderStatus] || STATUS.pending;
+                return (
+                  <div key={order._id} className="flex items-center justify-between px-5 py-3.5 hover:bg-(--bg-elevated) transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: `${st.color}15`, color: st.color }}>
+                        <FiShoppingBag size={13} />
                       </div>
-                      <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 shrink-0">
-                        <span className="gold-text font-bold font-display text-sm sm:text-base">
-                          Rs. {order.totalPrice?.toLocaleString()}
-                        </span>
-                        <span className="text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap"
-                          style={{ color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}30` }}>
-                          {st.label}
-                        </span>
+                      <div className="min-w-0">
+                        <p className="text-(--text-primary) text-xs font-medium">
+                          #{order._id.slice(-8).toUpperCase()}
+                          {" "}<span className="text-(--text-muted) font-normal">{order.user?.name || order.guestInfo?.name || "Guest"}</span>
+                        </p>
+                        <p className="text-(--text-muted)/60 text-[10px] mt-0.5">
+                          {new Date(order.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}
+                          {" · "}{order.orderItems?.length || 0} items
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="gold-text font-bold font-display text-sm hidden sm:block">
+                        Rs. {order.totalPrice?.toLocaleString()}
+                      </span>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                        style={{ color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}30` }}>
+                        {st.label}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* RIGHT COLUMN */}
-        <div className="space-y-5 sm:space-y-6">
+        <div className="space-y-5">
 
           {/* TOP PRODUCTS */}
           {data?.topProducts?.length > 0 && (
-            <div className="relative group">
-              <div className="absolute -inset-0.5 bg-linear-to-br from-[#818cf8]/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-              <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
-                <div className="px-5 py-4 border-b border-(--border) bg-(--bg-elevated)/50 backdrop-blur-md">
-                  <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
-                    <FiTrendingUp size={14} className="text-[#818cf8]" /> Top Selling Items
-                  </h3>
-                </div>
-                <div className="divide-y divide-(--border)">
-                  {data.topProducts.map((p, i) => (
-                    <div key={p.id} className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-6 h-6 rounded-md bg-(--bg-elevated) border border-(--border) flex items-center justify-center shrink-0">
-                          <span className="text-(--text-muted) text-[10px] font-bold">#{i + 1}</span>
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-(--text-primary) text-xs font-semibold truncate max-w-32 sm:max-w-40">{p.name}</p>
-                          <p className="text-(--text-muted) text-[10px] mt-0.5 flex items-center gap-1">
-                            <FiCheckCircle size={8} className="text-[#4ade80]" /> {p.qty} sold
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-[#818cf8] text-xs font-bold block">
-                          Rs. {(p.revenue || 0).toLocaleString()}
-                        </span>
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-(--border)">
+                <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
+                  <FiTrendingUp size={13} className="text-(--gold)" /> Top Selling
+                </h3>
+              </div>
+              <div className="divide-y divide-(--border)">
+                {data.topProducts.map((p, i) => (
+                  <div key={p.id} className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="text-(--text-muted) text-xs font-bold w-5 shrink-0">#{i + 1}</span>
+                      <div className="min-w-0">
+                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-32.5">{p.name}</p>
+                        <p className="text-(--text-muted) text-[10px]">{p.qty} sold</p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-(--gold) text-xs font-bold whitespace-nowrap">
+                      Rs. {(p.revenue || 0).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
           {/* LOW STOCK */}
-          <div className="relative group">
-            <div className="absolute -inset-0.5 bg-linear-to-br from-[#f59e0b]/10 to-transparent rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none" />
-            <div className="relative bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between bg-(--bg-elevated)/50 backdrop-blur-md">
-                <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
-                  <FiAlertTriangle size={14} className="text-[#f59e0b]" /> Inventory Alert
-                </h3>
-                {lowStock.length > 0 && (
-                  <span className="text-[10px] text-[#f59e0b] font-bold bg-[#f59e0b]/10 px-2 py-1 rounded-md border border-[#f59e0b]/20">
-                    {lowStock.length} items low
-                  </span>
-                )}
-              </div>
-              {lowStock.length === 0 ? (
-                <div className="p-8 text-center text-(--text-muted)">
-                  <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-3 border border-green-500/20">
-                    <FiCheckCircle size={20} className="text-green-500/60" />
-                  </div>
-                  <p className="text-xs font-medium text-green-500/80">Stock is perfectly maintained!</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-(--border)">
-                  {lowStock.map((p) => (
-                    <Link key={p._id} to={`/admin-dashboard/products/${p._id}/edit`} className="block group/item">
-                      <div className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-all duration-300">
-                        <div className="min-w-0 pr-3">
-                          <p className="text-(--text-primary) text-xs font-medium truncate group-hover/item:text-(--gold) transition-colors">{p.name}</p>
-                          <p className="text-(--text-muted) text-[10px] capitalize mt-0.5 opacity-70">{p.category?.name}</p>
-                        </div>
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-md shadow-sm shrink-0 whitespace-nowrap ${
-                          p.stock === 0
-                            ? "text-red-400 bg-red-900/20 border border-red-500/30 animate-pulse"
-                            : "text-orange-400 bg-orange-900/20 border border-orange-500/30"
-                        }`}>
-                          {p.stock === 0 ? "OUT OF STOCK" : `${p.stock} LEFT`}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between">
+              <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
+                <FiAlertTriangle size={13} className="text-[#f59e0b]" /> Low Stock
+              </h3>
+              <span className="text-xs text-[#f59e0b] font-bold">{lowStock.length} items</span>
             </div>
+            {lowStock.length === 0 ? (
+              <div className="p-6 text-center text-(--text-muted)">
+                <FiCheckCircle size={24} className="mx-auto mb-2 text-green-500/40" />
+                <p className="text-xs">Sab stock theek hai 👍</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-(--border)">
+                {lowStock.map((p) => (
+                  <Link key={p._id} to={`/admin-dashboard/products/${p._id}/edit`}>
+                    <div className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
+                      <div className="min-w-0">
+                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-35">{p.name}</p>
+                        <p className="text-(--text-muted) text-[10px] capitalize">{p.category?.name}</p>
+                      </div>
+                      <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
+                        p.stock === 0
+                          ? "text-red-400 bg-red-900/15 border border-red-900/20"
+                          : "text-orange-400 bg-orange-900/15 border border-orange-900/20"
+                      }`}>
+                        {p.stock === 0 ? "OUT!" : `${p.stock} left`}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
