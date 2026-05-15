@@ -27,8 +27,8 @@ export default function Cart() {
           <h2 className="font-display text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>Cart Is Empty</h2>
           <p className="text-sm opacity-50" style={{ color: "var(--text-muted)" }}>Abhi tak koi item add nahi kiya gaya.</p>
         </div>
-        <button 
-          onClick={() => navigate("/shop")} 
+        <button
+          onClick={() => navigate("/shop")}
           className="btn-gold px-8 py-3 rounded-full flex items-center gap-2 text-sm font-bold transition-transform active:scale-95"
         >
           Start Shopping
@@ -50,7 +50,7 @@ export default function Cart() {
               Shopping <span className="gold-text">Cart</span>
             </h1>
           </div>
-          <button 
+          <button
             onClick={clearCart}
             className="flex items-center gap-1.5 text-xs font-medium text-red-400/70 hover:text-red-400 transition-colors pb-1"
           >
@@ -59,7 +59,7 @@ export default function Cart() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+
           {/* ITEMS LIST */}
           <div className="lg:col-span-2 space-y-4">
             <AnimatePresence mode="popLayout">
@@ -70,33 +70,34 @@ export default function Cart() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="group relative flex gap-4 p-3 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors"
+                  className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-stretch"
                 >
-                  {/* IMAGE - Fixed Ratio for better fit */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5">
+                  {/* INDIVIDUAL DELETE BUTTON - Fixed positioning & improved visibility */}
+                  <button
+                    onClick={() => removeFromCart(item.cartId)}
+                    className="absolute top-3 right-3 p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
+                    title="Remove item"
+                  >
+                    <FiTrash2 size={18} />
+                  </button>
+
+                  {/* IMAGE - Fixed square container to fit perfectly */}
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5 aspect-square">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
-                      className="w-full h-full object-cover" // Ensure image fills container without distortion
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
 
                   {/* DETAILS */}
-                  <div className="flex flex-col justify-between grow min-w-0 py-1">
-                    <div className="relative pr-8">
-                      <h3 className="text-sm sm:text-lg font-bold truncate pr-2" style={{ color: "var(--text-primary)" }}>
+                  <div className="flex flex-col justify-between grow min-w-0 pr-8">
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold truncate pr-2" style={{ color: "var(--text-primary)" }}>
                         {item.name}
                       </h3>
-                      
-                      {/* Individual Trash Button - Positioned consistently */}
-                      <button
-                        onClick={() => removeFromCart(item.cartId)}
-                        className="absolute top-0 right-0 p-1 text-white/20 hover:text-red-400 transition-colors"
-                      >
-                        <FiTrash2 size={18} />
-                      </button>
 
-                      <div className="flex flex-wrap gap-2 mt-2">
+                      <div className="flex flex-wrap gap-2 mt-1.5">
                         {item.size && (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
                             Size: {item.size}
@@ -110,9 +111,9 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center justify-between mt-4">
                       <div className="flex flex-col">
-                        <span className="text-base sm:text-xl font-bold gold-text">
+                        <span className="text-base sm:text-lg font-bold gold-text">
                           Rs. {item.price?.toLocaleString()}
                         </span>
                         {item.comparePrice > item.price && (
@@ -152,7 +153,7 @@ export default function Cart() {
           <div className="lg:col-span-1 lg:sticky lg:top-24">
             <div className="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-md shadow-2xl">
               <h3 className="text-lg font-bold mb-6 text-(--text-primary)">Summary</h3>
-              
+
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-sm opacity-60">
                   <span>Subtotal</span>
