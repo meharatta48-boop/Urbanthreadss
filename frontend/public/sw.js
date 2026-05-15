@@ -7,7 +7,7 @@ const CACHE_NAME = 'urban-thread-images-v1';
 const ASSETS_CACHE = 'urban-thread-assets-v1';
 const DYNAMIC_CACHE = 'urban-thread-dynamic-v1';
 const OFFLINE_CACHE = 'urban-thread-offline-v1';
-const NETWORK_TIMEOUT = 5000;
+const NETWORK_TIMEOUT = 10000;
 const MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
 
 // Critical assets to cache immediately
@@ -149,6 +149,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // 1. Google Fonts Fix (Opaque responses bypass)
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+    event.respondWith(
+      caches.match(request).then((cached) => cached || fetch(request))
+    );
+    return;
+  }
+
   // Handle different request types
   if (isImageRequest(request)) {
     event.respondWith(handleImageRequest(request));
@@ -209,47 +217,37 @@ async function handleImageRequest(request) {
 }
 
 async function handleAPIRequest(request) {
+  const cache = await caches.open(DYNAMIC_CACHE);
+
   try {
-    // Network first for API requests with short timeout
-    const networkResponse = await fetch(request, {
-      signal: AbortSignal.timeout(3000)
-    });
+    // 10 Seconds ka timeout (Render free tier k liye zaroori hai)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    if (networkResponse && networkResponse.status === 200) {
-      // Cache successful GET requests
+    const networkResponse = await fetch(request, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (networkResponse.ok) {
       if (request.method === 'GET') {
-        const responseToCache = networkResponse.clone();
-        const cache = await caches.open(DYNAMIC_CACHE);
-        await cache.put(request, responseToCache);
+        cache.put(request, networkResponse.clone()).catch(() => { });
       }
-
       return networkResponse;
     }
+
+    throw new Error("Server Error");
+
   } catch (error) {
-    console.log('[SW] API request failed, trying cache:', error);
+    console.warn('[SW] API Failed, checking cache...', error.message);
 
-    // Try cache for GET requests
-    if (request.method === 'GET') {
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        // Add header to indicate cached response
-        const headers = new Headers(cachedResponse.headers);
-        headers.set('X-Cached-By', 'service-worker');
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) return cachedResponse;
 
-        return new Response(cachedResponse.body, {
-          status: cachedResponse.status,
-          statusText: cachedResponse.statusText,
-          headers
-        });
-      }
-    }
-
-    // Return offline response for API errors
+    // AGAR KUCH NAHI MILA TO CRASH NAHI HONA - VALID RESPONSE DENA HAI
     return new Response(
       JSON.stringify({
-        error: 'Offline',
-        message: 'No internet connection',
-        cached: false
+        success: false,
+        message: "Backend is waking up (Render Sleep Mode). Please refresh in 10 seconds.",
+        is_sw_fallback: true
       }),
       {
         status: 503,
