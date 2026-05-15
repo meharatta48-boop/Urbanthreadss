@@ -70,27 +70,26 @@ export default function Cart() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-start sm:items-center"
+                  className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-center"
                 >
-                  {/* PRODUCT IMAGE CONTAINER */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 shrink-0 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center relative">
+                  {/* IMAGE - Fixed square box that perfectly fits the card height */}
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5 aspect-square">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
-                      /* Tip: Agar image cut rahi ho toh 'object-cover' ko badal kar 'object-contain p-1' kar dein */
                       className="w-full h-full object-cover object-center"
                     />
                   </div>
 
-                  {/* DETAILS PANEL */}
-                  <div className="flex flex-col justify-between grow min-w-0 min-h-24 sm:min-h-32 pr-8">
+                  {/* DETAILS */}
+                  <div className="flex flex-col justify-between grow min-w-0 h-24 sm:h-28 pr-10">
                     <div>
-                      {/* pr-8 ensures text never overlaps the delete icon */}
-                      <h3 className="text-sm sm:text-lg font-bold truncate pr-8" style={{ color: "var(--text-primary)" }}>
+                      {/* Added heavy right padding (pr-6) so text never touches the delete button */}
+                      <h3 className="text-sm sm:text-base font-bold truncate pr-6" style={{ color: "var(--text-primary)" }}>
                         {item.name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-2 mt-1.5">
+                      <div className="flex flex-wrap gap-2 mt-1">
                         {item.size && (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
                             Size: {item.size}
@@ -104,9 +103,9 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center justify-between mt-auto">
                       <div className="flex flex-col">
-                        <span className="text-base sm:text-xl font-bold gold-text">
+                        <span className="text-base sm:text-lg font-bold gold-text">
                           Rs. {item.price?.toLocaleString()}
                         </span>
                         {item.comparePrice > item.price && (
@@ -116,7 +115,7 @@ export default function Cart() {
                         )}
                       </div>
 
-                      {/* QUANTITY PICKER */}
+                      {/* QUANTITY */}
                       <div className="flex items-center bg-black/40 rounded-lg border border-white/10 p-0.5">
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
@@ -138,10 +137,10 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  {/* PERMANENT DELETE BUTTON (ALWAYS VISIBLE) */}
+                  {/* FIXED DELETE BUTTON - Always visible, no hover hidden effect */}
                   <button
                     onClick={() => removeFromCart(item.cartId)}
-                    className="absolute top-4 right-4 p-2 text-white/50 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
+                    className="absolute top-4 right-4 p-2 text-red-400/80 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
                     title="Remove item"
                   >
                     <FiTrash2 size={18} />
