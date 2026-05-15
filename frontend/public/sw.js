@@ -7,8 +7,10 @@ const CACHE_NAME = 'urban-thread-images-v1';
 const ASSETS_CACHE = 'urban-thread-assets-v1';
 const DYNAMIC_CACHE = 'urban-thread-dynamic-v1';
 const OFFLINE_CACHE = 'urban-thread-offline-v1';
-const NETWORK_TIMEOUT = 10000;
-const MAX_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
+const NETWORK_TIMEOUT = 10000; // API Timeout
+const NAV_TIMEOUT = 3000; // Navigation Timeout for faster shell loading
+const MAX_CACHE_ITEMS = 50;
+const MAX_DYNAMIC_ITEMS = 100;
 
 // Critical assets to cache immediately
 const CRITICAL_ASSETS = [
@@ -205,8 +207,8 @@ async function handleImageRequest(request) {
       const cache = await caches.open(CACHE_NAME);
       await cache.put(request, responseToCache);
 
-      // Check cache size and clean if necessary
-      await cleanCacheIfNeeded(CACHE_NAME);
+      // Fast cache limit
+      limitCacheSize(CACHE_NAME, MAX_CACHE_ITEMS);
     }
 
     return networkResponse;
@@ -259,9 +261,9 @@ async function handleAPIRequest(request) {
 
 async function handleNavigationRequest(request) {
   try {
-    // Network first for navigation
+    // Fast network first for navigation
     const networkResponse = await fetch(request, {
-      signal: AbortSignal.timeout(NETWORK_TIMEOUT)
+      signal: AbortSignal.timeout(NAV_TIMEOUT)
     });
 
     if (networkResponse && networkResponse.status === 200) {
@@ -305,30 +307,12 @@ async function handleGeneralRequest(request) {
   }
 }
 
-// Cache management
-async function cleanCacheIfNeeded(cacheName) {
-  const cache = await caches.open(cacheName);
+// Optimized Cache Management (Faster than byte calculation)
+async function limitCacheSize(name, max) {
+  const cache = await caches.open(name);
   const keys = await cache.keys();
-
-  // Estimate cache size (rough calculation)
-  let totalSize = 0;
-  for (const request of keys) {
-    const response = await cache.match(request);
-    if (response) {
-      const responseClone = response.clone();
-      const buffer = await responseClone.arrayBuffer();
-      totalSize += buffer.byteLength;
-    }
-  }
-
-  // If cache is too large, remove oldest entries
-  if (totalSize > MAX_CACHE_SIZE) {
-    console.log('[SW] Cache size exceeded, cleaning up');
-    const entriesToRemove = Math.ceil(keys.length * 0.2); // Remove 20%
-
-    for (let i = 0; i < entriesToRemove; i++) {
-      await cache.delete(keys[i]);
-    }
+  if (keys.length > max) {
+    await cache.delete(keys[0]);
   }
 }
 
@@ -474,8 +458,8 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'PERIODIC_CLEANUP') {
     event.waitUntil(
       Promise.all([
-        cleanCacheIfNeeded(CACHE_NAME),
-        cleanCacheIfNeeded(DYNAMIC_CACHE)
+        limitCacheSize(CACHE_NAME, MAX_CACHE_ITEMS),
+        limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS)
       ])
     );
   }
