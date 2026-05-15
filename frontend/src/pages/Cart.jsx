@@ -70,18 +70,9 @@ export default function Cart() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-stretch"
+                  className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-center"
                 >
-                  {/* INDIVIDUAL DELETE BUTTON - Fixed positioning & improved visibility */}
-                  <button
-                    onClick={() => removeFromCart(item.cartId)}
-                    className="absolute top-3 right-3 p-2 text-white/40 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
-                    title="Remove item"
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
-
-                  {/* IMAGE - Fixed square container to fit perfectly */}
+                  {/* IMAGE - Fixed square box that perfectly fits the card height */}
                   <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5 aspect-square">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
@@ -91,13 +82,14 @@ export default function Cart() {
                   </div>
 
                   {/* DETAILS */}
-                  <div className="flex flex-col justify-between grow min-w-0 pr-8">
+                  <div className="flex flex-col justify-between grow min-w-0 h-24 sm:h-28 pr-10">
                     <div>
-                      <h3 className="text-sm sm:text-base font-bold truncate pr-2" style={{ color: "var(--text-primary)" }}>
+                      {/* Added heavy right padding (pr-6) so text never touches the delete button */}
+                      <h3 className="text-sm sm:text-base font-bold truncate pr-6" style={{ color: "var(--text-primary)" }}>
                         {item.name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-2 mt-1.5">
+                      <div className="flex flex-wrap gap-2 mt-1">
                         {item.size && (
                           <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
                             Size: {item.size}
@@ -111,7 +103,7 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center justify-between mt-auto">
                       <div className="flex flex-col">
                         <span className="text-base sm:text-lg font-bold gold-text">
                           Rs. {item.price?.toLocaleString()}
@@ -144,6 +136,15 @@ export default function Cart() {
                       </div>
                     </div>
                   </div>
+
+                  {/* FIXED DELETE BUTTON - Always visible, no hover hidden effect */}
+                  <button
+                    onClick={() => removeFromCart(item.cartId)}
+                    className="absolute top-4 right-4 p-2 text-red-400/80 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
+                    title="Remove item"
+                  >
+                    <FiTrash2 size={18} />
+                  </button>
                 </motion.div>
               ))}
             </AnimatePresence>
