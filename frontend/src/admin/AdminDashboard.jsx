@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -7,45 +7,78 @@ import { toast } from "react-toastify";
 import {
   FiUsers, FiPackage, FiDollarSign, FiShoppingBag,
   FiTrendingUp, FiAlertTriangle, FiClock, FiCheckCircle,
-  FiTruck, FiPlus, FiEye, FiRefreshCw, FiXCircle,
-  FiArrowUp, FiArrowDown, FiBarChart2
+  FiPlus, FiRefreshCw, FiBarChart2, FiCopy, FiLayers, FiCalendar
 } from "react-icons/fi";
 
 /* ── Status config ── */
 const STATUS = {
-  pending:    { label: "Pending",    color: "#f59e0b" },
-  processing: { label: "Packing",    color: "#c9a84c" },
-  shipped:    { label: "Shipped",    color: "#818cf8" },
-  delivered:  { label: "Delivered",  color: "#4ade80" },
-  cancelled:  { label: "Cancelled",  color: "#f87171" },
+  pending: { label: "Pending", color: "#f59e0b" },
+  processing: { label: "Packing", color: "#c9a84c" },
+  shipped: { label: "Shipped", color: "#818cf8" },
+  delivered: { label: "Delivered", color: "#4ade80" },
+  cancelled: { label: "Cancelled", color: "#f87171" },
 };
 
-/* ── Mini bar chart (pure CSS) ── */
-function BarChart({ data, valueKey, labelKey, color = "#c9a84c" }) {
+/* ── Animation Variants ── */
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
+
+/* ── Mini bar chart (pure CSS with Gridlines) ── */
+function BarChart({ data = [], valueKey, labelKey, color = "#c9a84c" }) {
   const max = Math.max(...data.map((d) => d[valueKey] || 0), 1);
   return (
-    <div className="flex items-end gap-1.5 h-20">
-      {data.map((d, i) => {
-        const pct = Math.round(((d[valueKey] || 0) / max) * 100);
-        return (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1">
-            <div
-              className="w-full rounded-t-sm transition-all duration-700"
-              style={{ height: `${Math.max(pct, 2)}%`, background: color, opacity: 0.7 + (i / data.length) * 0.3 }}
-              title={`${d[labelKey]}: Rs. ${(d[valueKey] || 0).toLocaleString()}`}
-            />
-            <span className="text-[8px] text-(--text-muted) truncate w-full text-center">{d[labelKey]}</span>
-          </div>
-        );
-      })}
+    <div className="relative pt-4">
+      {/* Background Guide Lines */}
+      <div className="absolute inset-x-0 bottom-6 top-4 flex flex-col justify-between pointer-events-none opacity-5">
+        <div className="border-b border-(--text-primary) w-full" />
+        <div className="border-b border-(--text-primary) w-full" />
+        <div className="border-b border-(--text-primary) w-full" />
+      </div>
+
+      <div className="flex items-end gap-2 h-24 relative z-10">
+        {data.map((d, i) => {
+          const pct = Math.round(((d[valueKey] || 0) / max) * 100);
+          return (
+            <div key={d[labelKey] || i} className="flex-1 flex flex-col items-center gap-1.5 group">
+              <div className="relative w-full flex justify-center">
+                {/* Tooltip */}
+                <span className="absolute -top-7 scale-0 group-hover:scale-100 bg-(--bg-elevated) border border-(--border) text-(--text-primary) text-[10px] px-1.5 py-0.5 rounded font-mono transition-transform duration-200 shadow-xl z-20 whitespace-nowrap">
+                  Rs. {(d[valueKey] || 0).toLocaleString()}
+                </span>
+                <div
+                  className="w-full rounded-t-md transition-all duration-1000 ease-out group-hover:opacity-100"
+                  style={{
+                    height: `${Math.max(pct, 4)}%`,
+                    background: color,
+                    opacity: 0.75 + (i / data.length) * 0.25
+                  }}
+                />
+              </div>
+              <span className="text-[9px] text-(--text-muted) truncate w-full text-center font-medium">
+                {d[labelKey]}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
 /* ── Donut chart (pure SVG) ── */
-function DonutChart({ data }) {
+function DonutChart({ data = [] }) {
   const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const r = 40, cx = 50, cy = 50, stroke = 14;
+  const r = 38, cx = 50, cy = 50, stroke = 11;
   const circ = 2 * Math.PI * r;
 
   const donutSegments = data.reduce((acc, d) => {
@@ -61,26 +94,31 @@ function DonutChart({ data }) {
   }, []);
 
   return (
-    <div className="flex items-center gap-4">
-      <svg viewBox="0 0 100 100" className="w-24 h-24 shrink-0">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--bg-elevated)" strokeWidth={stroke} />
-        {donutSegments.map((d, i) => (
-          <circle key={i} cx={cx} cy={cy} r={r} fill="none"
-            stroke={d.color} strokeWidth={stroke}
-            strokeDasharray={`${d.dash} ${d.gap}`}
-            strokeDashoffset={-d.offset * circ}
-            strokeLinecap="butt"
-            style={{ transform: "rotate(-90deg)", transformOrigin: "50% 50%" }}
-          />
-        ))}
-        <text x={cx} y={cy + 4} textAnchor="middle" fill="currentColor" className="text-(--text-primary) text-base font-bold">{total}</text>
-      </svg>
-      <div className="space-y-1.5 min-w-0">
+    <div className="flex items-center justify-between gap-6 bg-(--bg-elevated)/30 p-4 rounded-xl border border-(--border)/40">
+      <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
+        <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--bg-elevated)" strokeWidth={stroke + 1} />
+          {donutSegments.map((d, i) => (
+            <circle key={d.label || i} cx={cx} cy={cy} r={r} fill="none"
+              stroke={d.color} strokeWidth={stroke}
+              strokeDasharray={`${d.dash} ${d.gap}`}
+              strokeDashoffset={-d.offset * circ}
+              strokeLinecap="round"
+              className="transition-all duration-500 hover:opacity-80 cursor-pointer"
+            />
+          ))}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-(--text-primary) text-lg font-bold font-display">{total}</span>
+          <span className="text-(--text-muted) text-[9px] uppercase tracking-wider">Orders</span>
+        </div>
+      </div>
+      <div className="flex-1 space-y-2 min-w-0">
         {data.map((d) => (
-          <div key={d.label} className="flex items-center gap-2 text-xs">
-            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: d.color }} />
-            <span className="text-(--text-muted)">{d.label}</span>
-            <span className="ml-auto font-bold" style={{ color: d.color }}>{d.value}</span>
+          <div key={d.label} className="flex items-center gap-2 text-xs group py-0.5 px-1.5 rounded-md hover:bg-(--bg-elevated) transition-colors">
+            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ background: d.color }} />
+            <span className="text-(--text-muted) truncate font-medium">{d.label}</span>
+            <span className="ml-auto font-bold font-mono" style={{ color: d.color }}>{d.value}</span>
           </div>
         ))}
       </div>
@@ -90,11 +128,12 @@ function DonutChart({ data }) {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [data, setData]     = useState(null);
+  const [data, setData] = useState(null);
   const [orders, setOrders] = useState([]);
   const [lowStock, setLowStock] = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [refresh, setRefresh]   = useState(new Date());
+  const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(new Date());
+  const [timeRange, setTimeRange] = useState("7d"); // Custom State for filter analytics visually
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -104,9 +143,9 @@ export default function Dashboard() {
         api.get("/orders"),
         api.get("/products"),
       ]);
-      setData(advRes.data.data);
-      setOrders((ordersRes.data.orders || []).slice(0, 8));
-      const prods = prodRes.data.data || [];
+      setData(advRes?.data?.data || null);
+      setOrders((ordersRes?.data?.orders || []).slice(0, 8));
+      const prods = prodRes?.data?.data || [];
       setLowStock(prods.filter((p) => p.stock <= 5).slice(0, 6));
       setRefresh(new Date());
     } catch (e) {
@@ -119,7 +158,12 @@ export default function Dashboard() {
 
   useEffect(() => { load(); }, [load]);
 
-  const hour     = new Date().getHours();
+  const copyToClipboard = (id) => {
+    navigator.clipboard.writeText(id);
+    toast.success(`ID #${id.slice(-8).toUpperCase()} copied!`, { autoClose: 1500 });
+  };
+
+  const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
 
   const cards = data ? [
@@ -152,126 +196,149 @@ export default function Dashboard() {
       label: "Total Users",
       val: data.totalUsers || 0,
       sub: "Registered customers",
-      sub2: " ",
+      sub2: "Live tracking dashboard",
       Icon: FiUsers, color: "#c084fc", bg: "rgba(192,132,252,0.12)",
       link: "/admin-dashboard/users",
     },
   ] : [];
 
   const donutData = data ? [
-    { label: "Pending",   value: data.ordersByStatus?.pending    || 0, color: "#f59e0b" },
-    { label: "Packing",   value: data.ordersByStatus?.processing || 0, color: "#c9a84c" },
-    { label: "Shipped",   value: data.ordersByStatus?.shipped    || 0, color: "#818cf8" },
-    { label: "Delivered", value: data.ordersByStatus?.delivered  || 0, color: "#4ade80" },
-    { label: "Cancelled", value: data.ordersByStatus?.cancelled  || 0, color: "#f87171" },
+    { label: "Pending", value: data.ordersByStatus?.pending || 0, color: "#f59e0b" },
+    { label: "Packing", value: data.ordersByStatus?.processing || 0, color: "#c9a84c" },
+    { label: "Shipped", value: data.ordersByStatus?.shipped || 0, color: "#818cf8" },
+    { label: "Delivered", value: data.ordersByStatus?.delivered || 0, color: "#4ade80" },
+    { label: "Cancelled", value: data.ordersByStatus?.cancelled || 0, color: "#f87171" },
   ] : [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-400 mx-auto p-1 sm:p-4 selection:bg-(--gold) selection:text-black">
 
-      {/* HEADER */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      {/* HEADER SECTION */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-(--bg-card) border border-(--border) p-6 rounded-2xl shadow-sm">
         <div>
-          <p className="section-label mb-1">{greeting} 👋</p>
-          <h2 className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary)">
+          <p className="text-[11px] font-bold tracking-wider text-(--gold) uppercase mb-0.5">{greeting} 👋</p>
+          <h2 className="font-display text-2xl sm:text-3xl font-black text-(--text-primary) tracking-tight">
             {user?.name?.split(" ")[0] || "Admin"} Dashboard
           </h2>
-          <p className="text-(--text-muted) text-xs mt-1">Last updated: {refresh.toLocaleTimeString("en-PK")}</p>
+          <p className="text-(--text-muted) text-[11px] mt-1 flex items-center gap-1.5 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Last updated: {refresh.toLocaleTimeString("en-PK")}
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link to="/admin-dashboard/products/new" className="btn-gold text-sm" style={{ padding: "10px 18px", fontSize: "0.82rem" }}>
-            <FiPlus size={13} /> Add Product
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Link to="/admin-dashboard/products/new" className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-(--gold) hover:brightness-110 active:scale-95 text-black font-semibold text-xs px-4 py-3 rounded-xl shadow-md transition-all">
+            <FiPlus size={14} strokeWidth={3} /> Add Product
           </Link>
           <button onClick={load} disabled={loading}
-            className="flex items-center gap-2 text-xs text-(--text-muted) border border-(--border) px-3 py-2.5 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all disabled:opacity-40">
+            className="flex items-center justify-center gap-2 text-xs font-medium text-(--text-muted) bg-(--bg-elevated) border border-(--border) px-4 py-3 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all disabled:opacity-40">
             <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh
           </button>
         </div>
       </div>
 
-      {/* PENDING BANNER */}
-      {data && (data.ordersByStatus?.pending || 0) > 0 && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-[rgba(245,158,11,0.06)] border border-[#f59e0b]/20 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(245,158,11,0.12)] flex items-center justify-center">
-              <FiClock size={16} className="text-[#f59e0b]" />
+      {/* PENDING BANNER WITH ANK-BLINK INTERACTION */}
+      <AnimatePresence>
+        {data && (data.ordersByStatus?.pending || 0) > 0 && (
+          <motion.div initial={{ opacity: 0, height: 0, y: -10 }} animate={{ opacity: 1, height: "auto", y: 0 }} exit={{ opacity: 0, height: 0 }}
+            className="bg-linear-to-r from-[rgba(245,158,11,0.08)] to-[rgba(245,158,11,0.02)] border border-[#f59e0b]/25 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 flex-wrap shadow-sm">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-[#f59e0b]/15 flex items-center justify-center shadow-inner shrink-0">
+                <FiClock size={18} className="text-[#f59e0b] animate-pulse" />
+              </div>
+              <div>
+                <p className="text-[#f59e0b] font-extrabold text-sm tracking-wide">
+                  ⚡ {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""} — Process karo!
+                </p>
+                <p className="text-[#f59e0b]/70 text-xs mt-0.5">Customer queue me wait kar raha hai.</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[#f59e0b] font-bold text-sm">
-                ⚡ {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""} — Process karo!
-              </p>
-              <p className="text-[#f59e0b]/50 text-xs">Customer wait kar raha hai</p>
-            </div>
-          </div>
-          <Link to="/admin-dashboard/orders"
-            className="text-xs font-semibold px-4 py-2 rounded-xl"
-            style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.2)" }}>
-            Orders Dekho →
-          </Link>
-        </motion.div>
-      )}
+            <Link to="/admin-dashboard/orders"
+              className="text-xs font-bold px-4 py-2.5 rounded-xl transition-transform active:scale-95 shadow-sm"
+              style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)" }}>
+              Orders Dekho →
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* STAT CARDS */}
+      {/* STAT CARDS SECTION */}
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-32 animate-pulse" />
+            <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-36 animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {cards.map(({ label, val, sub, sub2, Icon: CIcon, color, bg, link, urgent }, i) => (
-            <motion.div key={label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-              <Link to={link} className="block">
-                <div className={`bg-(--bg-card) border rounded-2xl p-5 hover:border-(--border-light) transition-all group h-full ${urgent ? "border-[#f59e0b]/30" : "border-(--border)"}`}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: bg, color }}>
-                      <CIcon size={17} />
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {cards.map((card) => {
+            const { label, val, sub, sub2, Icon, color, bg, link, urgent } = card;
+            return (
+              <motion.div key={label} variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }}>
+                <Link to={link} className="block h-full">
+                  <div className={`bg-(--bg-card) border rounded-2xl p-5 hover:border-(--border-light) hover:shadow-md transition-all h-full relative overflow-hidden flex flex-col justify-between ${urgent ? "border-[#f59e0b]/40 shadow-[0_0_15px_rgba(245,158,11,0.03)]" : "border-(--border)"}`}>
+                    <div>
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="w-11 h-11 rounded-xl flex items-center justify-center shadow-sm" style={{ background: bg, color }}>
+                          <Icon size={19} />
+                        </div>
+                        {urgent && <span className="text-[8px] font-black tracking-widest text-[#f59e0b] bg-[#f59e0b]/10 border border-[#f59e0b]/25 px-2 py-0.5 rounded-full animate-bounce">URGENT</span>}
+                      </div>
+                      <div className="font-display text-2xl font-black text-(--text-primary) tracking-tight font-mono">{val}</div>
+                      <div className="text-(--text-muted) text-[9px] font-bold mt-1 uppercase tracking-wider">{label}</div>
                     </div>
-                    {urgent && <span className="text-[9px] font-bold text-[#f59e0b] bg-[rgba(245,158,11,0.1)] border border-[#f59e0b]/20 px-1.5 py-0.5 rounded">URGENT</span>}
+                    <div className="mt-4 pt-3 border-t border-(--border)/40">
+                      <div className="text-(--text-muted)/70 text-[10px] truncate font-medium">{sub}</div>
+                      <div className="text-(--gold) text-[10px] font-bold mt-0.5 truncate">{sub2}</div>
+                    </div>
                   </div>
-                  <div className="font-display text-xl sm:text-2xl font-bold text-(--text-primary)">{val}</div>
-                  <div className="text-(--text-muted) text-[10px] mt-1 uppercase tracking-wider">{label}</div>
-                  <div className="text-(--text-muted)/60 text-[10px] mt-0.5">{sub}</div>
-                  <div className="text-(--gold) text-[10px] mt-0.5">{sub2}</div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       )}
 
-      {/* CHARTS ROW */}
+      {/* CHARTS GRAPHICAL ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
         {/* WEEKLY REVENUE CHART */}
-        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
-              <FiBarChart2 size={14} className="text-(--gold)" /> 7-Day Revenue (Delivered)
-            </h3>
+        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+          <div>
+            <div className="flex items-center justify-between border-b border-(--border)/50 pb-3 mb-4">
+              <h3 className="text-(--text-primary) font-bold text-sm flex items-center gap-2">
+                <FiBarChart2 size={15} className="text-(--gold)" /> 7-Day Revenue (Delivered Only)
+              </h3>
+              {/* Advance Filter Mock Interface */}
+              <div className="flex bg-(--bg-elevated) p-0.5 rounded-lg border border-(--border) text-[10px] font-bold">
+                {["7d", "30d", "1y"].map((t) => (
+                  <button key={t} onClick={() => setTimeRange(t)} className={`px-2 py-1 rounded-md uppercase transition-all ${timeRange === t ? "bg-(--gold) text-black" : "text-(--text-muted)"}`}>{t}</button>
+                ))}
+              </div>
+            </div>
+            {data?.last7Days ? (
+              <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="var(--gold)" />
+            ) : (
+              <div className="h-24 bg-(--bg-elevated) rounded-xl animate-pulse" />
+            )}
           </div>
-          {data?.last7Days ? (
-            <BarChart data={data.last7Days} valueKey="revenue" labelKey="date" color="var(--gold)" />
-          ) : (
-            <div className="h-20 bg-(--bg-elevated) rounded-xl animate-pulse" />
-          )}
-          <div className="mt-3 flex gap-4 text-xs text-(--text-muted)">
-            <span>Orders this week: <span className="text-(--text-primary) font-bold">{data?.last7Days?.reduce((s, d) => s + d.orders, 0) || 0}</span></span>
-            <span>Revenue: <span className="text-(--gold) font-bold">Rs. {(data?.last7Days?.reduce((s, d) => s + d.revenue, 0) || 0).toLocaleString()}</span></span>
+          <div className="mt-4 pt-3 border-t border-(--border)/40 flex items-center justify-between text-xs text-(--text-muted) font-medium font-mono">
+            <span>Orders: <span className="text-(--text-primary) font-bold">{data?.last7Days?.reduce((s, d) => s + d.orders, 0) || 0} items</span></span>
+            <span>Total: <span className="text-(--gold) font-black">Rs. {(data?.last7Days?.reduce((s, d) => s + d.revenue, 0) || 0).toLocaleString()}</span></span>
           </div>
         </div>
 
         {/* ORDER STATUS DONUT */}
-        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5">
-          <h3 className="text-(--text-primary) font-semibold text-sm mb-4 flex items-center gap-2">
-            <FiTrendingUp size={14} className="text-(--gold)" /> Order Status
-          </h3>
-          {data ? <DonutChart data={donutData} /> : <div className="h-24 bg-(--bg-elevated) rounded-xl animate-pulse" />}
+        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+          <div>
+            <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+              <FiLayers size={14} className="text-(--gold)" /> Order Lifecycle Distribution
+            </h3>
+            {data ? <DonutChart data={donutData} /> : <div className="h-28 bg-(--bg-elevated) rounded-xl animate-pulse" />}
+          </div>
           {data && (
-            <div className="mt-3 pt-3 border-t border-(--border) text-xs text-(--text-muted)">
-              Conversion rate: <span className="text-[#4ade80] font-bold">{data.conversionRate || 0}%</span>
+            <div className="mt-3 pt-3 border-t border-(--border)/40 flex items-center justify-between text-xs text-(--text-muted)">
+              <span>Overall Delivery Rate:</span>
+              <span className="text-[#4ade80] font-black font-mono bg-[#4ade80]/10 border border-[#4ade80]/20 px-2 py-0.5 rounded-md">{data.conversionRate || 0}%</span>
             </div>
           )}
         </div>
@@ -279,97 +346,109 @@ export default function Dashboard() {
 
       {/* MONTHLY REVENUE CHART */}
       {data?.last6Months && (
-        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5">
-          <h3 className="text-(--text-primary) font-semibold text-sm mb-4 flex items-center gap-2">
-            <FiTrendingUp size={14} className="text-(--gold)" /> 6-Month Revenue Trend (Delivered Orders Only)
+        <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+          <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+            <FiTrendingUp size={15} className="text-[#818cf8]" /> 6-Month Revenue Trend Analytics
           </h3>
           <BarChart data={data.last6Months} valueKey="revenue" labelKey="month" color="#818cf8" />
         </div>
       )}
 
-      {/* BOTTOM ROW */}
+      {/* BOTTOM ACTIONABLE TABLES ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-        {/* RECENT ORDERS */}
-        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between">
-            <h3 className="font-display text-base font-bold text-(--text-primary) flex items-center gap-2">
-              <FiShoppingBag className="text-(--gold)" size={15} /> Recent Orders
-            </h3>
-            <Link to="/admin-dashboard/orders" className="text-xs text-(--text-muted) hover:text-(--gold) transition-colors">
-              Sab dekho →
-            </Link>
+        {/* RECENT ORDERS COMPONENT */}
+        <div className="xl:col-span-2 bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between bg-(--bg-elevated)/10">
+              <h3 className="font-display text-sm font-bold text-(--text-primary) flex items-center gap-2">
+                <FiShoppingBag className="text-(--gold)" size={15} /> Recent Dynamic Orders
+              </h3>
+              <Link to="/admin-dashboard/orders" className="text-[11px] font-bold text-(--text-muted) hover:text-(--gold) transition-colors">
+                Sab dekho →
+              </Link>
+            </div>
+            {loading ? (
+              <div className="p-12 text-center text-(--text-muted) flex items-center justify-center gap-2 font-medium text-xs">
+                <div className="w-4 h-4 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
+                Loading logs...
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="p-12 text-center text-(--text-muted)">
+                <FiShoppingBag size={32} className="mx-auto mb-2 opacity-20" />
+                <p className="text-xs font-medium">Koi order nahi mila abhi tak</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-(--border)/50">
+                {orders.map((order) => {
+                  const st = STATUS[order.orderStatus] || STATUS.pending;
+                  return (
+                    <div key={order._id} className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated)/40 transition-colors group">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-(--border)/20"
+                          style={{ background: `${st.color}10`, color: st.color }}>
+                          <FiShoppingBag size={14} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => copyToClipboard(order._id)}
+                              className="text-(--text-primary) text-xs font-bold font-mono hover:text-(--gold) flex items-center gap-1 group/btn"
+                              title="Click to copy ID"
+                            >
+                              #{order._id.slice(-8).toUpperCase()}
+                              <FiCopy size={10} className="opacity-0 group-hover/btn:opacity-100 text-(--text-muted)" />
+                            </button>
+                            <span className="text-(--text-muted) text-xs truncate max-w-27.5">
+                              · {order.user?.name || order.guestInfo?.name || "Guest"}
+                            </span>
+                          </div>
+                          <p className="text-(--text-muted)/60 text-[10px] mt-0.5 font-medium flex items-center gap-1">
+                            <FiCalendar size={10} />
+                            {new Date(order.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}
+                            <span>· {order.orderItems?.length || 0} items</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-(--text-primary) font-black font-mono text-xs hidden sm:block">
+                          Rs. {order.totalPrice?.toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg border shadow-inner"
+                          style={{ color: st.color, background: `${st.color}10`, borderColor: `${st.color}25` }}>
+                          {st.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
-          {loading ? (
-            <div className="p-8 text-center text-(--text-muted) flex items-center justify-center gap-2">
-              <div className="w-5 h-5 border-2 border-(--gold) border-t-transparent rounded-full animate-spin" />
-              Loading...
-            </div>
-          ) : orders.length === 0 ? (
-            <div className="p-10 text-center text-(--text-muted)">
-              <FiShoppingBag size={28} className="mx-auto mb-2 opacity-30" />
-              <p className="text-sm">Koi order nahi abhi tak</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-(--border)">
-              {orders.map((order) => {
-                const st = STATUS[order.orderStatus] || STATUS.pending;
-                return (
-                  <div key={order._id} className="flex items-center justify-between px-5 py-3.5 hover:bg-(--bg-elevated) transition-colors">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ background: `${st.color}15`, color: st.color }}>
-                        <FiShoppingBag size={13} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-(--text-primary) text-xs font-medium">
-                          #{order._id.slice(-8).toUpperCase()}
-                          {" "}<span className="text-(--text-muted) font-normal">{order.user?.name || order.guestInfo?.name || "Guest"}</span>
-                        </p>
-                        <p className="text-(--text-muted)/60 text-[10px] mt-0.5">
-                          {new Date(order.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "short" })}
-                          {" · "}{order.orderItems?.length || 0} items
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="gold-text font-bold font-display text-sm hidden sm:block">
-                        Rs. {order.totalPrice?.toLocaleString()}
-                      </span>
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                        style={{ color: st.color, background: `${st.color}15`, border: `1px solid ${st.color}30` }}>
-                        {st.label}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
 
-        {/* RIGHT COLUMN */}
+        {/* RIGHT SIDEBAR COLUMN */}
         <div className="space-y-5">
 
-          {/* TOP PRODUCTS */}
+          {/* TOP SELLING PRODUCTS */}
           {data?.topProducts?.length > 0 && (
-            <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-(--border)">
-                <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
-                  <FiTrendingUp size={13} className="text-(--gold)" /> Top Selling
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+              <div className="px-5 py-4 border-b border-(--border) bg-(--bg-elevated)/10">
+                <h3 className="text-(--text-primary) font-bold text-sm flex items-center gap-2">
+                  <FiTrendingUp size={14} className="text-(--gold)" /> Top Performing Products
                 </h3>
               </div>
-              <div className="divide-y divide-(--border)">
+              <div className="divide-y divide-(--border)/50">
                 {data.topProducts.map((p, i) => (
-                  <div key={p.id} className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
+                  <div key={p.id || i} className="flex items-center justify-between px-5 py-3.5 hover:bg-(--bg-elevated)/40 transition-colors">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-(--text-muted) text-xs font-bold w-5 shrink-0">#{i + 1}</span>
+                      <span className="text-(--text-muted) text-[11px] font-black w-5 font-mono">0{i + 1}</span>
                       <div className="min-w-0">
-                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-32.5">{p.name}</p>
-                        <p className="text-(--text-muted) text-[10px]">{p.qty} sold</p>
+                        <p className="text-(--text-primary) text-xs font-semibold truncate max-w-35">{p.name}</p>
+                        <p className="text-(--text-muted) text-[10px] font-mono mt-0.5">{p.qty} items units sold</p>
                       </div>
                     </div>
-                    <span className="text-(--gold) text-xs font-bold whitespace-nowrap">
+                    <span className="text-(--gold) text-xs font-black font-mono bg-(--gold)/5 border border-(--gold)/10 px-2 py-0.5 rounded-md">
                       Rs. {(p.revenue || 0).toLocaleString()}
                     </span>
                   </div>
@@ -378,34 +457,33 @@ export default function Dashboard() {
             </div>
           )}
 
-          {/* LOW STOCK */}
-          <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between">
-              <h3 className="text-(--text-primary) font-semibold text-sm flex items-center gap-2">
-                <FiAlertTriangle size={13} className="text-[#f59e0b]" /> Low Stock
+          {/* CRITICAL LOW STOCK MONITOR */}
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between bg-(--bg-elevated)/10">
+              <h3 className="text-(--text-primary) font-bold text-sm flex items-center gap-2">
+                <FiAlertTriangle size={14} className="text-[#f59e0b]" /> Inventory Stock Tracker
               </h3>
-              <span className="text-xs text-[#f59e0b] font-bold">{lowStock.length} items</span>
+              <span className="text-[10px] text-[#f59e0b] font-black bg-[#f59e0b]/10 px-2 py-0.5 rounded-md border border-[#f59e0b]/20 font-mono">{lowStock.length} Alerts</span>
             </div>
             {lowStock.length === 0 ? (
-              <div className="p-6 text-center text-(--text-muted)">
-                <FiCheckCircle size={24} className="mx-auto mb-2 text-green-500/40" />
-                <p className="text-xs">Sab stock theek hai 👍</p>
+              <div className="p-8 text-center text-(--text-muted)">
+                <FiCheckCircle size={26} className="mx-auto mb-2 text-green-400 opacity-60" />
+                <p className="text-xs font-medium">Sab stock absolutely perfect hai 👍</p>
               </div>
             ) : (
-              <div className="divide-y divide-(--border)">
+              <div className="divide-y divide-(--border)/50">
                 {lowStock.map((p) => (
-                  <Link key={p._id} to={`/admin-dashboard/products/${p._id}/edit`}>
-                    <div className="flex items-center justify-between px-5 py-3 hover:bg-(--bg-elevated) transition-colors">
+                  <Link key={p._id} to={`/admin-dashboard/products/${p._id}/edit`} className="block">
+                    <div className="flex items-center justify-between px-5 py-3.5 hover:bg-(--bg-elevated)/40 transition-colors group">
                       <div className="min-w-0">
-                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-35">{p.name}</p>
-                        <p className="text-(--text-muted) text-[10px] capitalize">{p.category?.name}</p>
+                        <p className="text-(--text-primary) text-xs font-medium truncate max-w-37.5 group-hover:text-(--gold) transition-colors">{p.name}</p>
+                        <p className="text-(--text-muted) text-[10px] capitalize mt-0.5 font-mono">{p.category?.name || "General"}</p>
                       </div>
-                      <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
-                        p.stock === 0
-                          ? "text-red-400 bg-red-900/15 border border-red-900/20"
-                          : "text-orange-400 bg-orange-900/15 border border-orange-900/20"
-                      }`}>
-                        {p.stock === 0 ? "OUT!" : `${p.stock} left`}
+                      <span className={`text-[10px] font-black font-mono px-2 py-1 rounded-lg border ${p.stock === 0
+                          ? "text-red-400 bg-red-950/20 border-red-900/30 shadow-sm"
+                          : "text-orange-400 bg-orange-950/20 border-orange-900/30 shadow-sm"
+                        }`}>
+                        {p.stock === 0 ? "OUT OF STOCK" : `${p.stock} Left`}
                       </span>
                     </div>
                   </Link>
@@ -413,6 +491,7 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+
         </div>
       </div>
     </div>
