@@ -260,50 +260,38 @@ async function handleAPIRequest(request) {
 }
 
 async function handleNavigationRequest(request) {
-  try {
-    // Fast network first for navigation
-    const networkResponse = await fetch(request, {
-      signal: AbortSignal.timeout(NAV_TIMEOUT)
-    });
-
+  const cachedResponse = await caches.match(request);
+  
+  // Stale-While-Revalidate for navigation (Immediate load from cache, update in background)
+  const networkFetch = fetch(request, {
+    signal: AbortSignal.timeout(NAV_TIMEOUT)
+  }).then(async (networkResponse) => {
     if (networkResponse && networkResponse.status === 200) {
-      // Cache successful responses
-      const responseToCache = networkResponse.clone();
       const cache = await caches.open(ASSETS_CACHE);
-      await cache.put(request, responseToCache);
-
-      return networkResponse;
+      await cache.put(request, networkResponse.clone());
     }
-  } catch (error) {
-    console.log('[SW] Navigation request failed, trying cache:', error);
-
-    // Try cache
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-
-    // Return offline page
+    return networkResponse;
+  }).catch(() => {
     return caches.match('/offline');
-  }
+  });
+
+  return cachedResponse || networkFetch;
 }
 
 async function handleGeneralRequest(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) return cachedResponse;
+
   try {
-    // Network first with fallback to cache
     const networkResponse = await fetch(request);
-
     if (networkResponse && networkResponse.status === 200) {
-      // Cache successful responses
-      const responseToCache = networkResponse.clone();
       const cache = await caches.open(DYNAMIC_CACHE);
-      await cache.put(request, responseToCache);
-
-      return networkResponse;
+      await cache.put(request, networkResponse.clone());
+      limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS);
     }
-  } catch (error) {
-    console.log('[SW] General request failed, trying cache:', error);
-    return caches.match(request);
+    return networkResponse;
+  } catch {
+    return null;
   }
 }
 
