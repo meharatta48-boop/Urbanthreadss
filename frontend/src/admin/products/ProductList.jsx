@@ -271,7 +271,7 @@ export default function ProductList() {
                                 <img
                                   src={getImageUrl(p.images[0])}
                                   alt={p.name}
-                                  className="w-full h-full object-cover"
+                                  className="w-full h-full object-contain"
                                   onError={(e) => { e.target.style.display = "none"; }}
                                 />
                               ) : (

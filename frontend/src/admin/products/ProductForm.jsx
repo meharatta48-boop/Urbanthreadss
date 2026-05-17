@@ -325,7 +325,7 @@ export default function ProductForm() {
                     <img
                       src={getImageUrl(img)}
                       alt={`existing-${i}`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                     {/* MAIN BADGE */}
                     {i === 0 && (
@@ -356,7 +356,7 @@ export default function ProductForm() {
                     exit={{ opacity: 0, scale: 0.8 }}
                     className="relative group aspect-square rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card)"
                   >
-                    <img src={url} alt={`new-${i}`} className="w-full h-full object-cover" />
+                    <img src={url} alt={`new-${i}`} className="w-full h-full object-contain" />
                     <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium">
                       New
                     </span>

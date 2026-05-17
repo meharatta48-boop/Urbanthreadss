@@ -525,7 +525,7 @@ export default function OrderList() {
                                               <div className="flex items-center gap-2">
                                                 <div className="w-8 h-8 rounded bg-(--bg-deep) border border-(--border) shrink-0 overflow-hidden">
                                                   {item.image ? (
-                                                    <img src={`${SERVER_URL}${item.image}`} alt={item.name} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
+                                                    <img src={`${SERVER_URL}${item.image}`} alt={item.name} className="w-full h-full object-contain" onError={(e) => { e.target.style.display = "none"; }} />
                                                   ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-(--text-muted)"><FiPackage size={12} /></div>
                                                   )}
