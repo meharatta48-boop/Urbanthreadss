@@ -67,7 +67,7 @@ export default function AboutUs() {
     return (
         <div className="min-h-screen overflow-hidden pb-20 transition-colors duration-500" style={{ backgroundColor: 'var(--bg-deep)' }}>
             {/* ── HERO BANNER IMAGE ── */}
-            <section className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
+            <section className="relative w-full h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
                 {settings.aboutUsHeroImage ? (
                     <>
                         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -81,7 +81,7 @@ export default function AboutUs() {
                         <div
                             className="absolute inset-0 z-0 overflow-hidden"
                             style={{
-                                background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7))'
+                                background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2), rgba(255,255,255,1))'
                             }}
                         />
                     </>
