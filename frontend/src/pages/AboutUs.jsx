@@ -24,11 +24,11 @@ export default function AboutUs() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         try {
             // Simulate form submission - replace with actual API call
             await new Promise(resolve => setTimeout(resolve, 1500));
-            
+
             toast.success("Message sent successfully! We'll get back to you soon.");
             setFormData({ name: '', email: '', message: '' });
             setShowForm(false);
@@ -75,7 +75,7 @@ export default function AboutUs() {
                             />
                         </div>
                         {/* Adaptive Overlay */}
-                        <div 
+                        <div
                             className="absolute inset-0 z-0 overflow-hidden"
                             style={{
                                 background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2), rgba(255,255,255,1))'
@@ -83,7 +83,7 @@ export default function AboutUs() {
                         />
                     </>
                 ) : (
-                    <div 
+                    <div
                         className="absolute inset-0 z-0 overflow-hidden"
                         style={{
                             background: 'linear-gradient(to bottom right, var(--bg-surface), var(--bg-deep))'
@@ -97,7 +97,7 @@ export default function AboutUs() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut" }}
                     >
-                        <span 
+                        <span
                             className="inline-block px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-6 backdrop-blur-sm"
                             style={{
                                 borderColor: 'var(--gold)',
@@ -106,15 +106,15 @@ export default function AboutUs() {
                                 color: 'var(--gold)'
                             }}
                         >
-                            {settings.brandYear ? `Established ${settings.brandYear}` : "Established 2020"}
+                            {settings.brandYear ? `Established ${settings.brandYear}` : "Established 2025"}
                         </span>
-                        <h1 
+                        <h1
                             className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 leading-[1.1]"
                             style={{ color: "var(--text-primary)" }}
                         >
                             {settings.aboutUsHeroTitle || "About Us"}
                         </h1>
-                        <p 
+                        <p
                             className="text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-light"
                             style={{ color: "var(--text-secondary)" }}
                         >
@@ -312,8 +312,8 @@ export default function AboutUs() {
                                         <FiMail className="text-(--gold)" /> Email Us
                                     </h3>
                                     <p className="text-(--text-muted) mb-2">Drop us a line anytime</p>
-                                    <a href={`mailto:${settings?.email || 'info@urbanthread.pk'}`} 
-                                       className="text-(--gold) hover:text-(--gold-light) transition-colors">
+                                    <a href={`mailto:${settings?.email || 'info@urbanthread.pk'}`}
+                                        className="text-(--gold) hover:text-(--gold-light) transition-colors">
                                         {settings?.email || 'info@urbanthread.pk'}
                                     </a>
                                 </div>
@@ -323,9 +323,9 @@ export default function AboutUs() {
                                         <FiMessageSquare className="text-(--gold)" /> WhatsApp
                                     </h3>
                                     <p className="text-(--text-muted) mb-2">Chat with us instantly</p>
-                                    <a href={`https://wa.me/${settings?.whatsapp || '923001234567'}`} 
-                                       target="_blank" rel="noopener noreferrer"
-                                       className="text-(--gold) hover:text-(--gold-light) transition-colors">
+                                    <a href={`https://wa.me/${settings?.whatsapp || '923001234567'}`}
+                                        target="_blank" rel="noopener noreferrer"
+                                        className="text-(--gold) hover:text-(--gold-light) transition-colors">
                                         +{settings?.whatsapp || '923001234567'}
                                     </a>
                                 </div>
