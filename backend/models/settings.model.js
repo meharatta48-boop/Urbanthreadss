@@ -76,10 +76,12 @@ const siteSettingsSchema = new mongoose.Schema(
     founder1Role:  { type: String, default: "Co-Founder" },
     founder1Bio:   { type: String, default: "" },
     founder1Image: { type: String, default: "" },
+    founder1Insta: { type: String, default: "#" },
     founder2Name:  { type: String, default: "" },
     founder2Role:  { type: String, default: "Co-Founder" },
     founder2Bio:   { type: String, default: "" },
     founder2Image: { type: String, default: "" },
+    founder2Insta: { type: String, default: "#" },
 
     // ── Business Info ──
     phone:    { type: String, default: "+92 300 1234567" },

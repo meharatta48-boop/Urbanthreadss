@@ -52,13 +52,15 @@ export default function AboutUs() {
             name: settings.founder1Name || "Founder One",
             role: settings.founder1Role || "Co-Founder",
             bio: settings.founder1Bio || "Passionate about bringing authentic Pakistani streetwear to the global stage.",
-            image: settings.founder1Image
+            image: settings.founder1Image,
+            insta: settings.founder1Insta || "#"
         },
         {
             name: settings.founder2Name || "Founder Two",
             role: settings.founder2Role || "Co-Founder",
             bio: settings.founder2Bio || "Dedicated to quality craftsmanship and innovative urban designs.",
-            image: settings.founder2Image
+            image: settings.founder2Image,
+            insta: settings.founder2Insta || "#"
         }
     ];
 
@@ -166,9 +168,9 @@ export default function AboutUs() {
 
                                     {/* Social Overlay */}
                                     <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex gap-2 sm:gap-3">
-                                        <button className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
+                                        <a href={founder.insta} target="_blank" rel="noopener noreferrer" className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
                                             <FiInstagram size={16} className="sm:w-4.5" />
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
 

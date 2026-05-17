@@ -2222,6 +2222,10 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
               <textarea value={form.founder1Bio || ""} onChange={e => set("founder1Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 1 journey..." />
             </div>
             <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Instagram Profile Link</label>
+              <input value={form.founder1Insta || ""} onChange={e => set("founder1Insta", e.target.value)} className="lux-input w-full" placeholder="e.g. https://instagram.com/username" />
+            </div>
+            <div>
               <label className="text-(--text-muted) text-xs mb-1 block">Profile Image</label>
               <div className="flex gap-4 items-center">
                 {form.founder1Image ? (
@@ -2260,6 +2264,10 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
             <div>
               <label className="text-(--text-muted) text-xs mb-1 block">Short Bio</label>
               <textarea value={form.founder2Bio || ""} onChange={e => set("founder2Bio", e.target.value)} className="lux-input w-full" rows={3} placeholder="Founder 2 journey..." />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Instagram Profile Link</label>
+              <input value={form.founder2Insta || ""} onChange={e => set("founder2Insta", e.target.value)} className="lux-input w-full" placeholder="e.g. https://instagram.com/username" />
             </div>
             <div>
               <label className="text-(--text-muted) text-xs mb-1 block">Profile Image</label>
