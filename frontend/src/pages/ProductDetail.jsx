@@ -123,7 +123,7 @@ export default function ProductDetail() {
 
   /* ── SHARE ── */
   const shareUrl = `${window.location.origin}/api/seo/social-preview/product/${product._id}`;
-  const shareText = `${product.name} — Rs. ${product.price?.toLocaleString()} | ${brandName}`;
+  const shareText = `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n🔗 *Buy Now:* ${shareUrl}\n✨ _${brandName}_`;
 
   const getProductImageFile = async () => {
     try {
@@ -144,11 +144,11 @@ export default function ProductDetail() {
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        const shareData = { title: product.name, text: shareText, url: shareUrl };
+        const shareData = { title: product.name, text: shareText };
         const imgFile = await getProductImageFile();
         
         if (imgFile) {
-          const shareWithFiles = { ...shareData, files: [imgFile] };
+          const shareWithFiles = { files: [imgFile], title: product.name, text: shareText };
           if (navigator.canShare && navigator.canShare(shareWithFiles)) {
             await navigator.share(shareWithFiles);
             return;
@@ -176,7 +176,7 @@ export default function ProductDetail() {
   };
 
   const handleWhatsAppShare = () => {
-    window.open(`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`);
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`);
     setShareOpen(false);
   };
 
