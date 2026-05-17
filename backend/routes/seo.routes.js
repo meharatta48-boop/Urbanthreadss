@@ -81,7 +81,6 @@ router.get("/social-preview/product/:id", async (req, res) => {
   <meta name="twitter:title" content="${title}" />
   <meta name="twitter:description" content="${desc}" />
   <meta name="twitter:image" content="${image}" />
-  <meta http-equiv="refresh" content="0;url=${host}/product/${product._id}" />
 </head>
 <body>
   <script>window.location.replace("${host}/product/${product._id}");</script>
