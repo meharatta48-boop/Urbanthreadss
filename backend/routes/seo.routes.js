@@ -62,8 +62,7 @@ router.get("/social-preview/product/:id", async (req, res) => {
     if (product.images && product.images.length > 0) {
       image = product.images[0];
       if (!image.startsWith("http")) {
-        const backendHost = `${req.protocol}://${req.get("host")}`;
-        image = `${backendHost}${image.startsWith("/") ? "" : "/"}${image}`;
+        image = `${host}${image.startsWith("/") ? "" : "/"}${image}`;
       }
     }
 

@@ -130,8 +130,7 @@ export default function ProductDetail() {
       try {
         await navigator.share({
           title: product.name,
-          text: `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n✨ _${brandName}_`,
-          url: shareUrl
+          text: shareText
         });
         return;
       } catch (err) {
@@ -142,9 +141,9 @@ export default function ProductDetail() {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareText);
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
-    toast.success('Details aur Link copy ho gaya! 🔗');
+    toast.success('Link copy ho gaya! 🔗');
 
     setTimeout(() => {
       setCopied(false);
@@ -553,8 +552,8 @@ export default function ProductDetail() {
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
                       >
                         {copied
-                          ? <><FiCheck size={15} className="text-green-400" /> Copy Ho Gaya!</>
-                          : <><FiLink size={15} /> Details + Link Copy Karo</>
+                          ? <><FiCheck size={15} className="text-green-400" /> Link Copy Ho Gaya!</>
+                          : <><FiLink size={15} /> Link Copy Karo</>
                         }
                       </button>
 
