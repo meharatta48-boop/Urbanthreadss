@@ -77,7 +77,7 @@ export default function Cart() {
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
-                      className=" object-contain object-center"
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
 
