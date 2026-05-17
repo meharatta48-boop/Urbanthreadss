@@ -125,12 +125,41 @@ export default function ProductDetail() {
   const shareUrl = `${window.location.origin}/api/seo/social-preview/product/${product._id}`;
   const shareText = `${product.name} — Rs. ${product.price?.toLocaleString()} | ${brandName}`;
 
+  const getProductImageFile = async () => {
+    try {
+      if (product.images?.length > 0) {
+        const imageUrl = getProductImageUrl(product.images[0]);
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const type = blob.type || 'image/jpeg';
+        const ext = type.split('/')[1] || 'jpg';
+        return new File([blob], `product_share.${ext}`, { type });
+      }
+    } catch (e) {
+      console.error("Failed to generate image file for sharing:", e);
+    }
+    return null;
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: product.name, text: shareText, url: shareUrl });
+        const shareData = { title: product.name, text: shareText, url: shareUrl };
+        const imgFile = await getProductImageFile();
+        
+        if (imgFile) {
+          const shareWithFiles = { ...shareData, files: [imgFile] };
+          if (navigator.canShare && navigator.canShare(shareWithFiles)) {
+            await navigator.share(shareWithFiles);
+            return;
+          }
+        }
+        
+        await navigator.share(shareData);
         return;
-      } catch { /* user cancelled */ }
+      } catch (err) {
+        console.warn("navigator.share error:", err);
+      }
     }
     setShareOpen((v) => !v);
   };
