@@ -419,7 +419,6 @@ export default function Checkout() {
                         src={getCartImageUrl(item.images?.[0] || item.image)}
                         alt={item.name}
                         className="absolute inset-0 w-full h-full object-cover object-center"
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
