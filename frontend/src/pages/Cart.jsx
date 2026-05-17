@@ -104,7 +104,7 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between g-5 mt-auto">
+                    <div className="flex items-center justify-between gap-5 mt-auto">
                       <div className="flex flex-col">
                         <span className="text-base sm:text-lg font-bold gold-text">
                           Rs. {item.price?.toLocaleString()}
