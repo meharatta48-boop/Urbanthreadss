@@ -242,7 +242,7 @@ export default function ProductDetail() {
                   srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
                   alt={product.name}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
                 
                 {/* Gallery Overlay */}
@@ -300,7 +300,7 @@ export default function ProductDetail() {
                     <LazyImage 
                       src={getThumbnailUrl(img)} 
                       alt={`thumb-${i}`} 
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </button>
                 ))}
