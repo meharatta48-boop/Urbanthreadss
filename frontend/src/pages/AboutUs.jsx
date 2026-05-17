@@ -6,6 +6,7 @@ import { SERVER_URL } from "../services/api";
 import { FiArrowRight, FiCheckCircle, FiInstagram, FiTwitter, FiLinkedin, FiUser, FiMail, FiMessageSquare, FiSend } from "react-icons/fi";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import BrandStory from "../components/home/BrandStory";
 
 export default function AboutUs() {
     const { settings } = useSettings();
@@ -133,65 +134,8 @@ export default function AboutUs() {
                 </motion.div>
             </section>
 
-            {/* ── THE DUO STORY ── */}
-            <section className="container-custom py-16 sm:py-24 md:py-32">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-16 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="lg:col-span-7 space-y-6 sm:space-y-8"
-                    >
-                        <div className="space-y-3 sm:space-y-4">
-                            <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                                {settings.aboutUsStoryTitle || "The Vision of Two"}
-                            </h2>
-                            <div className="w-20 sm:w-24 h-1 bg-(--gold) rounded-full" />
-                        </div>
-
-                        <div className="space-y-4 sm:space-y-6 text-(--text-secondary) text-base sm:text-lg md:text-xl leading-relaxed font-light">
-                            <p className="first-letter:text-4xl sm:first-letter:text-5xl first-letter:font-display first-letter:text-(--gold) first-letter:mr-2 sm:first-letter:mr-3 first-letter:float-left">
-                                {settings.aboutUsStoryText1 || "Urban Thread wasn't just built on fabric; it was built on a friendship and a shared obsession for street culture. What started as late-night discussions between two friends in Lahore has now evolved into a movement."}
-                            </p>
-                            <p>
-                                {settings.aboutUsStoryText2 || "We believed that the streets of Pakistan had a story to tell—one that global fashion was missing. Together, we set out to create a brand that speaks the language of the youth, blending high-end craftsmanship with the raw energy of urban life."}
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 sm:gap-8 pt-2 sm:pt-4">
-                            <div>
-                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">{settings.aboutUsStats1Value || "50k+"}</p>
-                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">{settings.aboutUsStats1Label || "Happy Customers"}</p>
-                            </div>
-                            <div>
-                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">{settings.aboutUsStats2Value || "100%"}</p>
-                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">{settings.aboutUsStats2Label || "Made in Pakistan"}</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                        className="lg:col-span-5 relative"
-                    >
-                        <div className="relative z-10 aspect-3/4 sm:aspect-4/5 rounded-2xl sm:rounded-4xl overflow-hidden border border-(--border) shadow-2xl group">
-                            {settings.aboutUsStoryImage ? (
-                                <img src={getUrl(settings.aboutUsStoryImage)} alt="Story" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                            ) : (
-                                <div className="w-full h-full bg-(--bg-card) flex items-center justify-center text-(--text-muted) text-sm sm:text-base">Brand Story Image</div>
-                            )}
-                            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
-                        </div>
-                        {/* Decorative Elements */}
-                        <div className="absolute -top-6 sm:-top-10 -right-6 sm:-right-10 w-24 sm:w-40 h-24 sm:h-40 border-t-2 border-r-2 border-(--gold)/30 rounded-tr-2xl sm:rounded-tr-[3rem] z-0" />
-                        <div className="absolute -bottom-6 sm:-bottom-10 -left-6 sm:-left-10 w-24 sm:w-40 h-24 sm:h-40 border-b-2 border-l-2 border-(--gold)/30 rounded-bl-2xl sm:rounded-bl-[3rem] z-0" />
-                    </motion.div>
-                </div>
-            </section>
+            {/* ── BRAND STORY ── */}
+            <BrandStory />
 
             {/* ── MEET THE FOUNDERS ── */}
             <section className="bg-(--bg-surface) py-16 sm:py-24 md:py-32 relative">
@@ -221,12 +165,9 @@ export default function AboutUs() {
                                     )}
 
                                     {/* Social Overlay */}
-                                    <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex gap-2 sm:gap-3 translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
+                                    <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex gap-2 sm:gap-3">
                                         <button className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
                                             <FiInstagram size={16} className="sm:w-4.5" />
-                                        </button>
-                                        <button className="w-9 sm:w-10 h-9 sm:h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-(--gold) hover:text-black transition-all text-sm sm:text-base">
-                                            <FiTwitter size={16} className="sm:w-4.5" />
                                         </button>
                                     </div>
                                 </div>
