@@ -414,11 +414,13 @@ export default function Checkout() {
               <div className="space-y-3 mb-4 max-h-52 overflow-y-auto pr-1">
                 {cart.map((item) => (
                   <div key={item.cartId} className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+                    {/* FIXED IMAGE BOX FOR CHECKOUT */}
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-black/10 aspect-square" style={{ border: "1px solid var(--border)" }}>
                       <LazyImage
                         src={getCartImageUrl(item.images?.[0] || item.image)}
                         alt={item.name}
                         className="absolute inset-0 w-full h-full object-cover object-center"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
