@@ -52,7 +52,16 @@ router.get("/social-preview/product/:id", async (req, res) => {
 
     const settings = await SiteSettings.findOne().lean();
     const brandName = settings?.brandName || "Urban Threads";
-    const host = (process.env.PUBLIC_SITE_URL || process.env.FRONTEND_URL || "https://urbanthreadss.store").replace(/\/$/, "");
+    
+    // Parse single valid frontend redirect target
+    let host = "https://www.urbanthreadss.store";
+    if (process.env.PUBLIC_SITE_URL) {
+      host = process.env.PUBLIC_SITE_URL;
+    } else if (process.env.FRONTEND_URL) {
+      const urls = process.env.FRONTEND_URL.split(",");
+      host = urls.find(u => u.includes("urbanthreadss.store")) || urls[0];
+    }
+    host = host.trim().replace(/\/$/, "");
 
     const title = `${product.name} - ${brandName}`;
     const desc = product.description || `Buy ${product.name} online in Pakistan.`;
