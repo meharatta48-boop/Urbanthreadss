@@ -122,7 +122,7 @@ export default function ProductDetail() {
     ? Math.round((1 - product.price / product.comparePrice) * 100) : 0;
 
   /* ── SHARE ── */
-  const shareUrl = `${SERVER_URL}/api/seo/social-preview/product/${product._id}`;
+  const shareUrl = `${window.location.origin}/api/seo/social-preview/product/${product._id}`;
   const shareText = `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n🔗 *Buy Now:* ${shareUrl}\n✨ _${brandName}_`;
 
   const handleShare = async () => {
