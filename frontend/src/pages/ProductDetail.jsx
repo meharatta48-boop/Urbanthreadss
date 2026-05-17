@@ -235,15 +235,25 @@ export default function ProductDetail() {
           <div className="space-y-3">
             {/* MAIN IMAGE */}
             <div className="product-gallery">
-              <div className="product-gallery-main">
-                <LazyImage
-                  key={images[activeImg]}
-                  src={getProductImageUrl(images[activeImg])}
-                  srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className="product-gallery-main relative">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeImg}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="absolute inset-0 w-full h-full"
+                  >
+                    <LazyImage
+                      src={getProductImageUrl(images[activeImg])}
+                      srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                </AnimatePresence>
                 
                 {/* Gallery Overlay */}
                 <div className="product-gallery-overlay">
