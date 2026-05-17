@@ -242,7 +242,7 @@ export default function ProductDetail() {
                   srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
                 
                 {/* Gallery Overlay */}
@@ -300,7 +300,7 @@ export default function ProductDetail() {
                     <LazyImage 
                       src={getThumbnailUrl(img)} 
                       alt={`thumb-${i}`} 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </button>
                 ))}
@@ -804,7 +804,7 @@ function ProductReviews({ product, setProduct }) {
                         <img
                           src={src}
                           alt={`preview-${idx}`}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                         <button
                           type="button" onClick={() => removeImage(idx)}
@@ -913,7 +913,7 @@ function ProductReviews({ product, setProduct }) {
                           onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(201,168,76,0.4)"}
                           onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}>
                           <img src={getImageUrl(img)} alt={`review-img-${i}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                             onError={(e) => { e.target.style.display="none"; }}
                           />
                         </a>

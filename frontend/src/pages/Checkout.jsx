@@ -418,7 +418,7 @@ export default function Checkout() {
                       <LazyImage
                         src={getCartImageUrl(item.images?.[0] || item.image)}
                         alt={item.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="flex-1 min-w-0">

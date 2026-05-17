@@ -381,7 +381,7 @@ export default function Shop() {
                     srcSet={getResponsiveImageSrcSet(p.images?.[0], 400)}
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     alt={p.name}
-                    className="absolute inset-0 w-full h-full object-cover object-top"
+                    className="absolute inset-0 w-full h-full object-contain"
                   />
                   <div className="product-overlay" />
 

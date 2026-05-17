@@ -121,7 +121,7 @@ const QuickView = ({ product, isOpen, onClose }) => {
                     <LazyImage
                       src={getProductImageUrl(product.images?.[0])}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   </div>
                   
@@ -136,7 +136,7 @@ const QuickView = ({ product, isOpen, onClose }) => {
                           <LazyImage
                             src={getThumbnailUrl(img)}
                             alt={`Thumbnail ${index + 1}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
                         </div>
                       ))}
