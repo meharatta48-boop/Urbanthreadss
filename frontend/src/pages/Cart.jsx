@@ -72,7 +72,7 @@ export default function Cart() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-center"
                 >
-                  {/* IMAGE - Fixed square box that perfectly fits the card height */}
+                  {/* IMAGE */}
                   <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
@@ -85,7 +85,6 @@ export default function Cart() {
                   {/* DETAILS */}
                   <div className="flex flex-col justify-between grow min-w-0 h-24 sm:h-28 pr-10">
                     <div>
-                      {/* Added heavy right padding (pr-6) so text never touches the delete button */}
                       <h3 className="text-sm sm:text-base font-bold truncate pr-6" style={{ color: "var(--text-primary)" }}>
                         {item.name}
                       </h3>
@@ -104,8 +103,9 @@ export default function Cart() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-5 mt-auto">
-                      <div className="flex flex-col">
+                    {/* PRICE & QUANTITY WITH EXTRA GAP (Added gap-4 and flex-wrap for responsiveness) */}
+                    <div className="flex items-center justify-between gap-4 mt-auto">
+                      <div className="flex flex-col shrink-0">
                         <span className="text-base sm:text-lg font-bold gold-text">
                           Rs. {item.price?.toLocaleString()}
                         </span>
@@ -117,7 +117,7 @@ export default function Cart() {
                       </div>
 
                       {/* QUANTITY */}
-                      <div className="flex items-center bg-black/10 sm:bg-black/40 rounded-lg border border-black/10 sm:border-white/10 p-0.5">
+                      <div className="flex items-center bg-black/10 sm:bg-black/40 rounded-lg border border-black/10 sm:border-white/10 p-0.5 ml-auto">
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
                           className="w-8 h-8 flex items-center justify-center hover:bg-black/5 sm:hover:bg-white/5 rounded transition-colors"
@@ -138,7 +138,7 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  {/* FIXED DELETE BUTTON - Always visible, no hover hidden effect */}
+                  {/* FIXED DELETE BUTTON */}
                   <button
                     onClick={() => removeFromCart(item.cartId)}
                     className="absolute top-4 right-4 p-2 text-red-400/80 hover:text-red-400 hover:bg-black/5 sm:hover:bg-white/5 rounded-xl transition-all z-10"
