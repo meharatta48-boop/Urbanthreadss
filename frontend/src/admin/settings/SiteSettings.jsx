@@ -2075,46 +2075,6 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
       </Card>
 
       <Card>
-        <SectionTitle title="Brand Story" desc="The main story component detailing your brand origins." />
-        <div className="space-y-4">
-          <div>
-            <label className="text-(--text-muted) text-xs mb-1 block">Story Title</label>
-            <input value={form.aboutUsStoryTitle || ""} onChange={e => set("aboutUsStoryTitle", e.target.value)} className="lux-input w-full" placeholder="How It All Started" />
-          </div>
-          <div>
-            <label className="text-(--text-muted) text-xs mb-1 block">Story Paragraph 1</label>
-            <textarea value={form.aboutUsStoryText1 || ""} onChange={e => set("aboutUsStoryText1", e.target.value)} className="lux-input w-full" rows={3} placeholder="We started with..." />
-          </div>
-          <div>
-            <label className="text-(--text-muted) text-xs mb-1 block">Story Paragraph 2</label>
-            <textarea value={form.aboutUsStoryText2 || ""} onChange={e => set("aboutUsStoryText2", e.target.value)} className="lux-input w-full" rows={3} placeholder="Our goal is..." />
-          </div>
-          <div>
-            <label className="text-(--text-muted) text-xs mb-1 block">Story Image</label>
-            <div className="flex gap-4 items-center">
-              {form.aboutUsStoryImage ? (
-                <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
-                  <img src={mediaUrl(form.aboutUsStoryImage)} alt="story" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button onClick={() => handleDeleteImage("aboutUsStoryImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-25 h-25 rounded-xl border border-dashed border-[#333] flex items-center justify-center bg-[#111]">
-                  <FiImage className="text-[#444]" size={24} />
-                </div>
-              )}
-              <div>
-                <input type="file" id="aboutStoryImg" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, "aboutUsStoryImage", "story")} />
-                <label htmlFor="aboutStoryImg" className="btn-outline cursor-pointer px-4 py-2 text-xs inline-block">
-                  {uploading.story ? "Uploading..." : "Upload Image"}
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-      <Card>
         <SectionTitle title="Stats Section" desc="Key numbers shown below the story." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>

@@ -66,8 +66,8 @@ export default function AboutUs() {
 
     return (
         <div className="min-h-screen overflow-hidden pb-20 transition-colors duration-500" style={{ backgroundColor: 'var(--bg-deep)' }}>
-            {/* ── HERO SECTION ── */}
-            <section className="relative w-full h-[65vh] sm:h-[70vh] md:h-[75vh] lg:h-[85vh] flex items-center justify-center overflow-hidden">
+            {/* ── HERO BANNER IMAGE ── */}
+            <section className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
                 {settings.aboutUsHeroImage ? (
                     <>
                         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -81,7 +81,7 @@ export default function AboutUs() {
                         <div
                             className="absolute inset-0 z-0 overflow-hidden"
                             style={{
-                                background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.2), rgba(255,255,255,1))'
+                                background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.7))'
                             }}
                         />
                     </>
@@ -94,45 +94,56 @@ export default function AboutUs() {
                     />
                 )}
 
-                <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
+                <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto pt-6">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: "easeOut" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1]"
+                        style={{ color: "var(--text-primary)" }}
                     >
-                        <span
-                            className="inline-block px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold mb-6 backdrop-blur-sm"
-                            style={{
-                                borderColor: 'var(--gold)',
-                                borderWidth: '1px',
-                                backgroundColor: 'rgba(201, 168, 76, 0.1)',
-                                color: 'var(--gold)'
-                            }}
-                        >
-                            {settings.brandYear ? `Established ${settings.brandYear}` : "Established 2025"}
-                        </span>
-                        <h1
-                            className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 leading-[1.1]"
-                            style={{ color: "var(--text-primary)" }}
-                        >
-                            {settings.aboutUsHeroTitle || "About Us"}
-                        </h1>
-                        <p
-                            className="text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-light"
-                            style={{ color: "var(--text-secondary)" }}
-                        >
-                            {settings.aboutUsHeroSubtitle || settings.aboutUsHeroText || "We're on a mission to redefine Pakistani streetwear with premium quality, authentic designs, and a commitment to local craftsmanship."}
-                        </p>
-                    </motion.div>
+                        {settings.aboutUsHeroTitle || "About Us"}
+                    </motion.h1>
                 </div>
+            </section>
 
-                {/* Scroll Indicator */}
+            {/* ── HERO DETAILS (BELOW THE IMAGE) ── */}
+            <section className="py-12 sm:py-16 md:py-20 text-center px-4 sm:px-6 max-w-5xl mx-auto relative z-10">
                 <motion.div
-                    animate={{ y: [0, 10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-(--gold)"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="space-y-6 sm:space-y-8"
                 >
-                    <div className="w-px h-16 bg-linear-to-b from-transparent via-(--gold) to-transparent mx-auto" />
+                    <span
+                        className="inline-block px-3 sm:px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.3em] font-bold backdrop-blur-sm"
+                        style={{
+                            borderColor: 'var(--gold)',
+                            borderWidth: '1px',
+                            backgroundColor: 'rgba(201, 168, 76, 0.1)',
+                            color: 'var(--gold)'
+                        }}
+                    >
+                        {settings.brandYear ? `Established ${settings.brandYear}` : "Established 2025"}
+                    </span>
+                    
+                    <p
+                        className="text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-light"
+                        style={{ color: "var(--text-secondary)" }}
+                    >
+                        {settings.aboutUsHeroSubtitle || settings.aboutUsHeroText || "We're on a mission to redefine Pakistani streetwear with premium quality, authentic designs, and a commitment to local craftsmanship."}
+                    </p>
+
+                    {/* Scroll Indicator / Vertical Line */}
+                    <div className="pt-6">
+                        <motion.div
+                            animate={{ y: [0, 10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="text-(--gold)"
+                        >
+                            <div className="w-px h-16 bg-linear-to-b from-transparent via-(--gold) to-transparent mx-auto" />
+                        </motion.div>
+                    </div>
                 </motion.div>
             </section>
 
