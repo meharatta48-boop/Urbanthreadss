@@ -106,19 +106,19 @@ export default function AboutUs() {
                                 color: 'var(--gold)'
                             }}
                         >
-                            Established 2020
+                            {settings.brandYear ? `Established ${settings.brandYear}` : "Established 2020"}
                         </span>
                         <h1 
                             className="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-6 leading-[1.1]"
                             style={{ color: "var(--text-primary)" }}
                         >
-                            About <span className="gold-text">Urban Thread</span>
+                            {settings.aboutUsHeroTitle || "About Us"}
                         </h1>
                         <p 
                             className="text-lg sm:text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-light"
                             style={{ color: "var(--text-secondary)" }}
                         >
-                            {settings.aboutUsHeroText || "We're on a mission to redefine Pakistani streetwear with premium quality, authentic designs, and a commitment to local craftsmanship."}
+                            {settings.aboutUsHeroSubtitle || settings.aboutUsHeroText || "We're on a mission to redefine Pakistani streetwear with premium quality, authentic designs, and a commitment to local craftsmanship."}
                         </p>
                     </motion.div>
                 </div>
@@ -161,12 +161,12 @@ export default function AboutUs() {
 
                         <div className="grid grid-cols-2 gap-4 sm:gap-8 pt-2 sm:pt-4">
                             <div>
-                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">50k+</p>
-                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">Happy Customers</p>
+                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">{settings.aboutUsStats1Value || "50k+"}</p>
+                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">{settings.aboutUsStats1Label || "Happy Customers"}</p>
                             </div>
                             <div>
-                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">100%</p>
-                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">Made in Pakistan</p>
+                                <p className="text-(--gold) text-2xl sm:text-3xl md:text-4xl font-display font-bold">{settings.aboutUsStats2Value || "100%"}</p>
+                                <p className="text-(--text-muted) text-xs sm:text-sm uppercase tracking-widest mt-1">{settings.aboutUsStats2Label || "Made in Pakistan"}</p>
                             </div>
                         </div>
                     </motion.div>
@@ -197,8 +197,8 @@ export default function AboutUs() {
             <section className="bg-(--bg-surface) py-16 sm:py-24 md:py-32 relative">
                 <div className="container-custom">
                     <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-20 space-y-3 sm:space-y-4 px-4">
-                        <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl font-bold">Behind The Thread</h2>
-                        <p className="text-(--text-secondary) text-base sm:text-lg font-light tracking-wide">Meet the duo driving the creative engine of Urban Thread.</p>
+                        <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl font-bold">{settings.aboutUsFoundersTitle || "Behind The Thread"}</h2>
+                        <p className="text-(--text-secondary) text-base sm:text-lg font-light tracking-wide">{settings.aboutUsFoundersSubtitle || "Meet the duo driving the creative engine of Urban Thread."}</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 max-w-5xl mx-auto px-4">
@@ -261,7 +261,11 @@ export default function AboutUs() {
                                     "{settings.aboutUsMissionText || "To empower the youth with clothing that speaks louder than words. Quality fabrics, bold designs, and zero compromises."}"
                                 </blockquote>
                                 <div className="pt-2 sm:pt-4 space-y-3 sm:space-y-4">
-                                    {["Uncompromising Quality", "Authentic Expression", "Community Driven"].map((item, idx) => (
+                                    {[
+                                        settings.aboutUsMissionBullet1 || "Uncompromising Quality",
+                                        settings.aboutUsMissionBullet2 || "Authentic Expression",
+                                        settings.aboutUsMissionBullet3 || "Community Driven"
+                                    ].map((item, idx) => (
                                         <div key={idx} className="flex items-center gap-3 sm:gap-4 text-(--text-primary) text-sm sm:text-base font-medium">
                                             <div className="w-5 sm:w-6 h-5 sm:h-6 rounded-full bg-(--gold)/20 flex items-center justify-center text-(--gold) shrink-0">
                                                 <FiCheckCircle size={12} className="sm:w-3.5" />
@@ -282,8 +286,8 @@ export default function AboutUs() {
                                 </div>
                                 {/* Floating badge */}
                                 <div className="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-6 bg-(--gold) text-black p-3 sm:p-6 rounded-lg sm:rounded-2xl shadow-2xl rotate-3">
-                                    <p className="text-xs uppercase tracking-widest font-black">Quality Guaranteed</p>
-                                    <p className="text-xl sm:text-2xl font-display font-bold">100% Cotton</p>
+                                    <p className="text-xs uppercase tracking-widest font-black">{settings.aboutUsMissionBadgeTop || "Quality Guaranteed"}</p>
+                                    <p className="text-xl sm:text-2xl font-display font-bold">{settings.aboutUsMissionBadgeBottom || "100% Cotton"}</p>
                                 </div>
                             </div>
                         </div>
@@ -296,8 +300,8 @@ export default function AboutUs() {
                 <div className="container-custom px-4">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-12 sm:mb-16">
-                            <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
-                            <p className="text-(--text-secondary) text-lg sm:text-xl">Have questions? We'd love to hear from you.</p>
+                            <h2 className="text-(--text-primary) font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-4">{settings.aboutUsContactTitle || "Get In Touch"}</h2>
+                            <p className="text-(--text-secondary) text-lg sm:text-xl">{settings.aboutUsContactSubtitle || "Have questions? We'd love to hear from you."}</p>
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
@@ -434,9 +438,9 @@ export default function AboutUs() {
                     viewport={{ once: true }}
                     className="bg-linear-to-br from-(--bg-card) to-(--bg-deep) rounded-xl sm:rounded-2xl lg:rounded-[2.5rem] py-12 sm:py-16 md:py-20 px-4 sm:px-8 border border-(--border) shadow-2xl"
                 >
-                    <h2 className="text-(--text-primary) font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">Ready to define your style?</h2>
+                    <h2 className="text-(--text-primary) font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8">{settings.aboutUsCtaTitle || "Ready to define your style?"}</h2>
                     <Link to="/shop" className="btn-gold px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-lg rounded-full shadow-2xl shadow-(--gold)/30 inline-flex items-center gap-2">
-                        Shop the Collection <FiArrowRight size={16} className="sm:w-5" />
+                        {settings.aboutUsCtaButton || "Shop the Collection"} <FiArrowRight size={16} className="sm:w-5" />
                     </Link>
                 </motion.div>
             </section>

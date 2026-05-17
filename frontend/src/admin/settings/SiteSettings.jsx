@@ -2114,6 +2114,23 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
           </div>
         </div>
       </Card>
+      <Card>
+        <SectionTitle title="Stats Section" desc="Key numbers shown below the story." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="text-(--text-muted) text-xs mb-1 block">Stat 1 Value</label>
+            <input value={form.aboutUsStats1Value || ""} onChange={e => set("aboutUsStats1Value", e.target.value)} className="lux-input w-full" placeholder="50k+" />
+            <label className="text-(--text-muted) text-xs mt-2 mb-1 block">Stat 1 Label</label>
+            <input value={form.aboutUsStats1Label || ""} onChange={e => set("aboutUsStats1Label", e.target.value)} className="lux-input w-full" placeholder="Happy Customers" />
+          </div>
+          <div>
+            <label className="text-(--text-muted) text-xs mb-1 block">Stat 2 Value</label>
+            <input value={form.aboutUsStats2Value || ""} onChange={e => set("aboutUsStats2Value", e.target.value)} className="lux-input w-full" placeholder="100%" />
+            <label className="text-(--text-muted) text-xs mt-2 mb-1 block">Stat 2 Label</label>
+            <input value={form.aboutUsStats2Label || ""} onChange={e => set("aboutUsStats2Label", e.target.value)} className="lux-input w-full" placeholder="Made in Pakistan" />
+          </div>
+        </div>
+      </Card>
 
       <Card>
         <SectionTitle title="Mission & Vision" desc="Your brands core mission and vision statement." />
@@ -2125,6 +2142,30 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
           <div>
             <label className="text-(--text-muted) text-xs mb-1 block">Mission Text</label>
             <textarea value={form.aboutUsMissionText || ""} onChange={e => set("aboutUsMissionText", e.target.value)} className="lux-input w-full" rows={3} placeholder="To empower the youth..." />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Bullet 1</label>
+              <input value={form.aboutUsMissionBullet1 || ""} onChange={e => set("aboutUsMissionBullet1", e.target.value)} className="lux-input w-full" placeholder="Uncompromising Quality" />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Bullet 2</label>
+              <input value={form.aboutUsMissionBullet2 || ""} onChange={e => set("aboutUsMissionBullet2", e.target.value)} className="lux-input w-full" placeholder="Authentic Expression" />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Bullet 3</label>
+              <input value={form.aboutUsMissionBullet3 || ""} onChange={e => set("aboutUsMissionBullet3", e.target.value)} className="lux-input w-full" placeholder="Community Driven" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Badge Top Text</label>
+              <input value={form.aboutUsMissionBadgeTop || ""} onChange={e => set("aboutUsMissionBadgeTop", e.target.value)} className="lux-input w-full" placeholder="Quality Guaranteed" />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Badge Bottom Text</label>
+              <input value={form.aboutUsMissionBadgeBottom || ""} onChange={e => set("aboutUsMissionBadgeBottom", e.target.value)} className="lux-input w-full" placeholder="100% Cotton" />
+            </div>
           </div>
           <div>
             <label className="text-(--text-muted) text-xs mb-1 block">Mission Image</label>
@@ -2154,6 +2195,16 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
 
       <Card>
         <SectionTitle title="Meet the Founders" desc="Details about the 2 owners of the brand." />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="text-(--text-muted) text-xs mb-1 block">Section Title</label>
+            <input value={form.aboutUsFoundersTitle || ""} onChange={e => set("aboutUsFoundersTitle", e.target.value)} className="lux-input w-full" placeholder="Behind The Thread" />
+          </div>
+          <div>
+            <label className="text-(--text-muted) text-xs mb-1 block">Section Subtitle</label>
+            <input value={form.aboutUsFoundersSubtitle || ""} onChange={e => set("aboutUsFoundersSubtitle", e.target.value)} className="lux-input w-full" placeholder="Meet the duo driving..." />
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Founder 1 */}
           <div className="space-y-4 p-4 rounded-2xl bg-[#080808] border border-(--border)">
@@ -2232,6 +2283,32 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
                   </label>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <SectionTitle title="Contact & CTA" desc="Bottom sections of the About page." />
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Contact Title</label>
+              <input value={form.aboutUsContactTitle || ""} onChange={e => set("aboutUsContactTitle", e.target.value)} className="lux-input w-full" placeholder="Get In Touch" />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">Contact Subtitle</label>
+              <input value={form.aboutUsContactSubtitle || ""} onChange={e => set("aboutUsContactSubtitle", e.target.value)} className="lux-input w-full" placeholder="Have questions?..." />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">CTA Title</label>
+              <input value={form.aboutUsCtaTitle || ""} onChange={e => set("aboutUsCtaTitle", e.target.value)} className="lux-input w-full" placeholder="Ready to define your style?" />
+            </div>
+            <div>
+              <label className="text-(--text-muted) text-xs mb-1 block">CTA Button Text</label>
+              <input value={form.aboutUsCtaButton || ""} onChange={e => set("aboutUsCtaButton", e.target.value)} className="lux-input w-full" placeholder="Shop the Collection" />
             </div>
           </div>
         </div>
