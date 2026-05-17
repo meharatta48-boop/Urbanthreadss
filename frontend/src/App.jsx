@@ -1,5 +1,5 @@
 import {
-  BrowserRouter, Routes, Route, Navigate, useLocation,
+  BrowserRouter, Routes, Route, Navigate, useLocation, useParams,
 } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -64,8 +64,12 @@ function AdminRoute({ children }) {
   }
 
   if (user?.role !== "admin") return <Navigate to="/" replace />;
-
   return children;
+}
+
+function SocialPreviewRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/product/${id}`} replace />;
 }
 
 /* LAYOUT WRAPPER */
@@ -192,6 +196,7 @@ export default function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/api/seo/social-preview/product/:id" element={<SocialPreviewRedirect />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/my-orders" element={<MyOrders />} />
