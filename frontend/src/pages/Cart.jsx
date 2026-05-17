@@ -73,11 +73,12 @@ export default function Cart() {
                   className="group relative flex gap-4 p-4 rounded-2xl border border-white/5 bg-white/2 hover:bg-white/4 transition-colors items-center"
                 >
                   {/* IMAGE - Fixed square box that perfectly fits the card height */}
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/40 border border-white/5 aspect-square">
+                  <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square">
                     <LazyImage
                       src={getCartImageUrl(item.images?.[0] || item.image)}
                       alt={item.name}
-                      className="w-full h-full object-cover object-center"
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </div>
 
@@ -116,10 +117,10 @@ export default function Cart() {
                       </div>
 
                       {/* QUANTITY */}
-                      <div className="flex items-center bg-black/40 rounded-lg border border-white/10 p-0.5">
+                      <div className="flex items-center bg-black/10 sm:bg-black/40 rounded-lg border border-black/10 sm:border-white/10 p-0.5">
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-white/5 rounded transition-colors"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-black/5 sm:hover:bg-white/5 rounded transition-colors"
                           disabled={item.quantity <= 1}
                         >
                           <FiMinus size={12} className={item.quantity <= 1 ? "opacity-20" : "opacity-100"} />
@@ -129,7 +130,7 @@ export default function Cart() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
-                          className="w-8 h-8 flex items-center justify-center hover:bg-white/5 rounded transition-colors"
+                          className="w-8 h-8 flex items-center justify-center hover:bg-black/5 sm:hover:bg-white/5 rounded transition-colors"
                         >
                           <FiPlus size={12} />
                         </button>
@@ -140,7 +141,7 @@ export default function Cart() {
                   {/* FIXED DELETE BUTTON - Always visible, no hover hidden effect */}
                   <button
                     onClick={() => removeFromCart(item.cartId)}
-                    className="absolute top-4 right-4 p-2 text-red-400/80 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all z-10"
+                    className="absolute top-4 right-4 p-2 text-red-400/80 hover:text-red-400 hover:bg-black/5 sm:hover:bg-white/5 rounded-xl transition-all z-10"
                     title="Remove item"
                   >
                     <FiTrash2 size={18} />
@@ -152,7 +153,7 @@ export default function Cart() {
 
           {/* SUMMARY SIDEBAR */}
           <div className="lg:col-span-1 lg:sticky lg:top-24">
-            <div className="rounded-3xl border border-white/5 bg-white/3 p-6 backdrop-blur-md shadow-2xl">
+            <div className="rounded-3xl border border-black/5 sm:border-white/5 bg-white/3 p-6 backdrop-blur-md shadow-xl sm:shadow-2xl">
               <h3 className="text-lg font-bold mb-6 text-(--text-primary)">Summary</h3>
 
               <div className="space-y-4 mb-6">
@@ -164,7 +165,7 @@ export default function Cart() {
                   <span>Delivery</span>
                   <span>Rs. {DELIVERY.toLocaleString()}</span>
                 </div>
-                <div className="h-px bg-white/10 my-2" />
+                <div className="h-px bg-black/10 sm:bg-white/10 my-2" />
                 <div className="flex justify-between items-center">
                   <span className="font-bold">Total</span>
                   <span className="text-2xl font-bold gold-text">Rs. {total.toLocaleString()}</span>
@@ -182,7 +183,7 @@ export default function Cart() {
               </div>
 
               {/* Badges */}
-              <div className="mt-8 pt-6 border-t border-white/5 space-y-3">
+              <div className="mt-8 pt-6 border-t border-black/5 sm:border-white/5 space-y-3">
                 <div className="flex items-center gap-3 text-[10px] opacity-40 uppercase tracking-widest">
                   <FiTruck size={16} className="gold-text" />
                   <span>Express Delivery</span>
@@ -198,10 +199,10 @@ export default function Cart() {
       </div>
 
       {/* MOBILE STICKY FOOTER */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-(--bg-deep)/90 backdrop-blur-xl border-t border-white/10 sm:hidden z-50 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 sm:bg-(--bg-deep)/90 backdrop-blur-xl border-t border-black/5 sm:border-white/10 sm:hidden z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
         <div className="max-w-md mx-auto flex items-center justify-between gap-6">
           <div className="flex flex-col">
-            <span className="text-[10px] opacity-40 uppercase font-bold tracking-tighter">Total Payable</span>
+            <span className="text-[10px] opacity-60 uppercase font-bold tracking-tighter">Total Payable</span>
             <span className="text-xl font-bold gold-text leading-tight">Rs. {total.toLocaleString()}</span>
           </div>
           <Link to="/checkout" className="btn-gold grow py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-xl transition-transform active:scale-95">
