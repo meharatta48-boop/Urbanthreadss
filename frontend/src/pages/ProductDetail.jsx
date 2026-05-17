@@ -43,7 +43,6 @@ export default function ProductDetail() {
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [qty, setQty] = useState(1);
-  const [wishlist, setWishlist] = useState(false);
   const [sizeError, setSizeError] = useState(false);
   const [colorError, setColorError] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -238,6 +237,7 @@ export default function ProductDetail() {
             <div className="product-gallery">
               <div className="product-gallery-main">
                 <LazyImage
+                  key={images[activeImg]}
                   src={getProductImageUrl(images[activeImg])}
                   srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
@@ -496,18 +496,6 @@ export default function ProductDetail() {
               >
                 Buy Now
               </motion.button>
-
-              <button
-                onClick={() => setWishlist(!wishlist)}
-                className={`p-4 rounded-xl border-2 transition-all ${
-                  wishlist
-                    ? "border-red-400/50 bg-red-900/15 text-red-400"
-                    : "border-(--border-light) text-(--text-muted) hover:text-red-500 hover:border-red-500/30"
-                }`}
-                title="Wishlist mein add karo"
-              >
-                <FiHeart size={18} className={wishlist ? "fill-red-400" : ""} />
-              </button>
 
               {/* SHARE BUTTON */}
               <div className="relative">
