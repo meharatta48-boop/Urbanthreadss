@@ -125,37 +125,14 @@ export default function ProductDetail() {
   const shareUrl = `${window.location.origin}/api/seo/social-preview/product/${product._id}`;
   const shareText = `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n🔗 *Buy Now:* ${shareUrl}\n✨ _${brandName}_`;
 
-  const getProductImageFile = async () => {
-    try {
-      if (product.images?.length > 0) {
-        const imageUrl = getProductImageUrl(product.images[0]);
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const type = blob.type || 'image/jpeg';
-        const ext = type.split('/')[1] || 'jpg';
-        return new File([blob], `product_share.${ext}`, { type });
-      }
-    } catch (e) {
-      console.error("Failed to generate image file for sharing:", e);
-    }
-    return null;
-  };
-
   const handleShare = async () => {
     if (navigator.share) {
       try {
-        const shareData = { title: product.name, text: shareText };
-        const imgFile = await getProductImageFile();
-        
-        if (imgFile) {
-          const shareWithFiles = { files: [imgFile], title: product.name, text: shareText };
-          if (navigator.canShare && navigator.canShare(shareWithFiles)) {
-            await navigator.share(shareWithFiles);
-            return;
-          }
-        }
-        
-        await navigator.share(shareData);
+        await navigator.share({
+          title: product.name,
+          text: `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n✨ _${brandName}_`,
+          url: shareUrl
+        });
         return;
       } catch (err) {
         console.warn("navigator.share error:", err);
@@ -165,9 +142,9 @@ export default function ProductDetail() {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
+    navigator.clipboard.writeText(shareText);
     setCopied(true);
-    toast.success('Link copy ho gaya! 🔗');
+    toast.success('Details aur Link copy ho gaya! 🔗');
 
     setTimeout(() => {
       setCopied(false);
@@ -576,8 +553,8 @@ export default function ProductDetail() {
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--bg-elevated) transition-colors"
                       >
                         {copied
-                          ? <><FiCheck size={15} className="text-green-400" /> Link Copy Ho Gaya!</>
-                          : <><FiLink size={15} /> Link Copy Karo</>
+                          ? <><FiCheck size={15} className="text-green-400" /> Copy Ho Gaya!</>
+                          : <><FiLink size={15} /> Details + Link Copy Karo</>
                         }
                       </button>
 
