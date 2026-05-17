@@ -839,7 +839,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                       <img
                         src={mediaUrl(img)}
                         alt={`Hero ${i + 1}`}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-cover"
                         onError={(e) => { e.target.style.display = "none"; }}
                       />
                     </div>
@@ -897,7 +897,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                     <img
                       src={mediaUrl(settings.brandImage)}
                       alt="Brand Story"
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-cover"
                       onError={(e) => { e.target.style.display = "none"; }}
                     />
                     {/* Delete overlay */}
@@ -1357,7 +1357,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) overflow-hidden shrink-0">
                   {settings?.popupImage ? (
-                    <img src={mediaUrl(settings.popupImage)} className="w-full h-full object-contain" />
+                    <img src={mediaUrl(settings.popupImage)} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-[#222]"><FiImage size={24} /></div>
                   )}
@@ -1730,7 +1730,7 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
               <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">Slide Image</p>
               <div className="aspect-video rounded-xl overflow-hidden bg-(--bg-elevated) border border-(--border-light) mb-3 relative">
                 {slide.image ? (
-                  <img src={mediaUrl(slide.image)} alt={`slide-${idx}`} className="w-full h-full object-contain"
+                  <img src={mediaUrl(slide.image)} alt={`slide-${idx}`} className="w-full h-full object-cover"
                     onError={(e) => { e.target.style.display = "none"; }} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-[#222]">
@@ -2054,7 +2054,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
           <div className="flex gap-4 items-center">
             {form.aboutUsHeroImage ? (
               <div className="relative group rounded-xl overflow-hidden" style={{ width: 120, height: 80 }}>
-                <img src={mediaUrl(form.aboutUsHeroImage)} alt="hero" className="w-full h-full object-contain" />
+                <img src={mediaUrl(form.aboutUsHeroImage)} alt="hero" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={() => handleDeleteImage("aboutUsHeroImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                 </div>
@@ -2094,7 +2094,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
             <div className="flex gap-4 items-center">
               {form.aboutUsStoryImage ? (
                 <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
-                  <img src={mediaUrl(form.aboutUsStoryImage)} alt="story" className="w-full h-full object-contain" />
+                  <img src={mediaUrl(form.aboutUsStoryImage)} alt="story" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button onClick={() => handleDeleteImage("aboutUsStoryImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                   </div>
@@ -2131,7 +2131,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
             <div className="flex gap-4 items-center">
               {form.aboutUsMissionImage ? (
                 <div className="relative group rounded-xl overflow-hidden" style={{ width: 100, height: 100 }}>
-                  <img src={mediaUrl(form.aboutUsMissionImage)} alt="mission" className="w-full h-full object-contain" />
+                  <img src={mediaUrl(form.aboutUsMissionImage)} alt="mission" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button onClick={() => handleDeleteImage("aboutUsMissionImage")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                   </div>
@@ -2175,7 +2175,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
               <div className="flex gap-4 items-center">
                 {form.founder1Image ? (
                   <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
-                    <img src={mediaUrl(form.founder1Image)} alt="founder1" className="w-full h-full object-contain" />
+                    <img src={mediaUrl(form.founder1Image)} alt="founder1" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button onClick={() => handleDeleteImage("founder1Image")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                     </div>
@@ -2215,7 +2215,7 @@ function AboutUsTab({ form, set, token, uploadLogo, deleteSettingImage, fetchSet
               <div className="flex gap-4 items-center">
                 {form.founder2Image ? (
                   <div className="relative group rounded-xl overflow-hidden" style={{ width: 80, height: 80 }}>
-                    <img src={mediaUrl(form.founder2Image)} alt="founder2" className="w-full h-full object-contain" />
+                    <img src={mediaUrl(form.founder2Image)} alt="founder2" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button onClick={() => handleDeleteImage("founder2Image")} className="text-(--text-primary) hover:text-red-400 p-2"><FiTrash2 size={16}/></button>
                     </div>

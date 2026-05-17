@@ -1138,8 +1138,8 @@ img {
 .product-card .product-image-container [data-lazy-image] {
   width: 100% !important;
   height: 100% !important;
-  object-fit: contain !important;
-  object-position: center;
+  object-fit: cover !important;
+  object-position: center top;
   display: block;
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }

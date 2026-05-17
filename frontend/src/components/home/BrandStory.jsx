@@ -31,7 +31,7 @@ export default function BrandStory() {
           >
             {/* Main Image Container */}
             <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border border-(--border) aspect-4/5">
-              <img src={img} alt="Brand Story" className="w-full h-full object-contain transition-transform duration-1000 hover:scale-105" />
+              <img src={img} alt="Brand Story" className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105" />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-40" />
             </div>
 

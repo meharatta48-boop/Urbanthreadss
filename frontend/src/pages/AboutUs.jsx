@@ -71,7 +71,7 @@ export default function AboutUs() {
                             <img
                                 src={getUrl(settings.aboutUsHeroImage)}
                                 alt="About Us Hero"
-                                className="w-full h-full object-contain object-center scale-105"
+                                className="w-full h-full object-cover object-center scale-105"
                             />
                         </div>
                         {/* Adaptive Overlay */}
@@ -180,7 +180,7 @@ export default function AboutUs() {
                     >
                         <div className="relative z-10 aspect-3/4 sm:aspect-4/5 rounded-2xl sm:rounded-4xl overflow-hidden border border-(--border) shadow-2xl group">
                             {settings.aboutUsStoryImage ? (
-                                <img src={getUrl(settings.aboutUsStoryImage)} alt="Story" className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" />
+                                <img src={getUrl(settings.aboutUsStoryImage)} alt="Story" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                             ) : (
                                 <div className="w-full h-full bg-(--bg-card) flex items-center justify-center text-(--text-muted) text-sm sm:text-base">Brand Story Image</div>
                             )}
@@ -213,7 +213,7 @@ export default function AboutUs() {
                             >
                                 <div className="relative mb-6 sm:mb-8 rounded-2xl sm:rounded-[2.5rem] overflow-hidden aspect-3/4 sm:aspect-4/5 shadow-xl border border-(--border) bg-(--bg-card)">
                                     {founder.image ? (
-                                        <img src={getUrl(founder.image)} alt={founder.name} className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105" />
+                                        <img src={getUrl(founder.image)} alt={founder.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-(--bg-elevated) text-(--text-muted)">
                                             <FiUser size={48} className="opacity-20" />
@@ -275,7 +275,7 @@ export default function AboutUs() {
                             <div className="relative">
                                 <div className="aspect-video rounded-lg sm:rounded-2xl overflow-hidden shadow-2xl border border-(--border)">
                                     {settings.aboutUsMissionImage ? (
-                                        <img src={getUrl(settings.aboutUsMissionImage)} alt="Mission" className="w-full h-full object-contain" />
+                                        <img src={getUrl(settings.aboutUsMissionImage)} alt="Mission" className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-(--bg-elevated) flex items-center justify-center text-(--text-muted) text-sm">Mission Image</div>
                                     )}

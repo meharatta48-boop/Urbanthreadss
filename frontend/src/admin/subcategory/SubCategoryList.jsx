@@ -38,7 +38,7 @@ function ImagePicker({ current, onFile, onRemove, label = "Image" }) {
       <p className="text-xs text-(--text-muted) uppercase tracking-wider font-medium">{label}</p>
       {displaySrc ? (
         <div className="relative group w-20 h-20 rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
-          <img src={displaySrc} alt="subcat" className="w-full h-full object-contain" />
+          <img src={displaySrc} alt="subcat" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
             <button
               type="button"
@@ -466,7 +466,7 @@ export default function SubCategoryList() {
                               <img
                                 src={getImageUrl(sc.image)}
                                 alt={sc.name}
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-cover"
                                 onError={(e) => { e.target.style.display = "none"; }}
                               />
                             </div>
