@@ -4,7 +4,7 @@
  */
 
 const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID || null; // Set in environment variables
-const API_URL = import.meta.env.VITE_API_URL || "https://urbanthreadss.onrender.com/api";
+const API_URL = import.meta.env.VITE_API_URL || "https://urbanthreadss.store/api";
 
 class MetaTracker {
   constructor() {
@@ -19,9 +19,9 @@ class MetaTracker {
     if (!this.pixelId) return;
 
     // Load Facebook Pixel script
-    (function(f, b, e, v, n, t, s) {
+    (function (f, b, e, v, n, t, s) {
       if (f.fbq) return;
-      n = f.fbq = function() {
+      n = f.fbq = function () {
         n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
       };
       if (!f._fbq) f._fbq = n;
@@ -140,16 +140,13 @@ class MetaTracker {
 
   // Track Search
   trackSearch(searchTerm, resultsCount) {
-    const customData = {
+    this.track('Search', {
       search_string: searchTerm,
       content_type: 'product',
       content_category: 'search',
       results_count: resultsCount
-    };
-    this.track('Search', customData);
-    this.trackServerEvent("Search", { customData });
+    });
   }
-
 
   // Track custom conversion events
   trackCustom(eventName, parameters = {}) {
@@ -214,7 +211,7 @@ export class MetaConversionAPI {
 }
 
 // Hash function for Conversion API
-MetaConversionAPI.prototype.hash = function(str) {
+MetaConversionAPI.prototype.hash = function (str) {
   // Simple hash for demo - use proper SHA256 in production
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
