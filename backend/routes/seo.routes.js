@@ -76,6 +76,12 @@ router.get("/social-preview/product/:id", async (req, res) => {
       }
     }
 
+  const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype/i.test(req.headers['user-agent'] || '');
+
+    if (!isBot) {
+      return res.redirect(301, `${host}/product/${product._id}`);
+    }
+
     const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
