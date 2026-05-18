@@ -59,7 +59,12 @@ router.get("/social-preview/product/:id", async (req, res) => {
       host = process.env.PUBLIC_SITE_URL;
     } else if (process.env.FRONTEND_URL) {
       const urls = process.env.FRONTEND_URL.split(",");
-      host = urls.find(u => u.includes("urbanthreadss.store")) || urls[0];
+      const prodUrl = urls.find(u => u.includes("urbanthreadss.store"));
+      if (prodUrl) {
+        host = prodUrl;
+      } else if (urls.length > 0 && !urls[0].includes("localhost")) {
+        host = urls[0];
+      }
     }
     host = host.trim().replace(/\/$/, "");
 
@@ -85,7 +90,7 @@ router.get("/social-preview/product/:id", async (req, res) => {
       image = image.replace(/\\/g, "/");
     }
 
-  const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype/i.test(req.headers['user-agent'] || '');
+  const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype|discord|telegram|viber/i.test(req.headers['user-agent'] || '');
 
     if (!isBot) {
       return res.redirect(301, `${host}/product/${product._id}`);
