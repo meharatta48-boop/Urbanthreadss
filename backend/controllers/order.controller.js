@@ -272,11 +272,28 @@ export const bulkUpdateStatus = async (req, res) => {
   }
 };
 
-/* ─── ADMIN — DELETE ORDER ─── */
+/* ─── DELETE ORDER ─── */
 export const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    const isAdmin = req.user?.role === "admin";
+    const isOwner = order.user && req.user && order.user.toString() === req.user._id.toString();
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    // If deleting an active order, restore product stock
+    if (order.orderStatus !== "cancelled") {
+      for (const item of order.orderItems) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+
     await order.deleteOne();
     res.json({ success: true, message: "Order deleted" });
   } catch (err) {

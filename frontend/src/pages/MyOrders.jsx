@@ -6,7 +6,7 @@ import api from "../services/api";
 import {
   FiPackage, FiClock, FiTruck, FiCheckCircle,
   FiXCircle, FiChevronDown, FiChevronUp, FiArrowLeft,
-  FiAlertCircle
+  FiAlertCircle, FiTrash2
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
@@ -28,6 +28,20 @@ export default function MyOrders() {
   const [orders, setOrders]   = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Aap ye order delete karna chahte hain?")) return;
+    try {
+      const res = await api.delete(`/orders/${orderId}`);
+      if (res.data.success) {
+        toast.success("Order kamyabi se delete ho gaya");
+        setOrders((prev) => prev.filter((o) => o._id !== orderId));
+      }
+    } catch (err) {
+      console.error("Delete order error:", err);
+      toast.error(err.response?.data?.message || "Order delete karne mein masla hua");
+    }
+  };
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -283,14 +297,24 @@ export default function MyOrders() {
                             </div>
                           )}
 
-                          {/* DATES */}
-                          <div className="flex flex-wrap gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
-                            <span>Ordered: {new Date(order.createdAt).toLocaleString("en-PK")}</span>
-                            {order.deliveredAt && (
-                              <span className="text-green-500">
-                                Delivered: {new Date(order.deliveredAt).toLocaleString("en-PK")}
-                              </span>
-                            )}
+                          {/* DATES & ACTIONS */}
+                          <div className="flex items-center justify-between flex-wrap gap-4 pt-3 border-t border-(--border)">
+                            <div className="flex flex-wrap gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
+                              <span>Ordered: {new Date(order.createdAt).toLocaleString("en-PK")}</span>
+                              {order.deliveredAt && (
+                                <span className="text-green-500">
+                                  Delivered: {new Date(order.deliveredAt).toLocaleString("en-PK")}
+                                </span>
+                              )}
+                            </div>
+                            
+                            <button
+                              onClick={() => handleDeleteOrder(order._id)}
+                              className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors hover:bg-red-500/10 cursor-pointer"
+                            >
+                              <FiTrash2 size={13} />
+                              Delete Order
+                            </button>
                           </div>
                         </div>
                       </motion.div>

@@ -38,7 +38,7 @@ router.get("/",              protect, adminOnly, orderPaginationValidation, vali
 router.put("/bulk-status",   protect, adminOnly, bulkUpdateStatus);
 router.put("/:id/pay",       protect, adminOnly, orderIdParamValidation, validateRequest, markOrderPaid);
 router.put("/:id/status",    protect, adminOnly, updateOrderStatusValidation, validateRequest, updateOrderStatus);
-router.delete("/:id",        protect, adminOnly, orderIdParamValidation, validateRequest, deleteOrder);
+router.delete("/:id",        protect, orderIdParamValidation, validateRequest, deleteOrder);
 
 /* ── USER ROUTES ── */
 router.post("/",      optionalAuth, createOrderValidation, validateRequest, createOrder);
