@@ -125,18 +125,7 @@ export default function ProductDetail() {
   const shareUrl = `${window.location.origin}/product/${product._id}`;
   const shareText = `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n🔗 *Buy Now:* ${shareUrl}\n✨ _${brandName}_`;
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: shareText
-        });
-        return;
-      } catch (err) {
-        console.warn("navigator.share error:", err);
-      }
-    }
+  const handleShare = () => {
     setShareOpen((v) => !v);
   };
 
