@@ -71,9 +71,18 @@ router.get("/social-preview/product/:id", async (req, res) => {
     if (product.images && product.images.length > 0) {
       image = product.images[0];
       if (!image.startsWith("http")) {
-        const backendHost = req.protocol + "://" + req.get("host");
+        let backendHost = req.protocol + "://" + req.get("host");
+        if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
+          backendHost = backendHost.replace("http://", "https://");
+        }
         image = `${backendHost}${image.startsWith("/") ? "" : "/"}${image}`;
+      } else if (image.startsWith("http://") && !image.includes("localhost")) {
+        image = image.replace("http://", "https://");
       }
+    }
+    // Standardize all backslashes to forward slashes for standard URLs
+    if (image) {
+      image = image.replace(/\\/g, "/");
     }
 
   const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype/i.test(req.headers['user-agent'] || '');
