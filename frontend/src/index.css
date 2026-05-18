@@ -1898,20 +1898,6 @@ n::selection {
   }
 }
 
-/* Enhanced Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-deep: #0a0a0a;
-    --bg-surface: #1a1a1a;
-    --bg-card: #2a2a2a;
-    --bg-elevated: #3a3a3a;
-    --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --text-muted: #a0a0a0;
-    --border: #404040;
-    --border-light: #505050;
-  }
-}
 
 /* Enhanced Mobile Optimizations */
 @media (max-width: 640px) {

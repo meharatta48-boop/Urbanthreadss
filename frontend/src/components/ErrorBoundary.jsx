@@ -7,7 +7,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -16,6 +16,19 @@ class ErrorBoundary extends React.Component {
       error: error,
       errorInfo: errorInfo
     });
+
+    // Auto-reload for chunk load errors (Vite lazy loading issue)
+    const isChunkLoadFailed = error?.message?.match(/Failed to fetch dynamically imported module|Importing a module script failed/i);
+    if (isChunkLoadFailed) {
+      const chunkFailedBefore = sessionStorage.getItem('chunkFailed');
+      if (!chunkFailedBefore) {
+        sessionStorage.setItem('chunkFailed', 'true');
+        window.location.reload();
+        return;
+      }
+    } else {
+      sessionStorage.removeItem('chunkFailed');
+    }
 
     // Log error to monitoring service
     console.error('Error Boundary caught an error:', error, errorInfo);
@@ -56,7 +69,7 @@ class ErrorBoundary extends React.Component {
                 We're sorry, but something unexpected happened. Our team has been notified and is working to fix this issue.
               </p>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="text-left mb-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                   <summary className="cursor-pointer font-mono text-xs" style={{ color: 'var(--text-muted)' }}>
                     Error Details (Development Only)

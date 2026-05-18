@@ -21,6 +21,7 @@ import MaintenanceMode from "./components/home/MaintenanceMode";
 import LaunchTimer from "./components/home/LaunchTimer";
 import PromotionalPopup from "./components/home/PromotionalPopup";
 import SeoManager from "./components/SeoManager";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 /* LAZY PAGES */
 const Home = lazy(() => import("./pages/Home"));
@@ -188,8 +189,9 @@ export default function App() {
       <PromotionalPopup />
 
       <Layout>
-        <Suspense fallback={<LoadingSpinner size="lg" message="Loading..." />}>
-          <Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingSpinner size="lg" message="Loading..." />}>
+            <Routes>
 
             {/* PUBLIC */}
             <Route path="/" element={<Home />} />
@@ -247,6 +249,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </ErrorBoundary>
       </Layout>
     </BrowserRouter>
   );
