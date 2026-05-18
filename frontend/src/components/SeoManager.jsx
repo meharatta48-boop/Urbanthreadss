@@ -32,7 +32,6 @@ export default function SeoManager() {
 
   useEffect(() => {
     if (!settings) return;
-    if (pathname.startsWith("/product/")) return;
 
     const siteName = safeText(settings.brandName, "Urban Thread");
     const siteTitle = safeText(settings.siteTitle, siteName);
@@ -46,9 +45,9 @@ export default function SeoManager() {
     const twitterHandle = safeText(settings.seoTwitterHandle, "");
     const tagline = safeText(settings.seoBrandTagline, "Pakistan ka premium streetwear brand.");
 
-    const fallbackImage = settings.logoImage ? getImageUrl(settings.logoImage) : "https://urbanthreadss.store/logo.png";
+    const fallbackImage = settings.logoImage ? getImageUrl(settings.logoImage) : `${window.location.origin}/logo.png`;
     const imageUrl = safeText(settings.seoDefaultImage, fallbackImage);
-    const canonical = `https://urbanthreadss.store${pathname}`;
+    const canonical = `${window.location.origin}${pathname}`;
 
     let pageTitle = siteTitle;
     let pageDesc = baseDesc;
@@ -59,6 +58,9 @@ export default function SeoManager() {
     } else if (pathname.startsWith("/shop")) {
       pageTitle = `Shop ${siteName} | Latest Pakistani Fashion`;
       pageDesc = `Buy latest ${siteName} articles online in Pakistan. ${baseDesc}`;
+    } else if (pathname.startsWith("/product/")) {
+      pageTitle = `Product Details | ${siteName}`;
+      pageDesc = `${baseDesc} Original quality, nationwide delivery in Pakistan.`;
     } else if (pathname.startsWith("/support")) {
       pageTitle = `Support | ${siteName}`;
       pageDesc = `Need help? Contact ${siteName} support for orders, delivery, size guide and returns in Pakistan.`;
@@ -96,7 +98,7 @@ export default function SeoManager() {
       name: siteName,
       description: baseDesc,
       image: imageUrl,
-      url: "https://urbanthreadss.store",
+      url: window.location.origin,
       address: {
         "@type": "PostalAddress",
         addressLocality: geoPlacename,

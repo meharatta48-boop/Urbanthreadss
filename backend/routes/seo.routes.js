@@ -50,31 +50,56 @@ router.get("/social-preview/product/:id", async (req, res) => {
     const product = await Product.findById(req.params.id).lean();
     if (!product) return res.status(404).send("Not Found");
 
-    // Check if the user is opening this directly in a browser
-    const acceptHeader = req.headers.accept || "";
-    if (acceptHeader.includes("text/html")) {
-      // Users should never open this API route directly. Redirect to standard product page.
-      return res.redirect(302, `https://urbanthreadss.store/product/${product._id}`);
+    const settings = await SiteSettings.findOne().lean();
+    const brandName = settings?.brandName || "Urban Threads";
+    
+    // Parse single valid frontend redirect target
+    let host = "https://www.urbanthreadss.store";
+    if (process.env.PUBLIC_SITE_URL) {
+      host = process.env.PUBLIC_SITE_URL;
+    } else if (process.env.FRONTEND_URL) {
+      const urls = process.env.FRONTEND_URL.split(",");
+      host = urls.find(u => u.includes("urbanthreadss.store")) || urls[0];
     }
+    host = host.trim().replace(/\/$/, "");
 
-    // Otherwise, this is for og:image preview. Serve or redirect to the actual image.
+    const title = `${product.name} - ${brandName}`;
+    const desc = product.description || `Buy ${product.name} online in Pakistan.`;
+    
+    // Convert cloudinary URI to URL if needed, assuming the image string is already a URL or path
     let image = "";
     if (product.images && product.images.length > 0) {
       image = product.images[0];
       if (!image.startsWith("http")) {
-        const backendHost = "https://urbanthreadss.store";
+        const backendHost = req.protocol + "://" + req.get("host");
         image = `${backendHost}${image.startsWith("/") ? "" : "/"}${image}`;
       }
-    } else {
-      // Fallback to site logo if product has no images
-      image = "https://urbanthreadss.store/logo.png";
     }
 
-    // Redirect to the actual image URL
-    return res.redirect(302, image);
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:image" content="${image}" />
+  <meta property="og:url" content="${host}/product/${product._id}" />
+  <meta property="og:type" content="product" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${image}" />
+</head>
+<body>
+  <script>window.location.replace("${host}/product/${product._id}");</script>
+</body>
+</html>`;
+
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(html);
   } catch (error) {
-    console.error("Error in social preview image route:", error);
-    res.status(500).send("Error serving preview image");
+    res.status(500).send("Error generating preview");
   }
 });
 

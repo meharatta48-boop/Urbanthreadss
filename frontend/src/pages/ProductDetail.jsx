@@ -71,7 +71,7 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!product) return;
     
-    // Dynamically inject OG tags
+    // Dynamically inject OG tags for crawlers that support JS
     const upsertMeta = (property, content) => {
       let el = document.head.querySelector(`meta[property="${property}"]`) || document.head.querySelector(`meta[name="${property}"]`);
       if (!el) {
@@ -86,32 +86,19 @@ export default function ProductDetail() {
       el.setAttribute("content", content);
     };
 
-    const title = `${product.name} - Rs. ${product.price?.toLocaleString()} | ${brandName}`;
+    const title = `${product.name} - ${brandName}`;
     const desc = product.description || `Buy ${product.name} online in Pakistan.`;
-    const imageUrl = `https://urbanthreadss.store/api/seo/social-preview/product/${product._id}`;
-    const productUrl = `https://urbanthreadss.store/product/${product._id}`;
+    const image = product.images?.length > 0 ? getImageUrl(product.images[0]) : "";
 
     document.title = title;
     upsertMeta("description", desc);
     upsertMeta("og:title", title);
     upsertMeta("og:description", desc);
-    upsertMeta("og:image", imageUrl);
-    upsertMeta("og:image:secure_url", imageUrl);
-    upsertMeta("og:url", productUrl);
-    upsertMeta("og:type", "product");
-    upsertMeta("twitter:card", "summary_large_image");
+    if (image) upsertMeta("og:image", image);
+    upsertMeta("og:url", window.location.href);
     upsertMeta("twitter:title", title);
     upsertMeta("twitter:description", desc);
-    upsertMeta("twitter:image", imageUrl);
-
-    // Canonical link tag
-    let canonicalLink = document.head.querySelector('link[rel="canonical"]');
-    if (!canonicalLink) {
-      canonicalLink = document.createElement("link");
-      canonicalLink.setAttribute("rel", "canonical");
-      document.head.appendChild(canonicalLink);
-    }
-    canonicalLink.setAttribute("href", productUrl);
+    if (image) upsertMeta("twitter:image", image);
 
   }, [product, brandName]);
 
@@ -135,7 +122,7 @@ export default function ProductDetail() {
     ? Math.round((1 - product.price / product.comparePrice) * 100) : 0;
 
   /* ── SHARE ── */
-  const shareUrl = `https://urbanthreadss.store/product/${product._id}`;
+  const shareUrl = `${SERVER_URL}/api/seo/social-preview/product/${product._id}`;
   const shareText = `🛍️ *${product.name}*\n💰 *Price:* Rs. ${product.price?.toLocaleString()}\n🔗 *Buy Now:* ${shareUrl}\n✨ _${brandName}_`;
 
   const handleShare = async () => {
@@ -143,8 +130,7 @@ export default function ProductDetail() {
       try {
         await navigator.share({
           title: product.name,
-          text: `🛍️ ${product.name}\n💰 Price: Rs. ${product.price?.toLocaleString()}\n✨ ${brandName}`,
-          url: shareUrl
+          text: shareText
         });
         return;
       } catch (err) {

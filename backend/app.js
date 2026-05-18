@@ -23,9 +23,6 @@ import navLinkRoutes from "./routes/navLink.routes.js";
 import customPageRoutes from "./routes/customPage.routes.js";
 import seoRoutes from "./routes/seo.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
-import mongoose from "mongoose";
-import Product from "./models/product.model.js";
-import SiteSettings from "./models/settings.model.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -121,88 +118,6 @@ if (fs.existsSync(frontendPath)) {
       res.setHeader("Cache-Control", "public, max-age=604800");
     },
   }));
-
-  // Intercept product page for dynamic SSR SEO metadata
-  app.get("/product/:id", async (req, res) => {
-    try {
-      const { id } = req.params;
-      
-      // If it's not a valid ObjectId, just fallback to standard index.html
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.sendFile(path.join(frontendPath, "index.html"));
-      }
-
-      // Fetch product and settings in parallel
-      const [product, settings] = await Promise.all([
-        Product.findById(id).lean(),
-        SiteSettings.findOne().lean(),
-      ]);
-
-      // If product is not found, fallback to standard index.html
-      if (!product) {
-        return res.sendFile(path.join(frontendPath, "index.html"));
-      }
-
-      const brandName = settings?.brandName || "URBAN THREADS";
-      const title = `${product.name} - Rs. ${product.price?.toLocaleString()} | ${brandName}`;
-      const desc = product.description 
-        ? (product.description.length > 160 ? product.description.substring(0, 157) + "..." : product.description)
-        : `Buy ${product.name} online in Pakistan. Premium quality fashion at ${brandName}.`;
-      
-      const canonical = `https://urbanthreadss.store/product/${product._id}`;
-      const imageUrl = `https://urbanthreadss.store/api/seo/social-preview/product/${product._id}`;
-
-      const htmlPath = path.join(frontendPath, "index.html");
-      if (!fs.existsSync(htmlPath)) {
-        return res.sendFile(path.join(frontendPath, "index.html"));
-      }
-
-      let html = fs.readFileSync(htmlPath, "utf8");
-
-      // Robustly strip existing default tags to avoid duplication
-      html = html.replace(/<title>[\s\S]*?<\/title>/gi, "");
-      html = html.replace(/<meta\s+name=["']title["'][\s\S]*?>/gi, "");
-      html = html.replace(/<meta\s+name=["']description["'][\s\S]*?>/gi, "");
-      html = html.replace(/<meta\s+property=["']og:(title|description|image|url|type|site_name)["'][\s\S]*?>/gi, "");
-      html = html.replace(/<meta\s+(property|name)=["']twitter:(card|title|description|image|url)["'][\s\S]*?>/gi, "");
-      html = html.replace(/<link\s+rel=["']canonical["'][\s\S]*?>/gi, "");
-
-      // Construct and inject new dynamic metadata tags at the top of <head>
-      const newTags = `
-  <title>${title}</title>
-  <meta name="title" content="${title}" />
-  <meta name="description" content="${desc}" />
-  <link rel="canonical" href="${canonical}" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="product" />
-  <meta property="og:url" content="${canonical}" />
-  <meta property="og:title" content="${title}" />
-  <meta property="og:description" content="${desc}" />
-  <meta property="og:image" content="${imageUrl}" />
-  <meta property="og:image:secure_url" content="${imageUrl}" />
-  <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="${brandName}" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="${canonical}" />
-  <meta name="twitter:title" content="${title}" />
-  <meta name="twitter:description" content="${desc}" />
-  <meta name="twitter:image" content="${imageUrl}" />
-`;
-
-      html = html.replace("<head>", `<head>${newTags}`);
-
-      res.setHeader("Content-Type", "text/html");
-      return res.status(200).send(html);
-    } catch (error) {
-      console.error("Error generating SSR metadata for product:", error);
-      return res.sendFile(path.join(frontendPath, "index.html"));
-    }
-  });
 
   // SPA fallback - serve index.html for all non-API routes
   app.get("*", (req, res) => {

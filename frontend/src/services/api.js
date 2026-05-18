@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://urbanthreadss.store/api";
-const SERVER_URL = "https://urbanthreadss.store";
+const API_URL = "https://urbanthreadss.onrender.com/api";
+const SERVER_URL = "https://urbanthreadss.onrender.com";
 
 const api = axios.create({
   baseURL: API_URL,
