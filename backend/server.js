@@ -16,7 +16,7 @@ const server = app.listen(PORT, () => {
 // Keep-alive ping system to prevent Render from sleeping
 import https from "https";
 setInterval(() => {
-  https.get("https://urbanthreadss.onrender.com/api/health", (res) => {
+  https.get("https://urbanthreadss.store/api/health", (res) => {
     console.log(`Keep-alive ping: ${res.statusCode}`.green);
   }).on("error", (e) => {
     console.log(`Keep-alive ping error: ${e.message}`.red);
