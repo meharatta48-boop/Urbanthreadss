@@ -140,12 +140,16 @@ class MetaTracker {
 
   // Track Search
   trackSearch(searchTerm, resultsCount) {
-    this.track('Search', {
+    const customData = {
       search_string: searchTerm,
       content_type: 'product',
-      content_category: 'search'
-    });
+      content_category: 'search',
+      results_count: resultsCount
+    };
+    this.track('Search', customData);
+    this.trackServerEvent("Search", { customData });
   }
+
 
   // Track custom conversion events
   trackCustom(eventName, parameters = {}) {
