@@ -51,7 +51,7 @@ const OrderList = lazy(() => import("./admin/orders/OrderList"));
 const SiteSettingsPage = lazy(() => import("./admin/settings/SiteSettings"));
 const Analytics = lazy(() => import("./admin/analytics/Analytics"));
 
-import { registerImageCache, preloadCriticalImages } from "./utils/imageCache";
+import { registerImageCache } from "./utils/imageCache";
 import { keepAliveManager } from "./utils/keepAlive";
 import { metaTracker } from "./utils/metaTracking";
 
@@ -124,7 +124,7 @@ export default function App() {
 
   useEffect(() => {
     registerImageCache();
-    preloadCriticalImages(["/logo.png"]);
+    // preloadCriticalImages(["/logo.png"]); // Disabled to prevent unused preload warning
     keepAliveManager.start();
     metaTracker.init();
   }, []);
