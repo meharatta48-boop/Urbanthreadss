@@ -119,33 +119,16 @@ export default function FeaturedProducts() {
               </div>
 
               {/* INFO */}
-              <div className="p-4">
-                <p className="text-[10px] uppercase tracking-widest mb-1" style={{ color: "var(--text-muted)" }}>
-                  {p.category?.name}
-                </p>
-                <h3 className="font-semibold text-sm leading-snug truncate" style={{ color: "var(--text-primary)" }}>
-                  {p.name}
-                </h3>
-                <div className="flex items-center justify-between mt-2">
+              <div className="product-info">
+                <p className="product-category">{p.category?.name}</p>
+                <h3 className="product-name truncate">{p.name}</h3>
+                <div className="product-price">
                   <div className="flex flex-col">
                     {p.comparePrice > p.price && (
-                      <span className="text-[11px] line-through opacity-40 mb-0" style={{ color: "var(--text-muted)" }}>
-                        Rs. {p.comparePrice?.toLocaleString()}
-                      </span>
+                      <span className="product-price-original">Rs. {p.comparePrice?.toLocaleString()}</span>
                     )}
-                    <span className="gold-text font-bold text-lg font-display">
-                      Rs. {p.price?.toLocaleString()}
-                    </span>
+                    <span className="product-price-current">Rs. {p.price?.toLocaleString()}</span>
                   </div>
-                  <Link
-                    to={`/product/${p._id}`}
-                    className="text-xs transition-colors"
-                    style={{ color: "var(--text-muted)" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
-                    onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
-                  >
-                    Details →
-                  </Link>
                 </div>
               </div>
             </motion.div>
