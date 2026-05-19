@@ -47,6 +47,7 @@ export default function ProductDetail() {
   const [colorError, setColorError] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [descExpanded, setDescExpanded] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -363,7 +364,23 @@ export default function ProductDetail() {
             </div>
 
             {product.description && (
-              <p className="leading-relaxed text-sm sm:text-base" style={{ color: "var(--text-secondary)" }}>{product.description}</p>
+              <div className="space-y-2">
+                <p 
+                  className={`leading-relaxed text-sm sm:text-base ${!descExpanded ? "line-clamp-3" : ""}`} 
+                  style={{ color: "var(--text-secondary)", whiteSpace: "pre-wrap" }}
+                >
+                  {product.description}
+                </p>
+                {product.description.length > 150 && (
+                  <button 
+                    onClick={() => setDescExpanded(!descExpanded)}
+                    className="text-xs font-semibold hover:underline uppercase tracking-wider"
+                    style={{ color: "var(--gold)" }}
+                  >
+                    {descExpanded ? "Show Less" : "Read More"}
+                  </button>
+                )}
+              </div>
             )}
 
             <div className="border-t" style={{ borderColor: "var(--border)" }} />

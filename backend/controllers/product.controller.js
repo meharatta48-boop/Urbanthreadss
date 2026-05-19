@@ -52,7 +52,7 @@ export const getProducts = async (req, res, next) => {
     const products = await Product.find(query)
       .populate("category", "name")
       .populate("subCategory", "name")
-      .select("name price comparePrice images category subCategory stock sizes colors isFeatured isActive createdAt")
+      .select("name description price comparePrice images category subCategory stock sizes colors isFeatured isActive video createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -108,10 +108,10 @@ export const createProduct = async (req, res, next) => {
 
     // req.files is now an object: { images: [...], productVideo: [...] }
     const imageFiles = req.files?.images || [];
-    const videoFile  = req.files?.productVideo?.[0] || null;
+    const videoFile = req.files?.productVideo?.[0] || null;
 
     const images = imageFiles.map((f) => f.path);
-    const video  = videoFile ? videoFile.path : "";
+    const video = videoFile ? videoFile.path : "";
 
     // Parse sizes & colors arrays from FormData
     const sizes = parseArray(req.body.sizes);
@@ -285,12 +285,12 @@ export const addProductReview = async (req, res) => {
     }
 
     product.reviews.push({
-      user:    req.user._id,
-      name:    req.user.name,
-      rating:  Number(rating),
+      user: req.user._id,
+      name: req.user.name,
+      rating: Number(rating),
       comment: comment.trim(),
-      images:  uploadedImages,
-      video:   uploadedVideo,
+      images: uploadedImages,
+      video: uploadedVideo,
     });
 
     // Recalculate avg
