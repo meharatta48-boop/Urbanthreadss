@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Confetti from "react-confetti";
 import api from "../../services/api";
+import { useSettings } from "../../context/SettingsContext";
 
 /* ── Particle background ── */
 function Particles() {
@@ -66,6 +68,8 @@ function DigitTile({ value, label }) {
 }
 
 export default function LaunchTimer({ launchDate }) {
+  const { fetchSettings } = useSettings();
+
   const calcLeft = useCallback(() => {
     const diff = new Date(launchDate).getTime() - Date.now();
     if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
@@ -80,7 +84,31 @@ export default function LaunchTimer({ launchDate }) {
 
   const [timeLeft, setTimeLeft] = useState(calcLeft());
   const [launched, setLaunched] = useState(false);
+  const [entering, setEntering] = useState(false);
   const autoDisableRef = useRef(false);
+  const redirectTimeoutRef = useRef(null);
+
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  useEffect(() => {
+    const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleEnterStore = useCallback(async () => {
+    if (entering) return;
+    setEntering(true);
+    if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+    try {
+      await fetchSettings();
+    } catch {
+      window.location.reload();
+    }
+  }, [fetchSettings, entering]);
 
   /* ── Auto-disable isComingSoon when timer hits 0 ── */
   const disableComingSoon = useCallback(async () => {
@@ -91,15 +119,28 @@ export default function LaunchTimer({ launchDate }) {
       const res = await api.get("/settings");
       if (res?.data?.success) {
         setLaunched(true);
-        // After 3.5s celebration, reload so the real site shows up
-        setTimeout(() => window.location.reload(), 3500);
+        // After 8 seconds, automatically open the store if they didn't click the button
+        redirectTimeoutRef.current = setTimeout(async () => {
+          try {
+            await fetchSettings();
+          } catch {
+            window.location.reload();
+          }
+        }, 8000);
       } else {
-        // Even if API fails, reload after delay so user can see the site
-        setTimeout(() => window.location.reload(), 4000);
+        setLaunched(true);
+        redirectTimeoutRef.current = setTimeout(() => window.location.reload(), 8000);
       }
     } catch {
-      setTimeout(() => window.location.reload(), 4000);
+      setLaunched(true);
+      redirectTimeoutRef.current = setTimeout(() => window.location.reload(), 8000);
     }
+  }, [fetchSettings]);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -135,37 +176,67 @@ export default function LaunchTimer({ launchDate }) {
         className="fixed inset-0 z-9999 flex flex-col items-center justify-center overflow-hidden"
         style={{ background: "var(--bg-deep)" }}
       >
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          recycle={true}
+          numberOfPieces={250}
+          colors={['#c9a84c', '#f0d060', '#ffffff', '#1a1a1a']}
+        />
         <Particles />
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 18 }}
-          className="relative z-10 flex flex-col items-center text-center gap-6 px-6"
+          className="relative z-10 flex flex-col items-center text-center gap-6 px-6 max-w-xl animate-fade-in"
         >
           {/* Glow ring */}
           <div
-            className="w-28 h-28 rounded-full flex items-center justify-center shadow-2xl"
+            className="w-28 h-28 rounded-full flex items-center justify-center shadow-2xl relative"
             style={{
               background: "linear-gradient(135deg, #c9a84c, #f0d060)",
               boxShadow: "0 0 80px rgba(201,168,76,0.5)",
             }}
           >
-            <span className="text-5xl">🚀</span>
+            <motion.span
+              className="text-5xl"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              🚀
+            </motion.span>
           </div>
           <div>
             <h1 className="font-display text-4xl sm:text-6xl font-black text-white mb-3">
               We&apos;re Live!
             </h1>
-            <p className="text-lg" style={{ color: "var(--text-muted)" }}>
-              Website ab khulja rahi hai... ✨
+            <p className="text-sm sm:text-base px-4" style={{ color: "var(--text-muted)" }}>
+              Urban Threads brand store is officially open. Discover our premium street collection now!
             </p>
           </div>
-          <div
-            className="flex items-center gap-2 text-sm font-medium px-5 py-2.5 rounded-full border"
-            style={{ borderColor: "rgba(201,168,76,0.3)", color: "var(--gold)" }}
+
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(201,168,76,0.6)" }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleEnterStore}
+            disabled={entering}
+            className="mt-2 px-8 py-3.5 rounded-full font-display font-black tracking-widest text-xs uppercase bg-white text-black transition-all cursor-pointer hover:bg-(--gold) hover:text-black flex items-center gap-2 border-2 border-white shadow-premium"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            Redirecting automatically...
+            {entering ? (
+              <>
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                Entering Store...
+              </>
+            ) : (
+              <>
+                Enter Store ✨
+              </>
+            )}
+          </motion.button>
+
+          <div className="flex items-center gap-2 text-xs text-(--text-muted) opacity-70 mt-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Auto-redirecting shortly...
           </div>
         </motion.div>
       </div>
