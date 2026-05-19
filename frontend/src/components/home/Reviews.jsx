@@ -12,12 +12,12 @@ import api from "../../services/api";
 
 /* ── Default reviews ── */
 const DEFAULT_REVIEWS = [
-  { _id: "d1", name: "Ahmad Raza",     city: "Lahore",     rating: 5, comment: "Bohot acha quality hai. Maine shirt order ki thi, kapra bilkul premium quality ka tha. Delivery bhi 2 din mein aa gayi. Definitely recommend karunga!" },
-  { _id: "d2", name: "Sana Malik",     city: "Karachi",    rating: 5, comment: "Pehli baar order kiya tha thoda dar tha but bohot khush hua. T-shirt ki quality amazing hai. Size bhi bilkul fit tha. Zindabad! 🙌" },
-  { _id: "d3", name: "Bilal Khan",     city: "Islamabad",  rating: 4, comment: "Overall experience acha tha. Product quality meri expectations se zyada achi nikli. Agle baar bhi zaroor order karunga insha Allah." },
+  { _id: "d1", name: "Ahmad Raza", city: "Lahore", rating: 5, comment: "Bohot acha quality hai. Maine shirt order ki thi, kapra bilkul premium quality ka tha. Delivery bhi 2 din mein aa gayi. Definitely recommend karunga!" },
+  { _id: "d2", name: "Sana Malik", city: "Karachi", rating: 5, comment: "Pehli baar order kiya tha thoda dar tha but bohot khush hua. T-shirt ki quality amazing hai. Size bhi bilkul fit tha. Zindabad! 🙌" },
+  { _id: "d3", name: "Bilal Khan", city: "Islamabad", rating: 4, comment: "Overall experience acha tha. Product quality meri expectations se zyada achi nikli. Agle baar bhi zaroor order karunga insha Allah." },
   { _id: "d4", name: "Fatima Hussain", city: "Faisalabad", rating: 5, comment: "Mujhe gift karni thi bhai ko, unhone bohot pasand kiya. Packaging bhi premium thi. WhatsApp pe bhi jaldi reply mila. 10/10 experience!" },
-  { _id: "d5", name: "Usman Tariq",    city: "Multan",     rating: 5, comment: "Price ke hisab se quality acha hai. Market mein itni quality itne daam mein nahi milti. Follow karta rahunga!" },
-  { _id: "d6", name: "Zara Ahmed",     city: "Rawalpindi", rating: 4, comment: "Delivery thodi late hui but product mein koi complaint nahi. Kapra soft hai aur rang fade nahi kiya wash ke baad bhi. Satisfied hun!" },
+  { _id: "d5", name: "Usman Tariq", city: "Multan", rating: 5, comment: "Price ke hisab se quality acha hai. Market mein itni quality itne daam mein nahi milti. Follow karta rahunga!" },
+  { _id: "d6", name: "Zara Ahmed", city: "Rawalpindi", rating: 4, comment: "Delivery thodi late hui but product mein koi complaint nahi. Kapra soft hai aur rang fade nahi kiya wash ke baad bhi. Satisfied hun!" },
 ];
 
 const COLORS = ["#c9a84c", "#4ade80", "#60a5fa", "#c084fc", "#f59e0b", "#f87171", "#34d399", "#fb923c"];
@@ -33,10 +33,12 @@ const AvatarCircle = ({ name, size = 44 }) => {
 
 const StarRow = ({ rating, size = 14 }) => (
   <div className="flex gap-1">
-    {[1,2,3,4,5].map((s) => (
+    {[1, 2, 3, 4, 5].map((s) => (
       <FiStar key={s} size={size}
-        style={{ color: s <= rating ? "#c9a84c" : "var(--border-light)",
-                 fill:  s <= rating ? "#c9a84c" : "transparent" }} />
+        style={{
+          color: s <= rating ? "#c9a84c" : "var(--border-light)",
+          fill: s <= rating ? "#c9a84c" : "transparent"
+        }} />
     ))}
   </div>
 );
@@ -45,7 +47,7 @@ const StarInput = ({ value, onChange }) => {
   const [hover, setHover] = useState(0);
   return (
     <div className="flex gap-2">
-      {[1,2,3,4,5].map((s) => (
+      {[1, 2, 3, 4, 5].map((s) => (
         <button key={s} type="button"
           onClick={() => onChange(s)}
           onMouseEnter={() => setHover(s)}
@@ -55,7 +57,7 @@ const StarInput = ({ value, onChange }) => {
           <FiStar size={28}
             style={{
               color: s <= (hover || value) ? "#c9a84c" : "var(--border-light)",
-              fill:  s <= (hover || value) ? "#c9a84c" : "transparent",
+              fill: s <= (hover || value) ? "#c9a84c" : "transparent",
             }}
           />
         </button>
@@ -189,7 +191,7 @@ export default function Reviews() {
   const { settings } = useSettings();
   const { token, user } = useAuth();
   const [activeIdx, setActiveIdx] = useState(0);
-  const [paused, setPaused]       = useState(false);
+  const [paused, setPaused] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   const reviews = (settings?.reviews?.filter((r) => r.isActive !== false) || []).length > 0
@@ -233,9 +235,9 @@ export default function Reviews() {
                 Community Stories
               </div>
               <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-(--text-primary) leading-tight mb-6">
-                Voices Of The <span className="gold-text italic">Urban Thread</span>
+                Voices Of The <span className="gold-text italic">Urban Threads Family</span>
               </h2>
-              
+
               <div className="flex flex-col items-center sm:items-start text-center sm:text-left py-6">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-3">
@@ -345,7 +347,7 @@ export default function Reviews() {
           token ? (
             <ReviewModal
               onClose={() => setShowModal(false)}
-              onSuccess={() => {}}
+              onSuccess={() => { }}
               userName={user?.name || "User"}
             />
           ) : (
