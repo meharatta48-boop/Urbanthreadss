@@ -18,6 +18,7 @@ const titleMap = {
   "/admin-dashboard/subcategories": "Sub-Categories",
   "/admin-dashboard/users": "Users",
   "/admin-dashboard/settings": "Site Settings",
+  "/admin-dashboard/analytics": "Analytics",
 };
 
 const iconMap = {
@@ -29,6 +30,7 @@ const iconMap = {
   "/admin-dashboard/subcategories": "🏷️",
   "/admin-dashboard/users": "👥",
   "/admin-dashboard/settings": "⚙️",
+  "/admin-dashboard/analytics": "📊",
 };
 
 const quickLinks = [
@@ -36,6 +38,7 @@ const quickLinks = [
   { label: "Orders",         to: "/admin-dashboard/orders",        keywords: "orders shipping pending delivery" },
   { label: "Products",       to: "/admin-dashboard/products",      keywords: "products catalog stock list" },
   { label: "Add Product",    to: "/admin-dashboard/products/new",  keywords: "new create product add" },
+  { label: "Analytics",      to: "/admin-dashboard/analytics",     keywords: "analytics charts revenue trend kpi" },
   { label: "Categories",     to: "/admin-dashboard/categories",    keywords: "category season collection" },
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", keywords: "subcategory men women kids" },
   { label: "Users",          to: "/admin-dashboard/users",         keywords: "customers users accounts" },

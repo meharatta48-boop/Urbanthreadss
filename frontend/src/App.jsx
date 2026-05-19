@@ -49,6 +49,7 @@ const SubCategoryList = lazy(() => import("./admin/subcategory/SubCategoryList")
 const Users = lazy(() => import("./admin/user/User"));
 const OrderList = lazy(() => import("./admin/orders/OrderList"));
 const SiteSettingsPage = lazy(() => import("./admin/settings/SiteSettings"));
+const Analytics = lazy(() => import("./admin/analytics/Analytics"));
 
 import { registerImageCache, preloadCriticalImages } from "./utils/imageCache";
 import { keepAliveManager } from "./utils/keepAlive";
@@ -244,6 +245,7 @@ export default function App() {
               <Route path="subcategories" element={<SubCategoryList />} />
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<SiteSettingsPage />} />
+              <Route path="analytics" element={<Analytics />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

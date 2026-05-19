@@ -7,7 +7,8 @@ import { toast } from "react-toastify";
 import {
   FiUsers, FiPackage, FiDollarSign, FiShoppingBag,
   FiTrendingUp, FiAlertTriangle, FiClock, FiCheckCircle,
-  FiPlus, FiRefreshCw, FiBarChart2, FiCopy, FiLayers, FiCalendar
+  FiPlus, FiRefreshCw, FiBarChart2, FiCopy, FiLayers, FiCalendar,
+  FiTarget, FiXCircle, FiPieChart, FiSettings, FiTag, FiZap
 } from "react-icons/fi";
 
 /* ── Status config ── */
@@ -195,10 +196,27 @@ export default function Dashboard() {
     {
       label: "Total Users",
       val: data.totalUsers || 0,
-      sub: "Registered customers",
-      sub2: "Live tracking dashboard",
+      sub: `+${data.newUsersToday || 0} aaj naye`,
+      sub2: `+${data.newUsersThisMonth || 0} this month`,
       Icon: FiUsers, color: "#c084fc", bg: "rgba(192,132,252,0.12)",
       link: "/admin-dashboard/users",
+    },
+    {
+      label: "Avg Order Value",
+      val: `Rs. ${(data.avgOrderValue || 0).toLocaleString()}`,
+      sub: "Per delivered order avg",
+      sub2: `${data.ordersByStatus?.delivered || 0} orders delivered`,
+      Icon: FiTarget, color: "#34d399", bg: "rgba(52,211,153,0.1)",
+      link: "/admin-dashboard/analytics",
+    },
+    {
+      label: "Cancel Rate",
+      val: `${data.cancelRate || 0}%`,
+      sub: `${data.ordersByStatus?.cancelled || 0} cancelled`,
+      sub2: `Delivery rate: ${data.conversionRate || 0}%`,
+      Icon: FiXCircle, color: "#f87171", bg: "rgba(248,113,113,0.08)",
+      link: "/admin-dashboard/analytics",
+      urgent: (data.cancelRate || 0) > 15,
     },
   ] : [];
 
@@ -225,12 +243,17 @@ export default function Dashboard() {
             Last updated: {refresh.toLocaleTimeString("en-PK")}
           </p>
         </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Link to="/admin-dashboard/products/new" className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-(--gold) hover:brightness-110 active:scale-95 text-black font-semibold text-xs px-4 py-3 rounded-xl shadow-md transition-all">
+        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+          <Link to="/admin-dashboard/products/new"
+            className="flex items-center justify-center gap-2 bg-(--gold) hover:brightness-110 active:scale-95 text-black font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all">
             <FiPlus size={14} strokeWidth={3} /> Add Product
           </Link>
+          <Link to="/admin-dashboard/analytics"
+            className="flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--border-light) text-(--text-muted) hover:text-(--text-primary) font-semibold text-xs px-4 py-2.5 rounded-xl transition-all">
+            <FiPieChart size={13} /> Analytics
+          </Link>
           <button onClick={load} disabled={loading}
-            className="flex items-center justify-center gap-2 text-xs font-medium text-(--text-muted) bg-(--bg-elevated) border border-(--border) px-4 py-3 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all disabled:opacity-40">
+            className="flex items-center justify-center gap-2 text-xs font-medium text-(--text-muted) bg-(--bg-elevated) border border-(--border) px-4 py-2.5 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all disabled:opacity-40">
             <FiRefreshCw size={12} className={loading ? "animate-spin" : ""} /> Refresh
           </button>
         </div>
@@ -261,15 +284,34 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
+      {/* QUICK ACTIONS */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Add Product",   to: "/admin-dashboard/products/new",  Icon: FiPlus,      color: "#c9a84c" },
+          { label: "View Orders",   to: "/admin-dashboard/orders",         Icon: FiShoppingBag, color: "#60a5fa" },
+          { label: "Analytics",     to: "/admin-dashboard/analytics",      Icon: FiBarChart2, color: "#818cf8" },
+          { label: "Site Settings", to: "/admin-dashboard/settings",       Icon: FiSettings,  color: "#34d399" },
+        ].map(({ label, to, Icon, color }) => (
+          <Link key={to} to={to}
+            className="flex items-center gap-2.5 px-4 py-3 bg-(--bg-card) border border-(--border) rounded-xl hover:border-(--border-light) hover:shadow-md transition-all group active:scale-95">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-110"
+              style={{ background: `${color}15`, color }}>
+              <Icon size={15} />
+            </div>
+            <span className="text-(--text-primary) text-xs font-semibold truncate">{label}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* STAT CARDS SECTION */}
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-36 animate-pulse" />
           ))}
         </div>
       ) : (
-        <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {cards.map((card) => {
             const { label, val, sub, sub2, Icon, color, bg, link, urgent } = card;
             return (

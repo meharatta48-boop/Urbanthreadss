@@ -51,6 +51,13 @@ export const getSettings = async (req, res) => {
   try {
     let settings = await SiteSettings.findOne();
     if (!settings) settings = await SiteSettings.create({});
+
+    // Auto-disable coming soon if launchDate has passed
+    if (settings.isComingSoon && settings.launchDate && new Date(settings.launchDate).getTime() <= Date.now()) {
+      settings.isComingSoon = false;
+      await settings.save();
+    }
+
     return sendSuccess(res, { settings: normalizeSettingsMedia(settings) });
   } catch (err) {
     return sendError(res, err.message);

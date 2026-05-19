@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { useSettings } from "../../context/SettingsContext";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
@@ -144,10 +144,10 @@ export default function SiteSettingsPage() {
 
   return (
     <div className="space-y-5 max-w-5xl">
-      {/* ── HEADER ── */}
+      {/* â”€â”€ HEADER â”€â”€ */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <p className="section-label mb-1">Pro CMS — WordPress Level</p>
+          <p className="section-label mb-1">Pro CMS â€” WordPress Level</p>
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-(--text-primary)">Site Settings</h2>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -188,7 +188,7 @@ export default function SiteSettingsPage() {
         </div>
       </div>
 
-      {/* ── SEARCH BAR ── */}
+      {/* â”€â”€ SEARCH BAR â”€â”€ */}
       <div className="relative">
         <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted)" />
         <input value={search} onChange={e => setSearch(e.target.value)}
@@ -202,7 +202,7 @@ export default function SiteSettingsPage() {
         )}
       </div>
 
-      {/* ── QUICK STRIP ── */}
+      {/* â”€â”€ QUICK STRIP â”€â”€ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 rounded-xl bg-(--bg-card) border border-(--border)">
         <div>
           <label className="text-(--text-muted) text-[10px] uppercase tracking-wider block mb-1">Brand Name</label>
@@ -226,7 +226,7 @@ export default function SiteSettingsPage() {
         </div>
       </div>
 
-      {/* ── TABS ── */}
+      {/* â”€â”€ TABS â”€â”€ */}
       <div className="flex gap-1 flex-wrap border-b border-(--border) pb-0.5 overflow-x-auto">
         {filteredTabs.map((t) => (
           <button key={t.id} onClick={() => { setActiveTab(t.id); setSearch(""); }}
@@ -258,7 +258,7 @@ export default function SiteSettingsPage() {
           />
         )}
 
-        {/* ── General: brand + favicon + announcement ── */}
+        {/* â”€â”€ General: brand + favicon + announcement â”€â”€ */}
         {activeTab === "general" && (
           <div className="space-y-6">
             <GeneralTab form={form} set={set} />
@@ -266,7 +266,7 @@ export default function SiteSettingsPage() {
           </div>
         )}
 
-        {/* ── Media: hero slides + all images/logos ── */}
+        {/* â”€â”€ Media: hero slides + all images/logos â”€â”€ */}
         {activeTab === "media" && (
           <div className="space-y-6">
             <SlidesTab settings={settings} token={token} fetchSettings={fetchSettings} deleteSlideImage={deleteSlideImage} mediaUrl={mediaUrl} />
@@ -274,7 +274,7 @@ export default function SiteSettingsPage() {
           </div>
         )}
 
-        {/* ── Content: hero text + brand story + sections text ── */}
+        {/* â”€â”€ Content: hero text + brand story + sections text â”€â”€ */}
         {activeTab === "content" && (
           <div className="space-y-6">
             <HeroTab form={form} set={set} />
@@ -283,18 +283,18 @@ export default function SiteSettingsPage() {
           </div>
         )}
 
-        {/* ── About Us Page ── */}
+        {/* â”€â”€ About Us Page â”€â”€ */}
         {activeTab === "about" && (
           <AboutUsTab form={form} set={set} token={token} settings={settings} fetchSettings={fetchSettings} mediaUrl={mediaUrl} uploadLogo={uploadLogo} deleteSettingImage={deleteSettingImage} />
         )}
 
-        {/* ── Navigation: nav links manager ── */}
+        {/* â”€â”€ Navigation: nav links manager â”€â”€ */}
         {activeTab === "navigation" && <NavigationTab />}
 
-        {/* ── Pages: custom pages CRUD ── */}
+        {/* â”€â”€ Pages: custom pages CRUD â”€â”€ */}
         {activeTab === "pages" && <PagesTab />}
 
-        {/* ── Shop: shop settings + contact + social ── */}
+        {/* â”€â”€ Shop: shop settings + contact + social â”€â”€ */}
         {activeTab === "shop" && (
           <div className="space-y-6">
             <ShopTab form={form} set={set} />
@@ -302,7 +302,7 @@ export default function SiteSettingsPage() {
           </div>
         )}
 
-        {/* ── Appearance: design studio + fonts + icons + CSS ── */}
+        {/* â”€â”€ Appearance: design studio + fonts + icons + CSS â”€â”€ */}
         {activeTab === "appearance" && (
           <div className="space-y-6">
             <DesignStudioTab    form={form} set={set} />
@@ -313,10 +313,10 @@ export default function SiteSettingsPage() {
           </div>
         )}
 
-        {/* ── Reviews ── */}
+        {/* â”€â”€ Reviews â”€â”€ */}
         {activeTab === "reviews" && <ReviewsTab settings={settings} token={token} fetchSettings={fetchSettings} />}
 
-        {/* ── Advanced ── */}
+        {/* â”€â”€ Advanced â”€â”€ */}
         {activeTab === "advanced" && <AdvancedTab form={form} set={set} token={token} settings={settings} fetchSettings={fetchSettings} mediaUrl={mediaUrl} />}
       </motion.div>
 
@@ -499,7 +499,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
   return (
     <div className="space-y-6">
       <Card>
-        <SectionTitle title="Control Center" desc="Fast admin operations — one-click presets, quick visibility control, emergency backup." />
+        <SectionTitle title="Control Center" desc="Fast admin operations â€” one-click presets, quick visibility control, emergency backup." />
         <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl p-4 mt-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-(--text-primary) text-sm">Setup Completion</p>
@@ -552,7 +552,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
       </Card>
 
       <Card>
-        <SectionTitle title="Backup & Recovery" desc="Purana setup safe rakho — local backup save/restore." />
+        <SectionTitle title="Backup & Recovery" desc="Purana setup safe rakho â€” local backup save/restore." />
         <div className="flex flex-wrap gap-3">
           <button onClick={onSaveLocalBackup} className="btn-outline" style={{ padding: "10px 18px", fontSize: "0.82rem" }}>
             Save Local Backup
@@ -637,8 +637,8 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
                 {item.isVisible !== false ? "Visible" : "Hidden"}
               </button>
               <div className="flex gap-1">
-                <button onClick={() => moveSection(idx, -1)} className="btn-outline" style={{ padding: "8px 10px", fontSize: "0.78rem" }}>▲</button>
-                <button onClick={() => moveSection(idx, 1)} className="btn-outline" style={{ padding: "8px 10px", fontSize: "0.78rem" }}>▼</button>
+                <button onClick={() => moveSection(idx, -1)} className="btn-outline" style={{ padding: "8px 10px", fontSize: "0.78rem" }}>â–²</button>
+                <button onClick={() => moveSection(idx, 1)} className="btn-outline" style={{ padding: "8px 10px", fontSize: "0.78rem" }}>â–¼</button>
               </div>
               <button onClick={() => deleteSection(idx)} className="btn-outline" style={{ padding: "8px 10px", fontSize: "0.78rem", color: "#f87171" }}>Delete</button>
             </div>
@@ -673,9 +673,9 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
   );
 }
 
-/* ════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    IMAGES TAB
-════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadBrandImage, uploadLogo, deleteSettingImage, form, set, fetchSettings, mediaUrl }) {
   const heroInputRef   = useRef(null);
   const brandInputRef  = useRef(null);
@@ -734,7 +734,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
     finally { setLogoUploading(false); }
   };
 
-  // Mobile logo upload — same route as desktop but with field param
+  // Mobile logo upload â€” same route as desktop but with field param
   const handleMobileLogo = async (file) => {
     if (!file) return;
     setMLogoUploading(true);
@@ -767,7 +767,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   return (
     <div className="space-y-8">
 
-      {/* ── HERO BANNER IMAGES ── */}
+      {/* â”€â”€ HERO BANNER IMAGES â”€â”€ */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between flex-wrap gap-3">
           <div>
@@ -775,7 +775,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               <FiImage className="text-[#c9a84c]" /> Hero Banner Images
             </h3>
             <p className="text-[#444] text-xs mt-0.5">
-              Homepage ka hero section — multiple slides ke liye multiple images upload karo
+              Homepage ka hero section â€” multiple slides ke liye multiple images upload karo
             </p>
           </div>
           <span className="badge-gold">{heroImages.length}/5 images</span>
@@ -816,8 +816,8 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   <p className="text-(--text-primary) font-medium">
                     {heroUploading ? "Uploading..." : heroDragging ? "Drop here!" : "Click or Drag to Upload"}
                   </p>
-                  <p className="text-[#444] text-sm mt-1">PNG, JPG, WebP — Max 5MB each</p>
-                  <p className="text-[#333] text-xs mt-1">Recommended: 1920×1080 or wider (landscape)</p>
+                  <p className="text-[#444] text-sm mt-1">PNG, JPG, WebP â€” Max 5MB each</p>
+                  <p className="text-[#333] text-xs mt-1">Recommended: 1920Ã—1080 or wider (landscape)</p>
                 </div>
               </div>
             </div>
@@ -871,13 +871,13 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
           {heroImages.length === 0 && !heroUploading && (
             <p className="text-center text-[#333] text-sm py-4">
-              Koi hero image nahi — fallback default image use ho rahi hai
+              Koi hero image nahi â€” fallback default image use ho rahi hai
             </p>
           )}
         </div>
       </div>
 
-      {/* ── BRAND STORY IMAGE ── */}
+      {/* â”€â”€ BRAND STORY IMAGE â”€â”€ */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
@@ -939,26 +939,26 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                 ) : <FiUpload size={15} />}
                 {brandUploading ? "Uploading..." : "Choose Image"}
               </button>
-              <p className="text-[#333] text-xs">Recommended: 800×1000px portrait</p>
+              <p className="text-[#333] text-xs">Recommended: 800Ã—1000px portrait</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── LOGO ── */}
+      {/* â”€â”€ LOGO â”€â”€ */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiImage className="text-[#c9a84c]" /> Logo Settings
           </h3>
-          <p className="text-[#444] text-xs mt-0.5">Navbar aur Footer mein dikhi hai — desktop aur mobile ke liye alag logos</p>
+          <p className="text-[#444] text-xs mt-0.5">Navbar aur Footer mein dikhi hai â€” desktop aur mobile ke liye alag logos</p>
         </div>
 
         <div className="p-6 space-y-6">
 
           {/* MAIN LOGO (DESKTOP) */}
           <div>
-            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">🖥️ Desktop / Main Logo</p>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">ðŸ–¥ï¸ Desktop / Main Logo</p>
             <div className="flex items-center gap-6 flex-wrap">
               <div className="relative group w-20 h-20 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.logoImage ? (
@@ -988,14 +988,14 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   {logoUploading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <FiUpload size={14} />}
                   {logoUploading ? "Uploading..." : "Upload Desktop Logo"}
                 </button>
-                <p className="text-[#333] text-xs mt-2">PNG transparent preferred • min 100×100px</p>
+                <p className="text-[#333] text-xs mt-2">PNG transparent preferred â€¢ min 100Ã—100px</p>
               </div>
             </div>
           </div>
 
           {/* MOBILE LOGO */}
           <div className="border-t border-(--border) pt-5">
-            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">📱 Mobile Logo <span className="normal-case text-[#333]">(choti screen)</span></p>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">ðŸ“± Mobile Logo <span className="normal-case text-[#333]">(choti screen)</span></p>
             <p className="text-[#333] text-xs mb-3">Khali rakhne par desktop wala hi use hoga</p>
             <div className="flex items-center gap-6 flex-wrap">
               <div className="relative group w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
@@ -1026,7 +1026,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   {mLogoUploading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <FiUpload size={14} />}
                   {mLogoUploading ? "Uploading..." : "Upload Mobile Logo"}
                 </button>
-                <p className="text-[#333] text-xs mt-2">Square icon ya simplified version • min 64×64px</p>
+                <p className="text-[#333] text-xs mt-2">Square icon ya simplified version â€¢ min 64Ã—64px</p>
               </div>
             </div>
           </div>
@@ -1034,7 +1034,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           {/* LOGO SIZES */}
           {form && set && (
             <div className="border-t border-(--border) pt-5 space-y-5">
-              <p className="text-xs text-(--text-muted) uppercase tracking-wider">📐 Logo Sizes</p>
+              <p className="text-xs text-(--text-muted) uppercase tracking-wider">ðŸ“ Logo Sizes</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { label: "Navbar (Desktop)", field: "navLogoSize",       min: 20, max: 72, def: 36 },
@@ -1087,7 +1087,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
               {/* LIVE PREVIEW */}
               <div className="bg-[#050505] border border-(--border) rounded-xl p-4">
-                <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">👁️ Navbar Preview</p>
+                <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">ðŸ‘ï¸ Navbar Preview</p>
                 <div className="flex items-center gap-3 bg-(--bg-elevated) px-4 py-3 rounded-xl border border-(--border-light)">
                   <div className="rounded-lg overflow-hidden bg-[#1a1a1a] flex items-center justify-center shrink-0"
                     style={{ width: form.navLogoSize || 36, height: form.navLogoSize || 36 }}>
@@ -1110,13 +1110,13 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
         </div>
       </div>
 
-      {/* ── SITE TITLE & FAVICON ── */}
+      {/* â”€â”€ SITE TITLE & FAVICON â”€â”€ */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
-            <FiGlobe className="text-[#c9a84c]" /> Browser Tab — Title & Icon
+            <FiGlobe className="text-[#c9a84c]" /> Browser Tab â€” Title & Icon
           </h3>
-          <p className="text-[#444] text-xs mt-0.5">Browser mein tab par jo naam aur icon dikhe — admin se control karo</p>
+          <p className="text-[#444] text-xs mt-0.5">Browser mein tab par jo naam aur icon dikhe â€” admin se control karo</p>
         </div>
         <div className="p-6 space-y-5">
 
@@ -1136,14 +1136,14 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   />
                 </div>
                 <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl px-3 py-2 flex items-center gap-2 shrink-0">
-                  <span className="text-[#c9a84c] text-xs">🌐</span>
+                  <span className="text-[#c9a84c] text-xs">ðŸŒ</span>
                   <span className="text-[#9a9a9a] text-xs font-mono truncate max-w-30">
                     {form.siteTitle || "URBAN THREAD"}
                   </span>
                 </div>
               </div>
               <p className="text-[#333] text-xs mt-2">
-                Yeh browser tab mein dikhega — short aur descriptive rakho
+                Yeh browser tab mein dikhega â€” short aur descriptive rakho
               </p>
             </div>
           )}
@@ -1151,7 +1151,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           {/* FAVICON */}
           <div className="border-t border-(--border) pt-5">
             <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">
-              🌐 Favicon (Tab Icon)
+              ðŸŒ Favicon (Tab Icon)
             </p>
             <div className="flex items-center gap-6 flex-wrap">
               {/* Current favicon preview */}
@@ -1178,7 +1178,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               <div className="flex-1 min-w-50">
                 <FaviconUploader token={token} fetchSettings={fetchSettings} settings={settings} onDelete={handleDeleteFavicon} />
                 <p className="text-[#333] text-xs mt-2">
-                  ICO, PNG, or SVG • Recommended: 32×32px or 64×64px<br />
+                  ICO, PNG, or SVG â€¢ Recommended: 32Ã—32px or 64Ã—64px<br />
                   <span className="text-[#222]">Khali rakhne par logo image use hogi</span>
                 </p>
               </div>
@@ -1212,9 +1212,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   );
 }
 
-/* ════════════════════════════════════════
-   ADVANCED TAB — Pro Level Controls
-════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   ADVANCED TAB â€” Pro Level Controls
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
   const popupRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -1265,34 +1265,118 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
         </div>
         {form.maintenanceMode && (
           <div className="bg-red-900/20 border border-red-700/30 rounded-xl p-4 text-red-400 text-xs mt-4">
-            ⚠️ Maintenance mode is ON. Normal users cannot access the website.
+            âš ï¸ Maintenance mode is ON. Normal users cannot access the website.
           </div>
         )}
       </Card>
 
       {/* COMING SOON / LAUNCH TIMER */}
       <Card>
-        <div className="flex items-center justify-between">
-          <div>
-            <SectionTitle title="Coming Soon / Launch Timer" desc="Website ko 'Coming Soon' mode me dalen aur ek launch date set karen." />
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <SectionTitle
+              title="ðŸš€ Coming Soon / Launch Timer"
+              desc="Website ko launch se pehle 'Coming Soon' mode mein rakhein. Launch time aane par website automatically khul jayegi."
+            />
           </div>
-          <button onClick={() => set("isComingSoon", !form.isComingSoon)}
-            className="w-12 h-6 rounded-full transition-all relative shrink-0"
-            style={{ background: form.isComingSoon ? "#c9a84c" : "#1a1a1a" }}>
-            <span className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
-              style={{ left: form.isComingSoon ? "calc(100% - 22px)" : 2, background: form.isComingSoon ? "#000" : "#555" }} />
+          <button
+            onClick={() => set("isComingSoon", !form.isComingSoon)}
+            className="w-12 h-6 rounded-full transition-all relative shrink-0 mt-1"
+            style={{ background: form.isComingSoon ? "#c9a84c" : "#1a1a1a" }}
+          >
+            <span
+              className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
+              style={{
+                left: form.isComingSoon ? "calc(100% - 22px)" : 2,
+                background: form.isComingSoon ? "#000" : "#555",
+              }}
+            />
           </button>
         </div>
+
+        {/* Status badge */}
+        <div className={`mt-3 inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full border ${
+          form.isComingSoon
+            ? "text-amber-400 bg-amber-950/30 border-amber-700/30"
+            : "text-emerald-400 bg-emerald-950/30 border-emerald-700/30"
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${form.isComingSoon ? "bg-amber-400 animate-pulse" : "bg-emerald-400"}`} />
+          {form.isComingSoon ? "Coming Soon Mode â€” Website bandi hai" : "Website Live hai âœ“"}
+        </div>
+
         {form.isComingSoon && (
-          <div className="mt-4 pt-4 border-t border-(--border)">
-            <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Launch Date & Time</label>
-            <input 
-              type="datetime-local" 
-              value={form.launchDate ? new Date(form.launchDate).toISOString().slice(0, 16) : ""}
-              onChange={(e) => set("launchDate", e.target.value)}
-              className="lux-input w-full sm:w-auto"
-            />
-            <p className="text-[#444] text-xs mt-2">Jab yeh waqt aayega, countdown zero ho jayega. Is se pehle users site nahi dekh sakte.</p>
+          <div className="mt-5 pt-5 border-t border-(--border) space-y-4">
+            <div>
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2 font-semibold">
+                📅 Launch Date &amp; Time
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
+                <input
+                  type="datetime-local"
+                  value={form.launchDate
+                    ? new Date(new Date(form.launchDate).getTime() - new Date().getTimezoneOffset() * 60000)
+                        .toISOString().slice(0, 16)
+                    : ""}
+                  onChange={(e) => {
+                    if (!e.target.value) { set("launchDate", null); return; }
+                    set("launchDate", new Date(e.target.value).toISOString());
+                  }}
+                  className="lux-input"
+                  style={{ colorScheme: "dark" }}
+                />
+                {form.launchDate && (
+                  <button
+                    onClick={() => set("launchDate", null)}
+                    className="text-xs text-red-400 border border-red-800/30 px-3 py-2 rounded-xl hover:text-red-300 transition-all"
+                  >
+                    Clear Date
+                  </button>
+                )}
+              </div>
+              <p className="text-(--text-muted) text-[11px] mt-1.5">
+                🕐 Timezone:{" "}
+                <span className="font-mono" style={{ color: "var(--gold)" }}>
+                  {Intl.DateTimeFormat().resolvedOptions().timeZone}{" "}
+                  (UTC{new Date().getTimezoneOffset() <= 0 ? `+${-new Date().getTimezoneOffset() / 60}` : `-${new Date().getTimezoneOffset() / 60}`})
+                </span>
+              </p>
+            </div>
+            {form.launchDate && (() => {
+              const diff = new Date(form.launchDate).getTime() - Date.now();
+              return (
+                <div className="rounded-xl border border-(--border) bg-(--bg-elevated) p-4 space-y-2">
+                  <p className="text-xs text-(--text-muted) uppercase tracking-wider font-semibold">Launch Preview</p>
+                  <div className="flex items-center justify-between text-sm flex-wrap gap-2">
+                    <span className="text-(--text-muted)">Launch DateTime:</span>
+                    <span className="font-semibold" style={{ color: "var(--gold)" }}>
+                      {new Date(form.launchDate).toLocaleString("en-PK", {
+                        weekday: "long", day: "numeric", month: "long",
+                        year: "numeric", hour: "2-digit", minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  {diff <= 0 ? (
+                    <p className="text-red-400 text-xs font-medium">⚠️ Yeh time guzar chuka hai! Save ke baad website khul jayegi.</p>
+                  ) : (
+                    <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
+                      ⏱️ Bacha hua waqt:{" "}
+                      <span className="font-mono bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-800/30">
+                        {Math.floor(diff / 86400000)}d {Math.floor((diff / 3600000) % 24)}h {Math.floor((diff / 60000) % 60)}m
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+            <div className="rounded-xl border border-amber-800/20 bg-amber-950/10 p-4">
+              <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">ℹ️ Kaise kaam karta hai</p>
+              <ul className="text-amber-400/80 text-xs space-y-1.5">
+                <li>✓ Coming Soon ON hone par normal users countdown page dekhenge</li>
+                <li>✓ Admin hamesha real website access kar sakte hain</li>
+                <li>✓ Jab launch time aayega, website automatically khul jayegi</li>
+                <li>✓ Launch ke baad Coming Soon mode automatic OFF ho jata hai</li>
+              </ul>
+            </div>
           </div>
         )}
       </Card>
@@ -1301,7 +1385,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
       <Card>
         <SectionTitle title="Global Settings" desc="Currency aur global variables configure karein." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-          <Field label="Currency Symbol" field="currencySymbol" form={form} set={set} placeholder="Rs." hint="e.g. Rs., $, £, €" />
+          <Field label="Currency Symbol" field="currencySymbol" form={form} set={set} placeholder="Rs." hint="e.g. Rs., $, Â£, â‚¬" />
           <div>
             <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Currency Position</label>
             <select value={form.currencyPosition || "left"} onChange={(e) => set("currencyPosition", e.target.value)} className="lux-select w-full">
@@ -1434,7 +1518,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
       <Card>
         <SectionTitle title="Custom Scripts (Head)" desc="Google Analytics, Facebook Pixel, Tawk.to, etc." />
         <div className="bg-yellow-900/10 border border-yellow-700/20 rounded-xl p-3 mb-4 mt-4">
-          <p className="text-yellow-400 text-xs">⚠️ Warning: Invalid scripts can break your website. Paste code carefully.</p>
+          <p className="text-yellow-400 text-xs">âš ï¸ Warning: Invalid scripts can break your website. Paste code carefully.</p>
         </div>
         <textarea value={form.customScripts || ""} onChange={(e) => set("customScripts", e.target.value)}
           rows={6} spellCheck={false}
@@ -1447,9 +1531,9 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
     </div>
   );
 }
-/* ════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FAVICON UPLOADER
-════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
   const faviconRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -1485,7 +1569,7 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
       </button>
       {settings?.faviconUrl && (
         <>
-          <span className="text-green-400 text-xs">✓ Custom favicon set</span>
+          <span className="text-green-400 text-xs">âœ“ Custom favicon set</span>
           <button
             onClick={onDelete}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
@@ -1498,9 +1582,9 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
   );
 }
 
-/* ════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FIELD COMPONENTS
-════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function Field({ label, field, form, set, type = "text", placeholder, rows, hint }) {
   return (
     <div className="space-y-2">
@@ -1545,11 +1629,11 @@ function Card({ children }) {
   );
 }
 
-/* ── HERO TEXT TAB ── */
+/* â”€â”€ HERO TEXT TAB â”€â”€ */
 function HeroTab({ form, set }) {
   return (
     <Card>
-      <SectionTitle title="Hero Banner — Text" desc="Homepage ka main banner text edit karo. Images 'Images' tab mein update karo." />
+      <SectionTitle title="Hero Banner â€” Text" desc="Homepage ka main banner text edit karo. Images 'Images' tab mein update karo." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Label (small badge)" field="heroLabel" form={form} set={set} placeholder="New Season 2026" />
         <Field label="CTA Button Text" field="heroCta" form={form} set={set} placeholder="Shop Collection" />
@@ -1574,11 +1658,11 @@ function HeroTab({ form, set }) {
   );
 }
 
-/* ── BRAND STORY TEXT TAB ── */
+/* â”€â”€ BRAND STORY TEXT TAB â”€â”€ */
 function BrandTab({ form, set }) {
   return (
     <Card>
-      <SectionTitle title="Brand Story — Text" desc="'Our Story' section ka text. Image 'Images' tab mein update karo." />
+      <SectionTitle title="Brand Story â€” Text" desc="'Our Story' section ka text. Image 'Images' tab mein update karo." />
       <Field label="Section Heading" field="brandTitle" form={form} set={set} placeholder="Fashion Born From Pakistani Streets" />
       <Field label="Founded Year" field="brandYear" form={form} set={set} placeholder="2020" />
       <Field label="Paragraph 1" field="brandText1" form={form} set={set} rows={4} />
@@ -1588,7 +1672,7 @@ function BrandTab({ form, set }) {
   );
 }
 
-/* ── SHOP TAB ── */
+/* â”€â”€ SHOP TAB â”€â”€ */
 function ShopTab({ form, set }) {
   return (
     <Card>
@@ -1599,15 +1683,15 @@ function ShopTab({ form, set }) {
         <Field label="Coupon Discount (Rs.)" field="couponDiscount" form={form} set={set} type="number" placeholder="500" />
       </div>
       <div className="bg-(--bg-elevated) rounded-xl p-4 border border-(--border) text-sm text-(--text-muted)">
-        📦 Delivery: <span className="text-(--gold) font-semibold">Rs. {form.deliveryCharges}</span>
-        &nbsp;|&nbsp; 🏷️ Code: <span className="text-(--gold) font-semibold">{form.couponCode}</span>
-        &nbsp;→&nbsp; saves <span className="text-(--gold) font-semibold">Rs. {form.couponDiscount}</span>
+        ðŸ“¦ Delivery: <span className="text-(--gold) font-semibold">Rs. {form.deliveryCharges}</span>
+        &nbsp;|&nbsp; ðŸ·ï¸ Code: <span className="text-(--gold) font-semibold">{form.couponCode}</span>
+        &nbsp;â†’&nbsp; saves <span className="text-(--gold) font-semibold">Rs. {form.couponDiscount}</span>
       </div>
     </Card>
   );
 }
 
-/* ── CONTACT TAB ── */
+/* â”€â”€ CONTACT TAB â”€â”€ */
 function ContactTab({ form, set }) {
   return (
     <div className="space-y-5">
@@ -1633,7 +1717,7 @@ function ContactTab({ form, set }) {
   );
 }
 
-/* ── GENERAL TAB ── */
+/* â”€â”€ GENERAL TAB â”€â”€ */
 function GeneralTab({ form, set }) {
   return (
     <Card>
@@ -1641,16 +1725,16 @@ function GeneralTab({ form, set }) {
       <Field label="Brand Name" field="brandName" form={form} set={set} placeholder="URBAN THREAD" hint="Navbar aur Footer mein use hogi" />
       <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-xl p-4">
         <p className="text-yellow-400 text-sm">
-          ⚠️ Brand name change karne ke baad puri website mein update hogi.
+          âš ï¸ Brand name change karne ke baad puri website mein update hogi.
         </p>
       </div>
     </Card>
   );
 }
 
-/* ════════════════════════════════════════
-   HERO SLIDES TAB — Per-slide text + image
-════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   HERO SLIDES TAB â€” Per-slide text + image
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl }) {
   const [slides, setSlides] = useState(() => {
     const s = settings?.heroSlides || [];
@@ -1703,13 +1787,13 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
     finally { setSaving(false); }
   };
 
-  const SLIDE_NAMES = ["Slide 1 — Main", "Slide 2", "Slide 3"];
+  const SLIDE_NAMES = ["Slide 1 â€” Main", "Slide 2", "Slide 3"];
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="text-(--text-primary) font-semibold">Hero Slides — 3 Slides Control</h3>
+          <h3 className="text-(--text-primary) font-semibold">Hero Slides â€” 3 Slides Control</h3>
           <p className="text-[#444] text-sm mt-0.5">Har slide ka image, title aur text alag se set karo</p>
         </div>
         <button onClick={handleSaveText} disabled={saving} className="btn-gold" style={{ padding: "10px 20px", fontSize: "0.82rem" }}>
@@ -1784,7 +1868,7 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
                 <textarea value={slide.title || ""} onChange={(e) => updateSlide(idx, "title", e.target.value)}
                   placeholder={"Style That\nSpeaks Louder"} rows={2}
                   className="lux-input resize-none" style={{ resize: "vertical" }} />
-                <p className="text-[#333] text-xs mt-1">💡 Dusri line automatic gold color mein hogi</p>
+                <p className="text-[#333] text-xs mt-1">ðŸ’¡ Dusri line automatic gold color mein hogi</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Subtitle / Description</label>
@@ -1812,9 +1896,9 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
   );
 }
 
-/* ════════════════════════════════════════
-   REVIEWS TAB — Admin manages reviews
-════════════════════════════════════════ */
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   REVIEWS TAB â€” Admin manages reviews
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function StarInput({ value, onChange }) {
   return (
     <div className="flex gap-1">
@@ -1924,7 +2008,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
           <div className="flex items-center gap-2">
             {reviews.filter((r) => !r.isActive).length > 0 && (
               <span className="text-xs font-bold text-orange-400 bg-orange-900/15 border border-orange-700/20 px-2.5 py-1 rounded-full">
-                ⚡ {reviews.filter((r) => !r.isActive).length} pending
+                âš¡ {reviews.filter((r) => !r.isActive).length} pending
               </span>
             )}
             <span className="badge-gold">{reviews.length} total</span>
@@ -1934,7 +2018,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
         {reviews.length === 0 ? (
           <div className="p-10 text-center text-[#333]">
             <FiMessageSquare size={28} className="mx-auto mb-2 opacity-30" />
-            <p className="text-sm">Koi review nahi abhi — upar se add karo ya user submit kare</p>
+            <p className="text-sm">Koi review nahi abhi â€” upar se add karo ya user submit kare</p>
           </div>
         ) : (
           <div className="divide-y divide-[#111]">
@@ -1968,7 +2052,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
                       onClick={() => handleToggle(r)}
                       className="text-[10px] font-bold px-2.5 py-1 rounded-lg border border-green-700/40 text-green-400 bg-green-900/15 hover:bg-green-900/30 transition-all"
                     >
-                      ✓ Approve
+                      âœ“ Approve
                     </button>
                   )}
                   {r.isActive && (

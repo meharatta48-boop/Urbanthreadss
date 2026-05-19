@@ -129,7 +129,7 @@ export const getAdvancedStats = async (req, res) => {
     const thisMonthRevenue = thisMonthOrders.reduce((s, o) => s + (o.totalPrice || 0), 0);
 
     // ── Total counts ──
-    const [pending, processing, shipped, delivered, cancelled, totalOrders, totalUsers] =
+    const [pending, processing, shipped, delivered, cancelled, totalOrders, totalUsers, totalProducts] =
       await Promise.all([
         Order.countDocuments({ orderStatus: "pending" }),
         Order.countDocuments({ orderStatus: "processing" }),
@@ -138,11 +138,74 @@ export const getAdvancedStats = async (req, res) => {
         Order.countDocuments({ orderStatus: "cancelled" }),
         Order.countDocuments(),
         User.countDocuments(),
+        Product.countDocuments(),
       ]);
+
+    // ── New users today & this month ──
+    const userTodayStart = new Date(); userTodayStart.setHours(0, 0, 0, 0);
+    const userMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [newUsersToday, newUsersThisMonth] = await Promise.all([
+      User.countDocuments({ createdAt: { $gte: userTodayStart } }),
+      User.countDocuments({ createdAt: { $gte: userMonthStart } }),
+    ]);
+
+    // ── Low stock count ──
+    const allProducts = await Product.find({}, "stock").lean();
+    const lowStockCount = allProducts.filter((p) => p.stock >= 0 && p.stock <= 5).length;
+    const outOfStockCount = allProducts.filter((p) => p.stock === 0).length;
+
+    // ── Avg order value (delivered only) ──
+    const avgOrderValue = delivered > 0
+      ? Math.round(allDelivered.reduce((s, o) => s + (o.totalPrice || 0), 0) / delivered)
+      : 0;
+
+    // ── Last 30 days revenue via aggregation (single query) ──
+    const thirtyDaysAgo = new Date(now);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+    const raw30 = await Order.aggregate([
+      { $match: { createdAt: { $gte: thirtyDaysAgo } } },
+      {
+        $group: {
+          _id: {
+            y: { $year: "$createdAt" },
+            m: { $month: "$createdAt" },
+            d: { $dayOfMonth: "$createdAt" },
+          },
+          orders: { $sum: 1 },
+          revenue: {
+            $sum: {
+              $cond: [{ $eq: ["$orderStatus", "delivered"] }, "$totalPrice", 0],
+            },
+          },
+        },
+      },
+      { $sort: { "_id.y": 1, "_id.m": 1, "_id.d": 1 } },
+    ]);
+
+    // Fill in missing days with 0
+    const raw30Map = {};
+    raw30.forEach((r) => {
+      const key = `${r._id.y}-${String(r._id.m).padStart(2, "0")}-${String(r._id.d).padStart(2, "0")}`;
+      raw30Map[key] = r;
+    });
+
+    const last30Days = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const entry = raw30Map[key] || { orders: 0, revenue: 0 };
+      const label = d.toLocaleDateString("en-PK", { day: "numeric", month: "short" });
+      last30Days.push({ date: label, orders: entry.orders, revenue: entry.revenue });
+    }
 
     const totalRevenue = allDelivered.reduce((s, o) => s + (o.totalPrice || 0), 0);
     const conversionRate = totalOrders > 0
       ? Math.round((delivered / totalOrders) * 100) : 0;
+    const cancelRate = totalOrders > 0
+      ? Math.round((cancelled / totalOrders) * 100) : 0;
 
     res.json({
       success: true,
@@ -153,10 +216,18 @@ export const getAdvancedStats = async (req, res) => {
         todayOrders,
         totalOrders,
         totalUsers,
+        totalProducts,
         conversionRate,
+        cancelRate,
+        avgOrderValue,
+        newUsersToday,
+        newUsersThisMonth,
+        lowStockCount,
+        outOfStockCount,
         ordersByStatus: { pending, processing, shipped, delivered, cancelled },
         last7Days: last7,
         last6Months,
+        last30Days,
         topProducts,
       },
     });
