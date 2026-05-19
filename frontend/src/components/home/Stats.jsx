@@ -22,25 +22,26 @@ function CountUp({ target, prefix = "", suffix = "", duration = 1.5 }) {
 }
 
 export default function Stats() {
-  const [data, setData]   = useState({ products: 0, delivery: 250 });
+  const [data, setData]   = useState({ products: 0, happyCustomers: 500, delivery: 250, ordersCompleted: 150 });
   const [loaded, setLoaded] = useState(false);
   const { settings } = useSettings();
 
   useEffect(() => {
-    api.get("/products")
+    api.get("/stats/public")
       .then((r) => {
-        const prods = (r.data.data || []).filter((p) => p.isActive !== false);
-        setData({ products: prods.length, delivery: 250 });
+        if (r.data?.success && r.data?.data) {
+          setData(r.data.data);
+        }
       })
       .catch(() => {})
       .finally(() => setLoaded(true));
   }, []);
 
   const stats = [
-    { Icon: FiUsers,   value: Math.max(data.products * 25, 500), suffix: "+", label: "Happy Customers",        color: "var(--gold)" },
+    { Icon: FiUsers,   value: data.happyCustomers,               suffix: "+", label: "Happy Customers",        color: "var(--gold)" },
     { Icon: FiPackage, value: data.products,                     suffix: "+", label: "Products In Store",      color: "#4ade80" },
     { Icon: FiTruck,   value: null, display: `Rs. ${data.delivery}`,          label: "Pakistan-Wide Delivery", color: "#60a5fa" },
-    { Icon: FiAward,   value: Math.max(data.products * 8, 150),  suffix: "+", label: "Orders Completed",       color: "#c084fc" },
+    { Icon: FiAward,   value: data.ordersCompleted,              suffix: "+", label: "Orders Completed",       color: "#c084fc" },
   ];
 
   const trust = [

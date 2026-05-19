@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
+import SiteSettings from "../models/settings.model.js";
 
 /* ─── BASIC STATS (used by old dashboard) ─── */
 export const getAdminStats = async (req, res) => {
@@ -234,5 +235,34 @@ export const getAdvancedStats = async (req, res) => {
   } catch (error) {
     console.error("Advanced stats error:", error);
     res.status(500).json({ success: false, message: "Failed to fetch advanced stats" });
+  }
+};
+
+/* ─── PUBLIC STATS (for storefront Stats Bar) ─── */
+export const getPublicStats = async (req, res) => {
+  try {
+    const [activeProductsCount, deliveredOrdersCount, totalUsersCount, settings] = await Promise.all([
+      Product.countDocuments({ isActive: { $ne: false } }),
+      Order.countDocuments({ orderStatus: "delivered" }),
+      User.countDocuments(),
+      SiteSettings.findOne(),
+    ]);
+
+    const deliveryCharges = settings?.deliveryCharges ?? 250;
+    const happyCustomers = Math.max(deliveredOrdersCount + totalUsersCount, 500);
+    const ordersCompleted = Math.max(deliveredOrdersCount, 150);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        products: activeProductsCount,
+        happyCustomers,
+        delivery: deliveryCharges,
+        ordersCompleted,
+      },
+    });
+  } catch (error) {
+    console.error("Public stats error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch public stats" });
   }
 };
