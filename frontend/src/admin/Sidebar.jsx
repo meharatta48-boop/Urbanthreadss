@@ -43,7 +43,7 @@ export default function Sidebar() {
   const handleLogout = () => { logout(); navigate("/"); };
 
   return (
-    <aside className="w-60 min-h-screen bg-(--bg-surface) border-r border-(--border) flex flex-col shrink-0 transition-colors duration-300">
+    <aside className="w-60 h-screen max-h-screen overflow-hidden bg-(--bg-surface) border-r border-(--border) flex flex-col shrink-0 transition-colors duration-300">
 
       {/* ── BRAND LOGO ── */}
       <div className="px-5 py-5 border-b border-(--border)">
@@ -72,7 +72,7 @@ export default function Sidebar() {
       </div>
 
       {/* ── MAIN NAV ── */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto admin-sidebar-scroll">
         <p className="text-[9px] text-(--text-muted)/60 uppercase tracking-widest px-3 mb-2 font-semibold">Navigation</p>
 
         {menu.map(({ label, to, Icon: MIcon, end, description, badge }) => (
