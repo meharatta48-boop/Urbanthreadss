@@ -391,6 +391,7 @@ export default function Shop() {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (p.sizes?.length > 0 || p.colors?.length > 0) {
+                          toast.error("Please select size or color first");
                           navigate(`/product/${p._id}`);
                         } else {
                           addToCart(p);

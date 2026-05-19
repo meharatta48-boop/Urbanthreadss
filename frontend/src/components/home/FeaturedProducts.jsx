@@ -84,6 +84,7 @@ export default function FeaturedProducts() {
                       e.preventDefault(); 
                       e.stopPropagation(); 
                       if (p.sizes?.length > 0 || p.colors?.length > 0) {
+                        toast.error("Please select size or color first");
                         navigate(`/product/${p._id}`);
                       } else {
                         addToCart(p); 
@@ -93,7 +94,7 @@ export default function FeaturedProducts() {
                     className="btn-gold flex-1 text-xs whitespace-nowrap shadow-xl"
                     style={{ padding: "8px 10px", minHeight: "36px" }}
                   >
-                    <FiShoppingCart size={12} /> Add to Cart
+                    <FiShoppingCart size={12} /> <span className="hidden sm:inline">Add to Cart</span><span className="sm:hidden">Add</span>
                   </button>
                   <button
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/product/${p._id}`); }}
