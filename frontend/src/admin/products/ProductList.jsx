@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { getImageUrl } from "../../utils/imageUrl";
-
+import LazyImage from "../../components/LazyImage";
 export default function ProductList() {
   const { products, removeProduct, loading, fetchProducts } = useProducts();
   const [search, setSearch] = useState("");
@@ -266,16 +266,16 @@ export default function ProductList() {
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0 flex-1">
                             {/* IMAGE */}
-                            <div className="w-12 h-12 rounded-xl overflow-hidden bg-(--bg-deep) border border-(--border) shrink-0">
+                            <div className="relative w-12 h-12 shrink-0 rounded-xl overflow-hidden bg-(--bg-deep) border border-(--border) aspect-square">
                               {p.images?.length ? (
-                                <img
+                                <LazyImage
                                   src={getImageUrl(p.images[0])}
                                   alt={p.name}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => { e.target.style.display = "none"; }}
+                                  className="absolute inset-0 w-full h-full object-cover object-center"
+                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-(--text-muted)">
+                                <div className="absolute inset-0 w-full h-full flex items-center justify-center text-(--text-muted)">
                                   <FiPackage size={18} />
                                 </div>
                               )}

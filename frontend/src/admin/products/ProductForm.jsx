@@ -13,6 +13,7 @@ import {
 
 import { SERVER_URL } from "../../services/api";
 import { getImageUrl } from "../../utils/imageUrl";
+import LazyImage from "../../components/LazyImage";
 const API_BASE = SERVER_URL;
 const SIZES_PRESET = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const COLORS_PRESET = ["Black", "White", "Navy", "Grey", "Beige", "Brown", "Olive", "Red", "Blue", "Green"];
@@ -322,10 +323,11 @@ export default function ProductForm() {
                     exit={{ opacity: 0, scale: 0.8 }}
                     className="relative group aspect-square rounded-xl overflow-hidden border border-(--border) bg-(--bg-card)"
                   >
-                    <img
+                    <LazyImage
                       src={getImageUrl(img)}
                       alt={`existing-${i}`}
-                      className="w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                     {/* MAIN BADGE */}
                     {i === 0 && (
@@ -356,7 +358,7 @@ export default function ProductForm() {
                     exit={{ opacity: 0, scale: 0.8 }}
                     className="relative group aspect-square rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card)"
                   >
-                    <img src={url} alt={`new-${i}`} className="w-full h-full object-cover" />
+                    <LazyImage src={url} alt={`new-${i}`} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium">
                       New
                     </span>
