@@ -54,7 +54,7 @@ export default function FeaturedProducts() {
         </div>
 
         {/* GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
+        <div className="grid grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 md:gap-6">
           {products.map((p, i) => (
             <motion.div
               key={p._id}
