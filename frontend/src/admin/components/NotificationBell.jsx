@@ -18,10 +18,10 @@ const STATUS_COLOR = {
 
 const timeAgo = (date) => {
   const s = Math.floor((Date.now() - new Date(date)) / 1000);
-  if (s < 60) return "abhi abhi";
-  if (s < 3600) return `${Math.floor(s / 60)} min pehle`;
-  if (s < 86400) return `${Math.floor(s / 3600)} ghante pehle`;
-  return `${Math.floor(s / 86400)} din pehle`;
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
 };
 
 export default function NotificationBell() {
@@ -57,7 +57,7 @@ export default function NotificationBell() {
             color: STATUS_COLOR.pending,
             bg: "rgba(245,158,11,0.1)",
             title: "New Order!",
-            body: `${o.user?.name || "Customer"} ne Rs. ${o.totalPrice?.toLocaleString()} ka order diya`,
+            body: `${o.user?.name || "Customer"} placed an order of Rs. ${o.totalPrice?.toLocaleString()}`,
             time: o.createdAt,
             action: () => navigate("/admin-dashboard/orders"),
           });
@@ -74,7 +74,7 @@ export default function NotificationBell() {
             color: "#f59e0b",
             bg: "rgba(245,158,11,0.08)",
             title: "Low Stock!",
-            body: `"${p.name}" sirf ${p.stock} bacha — stock update karo`,
+            body: `"${p.name}" has only ${p.stock} left — please update the stock`,
             time: p.updatedAt,
             action: () => navigate(`/admin-dashboard/products/${p._id}/edit`),
           });
@@ -91,7 +91,7 @@ export default function NotificationBell() {
             color: "#f87171",
             bg: "rgba(248,113,113,0.08)",
             title: "Out of Stock!",
-            body: `"${p.name}" bilkul khatam ho gaya`,
+            body: `"${p.name}" is completely out of stock`,
             time: p.updatedAt,
             action: () => navigate(`/admin-dashboard/products/${p._id}/edit`),
           });
@@ -181,7 +181,7 @@ export default function NotificationBell() {
                 <span className="text-(--text-primary) font-semibold text-sm">Notifications</span>
                 {unreadCount > 0 && (
                   <span className="text-[10px] gold-gradient text-black px-2 py-0.5 rounded-full font-bold">
-                    {unreadCount} naye
+                    {unreadCount} new
                   </span>
                 )}
               </div>
@@ -190,7 +190,7 @@ export default function NotificationBell() {
                   onClick={markAllRead}
                   className="text-[10px] text-(--text-muted) hover:text-(--gold) transition-colors flex items-center gap-1"
                 >
-                  <FiCheck size={10} /> Sab read karo
+                  <FiCheck size={10} /> Mark all read
                 </button>
               )}
             </div>
@@ -200,7 +200,7 @@ export default function NotificationBell() {
               {notifications.length === 0 ? (
                 <div className="py-10 text-center text-(--text-muted)">
                   <FiBell size={28} className="mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">Koi notification nahi</p>
+                  <p className="text-sm">No notifications</p>
                 </div>
               ) : (
                 <div className="divide-y divide-(--border)">
@@ -249,7 +249,7 @@ export default function NotificationBell() {
                 onClick={() => { setOpen(false); navigate("/admin-dashboard/orders"); }}
                 className="w-full text-center text-xs text-(--text-muted) hover:text-(--gold) transition-colors"
               >
-                Sare Orders dekho →
+                View all orders →
               </button>
             </div>
           </motion.div>

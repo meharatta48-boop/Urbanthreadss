@@ -186,7 +186,7 @@ export default function OrderList() {
   };
 
   const deleteOrder = async (id) => {
-    if (!window.confirm("Order delete karo?")) return;
+    if (!window.confirm("Delete order?")) return;
     try {
       await api.delete(`/orders/${id}`);
       toast.success("Order deleted");
@@ -195,7 +195,7 @@ export default function OrderList() {
   };
 
   const bulkUpdate = async () => {
-    if (!selected.length) return toast.warn("Koi order select nahi");
+    if (!selected.length) return toast.warn("No orders selected");
     try {
       await api.put("/orders/bulk-status", { orderIds: selected, status: bulkStatus });
       toast.success(`${selected.length} orders → ${bulkStatus}`);
@@ -255,7 +255,7 @@ export default function OrderList() {
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Order ID, customer name, phone ya email se search karo..."
+          placeholder="Search by Order ID, customer name, phone, or email..."
           className="lux-input pl-11"
           style={{ padding: "12px 16px 12px 42px" }}
         />
@@ -578,7 +578,7 @@ export default function OrderList() {
                   );
                 })}
                 {filtered.length === 0 && !loading && (
-                  <tr><td colSpan={9} className="px-6 py-14 text-center text-(--text-muted)">Koi order nahi mila</td></tr>
+                  <tr><td colSpan={9} className="px-6 py-14 text-center text-(--text-muted)">No orders found</td></tr>
                 )}
               </tbody>
             </table>

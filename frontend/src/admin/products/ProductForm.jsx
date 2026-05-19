@@ -135,7 +135,7 @@ export default function ProductForm() {
   const handleVideoPick = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith("video/")) { toast.error("Sirf video file allowed hai"); return; }
+    if (!file.type.startsWith("video/")) { toast.error("Only video files are allowed"); return; }
     if (file.size > 100 * 1024 * 1024) { toast.error("Video max 100MB honi chahiye"); return; }
     if (videoPreview) URL.revokeObjectURL(videoPreview);
     setVideoFile(file);
@@ -510,7 +510,7 @@ export default function ProductForm() {
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="Product ke baare mein likho — fabric, fit, occasion..."
+                placeholder="Describe the product — fabric, fit, occasion..."
                 rows={4}
                 className="lux-input resize-none"
                 style={{ resize: "vertical" }}
@@ -679,7 +679,7 @@ export default function ProductForm() {
                   value={customColor}
                   onChange={(e) => setCustomColor(e.target.value)}
                   onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAddCustomColor(); } }}
-                  placeholder="Custom color likhein..."
+                  placeholder="Enter custom color..."
                   className="lux-input flex-1"
                 />
                 <button

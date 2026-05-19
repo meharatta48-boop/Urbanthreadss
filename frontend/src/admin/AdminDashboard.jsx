@@ -151,7 +151,7 @@ export default function Dashboard() {
       setRefresh(new Date());
     } catch (e) {
       console.error("Dashboard load error:", e);
-      toast.error("Dashboard data load nahi ho saka");
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -196,7 +196,7 @@ export default function Dashboard() {
     {
       label: "Total Users",
       val: data.totalUsers || 0,
-      sub: `+${data.newUsersToday || 0} aaj naye`,
+      sub: `+${data.newUsersToday || 0} new today`,
       sub2: `+${data.newUsersThisMonth || 0} this month`,
       Icon: FiUsers, color: "#c084fc", bg: "rgba(192,132,252,0.12)",
       link: "/admin-dashboard/users",
@@ -270,15 +270,15 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-[#f59e0b] font-extrabold text-sm tracking-wide">
-                  ⚡ {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""} — Process karo!
+                  ⚡ {data.ordersByStatus.pending} Pending Order{data.ordersByStatus.pending > 1 ? "s" : ""} — Process now!
                 </p>
-                <p className="text-[#f59e0b]/70 text-xs mt-0.5">Customer queue me wait kar raha hai.</p>
+                <p className="text-[#f59e0b]/70 text-xs mt-0.5">Customers are waiting in the queue.</p>
               </div>
             </div>
             <Link to="/admin-dashboard/orders"
               className="text-xs font-bold px-4 py-2.5 rounded-xl transition-transform active:scale-95 shadow-sm"
               style={{ background: "rgba(245,158,11,0.15)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)" }}>
-              Orders Dekho →
+              Orders View →
             </Link>
           </motion.div>
         )}
@@ -407,7 +407,7 @@ export default function Dashboard() {
                 <FiShoppingBag className="text-(--gold)" size={15} /> Recent Dynamic Orders
               </h3>
               <Link to="/admin-dashboard/orders" className="text-[11px] font-bold text-(--text-muted) hover:text-(--gold) transition-colors">
-                Sab dekho →
+                View all →
               </Link>
             </div>
             {loading ? (
@@ -418,7 +418,7 @@ export default function Dashboard() {
             ) : orders.length === 0 ? (
               <div className="p-12 text-center text-(--text-muted)">
                 <FiShoppingBag size={32} className="mx-auto mb-2 opacity-20" />
-                <p className="text-xs font-medium">Koi order nahi mila abhi tak</p>
+                <p className="text-xs font-medium">No orders found yet</p>
               </div>
             ) : (
               <div className="divide-y divide-(--border)/50">
@@ -510,7 +510,7 @@ export default function Dashboard() {
             {lowStock.length === 0 ? (
               <div className="p-8 text-center text-(--text-muted)">
                 <FiCheckCircle size={26} className="mx-auto mb-2 text-green-400 opacity-60" />
-                <p className="text-xs font-medium">Sab stock absolutely perfect hai 👍</p>
+                <p className="text-xs font-medium">All stocks are perfectly sufficient 👍</p>
               </div>
             ) : (
               <div className="divide-y divide-(--border)/50">

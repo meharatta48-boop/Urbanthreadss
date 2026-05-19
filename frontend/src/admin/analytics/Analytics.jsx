@@ -147,7 +147,7 @@ export default function Analytics() {
       const res = await api.get("/stats/advanced");
       setData(res?.data?.data || null);
     } catch {
-      toast.error("Analytics load nahi ho saka");
+      toast.error("Failed to load analytics");
     } finally {
       setLoading(false);
     }
@@ -208,7 +208,7 @@ export default function Analytics() {
         <div>
           <p className="text-[11px] font-bold tracking-wider text-(--gold) uppercase mb-0.5">📊 Business Intelligence</p>
           <h2 className="font-display text-2xl font-black text-(--text-primary)">Analytics Overview</h2>
-          <p className="text-(--text-muted) text-xs mt-1">Revenue trends, order flow aur customer insights</p>
+          <p className="text-(--text-muted) text-xs mt-1">Revenue trends, order flow, and customer insights</p>
         </div>
         <button onClick={load}
           className="flex items-center gap-2 text-xs font-medium text-(--text-muted) bg-(--bg-elevated) border border-(--border) px-4 py-2.5 rounded-xl hover:text-(--text-primary) transition-all">
@@ -352,7 +352,7 @@ export default function Analytics() {
               </div>
             </div>
           ) : (
-            <div className="p-10 text-center text-(--text-muted) text-xs">Koi data nahi mila</div>
+            <div className="p-10 text-center text-(--text-muted) text-xs">No data found</div>
           )}
         </div>
       </div>

@@ -89,10 +89,10 @@ export default function ServerWakeUp() {
             {/* Message */}
             <div className="flex-1 min-w-0">
               <p className="text-(--gold) font-semibold text-xs">
-                ⚡ Server Warm Ho Raha Hai ({elapsed}s)
+                ⚡ Server is Warming Up ({elapsed}s)
               </p>
               <p className="text-(--text-muted) text-[10px] mt-0.5">
-                Render.com free server cold-start ho raha hai. 30-50 seconds lagenge — phir sab kaam karega.
+                The free server on Render.com is starting up. This may take 30-50 seconds. Once warmed up, everything will work correctly.
               </p>
             </div>
 

@@ -32,7 +32,7 @@ export default function PagesTab() {
   };
 
   const saveForm = async () => {
-    if (!form.title.trim()) return toast.error("Title zaroori hai");
+    if (!form.title.trim()) return toast.error("Title is required");
     setSaving(true);
     try {
       if (editId) {
@@ -40,7 +40,7 @@ export default function PagesTab() {
         if (data.success) { setPages(p => p.map(x => x._id === editId ? data.page : x)); toast.success("Page updated!"); }
       } else {
         const { data } = await api.post("/pages", form);
-        if (data.success) { setPages(p => [data.page, ...p]); toast.success("Page create ho gaya!"); }
+        if (data.success) { setPages(p => [data.page, ...p]); toast.success("Page created successfully!"); }
       }
       resetForm();
     } catch (e) { toast.error(e.response?.data?.message || "Error"); }
@@ -48,7 +48,7 @@ export default function PagesTab() {
   };
 
   const del = async (id) => {
-    if (!confirm("Page permanently delete hoga — confirm?")) return;
+    if (!confirm("This page will be permanently deleted — confirm?")) return;
     try {
       await api.delete(`/pages/${id}`);
       setPages(p => p.filter(x => x._id !== id));
@@ -81,7 +81,7 @@ export default function PagesTab() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-(--text-primary) font-bold">Custom Pages</h3>
-          <p className="text-(--text-muted) text-xs mt-0.5">Apni marzi se pages banao — About, Privacy Policy, koi bhi</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Create custom pages — About, Privacy Policy, or any other</p>
         </div>
         <button onClick={() => setView("edit")}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-black gold-gradient shadow-lg"
@@ -95,7 +95,7 @@ export default function PagesTab() {
       ) : pages.length === 0 ? (
         <div className="text-center py-12 text-(--text-muted)">
           <FiFileText size={36} className="mx-auto mb-3 opacity-20" />
-          <p className="text-sm">Koi page nahi — "New Page" dabao</p>
+          <p className="text-sm">No pages found — click "New Page" above</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -139,8 +139,8 @@ export default function PagesTab() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-(--text-primary) font-bold">{editId ? "✏️ Page Edit" : "➕ Naya Page"}</h3>
-          <p className="text-(--text-muted) text-xs mt-0.5">Site par /page/{form.slug || "slug"} par dikhe ga</p>
+          <h3 className="text-(--text-primary) font-bold">{editId ? "✏️ Edit Page" : "➕ New Page"}</h3>
+          <p className="text-(--text-muted) text-xs mt-0.5">Will be visible on the site at /page/{form.slug || "slug"}</p>
         </div>
         <button onClick={resetForm}
           className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-(--text-muted) hover:text-(--text-primary) transition-all border border-(--border) hover:bg-(--bg-elevated)"
@@ -174,7 +174,7 @@ export default function PagesTab() {
         <div>
           <label className="text-(--text-muted) text-xs mb-1 block">Meta Description (SEO)</label>
           <input value={form.metaDesc} onChange={e => setForm(f => ({ ...f, metaDesc: e.target.value }))}
-            placeholder="Google search mein jo description dikhega..."
+            placeholder="Description that will appear in Google search results..."
             className="w-full px-3 py-2.5 rounded-xl text-sm text-(--text-primary) outline-none bg-(--bg-elevated) border border-(--border)"
           />
         </div>
@@ -183,10 +183,10 @@ export default function PagesTab() {
         <div>
           <label className="text-(--text-muted) text-xs mb-1 block">Page Content</label>
           <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-            rows={12} placeholder="Page ka content yahan likhein... HTML bhi use kar sakte hain."
+            rows={12} placeholder="Write page content here... HTML is also supported."
             className="w-full px-3 py-3 rounded-xl text-sm text-(--text-primary) outline-none font-mono resize-y bg-(--bg-elevated) border border-(--border)"
             style={{ lineHeight: 1.6 }} />
-          <p className="text-(--text-muted) text-[10px] mt-1 opacity-60">Tip: HTML tags use kar sakte hain — &lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt; etc.</p>
+          <p className="text-(--text-muted) text-[10px] mt-1 opacity-60">Tip: You can use HTML tags — &lt;b&gt;, &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt; etc.</p>
         </div>
 
         {/* Toggles */}
@@ -196,8 +196,8 @@ export default function PagesTab() {
             <span className="text-(--text-muted) text-sm">Published (visible)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.target.checked }))} className="accent-(--gold)" />
-            <span className="text-(--text-muted) text-sm">Navbar mein dikhao</span>
+            <input type="checkbox" checked={form.showInNav} onChange={e => setForm(f => ({ ...f, showInNav: e.checked }))} className="accent-(--gold)" />
+            <span className="text-(--text-muted) text-sm">Show in Navigation Bar</span>
           </label>
         </div>
       </div>

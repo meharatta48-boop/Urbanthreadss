@@ -25,8 +25,8 @@ const siteSettingsSchema = new mongoose.Schema(
       type: [heroSlideSchema],
       default: [
         { image: "", label: "New Season 2026", title: "Style That\nSpeaks Louder", subtitle: "Premium Pakistani streetwear.", cta: "Shop Collection" },
-        { image: "", label: "Summer 2026",     title: "Urban\nVibes",             subtitle: "Ghar par baithe best fashion.",  cta: "Shop Summer" },
-        { image: "", label: "New Arrivals",    title: "Trend\nSetter",            subtitle: "Jo pehnein wo trend ban jaye.", cta: "View New Arrivals" },
+        { image: "", label: "Summer 2026",     title: "Urban\nVibes",             subtitle: "Shop the best fashion from home.",  cta: "Shop Summer" },
+        { image: "", label: "New Arrivals",    title: "Trend\nSetter",            subtitle: "Wear what becomes the next trend.", cta: "View New Arrivals" },
       ],
     },
 
@@ -40,7 +40,7 @@ const siteSettingsSchema = new mongoose.Schema(
     // ── Brand Story ──
     brandTitle: { type: String, default: "Fashion Born From Pakistani Streets" },
     brandText1: { type: String, default: "Urban Thread was born from a simple vision — to bring world-class streetwear to the streets of Pakistan." },
-    brandText2: { type: String, default: "From Karachi ki garmi to Lahore ki shaam, our fabrics are designed to move with you." },
+    brandText2: { type: String, default: "From the summer heat of Karachi to the evenings of Lahore, our fabrics are designed to move with you." },
     brandYear:  { type: String, default: "2020" },
     brandImage: { type: String, default: "" },
 
@@ -94,7 +94,7 @@ const siteSettingsSchema = new mongoose.Schema(
     couponCode:      { type: String, default: "" },
     couponDiscount:  { type: Number, default: 500 },
     brandName:       { type: String, default: "URBAN THREAD" },
-    footerTagline:   { type: String, default: "Pakistan ka premium streetwear brand." },
+    footerTagline:   { type: String, default: "Pakistan's premium streetwear brand." },
 
     // ── Social ──
     instagram: { type: String, default: "#" },
@@ -171,7 +171,7 @@ const siteSettingsSchema = new mongoose.Schema(
     showNewsletter: { type: Boolean, default: true },
 
     // ── Section Text Content ──
-    statsTitle:      { type: String, default: "Pakistan Ke Bharose Ka Nishaana" },
+    statsTitle:      { type: String, default: "Trusted Across Pakistan" },
     statsSubLabel:   { type: String, default: "By The Numbers" },
     featuredTitle:   { type: String, default: "Featured Collection" },
     featuredLabel:   { type: String, default: "Curated Picks" },
@@ -179,7 +179,7 @@ const siteSettingsSchema = new mongoose.Schema(
     reviewsLabel:    { type: String, default: "Real Reviews" },
     newsletterTitle: { type: String, default: "Get Exclusive Deals First" },
     newsletterLabel: { type: String, default: "Newsletter" },
-    newsletterDesc:  { type: String, default: "Subscribe karo aur pehle pao — new drops, flash sales." },
+    newsletterDesc:  { type: String, default: "Subscribe now to get early access to new drops and flash sales." },
 
     // ── Announcement Bar ──
     announcementText:  { type: String, default: "" },
@@ -187,8 +187,8 @@ const siteSettingsSchema = new mongoose.Schema(
     announcementColor: { type: String, default: "#000000" },
 
     // ── Support Page ──
-    supportTitle:    { type: String, default: "Hum Yahan Hain" },
-    supportSubtitle: { type: String, default: "Koi bhi sawaal ho — hum 24/7 available hain." },
+    supportTitle:    { type: String, default: "We Are Here" },
+    supportSubtitle: { type: String, default: "Have questions? We are available 24/7 to help." },
     supportHours:    { type: String, default: "Mon–Sat: 9am – 9pm" },
 
     // ── Custom CSS & Scripts ──
@@ -212,7 +212,7 @@ const siteSettingsSchema = new mongoose.Schema(
     seoRobots: { type: String, default: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
     seoTwitterHandle: { type: String, default: "" },
     seoDefaultImage: { type: String, default: "" },
-    seoBrandTagline: { type: String, default: "Pakistan ka premium streetwear brand." },
+    seoBrandTagline: { type: String, default: "Pakistan's premium streetwear brand." },
 
     // ── Floating Action Buttons ──
     whatsappFloatEnabled: { type: Boolean, default: true },
@@ -231,8 +231,8 @@ const siteSettingsSchema = new mongoose.Schema(
     invoiceShowPhone:   { type: Boolean, default: true },
     invoiceShowEmail:   { type: Boolean, default: true },
     invoiceTagline:     { type: String, default: "Official Invoice / Receipt" },
-    invoiceThankYou:    { type: String, default: "Shukriya hamse khareedne ka!" },
-    invoiceFooterNote:  { type: String, default: "Yeh computer-generated invoice hai — koi signature zaroorat nahi" },
+    invoiceThankYou:    { type: String, default: "Thank you for shopping with us!" },
+    invoiceFooterNote:  { type: String, default: "This is a computer-generated invoice — no signature is required" },
     invoiceNote:        { type: String, default: "" },
 
     // ── Footer Settings ──

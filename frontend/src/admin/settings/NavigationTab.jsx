@@ -25,14 +25,14 @@ export default function NavigationTab() {
   useEffect(() => { fetch(); }, []);
 
   const save = async () => {
-    if (!form.label.trim() || !form.url.trim()) return toast.error("Label aur URL zaroori hain");
+    if (!form.label.trim() || !form.url.trim()) return toast.error("Label and URL are required");
     try {
       if (editId) {
         const { data } = await api.put(`/nav-links/${editId}`, form);
         if (data.success) { setLinks(l => l.map(x => x._id === editId ? data.link : x)); toast.success("Updated!"); }
       } else {
         const { data } = await api.post("/nav-links", form);
-        if (data.success) { setLinks(l => [...l, data.link]); toast.success("Link add ho gaya!"); }
+        if (data.success) { setLinks(l => [...l, data.link]); toast.success("Link added successfully!"); }
       }
       resetForm();
     } catch (e) { toast.error(e.response?.data?.message || "Error"); }
@@ -90,7 +90,7 @@ export default function NavigationTab() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-(--text-primary) font-bold">Navigation Links</h3>
-          <p className="text-(--text-muted) text-xs mt-0.5">Site navbar mein dikhne wale links — add, edit, reorder, hide</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Links displayed in the site navigation bar — add, edit, reorder, hide</p>
         </div>
         {!adding && (
           <button onClick={() => setAdding(true)}
@@ -124,7 +124,7 @@ export default function NavigationTab() {
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={form.isExternal} onChange={e => setForm(f => ({ ...f, isExternal: e.target.checked }))} className="accent-(--gold)" />
-              <span className="text-(--text-muted) text-xs flex items-center gap-1"><FiExternalLink size={11} /> New tab mein kholein</span>
+              <span className="text-(--text-muted) text-xs flex items-center gap-1"><FiExternalLink size={11} /> Open in new tab</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" checked={form.isVisible} onChange={e => setForm(f => ({ ...f, isVisible: e.target.checked }))} className="accent-(--gold)" />
@@ -152,7 +152,7 @@ export default function NavigationTab() {
       ) : links.length === 0 ? (
         <div className="text-center py-10 text-(--text-muted)">
           <FiMenu size={32} className="mx-auto mb-3 opacity-30" />
-          <p className="text-sm">Koi link nahi — upar "Add Link" dabao</p>
+          <p className="text-sm">No links found — click "Add Link" above</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -195,7 +195,7 @@ export default function NavigationTab() {
       )}
 
       <div className="p-4 rounded-xl text-xs text-(--text-muted) border border-dashed border-(--border) bg-(--bg-surface)/50">
-        💡 Reorder karne ke liye ▲ ▼ buttons use karo. Changes site par turant apply ho jaenge.
+        💡 Use the ▲ ▼ buttons to reorder links. Changes will apply immediately on the live site.
       </div>
     </div>
   );

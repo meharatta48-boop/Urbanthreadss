@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSettings } from "../../context/SettingsContext";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
@@ -97,7 +97,7 @@ export default function SiteSettingsPage() {
         const imported = JSON.parse(ev.target.result);
         setForm(f => ({ ...f, ...imported }));
         setDirty(true);
-        toast.success("Settings imported! Save karo apply karne ke liye.");
+        toast.success("Settings imported! Save changes to apply.");
       } catch { toast.error("Invalid JSON file"); }
     };
     reader.readAsText(file);
@@ -107,7 +107,7 @@ export default function SiteSettingsPage() {
   const applyPreset = (patch, name) => {
     setForm((prev) => ({ ...prev, ...patch }));
     setDirty(true);
-    toast.success(`${name} preset apply ho gaya`);
+    toast.success(`${name} preset applied successfully`);
   };
 
   const saveLocalBackup = () => {
@@ -117,23 +117,23 @@ export default function SiteSettingsPage() {
         data: form,
       };
       localStorage.setItem(localBackupKey, JSON.stringify(payload));
-      toast.success("Local backup save ho gaya");
+      toast.success("Local backup saved successfully");
     } catch {
-      toast.error("Local backup save nahi hua");
+      toast.error("Failed to save local backup");
     }
   };
 
   const restoreLocalBackup = () => {
     try {
       const raw = localStorage.getItem(localBackupKey);
-      if (!raw) return toast.error("Backup mila nahi");
+      if (!raw) return toast.error("Backup not found");
       const parsed = JSON.parse(raw);
-      if (!parsed?.data) return toast.error("Backup invalid hai");
+      if (!parsed?.data) return toast.error("Invalid backup file");
       setForm((prev) => ({ ...prev, ...parsed.data }));
       setDirty(true);
-      toast.success("Backup restore ho gaya, ab Save Changes karo");
+      toast.success("Backup restored successfully! Save changes to apply.");
     } catch {
-      toast.error("Backup restore nahi hua");
+      toast.error("Failed to restore backup");
     }
   };
 
@@ -192,7 +192,7 @@ export default function SiteSettingsPage() {
       <div className="relative">
         <FiSearch size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted)" />
         <input value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Tab dhundho... (general, media, navigation, pages...)"
+          placeholder="Search tabs... (general, media, navigation, pages...)"
           className="lux-input w-full pl-9 pr-8" />
         {search && (
           <button onClick={() => setSearch("")}
@@ -431,9 +431,9 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
     try {
       const parsed = JSON.parse(jsonEditor);
       Object.entries(parsed).forEach(([k, v]) => set(k, v));
-      toast.success("Full JSON settings apply ho gayi. Save Changes karo.");
+      toast.success("Full JSON settings applied. Save Changes to apply.");
     } catch {
-      toast.error("JSON invalid hai");
+      toast.error("Invalid JSON");
     }
   };
 
@@ -444,7 +444,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
     delete cleaned.createdAt;
     delete cleaned.updatedAt;
     setJsonEditor(JSON.stringify(cleaned, null, 2));
-    toast.success("Editor reset ho gaya");
+    toast.success("Editor reset successfully");
   };
 
   const updateFooterColumn = (idx, patch) => {
@@ -454,7 +454,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
   };
 
   const addFooterColumn = () => {
-    if (!newColumnHeading.trim()) return toast.error("Column heading likho");
+    if (!newColumnHeading.trim()) return toast.error("Column heading is required");
     const next = [...footerColumns, { heading: newColumnHeading.trim(), links: [] }];
     set("footerColumns", next);
     setNewColumnHeading("");
@@ -502,7 +502,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
   };
 
   const addSection = () => {
-    if (!newSectionId.trim() || !newSectionLabel.trim()) return toast.error("Section ID aur label dono required hain");
+    if (!newSectionId.trim() || !newSectionLabel.trim()) return toast.error("Section ID and label are both required");
     const next = [
       ...sectionOrder,
       { id: newSectionId.trim(), label: newSectionLabel.trim(), isVisible: true },
@@ -520,7 +520,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
   return (
     <div className="space-y-6">
       <Card>
-        <SectionTitle title="Control Center" desc="Fast admin operations Ã¢â‚¬â€ one-click presets, quick visibility control, emergency backup." />
+        <SectionTitle title="Control Center" desc="Fast admin operations — one-click presets, quick visibility control, emergency backup." />
         <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl p-4 mt-3">
           <div className="flex items-center justify-between mb-2">
             <p className="text-(--text-primary) text-sm">Setup Completion</p>
@@ -533,7 +533,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
       </Card>
 
       <Card>
-        <SectionTitle title="One-Click Presets" desc="Business mode ke hisaab se settings apply karo, phir Save Changes karo." />
+        <SectionTitle title="One-Click Presets" desc="Apply settings templates, then click Save Changes to apply." />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {quickPresets.map((preset) => (
             <button
@@ -549,7 +549,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
       </Card>
 
       <Card>
-        <SectionTitle title="Quick Global Toggles" desc="Website ke important blocks on/off yahin se manage karo." />
+        <SectionTitle title="Quick Global Toggles" desc="Quickly toggle visibility of key sections of the website." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {toggleGroups.map((item) => {
             const enabled = form[item.field] !== false;
@@ -573,7 +573,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
       </Card>
 
       <Card>
-        <SectionTitle title="Backup & Recovery" desc="Purana setup safe rakho Ã¢â‚¬â€ local backup save/restore." />
+        <SectionTitle title="Backup & Recovery" desc="Keep your setup safe — local backup save/restore." />
         <div className="flex flex-wrap gap-3">
           <button onClick={onSaveLocalBackup} className="btn-outline" style={{ padding: "10px 18px", fontSize: "0.82rem" }}>
             Save Local Backup
@@ -582,11 +582,11 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
             Restore Local Backup
           </button>
         </div>
-        <p className="text-(--text-muted) text-xs">Tip: Backup restore ke baad upar se Save Changes press karna zaroori hai.</p>
+        <p className="text-(--text-muted) text-xs">Tip: After restoring a backup, you must click Save Changes at the top to apply.</p>
       </Card>
 
       <Card>
-        <SectionTitle title="Footer Columns Manager" desc="Footer ke columns aur links add/edit/delete yahin se." />
+        <SectionTitle title="Footer Columns Manager" desc="Manage footer columns and links (add, edit, or delete) here." />
         <div className="space-y-3">
           {footerColumns.map((col, colIdx) => (
             <div key={colIdx} className="p-3 rounded-xl border border-(--border-light) bg-(--bg-elevated) space-y-3">
@@ -675,7 +675,7 @@ function ControlCenterTab({ form, set, applyPreset, onSaveLocalBackup, onRestore
       <Card>
         <SectionTitle title="Full JSON Control" desc="Har field ka raw control. Expert mode." />
         <div className="bg-yellow-900/10 border border-yellow-700/20 rounded-xl p-3">
-          <p className="text-yellow-400 text-xs">Warning: Invalid JSON ya wrong values se layout affect ho sakta hai. Save se pehle review karein.</p>
+          <p className="text-yellow-400 text-xs">Warning: Invalid JSON or incorrect values can break the website layout. Review before saving.</p>
         </div>
         <textarea
           value={jsonEditor}
@@ -728,10 +728,10 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   };
 
   const handleDeleteBrand = async () => {
-    if (!window.confirm("Brand image delete karein?")) return;
+    if (!window.confirm("Delete brand image?")) return;
     try {
       const res = await deleteSettingImage("brandImage", token);
-      if (res.success) { toast.success("Brand image delete ho gayi"); fetchSettings?.(); }
+      if (res.success) { toast.success("Brand image deleted"); fetchSettings?.(); }
     } catch { toast.error("Delete failed"); }
   };
 
@@ -768,18 +768,18 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   };
 
   const handleDeleteLogo = async (field, label) => {
-    if (!window.confirm(`${label} delete karein?`)) return;
+    if (!window.confirm(`Delete ${label}?`)) return;
     try {
       const res = await deleteSettingImage(field, token);
-      if (res.success) { toast.success(`${label} delete ho gaya`); fetchSettings?.(); }
+      if (res.success) { toast.success(`${label} deleted`); fetchSettings?.(); }
     } catch { toast.error("Delete failed"); }
   };
 
   const handleDeleteFavicon = async () => {
-    if (!window.confirm("Favicon delete karein?")) return;
+    if (!window.confirm("Delete favicon?")) return;
     try {
       const res = await deleteSettingImage("faviconUrl", token);
-      if (res.success) { toast.success("Favicon delete ho gaya"); fetchSettings?.(); }
+      if (res.success) { toast.success("Favicon deleted"); fetchSettings?.(); }
     } catch { toast.error("Delete failed"); }
   };
 
@@ -788,7 +788,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   return (
     <div className="space-y-8">
 
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ HERO BANNER IMAGES Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ———— HERO BANNER IMAGES ———— */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border) flex items-center justify-between flex-wrap gap-3">
           <div>
@@ -796,7 +796,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               <FiImage className="text-[#c9a84c]" /> Hero Banner Images
             </h3>
             <p className="text-[#444] text-xs mt-0.5">
-              Homepage ka hero section Ã¢â‚¬â€ multiple slides ke liye multiple images upload karo
+              Homepage hero section — upload multiple images for a sliding carousel
             </p>
           </div>
           <span className="badge-gold">{heroImages.length}/5 images</span>
@@ -837,8 +837,8 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   <p className="text-(--text-primary) font-medium">
                     {heroUploading ? "Uploading..." : heroDragging ? "Drop here!" : "Click or Drag to Upload"}
                   </p>
-                  <p className="text-[#444] text-sm mt-1">PNG, JPG, WebP Ã¢â‚¬â€ Max 5MB each</p>
-                  <p className="text-[#333] text-xs mt-1">Recommended: 1920Ãƒâ€”1080 or wider (landscape)</p>
+                  <p className="text-[#444] text-sm mt-1">PNG, JPG, WebP — Max 5MB each</p>
+                  <p className="text-[#333] text-xs mt-1">Recommended: 1920×1080 or wider (landscape)</p>
                 </div>
               </div>
             </div>
@@ -892,19 +892,19 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
           {heroImages.length === 0 && !heroUploading && (
             <p className="text-center text-[#333] text-sm py-4">
-              Koi hero image nahi Ã¢â‚¬â€ fallback default image use ho rahi hai
+              No hero image uploaded — fallback default image is currently active
             </p>
           )}
         </div>
       </div>
 
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ BRAND STORY IMAGE Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ———— BRAND STORY IMAGE ———— */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiImage className="text-[#c9a84c]" /> Brand Story Image
           </h3>
-          <p className="text-[#444] text-xs mt-0.5">Homepage ke "Our Story" section mein dikhi hai</p>
+          <p className="text-[#444] text-xs mt-0.5">Displayed in the "Our Story" section of the homepage</p>
         </div>
 
         <div className="p-6">
@@ -960,26 +960,26 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                 ) : <FiUpload size={15} />}
                 {brandUploading ? "Uploading..." : "Choose Image"}
               </button>
-              <p className="text-[#333] text-xs">Recommended: 800Ãƒâ€”1000px portrait</p>
+              <p className="text-[#333] text-xs">Recommended: 800×1000px portrait</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ LOGO Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ———— LOGO ———— */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
             <FiImage className="text-[#c9a84c]" /> Logo Settings
           </h3>
-          <p className="text-[#444] text-xs mt-0.5">Navbar aur Footer mein dikhi hai Ã¢â‚¬â€ desktop aur mobile ke liye alag logos</p>
+          <p className="text-[#444] text-xs mt-0.5">Visible in navbar and footer — separate options for desktop and mobile logos</p>
         </div>
 
         <div className="p-6 space-y-6">
 
           {/* MAIN LOGO (DESKTOP) */}
           <div>
-            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">Ã°Å¸â€“Â¥Ã¯Â¸Â Desktop / Main Logo</p>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">🖥️ Desktop / Main Logo</p>
             <div className="flex items-center gap-6 flex-wrap">
               <div className="relative group w-20 h-20 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.logoImage ? (
@@ -1009,15 +1009,15 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   {logoUploading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <FiUpload size={14} />}
                   {logoUploading ? "Uploading..." : "Upload Desktop Logo"}
                 </button>
-                <p className="text-[#333] text-xs mt-2">PNG transparent preferred Ã¢â‚¬Â¢ min 100Ãƒâ€”100px</p>
+                <p className="text-[#333] text-xs mt-2">PNG transparent preferred • min 100×100px</p>
               </div>
             </div>
           </div>
 
           {/* MOBILE LOGO */}
           <div className="border-t border-(--border) pt-5">
-            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">Ã°Å¸â€œÂ± Mobile Logo <span className="normal-case text-[#333]">(choti screen)</span></p>
-            <p className="text-[#333] text-xs mb-3">Khali rakhne par desktop wala hi use hoga</p>
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">📱 Mobile Logo <span className="normal-case text-[#333]">(small screen)</span></p>
+            <p className="text-[#333] text-xs mb-3">If empty, desktop logo will be used</p>
             <div className="flex items-center gap-6 flex-wrap">
               <div className="relative group w-16 h-16 rounded-xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0">
                 {settings?.logoMobileImage ? (
@@ -1047,7 +1047,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   {mLogoUploading ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <FiUpload size={14} />}
                   {mLogoUploading ? "Uploading..." : "Upload Mobile Logo"}
                 </button>
-                <p className="text-[#333] text-xs mt-2">Square icon ya simplified version Ã¢â‚¬Â¢ min 64Ãƒâ€”64px</p>
+                <p className="text-[#333] text-xs mt-2">Square icon or simplified version • min 64×64px</p>
               </div>
             </div>
           </div>
@@ -1055,7 +1055,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           {/* LOGO SIZES */}
           {form && set && (
             <div className="border-t border-(--border) pt-5 space-y-5">
-              <p className="text-xs text-(--text-muted) uppercase tracking-wider">Ã°Å¸â€œÂ Logo Sizes</p>
+              <p className="text-xs text-(--text-muted) uppercase tracking-wider">📏 Logo Sizes</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { label: "Navbar (Desktop)", field: "navLogoSize",       min: 20, max: 72, def: 36 },
@@ -1088,13 +1088,13 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   <input type="range" min={12} max={28} value={form.navTitleSize || 18}
                     onChange={(e) => set("navTitleSize", e.target.value)}
                     className="w-full" style={{ accentColor: "#c9a84c" }} />
-                  <p className="text-[#333] text-xs mt-1">Navbar mein brand name ka font size</p>
+                  <p className="text-[#333] text-xs mt-1">Font size of the brand name in the navbar</p>
                 </div>
 
                 <div className="flex items-center justify-between p-4 bg-(--bg-elevated) border border-(--border-light) rounded-xl">
                   <div>
                     <p className="text-(--text-primary) text-sm">Show Brand Name Text</p>
-                    <p className="text-[#444] text-xs mt-0.5">Navbar mein logo ke sath text dikhao</p>
+                    <p className="text-[#444] text-xs mt-0.5">Show text along with the logo in the navigation bar</p>
                   </div>
                   <button onClick={() => set("showBrandName", !(form.showBrandName !== false))}
                     className="w-12 h-6 rounded-full transition-all relative shrink-0"
@@ -1108,7 +1108,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
 
               {/* LIVE PREVIEW */}
               <div className="bg-[#050505] border border-(--border) rounded-xl p-4">
-                <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">Ã°Å¸â€˜ÂÃ¯Â¸Â Navbar Preview</p>
+                <p className="text-(--text-muted) text-xs uppercase tracking-wider mb-3">👆 Navbar Preview</p>
                 <div className="flex items-center gap-3 bg-(--bg-elevated) px-4 py-3 rounded-xl border border-(--border-light)">
                   <div className="rounded-lg overflow-hidden bg-[#1a1a1a] flex items-center justify-center shrink-0"
                     style={{ width: form.navLogoSize || 36, height: form.navLogoSize || 36 }}>
@@ -1131,13 +1131,13 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
         </div>
       </div>
 
-      {/* Ã¢â€â‚¬Ã¢â€â‚¬ SITE TITLE & FAVICON Ã¢â€â‚¬Ã¢â€â‚¬ */}
+      {/* ———— SITE TITLE & FAVICON ———— */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden">
         <div className="px-6 py-5 border-b border-(--border)">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
-            <FiGlobe className="text-[#c9a84c]" /> Browser Tab Ã¢â‚¬â€ Title & Icon
+            <FiGlobe className="text-[#c9a84c]" /> Browser Tab — Title & Icon
           </h3>
-          <p className="text-[#444] text-xs mt-0.5">Browser mein tab par jo naam aur icon dikhe Ã¢â‚¬â€ admin se control karo</p>
+          <p className="text-[#444] text-xs mt-0.5">Configure the tab name and icon that appears in the browser</p>
         </div>
         <div className="p-6 space-y-5">
 
@@ -1157,14 +1157,14 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
                   />
                 </div>
                 <div className="bg-(--bg-elevated) border border-(--border-light) rounded-xl px-3 py-2 flex items-center gap-2 shrink-0">
-                  <span className="text-[#c9a84c] text-xs">Ã°Å¸Å’Â</span>
+                  <span className="text-[#c9a84c] text-xs">🌐 </span>
                   <span className="text-[#9a9a9a] text-xs font-mono truncate max-w-30">
                     {form.siteTitle || "URBAN THREAD"}
                   </span>
                 </div>
               </div>
               <p className="text-[#333] text-xs mt-2">
-                Yeh browser tab mein dikhega Ã¢â‚¬â€ short aur descriptive rakho
+                This will appear in the browser tab
               </p>
             </div>
           )}
@@ -1172,7 +1172,7 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
           {/* FAVICON */}
           <div className="border-t border-(--border) pt-5">
             <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-3">
-              Ã°Å¸Å’Â Favicon (Tab Icon)
+              🌍 Favicon (Tab Icon)
             </p>
             <div className="flex items-center gap-6 flex-wrap">
               {/* Current favicon preview */}
@@ -1199,8 +1199,8 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               <div className="flex-1 min-w-50">
                 <FaviconUploader token={token} fetchSettings={fetchSettings} settings={settings} onDelete={handleDeleteFavicon} />
                 <p className="text-[#333] text-xs mt-2">
-                  ICO, PNG, or SVG Ã¢â‚¬Â¢ Recommended: 32Ãƒâ€”32px or 64Ãƒâ€”64px<br />
-                  <span className="text-[#222]">Khali rakhne par logo image use hogi</span>
+                  ICO, PNG, or SVG • Recommended: 32×32px or 64×64px<br />
+                  <span className="text-[#222]">If left empty, the logo image will be used</span>
                 </p>
               </div>
             </div>
@@ -1233,9 +1233,9 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
   );
 }
 
-/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-   ADVANCED TAB Ã¢â‚¬â€ Pro Level Controls
-Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
+/* ———————————————————————————————————— 
+   ADVANCED TAB — Pro Level Controls
+———————————————————————————————————— */
 function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
   const popupRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -1259,7 +1259,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
   };
 
   const deletePopupImage = async () => {
-    if (!window.confirm("Popup image delete karein?")) return;
+    if (!window.confirm("Delete popup image?")) return;
     try {
       const res = await api.post("/settings/delete-image", { field: "popupImage" });
       if (res.data.success) {
@@ -1275,7 +1275,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
       <Card>
         <div className="flex items-center justify-between">
           <div>
-            <SectionTitle title="Maintenance Mode" desc="Website ko temporary down karein, sirf admin login access kar sakega." />
+            <SectionTitle title="Maintenance Mode" desc="Temporarily take the website down. Only administrators will have access." />
           </div>
           <button onClick={() => set("maintenanceMode", !form.maintenanceMode)}
             className="w-12 h-6 rounded-full transition-all relative shrink-0"
@@ -1286,7 +1286,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
         </div>
         {form.maintenanceMode && (
           <div className="bg-red-900/20 border border-red-700/30 rounded-xl p-4 text-red-400 text-xs mt-4">
-            ⚠️ Maintenance mode is ON. Normal users cannot access the website.
+            ⚠️  Maintenance mode is ON. Normal users cannot access the website.
           </div>
         )}
       </Card>
@@ -1296,8 +1296,8 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <SectionTitle
-              title="ðŸš€ Coming Soon / Launch Timer"
-              desc="Website ko launch se pehle 'Coming Soon' mode mein rakhein. Launch time aane par website automatically khul jayegi."
+              title="🚀 Coming Soon / Launch Timer"
+              desc="Keep the website in 'Coming Soon' mode before launch. The website will open automatically at launch time."
             />
           </div>
           <button
@@ -1322,14 +1322,14 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
             : "text-emerald-400 bg-emerald-950/30 border-emerald-700/30"
         }`}>
           <span className={`w-1.5 h-1.5 rounded-full ${form.isComingSoon ? "bg-amber-400 animate-pulse" : "bg-emerald-400"}`} />
-          {form.isComingSoon ? "Coming Soon Mode â€” Website bandi hai" : "Website Live hai âœ“"}
+          {form.isComingSoon ? "Coming Soon Mode — Website is inactive" : "Website is Live ✓"}
         </div>
 
         {form.isComingSoon && (
           <div className="mt-5 pt-5 border-t border-(--border) space-y-4">
             <div>
               <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2 font-semibold">
-                ðŸ“… Launch Date &amp; Time
+                📅 Launch Date & Time
               </label>
               <div className="flex flex-col sm:flex-row gap-3 items-start">
                 <input
@@ -1355,7 +1355,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
                 )}
               </div>
               <p className="text-(--text-muted) text-[11px] mt-1.5">
-                ðŸ• Timezone:{" "}
+                🕒 Timezone:{" "}
                 <span className="font-mono" style={{ color: "var(--gold)" }}>
                   {Intl.DateTimeFormat().resolvedOptions().timeZone}{" "}
                   (UTC{new Date().getTimezoneOffset() <= 0 ? `+${-new Date().getTimezoneOffset() / 60}` : `-${new Date().getTimezoneOffset() / 60}`})
@@ -1377,10 +1377,10 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
                     </span>
                   </div>
                   {diff <= 0 ? (
-                    <p className="text-red-400 text-xs font-medium">⚠️ Yeh time guzar chuka hai! Save ke baad website khul jayegi.</p>
+                    <p className="text-red-400 text-xs font-medium">⚠️  This time has passed! The website will go live upon saving.</p>
                   ) : (
                     <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
-                      â±ï¸ Bacha hua waqt:{" "}
+                      ⏱️ Remaining time:{" "}
                       <span className="font-mono bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-800/30">
                         {Math.floor(diff / 86400000)}d {Math.floor((diff / 3600000) % 24)}h {Math.floor((diff / 60000) % 60)}m
                       </span>
@@ -1390,12 +1390,12 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
               );
             })()}
             <div className="rounded-xl border border-amber-800/20 bg-amber-950/10 p-4">
-              <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">â„¹ï¸ Kaise kaam karta hai</p>
+              <p className="text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">ℹ️  How it works</p>
               <ul className="text-amber-400/80 text-xs space-y-1.5">
-                <li>âœ“ Coming Soon ON hone par normal users countdown page dekhenge</li>
-                <li>âœ“ Admin hamesha real website access kar sakte hain</li>
-                <li>âœ“ Jab launch time aayega, website automatically khul jayegi</li>
-                <li>âœ“ Launch ke baad Coming Soon mode automatic OFF ho jata hai</li>
+                <li>✓ Coming Soon ON shows normal users the countdown page</li>
+                <li>✓ Admin can always access the real website</li>
+                <li>✓ Website will automatically open at launch time</li>
+                <li>✓ Coming Soon mode is automatically turned OFF after launch</li>
               </ul>
             </div>
           </div>
@@ -1404,9 +1404,9 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
 
       {/* CURRENCY & GLOBALS */}
       <Card>
-        <SectionTitle title="Global Settings" desc="Currency aur global variables configure karein." />
+        <SectionTitle title="Global Settings" desc="Configure currency and other global variables." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-          <Field label="Currency Symbol" field="currencySymbol" form={form} set={set} placeholder="Rs." hint="e.g. Rs., $, Â£, â‚¬" />
+          <Field label="Currency Symbol" field="currencySymbol" form={form} set={set} placeholder="Rs." hint="e.g. Rs., $, £, €" />
           <div>
             <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Currency Position</label>
             <select value={form.currencyPosition || "left"} onChange={(e) => set("currencyPosition", e.target.value)} className="lux-select w-full">
@@ -1498,7 +1498,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
                 set("seoGeoPlacename", "Lahore");
                 set("seoGeoPosition", "31.5204;74.3587");
                 set("seoBrandTagline", "Pakistan ka premium streetwear brand.");
-                toast.success("Pakistan SEO preset apply ho gaya");
+                toast.success("Pakistan SEO preset applied");
               }}
               className="btn-outline"
               style={{ padding: "10px 12px", fontSize: "0.82rem" }}
@@ -1514,7 +1514,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
                 set("seoGeoPlacename", "Karachi");
                 set("seoGeoPosition", "24.8607;67.0011");
                 set("seoBrandTagline", "Affordable style for Pakistan.");
-                toast.success("Alternate Pakistan preset apply ho gaya");
+                toast.success("Alternate Pakistan preset applied");
               }}
               className="btn-outline"
               style={{ padding: "10px 12px", fontSize: "0.82rem" }}
@@ -1539,7 +1539,7 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
       <Card>
         <SectionTitle title="Custom Scripts (Head)" desc="Google Analytics, Facebook Pixel, Tawk.to, etc." />
         <div className="bg-yellow-900/10 border border-yellow-700/20 rounded-xl p-3 mb-4 mt-4">
-          <p className="text-yellow-400 text-xs">⚠️ Warning: Invalid scripts can break your website. Paste code carefully.</p>
+          <p className="text-yellow-400 text-xs">⚠️  Warning: Invalid scripts can break your website. Paste code carefully.</p>
         </div>
         <textarea value={form.customScripts || ""} onChange={(e) => set("customScripts", e.target.value)}
           rows={6} spellCheck={false}
@@ -1552,9 +1552,9 @@ function AdvancedTab({ form, set, token, settings, fetchSettings, mediaUrl }) {
     </div>
   );
 }
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ 
+/* ———————————————————————————————————— 
    FAVICON UPLOADER
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+———————————————————————————————————— */
 function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
   const faviconRef = useRef(null);
   const [uploading, setUploading] = useState(false);
@@ -1570,7 +1570,7 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
       if (res.data.success) {
-        toast.success("Favicon updated! Refresh karo tab icon dekhne ke liye.");
+        toast.success("Favicon updated! Refresh to see the new tab icon.");
         fetchSettings && fetchSettings();
       } else toast.error("Upload failed");
     } catch { toast.error("Upload error"); }
@@ -1590,7 +1590,7 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
       </button>
       {settings?.faviconUrl && (
         <>
-          <span className="text-green-400 text-xs">âœ“ Custom favicon set</span>
+          <span className="text-green-400 text-xs">✓ Custom favicon set</span>
           <button
             onClick={onDelete}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
@@ -1603,9 +1603,9 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
   );
 }
 
-/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ 
+/* ———————————————————————————————————— 
    FIELD COMPONENTS
-â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+———————————————————————————————————— */
 function Field({ label, field, form, set, type = "text", placeholder, rows, hint }) {
   return (
     <div className="space-y-1.5">
@@ -1653,11 +1653,11 @@ function Card({ children }) {
   );
 }
 
-/* â”€â”€ HERO TEXT TAB â”€â”€ */
+/* ——— HERO TEXT TAB ——— */
 function HeroTab({ form, set }) {
   return (
     <Card>
-      <SectionTitle title="Hero Banner â€” Text" desc="Homepage ka main banner text edit karo. Images 'Images' tab mein update karo." />
+      <SectionTitle title="Hero Banner — Text" desc="Edit homepage main banner text. Update images in the 'Images' tab." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Label (small badge)" field="heroLabel" form={form} set={set} placeholder="New Season 2026" />
         <Field label="CTA Button Text" field="heroCta" form={form} set={set} placeholder="Shop Collection" />
@@ -1682,11 +1682,11 @@ function HeroTab({ form, set }) {
   );
 }
 
-/* â”€â”€ BRAND STORY TEXT TAB â”€â”€ */
+/* ——— BRAND STORY TEXT TAB ——— */
 function BrandTab({ form, set }) {
   return (
     <Card>
-      <SectionTitle title="Brand Story â€” Text" desc="'Our Story' section ka text. Image 'Images' tab mein update karo." />
+      <SectionTitle title="Brand Story — Text" desc="Edit the 'Our Story' section text. Update the image in the 'Images' tab." />
       <Field label="Section Heading" field="brandTitle" form={form} set={set} placeholder="Fashion Born From Pakistani Streets" />
       <Field label="Founded Year" field="brandYear" form={form} set={set} placeholder="2020" />
       <Field label="Paragraph 1" field="brandText1" form={form} set={set} rows={4} />
@@ -1696,31 +1696,31 @@ function BrandTab({ form, set }) {
   );
 }
 
-/* â”€â”€ SHOP TAB â”€â”€ */
+/* ——— SHOP TAB ——— */
 function ShopTab({ form, set }) {
   return (
     <Card>
-      <SectionTitle title="Shop & Pricing" desc="Delivery charges, coupon codes configure karo." />
+      <SectionTitle title="Shop & Pricing" desc="Configure delivery charges and coupon codes." />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <Field label="Delivery Charges (Rs.)" field="deliveryCharges" form={form} set={set} type="number" placeholder="250" />
         <Field label="Coupon Code" field="couponCode" form={form} set={set} placeholder="SAVE10" />
         <Field label="Coupon Discount (Rs.)" field="couponDiscount" form={form} set={set} type="number" placeholder="500" />
       </div>
       <div className="bg-(--bg-elevated) rounded-xl p-4 border border-(--border) text-sm text-(--text-muted)">
-        ðŸ“¦ Delivery: <span className="text-(--gold) font-semibold">Rs. {form.deliveryCharges}</span>
-        &nbsp;|&nbsp; ðŸŽŸï¸ Code: <span className="text-(--gold) font-semibold">{form.couponCode}</span>
-        &nbsp;â†’&nbsp; saves <span className="text-(--gold) font-semibold">Rs. {form.couponDiscount}</span>
+        📦 Delivery: <span className="text-(--gold) font-semibold">Rs. {form.deliveryCharges}</span>
+        &nbsp;|&nbsp; 🎫 Code: <span className="text-(--gold) font-semibold">{form.couponCode}</span>
+        &nbsp;→&nbsp; saves <span className="text-(--gold) font-semibold">Rs. {form.couponDiscount}</span>
       </div>
     </Card>
   );
 }
 
-/* â”€â”€ CONTACT TAB â”€â”€ */
+/* ——— CONTACT TAB ——— */
 function ContactTab({ form, set }) {
   return (
     <div className="space-y-5">
       <Card>
-        <SectionTitle title="Contact Information" desc="Footer aur Support page mein dikhi hai." />
+        <SectionTitle title="Contact Information" desc="Displayed in the footer and support page." />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <Field label="Phone" field="phone" form={form} set={set} placeholder="+92 300 1234567" />
           <Field label="WhatsApp (digits only)" field="whatsapp" form={form} set={set} placeholder="923001234567" />
@@ -1741,24 +1741,24 @@ function ContactTab({ form, set }) {
   );
 }
 
-/* Ã¢â€â‚¬Ã¢â€â‚¬ GENERAL TAB Ã¢â€â‚¬Ã¢â€â‚¬ */
+/* ——— GENERAL TAB ——— */
 function GeneralTab({ form, set }) {
   return (
     <Card>
       <SectionTitle title="General" desc="Core brand identity." />
-      <Field label="Brand Name" field="brandName" form={form} set={set} placeholder="URBAN THREAD" hint="Navbar aur Footer mein use hogi" />
+      <Field label="Brand Name" field="brandName" form={form} set={set} placeholder="URBAN THREAD" hint="Used in navbar and footer" />
       <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-xl p-4">
         <p className="text-yellow-400 text-sm">
-          ⚠️ Brand name change karne ke baad puri website mein update hogi.
+          ⚠️  Changing the brand name updates it across the entire website.
         </p>
       </div>
     </Card>
   );
 }
 
-/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-   HERO SLIDES TAB Ã¢â‚¬â€ Per-slide text + image
-Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
+/* ———————————————————————————————————— 
+   HERO SLIDES TAB — Per-slide text + image
+———————————————————————————————————— */
 function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl }) {
   const [slides, setSlides] = useState(() => {
     const s = settings?.heroSlides || [];
@@ -1792,9 +1792,9 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
-        toast.success(`Slide ${idx + 1} image upload ho gayi!`);
+        toast.success(`Slide ${idx + 1} image uploaded!`);
         fetchSettings?.();
-      } else toast.error("Upload nahi hua");
+      } else toast.error("Upload failed");
     } catch { toast.error("Upload error"); }
     finally { setUploading((prev) => { const n = [...prev]; n[idx] = false; return n; }); }
   };
@@ -1806,19 +1806,19 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) { toast.success("Slides saved!"); fetchSettings?.(); }
-      else toast.error("Save nahi hua");
+      else toast.error("Save failed");
     } catch { toast.error("Error saving"); }
     finally { setSaving(false); }
   };
 
-  const SLIDE_NAMES = ["Slide 1 Ã¢â‚¬â€ Main", "Slide 2", "Slide 3"];
+  const SLIDE_NAMES = ["Slide 1 — Main", "Slide 2", "Slide 3"];
 
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h3 className="text-(--text-primary) font-semibold">Hero Slides Ã¢â‚¬â€ 3 Slides Control</h3>
-          <p className="text-[#444] text-sm mt-0.5">Har slide ka image, title aur text alag se set karo</p>
+          <h3 className="text-(--text-primary) font-semibold">Hero Slides — 3 Slides Control</h3>
+          <p className="text-[#444] text-sm mt-0.5">Configure image, title, and text separately for each slide</p>
         </div>
         <button onClick={handleSaveText} disabled={saving} className="btn-gold" style={{ padding: "10px 20px", fontSize: "0.82rem" }}>
           {saving ? "Saving..." : <><FiSave size={13} /> Save Slides Text</>}
@@ -1855,22 +1855,22 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
                 onChange={(e) => handleImageUpload(idx, e.target.files[0])} />
               <button onClick={() => inputRefs[idx].current?.click()} disabled={uploading[idx]}
                 className="btn-outline w-full text-xs" style={{ padding: "10px", width: "100%" }}>
-                <FiUpload size={12} /> {uploading[idx] ? "Uploading..." : "Image Change Karo"}
+                <FiUpload size={12} /> {uploading[idx] ? "Uploading..." : "Change Image"}
               </button>
               {/* Delete slide image */}
               {slide.image && (
                 <button
                   onClick={async () => {
-                    if (!window.confirm(`Slide ${idx + 1} image delete karein?`)) return;
+                    if (!window.confirm(`Delete slide ${idx + 1} image?`)) return;
                     try {
                       const res = await deleteSlideImage(idx, token);
-                      if (res.success) { toast.success(`Slide ${idx + 1} image delete ho gayi`); fetchSettings?.(); }
-                    } catch { toast.error("Delete nahi hua"); }
+                      if (res.success) { toast.success(`Slide ${idx + 1} image deleted`); fetchSettings?.(); }
+                    } catch { toast.error("Failed to delete image"); }
                   }}
                   className="mt-2 w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
                   style={{ width: "100%" }}
                 >
-                  <FiTrash2 size={11} /> Image Delete Karo
+                  <FiTrash2 size={11} /> Delete Image
                 </button>
               )}
             </div>
@@ -1892,7 +1892,7 @@ function SlidesTab({ settings, token, fetchSettings, deleteSlideImage, mediaUrl 
                 <textarea value={slide.title || ""} onChange={(e) => updateSlide(idx, "title", e.target.value)}
                   placeholder={"Style That\nSpeaks Louder"} rows={2}
                   className="lux-input resize-none" style={{ resize: "vertical" }} />
-                <p className="text-[#333] text-xs mt-1">Ã°Å¸â€™Â¡ Dusri line automatic gold color mein hogi</p>
+                <p className="text-[#333] text-xs mt-1">💡 The second line will automatically be colored gold</p>
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Subtitle / Description</label>
@@ -1944,7 +1944,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
   const resetForm = () => { setForm({ name: "", city: "", rating: 5, comment: "" }); setEditId(null); };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.comment.trim()) { toast.error("Naam aur comment zaroori hain"); return; }
+    if (!form.name.trim() || !form.comment.trim()) { toast.error("Name and comment are required"); return; }
     setSaving(true);
     try {
       if (editId) {
@@ -1952,7 +1952,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
         toast.success("Review updated!");
       } else {
         await api.post("/settings/reviews", form, { headers: { Authorization: `Bearer ${token}` } });
-        toast.success("Review add ho gaya!");
+        toast.success("Review added successfully!");
       }
       fetchSettings?.();
       resetForm();
@@ -1964,16 +1964,16 @@ function ReviewsTab({ settings, token, fetchSettings }) {
     if (!window.confirm("Delete this review?")) return;
     try {
       await api.delete(`/settings/reviews/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-      toast.success("Review delete ho gaya");
+      toast.success("Review deleted successfully");
       fetchSettings?.();
-    } catch { toast.error("Delete nahi hua"); }
+    } catch { toast.error("Failed to delete review"); }
   };
 
   const handleToggle = async (review) => {
     try {
       await api.put(`/settings/reviews/${review._id}`, { ...review, isActive: !review.isActive }, { headers: { Authorization: `Bearer ${token}` } });
       fetchSettings?.();
-    } catch { toast.error("Toggle nahi hua"); }
+    } catch { toast.error("Failed to toggle status"); }
   };
 
   const startEdit = (r) => {
@@ -1987,7 +1987,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
       {/* ADD / EDIT FORM */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4">
         <h3 className="text-(--text-primary) font-semibold flex items-center gap-2">
-          {editId ? <><FiEdit2 size={15} className="text-[#c9a84c]" /> Review Edit Karo</> : <><FiPlus size={15} className="text-[#c9a84c]" /> Naya Review Add Karo</>}
+          {editId ? <><FiEdit2 size={15} className="text-[#c9a84c]" /> Edit Review</> : <><FiPlus size={15} className="text-[#c9a84c]" /> Add New Review</>}
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -2042,7 +2042,7 @@ function ReviewsTab({ settings, token, fetchSettings }) {
         {reviews.length === 0 ? (
           <div className="p-10 text-center text-[#333]">
             <FiMessageSquare size={28} className="mx-auto mb-2 opacity-30" />
-            <p className="text-sm">Koi review nahi abhi Ã¢â‚¬â€ upar se add karo ya user submit kare</p>
+            <p className="text-sm">No reviews yet — add from above or wait for user submission</p>
           </div>
         ) : (
           <div className="divide-y divide-[#111]">

@@ -40,7 +40,7 @@ export function DesignStudioTab({ form, set }) {
     <div className="space-y-6">
       {/* ACCENT */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
-        <div><p className="text-(--text-primary) font-semibold mb-0.5">🎨 Accent Color</p><p className="text-(--text-muted) text-xs">Brand color — buttons, links, highlights sab pe lagta hai</p></div>
+        <div><p className="text-(--text-primary) font-semibold mb-0.5">🎨 Accent Color</p><p className="text-(--text-muted) text-xs">Brand color — applied to buttons, links, and highlights</p></div>
         <div className="flex flex-wrap gap-2 mb-3">
           {Object.entries(COLOR_PRESETS).map(([n, p]) => (
             <button key={n} onClick={() => applyPreset(p)}
@@ -58,7 +58,7 @@ export function DesignStudioTab({ form, set }) {
 
       {/* BACKGROUND */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
-        <div><p className="text-(--text-primary) font-semibold mb-0.5">🌑 Backgrounds</p><p className="text-(--text-muted) text-xs">Page, sections, cards ka background</p></div>
+        <div><p className="text-(--text-primary) font-semibold mb-0.5">🌑 Backgrounds</p><p className="text-(--text-muted) text-xs">Background color for pages, sections, and cards</p></div>
         <div className="flex flex-wrap gap-2 mb-3">
           {Object.entries(BG_PRESETS).map(([n, p]) => (
             <button key={n} onClick={() => applyPreset(p)}
@@ -192,11 +192,11 @@ export function SectionsTab({ form, set }) {
         </div>
       </div>
       {[
-        { title: "📊 Stats Section", fields: [["Sub Label", "statsSubLabel", "By The Numbers"], ["Main Title", "statsTitle", "Pakistan Ke Bharose Ka Nishaana"]] },
+        { title: "📊 Stats Section", fields: [["Sub Label", "statsSubLabel", "By The Numbers"], ["Main Title", "statsTitle", "Trusted Across Pakistan"]] },
         { title: "🛍️ Featured Products", fields: [["Label", "featuredLabel", "Curated Picks"], ["Title", "featuredTitle", "Featured Collection"]] },
         { title: "⭐ Reviews", fields: [["Label", "reviewsLabel", "Real Reviews"], ["Title", "reviewsTitle", "What Our Customers Say"]] },
-        { title: "📧 Newsletter", fields: [["Label", "newsletterLabel", "Newsletter"], ["Title", "newsletterTitle", "Get Exclusive Deals First"], ["Description", "newsletterDesc", "Subscribe karo..."]] },
-        { title: "💬 Support Page", fields: [["Title", "supportTitle", "Hum Yahan Hain"], ["Subtitle", "supportSubtitle", "24/7 available"], ["Hours", "supportHours", "Mon–Sat: 9am – 9pm"]] },
+        { title: "📧 Newsletter", fields: [["Label", "newsletterLabel", "Newsletter"], ["Title", "newsletterTitle", "Get Exclusive Deals First"], ["Description", "newsletterDesc", "Subscribe now..."]] },
+        { title: "💬 Support Page", fields: [["Title", "supportTitle", "We Are Here"], ["Subtitle", "supportSubtitle", "24/7 available"], ["Hours", "supportHours", "Mon–Sat: 9am – 9pm"]] },
       ].map(({ title, fields }) => (
         <div key={title} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 shadow-sm">
           <p className="text-(--text-primary) font-semibold mb-4">{title}</p>
@@ -218,7 +218,7 @@ export function AnnouncementTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">📢 Announcement Bar</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Coupon bar ki jagah custom message. Khali chodo to coupon code dikhega.</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Custom message in place of coupon bar. Leave empty to show the coupon code.</p>
         </div>
         <div>
           <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">Text</label>
@@ -278,10 +278,10 @@ export function CustomCSSTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">💻 Custom CSS</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Yahan likha CSS poori website par apply hoga</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">CSS written here will be applied across the entire website</p>
         </div>
         <div className="bg-yellow-900/10 border border-yellow-700/20 rounded-xl p-3">
-          <p className="text-yellow-400 text-xs">⚠️ Advanced feature — galat CSS se website ka design bigad sakta hai.</p>
+          <p className="text-yellow-400 text-xs">⚠️ Advanced feature — incorrect CSS can break the website layout.</p>
         </div>
         <div>
           <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-2">Quick Snippets</p>
@@ -296,7 +296,7 @@ export function CustomCSSTab({ form, set }) {
         </div>
         <textarea value={form.customCSS || ""} onChange={(e) => set("customCSS", e.target.value)}
           rows={16} spellCheck={false}
-          placeholder={"/* Custom CSS likhein */\n\n.btn-gold {\n  border-radius: 999px !important;\n}"}
+          placeholder={"/* Write Custom CSS here */\n\n.btn-gold {\n  border-radius: 999px !important;\n}"}
           className="w-full text-sm font-mono rounded-2xl"
           style={{ background: "var(--bg-deep)", border: "1px solid var(--border)", padding: 16, outline: "none", resize: "vertical", color: "var(--gold)", lineHeight: 1.7, minHeight: 200 }}
         />
@@ -355,7 +355,7 @@ export function TypographySizesTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">📏 Font Sizes</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Har jagah ka text size control karo</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Control the text size across all sections</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SizeSlider label="Body Text" field="fontSizeBase" form={form} set={set} min={12} max={22} hint="Paragraph, description" />
@@ -390,7 +390,7 @@ export function TypographySizesTab({ form, set }) {
           </h2>
           <h3 style={{ fontSize: `${form.fontSizeH3 || 22}px`, color: "var(--text-primary)" }}>Product Name Goes Here</h3>
           <p style={{ fontSize: `${form.fontSizeBase || 16}px`, color: form.themeTextSecondary || "var(--text-secondary)", fontFamily: `'${bodyFont}',sans-serif`, lineHeight: form.lineHeight || 1.65, letterSpacing: `${form.letterSpacing || 0}em` }}>
-            Premium Pakistani streetwear — crafted for the bold and the fearless. Har season ka naya drop, sirf Urban Thread pe.
+            Premium streetwear — crafted for the bold and the fearless. Brand new drops every season, only on Urban Thread.
           </p>
         </div>
       </div>
@@ -423,7 +423,7 @@ export function ImageSizesTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">🖼️ Product Card Image Ratio</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Shop page aur home page product cards ka image shape</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Image aspect ratio for product cards on shop and home pages</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {RATIO_OPTIONS.map(({ label, value, preview }) => {
@@ -444,7 +444,7 @@ export function ImageSizesTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">📸 Brand Story Image Ratio</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">About / Brand Story section ki image shape</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Image aspect ratio for the About / Brand Story section</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {RATIO_OPTIONS.map(({ label, value, preview }) => {
@@ -485,7 +485,7 @@ export function ImageSizesTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">📐 Hero Section Height</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Home page ka hero slider kitna tall ho</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Height of the homepage hero slider</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {HERO_HEIGHTS.map((h) => {
@@ -569,7 +569,7 @@ export function IconsTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5 shadow-sm">
         <div>
           <p className="text-(--text-primary) font-semibold">📐 Icon Sizes</p>
-          <p className="text-(--text-muted) text-xs mt-0.5">Website ke different areas mein icons ka size</p>
+          <p className="text-(--text-muted) text-xs mt-0.5">Size of icons in different areas of the website</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* NAV ICON SIZE */}
@@ -620,7 +620,7 @@ export function IconsTab({ form, set }) {
       {/* ICON PREVIEW GRID */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 shadow-sm">
         <p className="text-(--text-primary) font-semibold mb-4">🗂️ Icon Library Preview</p>
-        <p className="text-(--text-muted) text-[10px] uppercase tracking-widest mb-4 opacity-60">Yeh sab icons website mein use ho rahe hain (react-icons/fi)</p>
+        <p className="text-(--text-muted) text-[10px] uppercase tracking-widest mb-4 opacity-60">These icons are used throughout the website (react-icons/fi)</p>
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           {DEMO_ICONS.map(({ name, icon }) => (
             <div key={name} className="flex flex-col items-center gap-1.5 p-3 bg-(--bg-surface) border border-(--border) rounded-xl hover:border-(--border-light) transition-all shadow-sm">
@@ -635,8 +635,8 @@ export function IconsTab({ form, set }) {
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 shadow-sm">
         <p className="text-(--text-primary) font-semibold mb-2">ℹ️ Icon Style</p>
         <p className="text-(--text-muted) text-sm">
-          Website mein <code className="text-(--gold) font-mono">react-icons/fi</code> (Feather Icons) use ho rahe hain — clean, outline style.
-          Agar alag style chahiye to Custom CSS tab se override kar sakte hain.
+          The website uses <code className="text-(--gold) font-mono">react-icons/fi</code> (Feather Icons) — clean, outline style.
+          If you want a different style, you can override it using the Custom CSS tab.
         </p>
         <div className="mt-3 p-3 bg-(--bg-deep) rounded-xl border border-(--border) shadow-inner">
           <code className="text-(--gold) text-xs font-mono">

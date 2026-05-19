@@ -154,7 +154,7 @@ export default function SubCategoryList() {
       toast.success(`"${n}" added to ${catObj?.name || "category"} ✓`);
     } catch (error) {
       console.error("Add subcategory error:", error);
-      toast.error("Sub-category add nahi ho saki");
+      toast.error("Could not add sub-category");
     } finally {
       setAdding(false);
     }
@@ -198,7 +198,7 @@ export default function SubCategoryList() {
       setEditId(null);
     } catch (error) {
       console.error("Update subcategory error:", error);
-      toast.error("Sub-category update nahi ho saki");
+      toast.error("Could not update sub-category");
     } finally {
       setUpdating(false);
     }
