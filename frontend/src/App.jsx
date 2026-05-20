@@ -8,7 +8,7 @@ import { Suspense, lazy, useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useAuth } from "./context/AuthContext";
 // import { useTheme } from "./context/ThemeContext";
-// import { SpeedInsights } from "@vercel/speed-insights/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useSettings } from "./context/SettingsContext";
 
 /* LAYOUT */

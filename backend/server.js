@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+import cors from "cors";
 import colors from "colors";
 import app from "./app.js";
 import connectDB from "./config/db.js";
@@ -9,10 +10,17 @@ import * as https from "https";
 (async () => {
   await connectDB();
 
-  const PORT = parseInt(process.env.PORT || "5001", 10);
-  const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`.bgCyan.bold);
-  });
+  // Enable CORS for frontend domains
+  app.use(
+    cors({
+      origin: [
+        "https://www.urbanthreadss.store",
+        "https://urbanthreadss.store",
+        "http://localhost:5173",
+      ],
+      credentials: true,
+    })
+  );
 
   // Keep-alive ping system to prevent Render from sleeping
   setInterval(() => {
