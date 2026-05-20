@@ -52,7 +52,7 @@ export const getProducts = async (req, res, next) => {
     const products = await Product.find(query)
       .populate("category", "name")
       .populate("subCategory", "name")
-      .select("name description price comparePrice images category subCategory stock sizes colors isFeatured isActive video createdAt")
+      .select("name description price comparePrice images category subCategory stock sizes colors isFeatured isActive video fabricCost printingCost packagingCost brandingCost deliveryCost adsCost miscCost createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -101,6 +101,8 @@ export const createProduct = async (req, res, next) => {
     const {
       name, price, category, subCategory, description,
       stock, comparePrice, isFeatured, isActive,
+      fabricCost, printingCost, packagingCost, brandingCost,
+      deliveryCost, adsCost, miscCost,
     } = req.body;
 
     if (!name || !price || !category)
@@ -131,6 +133,13 @@ export const createProduct = async (req, res, next) => {
       colors,
       isFeatured: isFeatured === "true" || isFeatured === true,
       isActive: isActive !== "false" && isActive !== false,
+      fabricCost: Number(fabricCost) || 0,
+      printingCost: Number(printingCost) || 0,
+      packagingCost: Number(packagingCost) || 0,
+      brandingCost: Number(brandingCost) || 0,
+      deliveryCost: Number(deliveryCost) || 0,
+      adsCost: Number(adsCost) || 0,
+      miscCost: Number(miscCost) || 0,
     });
 
     const populated = await Product.findById(product._id)
@@ -153,6 +162,8 @@ export const updateProduct = async (req, res, next) => {
     const {
       name, price, category, subCategory, description,
       stock, keepImages, comparePrice, isFeatured, isActive, removeVideo,
+      fabricCost, printingCost, packagingCost, brandingCost,
+      deliveryCost, adsCost, miscCost,
     } = req.body;
 
     // Parse sizes & colors
@@ -201,6 +212,14 @@ export const updateProduct = async (req, res, next) => {
     product.colors = colors;
     if (isFeatured !== undefined) product.isFeatured = isFeatured === "true" || isFeatured === true;
     if (isActive !== undefined) product.isActive = isActive !== "false" && isActive !== false;
+
+    if (fabricCost !== undefined) product.fabricCost = Number(fabricCost) || 0;
+    if (printingCost !== undefined) product.printingCost = Number(printingCost) || 0;
+    if (packagingCost !== undefined) product.packagingCost = Number(packagingCost) || 0;
+    if (brandingCost !== undefined) product.brandingCost = Number(brandingCost) || 0;
+    if (deliveryCost !== undefined) product.deliveryCost = Number(deliveryCost) || 0;
+    if (adsCost !== undefined) product.adsCost = Number(adsCost) || 0;
+    if (miscCost !== undefined) product.miscCost = Number(miscCost) || 0;
 
     await product.save();
 

@@ -42,6 +42,13 @@ export default function ProductForm() {
     colors: [],
     isFeatured: false,
     isActive: true,
+    fabricCost: "",
+    printingCost: "",
+    packagingCost: "",
+    brandingCost: "",
+    deliveryCost: "",
+    adsCost: "",
+    miscCost: "",
   });
 
   /* ── IMAGE STATE ── */
@@ -81,6 +88,13 @@ export default function ProductForm() {
       colors: product.colors || [],
       isFeatured: product.isFeatured || false,
       isActive: product.isActive !== false,
+      fabricCost: product.fabricCost !== undefined ? product.fabricCost : "",
+      printingCost: product.printingCost !== undefined ? product.printingCost : "",
+      packagingCost: product.packagingCost !== undefined ? product.packagingCost : "",
+      brandingCost: product.brandingCost !== undefined ? product.brandingCost : "",
+      deliveryCost: product.deliveryCost !== undefined ? product.deliveryCost : "",
+      adsCost: product.adsCost !== undefined ? product.adsCost : "",
+      miscCost: product.miscCost !== undefined ? product.miscCost : "",
     });
     setExistingImages(product.images || []);
     setExistingVideo(product.video || "");
@@ -199,6 +213,13 @@ export default function ProductForm() {
     // Send as JSON strings — reliable across all FormData parsers
     data.append("sizes", JSON.stringify(form.sizes));
     data.append("colors", JSON.stringify(form.colors));
+    data.append("fabricCost", form.fabricCost || 0);
+    data.append("printingCost", form.printingCost || 0);
+    data.append("packagingCost", form.packagingCost || 0);
+    data.append("brandingCost", form.brandingCost || 0);
+    data.append("deliveryCost", form.deliveryCost || 0);
+    data.append("adsCost", form.adsCost || 0);
+    data.append("miscCost", form.miscCost || 0);
 
     // When editing, send which existing images to keep
     if (isEdit) {
@@ -230,6 +251,21 @@ export default function ProductForm() {
       setLoading(false);
     }
   };
+
+  const fabricCostVal = Number(form.fabricCost) || 0;
+  const printingCostVal = Number(form.printingCost) || 0;
+  const packagingCostVal = Number(form.packagingCost) || 0;
+  const brandingCostVal = Number(form.brandingCost) || 0;
+  const deliveryCostVal = Number(form.deliveryCost) || 0;
+  const adsCostVal = Number(form.adsCost) || 0;
+  const miscCostVal = Number(form.miscCost) || 0;
+  const sellingPriceVal = Number(form.price) || 0;
+
+  const totalCostVal = fabricCostVal + printingCostVal + packagingCostVal + brandingCostVal + deliveryCostVal + adsCostVal + miscCostVal;
+  const netProfitVal = sellingPriceVal - totalCostVal;
+  const profitMarginVal = sellingPriceVal > 0 ? ((netProfitVal / sellingPriceVal) * 100).toFixed(1) : "0.0";
+  const roiVal = totalCostVal > 0 ? ((netProfitVal / totalCostVal) * 100).toFixed(1) : "0.0";
+  const breakEvenVal = totalCostVal;
 
   const totalImages = existingImages.length + newFiles.length;
 
@@ -569,6 +605,149 @@ export default function ProductForm() {
                   placeholder="50"
                   className="lux-input"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* PRODUCTION COST DETAILS */}
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 sm:p-6 space-y-5">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+                <FiDollarSign className="text-(--gold)" /> Production Cost Details
+              </h3>
+              <span className="text-[11px] text-(--gold) bg-(--gold)/5 px-2.5 py-1 rounded-lg border border-(--gold)/20 font-medium">
+                Auto-Calculated Margins
+              </span>
+            </div>
+
+            {/* Inputs grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Fabric Cost (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.fabricCost}
+                  onChange={(e) => setForm({ ...form, fabricCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Printing (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.printingCost}
+                  onChange={(e) => setForm({ ...form, printingCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Packaging (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.packagingCost}
+                  onChange={(e) => setForm({ ...form, packagingCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Branding/Tags (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.brandingCost}
+                  onChange={(e) => setForm({ ...form, brandingCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Delivery (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.deliveryCost}
+                  onChange={(e) => setForm({ ...form, deliveryCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Ads/Mktg (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.adsCost}
+                  onChange={(e) => setForm({ ...form, adsCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block text-[11px] text-(--text-muted) uppercase tracking-wider mb-2">
+                  Miscellaneous (Rs.)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.miscCost}
+                  onChange={(e) => setForm({ ...form, miscCost: e.target.value })}
+                  placeholder="0"
+                  className="lux-input text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Calculations Card */}
+            <div className="bg-(--bg-elevated) border border-(--border) rounded-xl p-4 grid grid-cols-2 sm:grid-cols-5 gap-4">
+              <div>
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-wider mb-1">Total Cost</p>
+                <p className="font-semibold text-(--text-primary) text-base">Rs. {totalCostVal.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-wider mb-1">Net Profit</p>
+                <p className={`font-semibold text-base ${netProfitVal >= 0 ? "text-green-500" : "text-red-500"}`}>
+                  Rs. {netProfitVal.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-wider mb-1">Profit Margin</p>
+                <p className={`font-semibold text-base ${Number(profitMarginVal) >= 30 ? "text-green-500" : Number(profitMarginVal) >= 10 ? "text-yellow-500" : "text-red-500"}`}>
+                  {profitMarginVal}%
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-wider mb-1">ROI</p>
+                <p className={`font-semibold text-base ${Number(roiVal) >= 30 ? "text-green-500" : "text-red-500"}`}>
+                  {roiVal}%
+                </p>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <p className="text-[10px] text-(--text-muted) uppercase tracking-wider mb-1">Break-even</p>
+                <p className="font-semibold text-(--gold) text-base">Rs. {breakEvenVal.toLocaleString()}</p>
               </div>
             </div>
           </div>

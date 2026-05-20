@@ -9,6 +9,14 @@ const orderItemSchema = new mongoose.Schema(
     size:     { type: String, default: "" },
     color:    { type: String, default: "" },
     image:    { type: String, default: "" },
+    fabricCost:    { type: Number, default: 0 },
+    printingCost:  { type: Number, default: 0 },
+    packagingCost: { type: Number, default: 0 },
+    brandingCost:  { type: Number, default: 0 },
+    deliveryCost:  { type: Number, default: 0 },
+    adsCost:       { type: Number, default: 0 },
+    miscCost:      { type: Number, default: 0 },
+    unitCost:      { type: Number, default: 0 },
   },
   { _id: false }
 );
@@ -41,6 +49,8 @@ const orderSchema = new mongoose.Schema(
     couponCode:      { type: String, default: "" },
     couponDiscount:  { type: Number, default: 0 },
     totalPrice:      { type: Number, required: true },
+    totalCost:       { type: Number, default: 0 },
+    netProfit:       { type: Number, default: 0 },
     paymentMethod:   { type: String, enum: ["COD", "Card", "EasyPaisa", "JazzCash"], default: "COD" },
     paymentStatus:   { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
     orderStatus:     {

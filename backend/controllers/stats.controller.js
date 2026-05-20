@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import SiteSettings from "../models/settings.model.js";
+import BusinessGoal from "../models/businessGoal.model.js";
 
 /* ─── BASIC STATS (used by old dashboard) ─── */
 export const getAdminStats = async (req, res) => {
@@ -264,5 +265,289 @@ export const getPublicStats = async (req, res) => {
   } catch (error) {
     console.error("Public stats error:", error);
     res.status(500).json({ success: false, message: "Failed to fetch public stats" });
+  }
+};
+
+/* ─── PROFIT & BUSINESS INTELLIGENCE ANALYTICS ─── */
+export const getProfitAnalytics = async (req, res) => {
+  try {
+    // 1. Fetch all products and map their current costs
+    const products = await Product.find({}, "name price fabricCost printingCost packagingCost brandingCost deliveryCost adsCost miscCost stock category")
+      .populate("category", "name")
+      .lean();
+
+    const productMap = {};
+    products.forEach((p) => {
+      const totalCost =
+        (p.fabricCost || 0) +
+        (p.printingCost || 0) +
+        (p.packagingCost || 0) +
+        (p.brandingCost || 0) +
+        (p.deliveryCost || 0) +
+        (p.adsCost || 0) +
+        (p.miscCost || 0);
+
+      productMap[p._id.toString()] = {
+        totalCost,
+        name: p.name,
+      };
+    });
+
+    // 2. Fetch all orders (lean, for processing)
+    const orders = await Order.find().sort({ createdAt: -1 }).lean();
+
+    // 3. Overall Totals
+    let totalRevenue = 0;
+    let totalProfit = 0;
+    let codPendingAmount = 0;
+    let pendingOrdersCount = 0;
+
+    orders.forEach((order) => {
+      // Calculate order costs & profits
+      let orderCost = 0;
+      order.orderItems?.forEach((item) => {
+        // Fallback: use snapshotted unitCost if available, else look up current product cost
+        const uCost =
+          item.unitCost !== undefined && item.unitCost > 0
+            ? item.unitCost
+            : (productMap[item.product?.toString()]?.totalCost || 0);
+        orderCost += uCost * item.quantity;
+      });
+
+      const orderProfit = (order.totalPrice || 0) - orderCost;
+
+      if (order.orderStatus === "delivered") {
+        totalRevenue += order.totalPrice || 0;
+        totalProfit += orderProfit;
+      } else if (order.orderStatus !== "cancelled") {
+        if (order.orderStatus === "pending") {
+          pendingOrdersCount++;
+        }
+        if (order.paymentMethod === "COD" && order.paymentStatus === "pending") {
+          codPendingAmount += order.totalPrice || 0;
+        }
+      }
+    });
+
+    // 4. Monthly Profit & Sales Trend (Last 6 Months)
+    const now = new Date();
+    const last6Months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const start = new Date(d.getFullYear(), d.getMonth(), 1);
+      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      const monthOrders = orders.filter(
+        (o) => o.orderStatus === "delivered" && new Date(o.createdAt) >= start && new Date(o.createdAt) <= end
+      );
+
+      const monthRevenue = monthOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+      let monthProfit = 0;
+
+      monthOrders.forEach((o) => {
+        let oCost = 0;
+        o.orderItems?.forEach((item) => {
+          const uCost =
+            item.unitCost !== undefined && item.unitCost > 0
+              ? item.unitCost
+              : (productMap[item.product?.toString()]?.totalCost || 0);
+          oCost += uCost * item.quantity;
+        });
+        monthProfit += (o.totalPrice || 0) - oCost;
+      });
+
+      const monthLabel = start.toLocaleDateString("en-PK", { month: "short", year: "2-digit" });
+      last6Months.push({
+        month: monthLabel,
+        revenue: monthRevenue,
+        profit: monthProfit,
+        orders: monthOrders.length,
+      });
+    }
+
+    // 5. Business Goal Status
+    let goal = await BusinessGoal.findOne();
+    if (!goal) {
+      goal = await BusinessGoal.create({
+        title: "Achieve 500,000 PKR profit within 6 months",
+        targetProfit: 500000,
+        durationMonths: 6,
+        startDate: new Date(),
+      });
+    }
+
+    const goalStart = new Date(goal.startDate);
+    const goalOrders = orders.filter(
+      (o) => o.orderStatus === "delivered" && new Date(o.createdAt) >= goalStart
+    );
+
+    let goalProfit = 0;
+    goalOrders.forEach((o) => {
+      let oCost = 0;
+      o.orderItems?.forEach((item) => {
+        const uCost =
+          item.unitCost !== undefined && item.unitCost > 0
+            ? item.unitCost
+            : (productMap[item.product?.toString()]?.totalCost || 0);
+        oCost += uCost * item.quantity;
+      });
+      goalProfit += (o.totalPrice || 0) - oCost;
+    });
+
+    const goalEnd = new Date(goalStart.getFullYear(), goalStart.getMonth() + goal.durationMonths, goalStart.getDate());
+    const timeDiff = goalEnd.getTime() - Date.now();
+    const remainingDays = Math.max(0, Math.ceil(timeDiff / (1000 * 60 * 60 * 24)));
+    const remainingMonths = Math.max(0, Number((remainingDays / 30).toFixed(1)));
+    const remainingProfit = Math.max(0, goal.targetProfit - goalProfit);
+    const monthlyRequiredProfit = remainingMonths > 0 ? Math.round(remainingProfit / remainingMonths) : remainingProfit;
+
+    // 6. Return & Loss Tracking
+    const cancelledOrders = orders.filter((o) => o.orderStatus === "cancelled");
+    const cancelledCount = cancelledOrders.length;
+    const lostRevenue = cancelledOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    let lostCost = 0;
+    cancelledOrders.forEach((o) => {
+      o.orderItems?.forEach((item) => {
+        const uCost =
+          item.unitCost !== undefined && item.unitCost > 0
+            ? item.unitCost
+            : (productMap[item.product?.toString()]?.totalCost || 0);
+        lostCost += uCost * item.quantity;
+      });
+    });
+
+    // 7. Product Performance Analytics
+    const productStats = products.map((p) => {
+      const pId = p._id.toString();
+      const totalCost =
+        (p.fabricCost || 0) +
+        (p.printingCost || 0) +
+        (p.packagingCost || 0) +
+        (p.brandingCost || 0) +
+        (p.deliveryCost || 0) +
+        (p.adsCost || 0) +
+        (p.miscCost || 0);
+
+      const sellingPrice = p.price || 0;
+      const unitProfit = sellingPrice - totalCost;
+      const marginPct = sellingPrice > 0 ? (unitProfit / sellingPrice) * 100 : 0;
+      const roiPct = totalCost > 0 ? (unitProfit / totalCost) * 100 : 0;
+
+      let marginStatus = "Red";
+      if (marginPct >= 30) marginStatus = "Green";
+      else if (marginPct >= 10) marginStatus = "Yellow";
+
+      let qtySold = 0;
+      let revenueGenerated = 0;
+      let profitGenerated = 0;
+
+      orders.forEach((o) => {
+        if (o.orderStatus === "delivered") {
+          o.orderItems?.forEach((item) => {
+            if (item.product?.toString() === pId) {
+              qtySold += item.quantity;
+              revenueGenerated += item.price * item.quantity;
+              const uCost =
+                item.unitCost !== undefined && item.unitCost > 0 ? item.unitCost : totalCost;
+              profitGenerated += (item.price - uCost) * item.quantity;
+            }
+          });
+        }
+      });
+
+      return {
+        _id: p._id,
+        name: p.name,
+        category: p.category?.name || "General",
+        stock: p.stock || 0,
+        price: p.price,
+        fabricCost: p.fabricCost || 0,
+        printingCost: p.printingCost || 0,
+        packagingCost: p.packagingCost || 0,
+        brandingCost: p.brandingCost || 0,
+        deliveryCost: p.deliveryCost || 0,
+        adsCost: p.adsCost || 0,
+        miscCost: p.miscCost || 0,
+        totalCost,
+        unitProfit,
+        marginPct,
+        roiPct,
+        marginStatus,
+        qtySold,
+        revenueGenerated,
+        profitGenerated,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalRevenue,
+        totalProfit,
+        codPendingAmount,
+        pendingOrdersCount,
+        last6Months,
+        cancelledStats: {
+          count: cancelledCount,
+          lostRevenue,
+          lostCost,
+        },
+        goalStatus: {
+          title: goal.title,
+          targetProfit: goal.targetProfit,
+          durationMonths: goal.durationMonths,
+          startDate: goal.startDate,
+          achievedProfit: goalProfit,
+          remainingProfit,
+          remainingDays,
+          remainingMonths,
+          monthlyRequiredProfit,
+          progressPct: Math.min(100, Math.round((goalProfit / goal.targetProfit) * 100) || 0),
+        },
+        productStats,
+      },
+    });
+  } catch (error) {
+    console.error("Profit analytics error:", error);
+    res.status(500).json({ success: false, message: "Failed to generate profit analytics" });
+  }
+};
+
+/* ─── BUSINESS GOAL CRUD ─── */
+export const getBusinessGoal = async (req, res) => {
+  try {
+    let goal = await BusinessGoal.findOne();
+    if (!goal) {
+      goal = await BusinessGoal.create({
+        title: "Achieve 500,000 PKR profit within 6 months",
+        targetProfit: 500000,
+        durationMonths: 6,
+        startDate: new Date(),
+      });
+    }
+    res.status(200).json({ success: true, data: goal });
+  } catch (error) {
+    console.error("Get business goal error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch business goal" });
+  }
+};
+
+export const updateBusinessGoal = async (req, res) => {
+  try {
+    const { title, targetProfit, durationMonths, startDate } = req.body;
+    let goal = await BusinessGoal.findOne();
+    if (!goal) {
+      goal = new BusinessGoal();
+    }
+    if (title !== undefined) goal.title = title;
+    if (targetProfit !== undefined) goal.targetProfit = Number(targetProfit) || 0;
+    if (durationMonths !== undefined) goal.durationMonths = Number(durationMonths) || 1;
+    if (startDate !== undefined) goal.startDate = new Date(startDate);
+
+    await goal.save();
+    res.status(200).json({ success: true, data: goal });
+  } catch (error) {
+    console.error("Update business goal error:", error);
+    res.status(500).json({ success: false, message: "Failed to update business goal" });
   }
 };

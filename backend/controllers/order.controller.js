@@ -41,6 +41,15 @@ export const createOrder = async (req, res) => {
         return sendError(res, `${exists.name} ka stock khatam hai`, 400);
       }
 
+      const fabricCost = product.fabricCost || 0;
+      const printingCost = product.printingCost || 0;
+      const packagingCost = product.packagingCost || 0;
+      const brandingCost = product.brandingCost || 0;
+      const deliveryCost = product.deliveryCost || 0;
+      const adsCost = product.adsCost || 0;
+      const miscCost = product.miscCost || 0;
+      const unitCost = fabricCost + printingCost + packagingCost + brandingCost + deliveryCost + adsCost + miscCost;
+
       formattedItems.push({
         product: product._id,
         name: product.name,
@@ -49,6 +58,14 @@ export const createOrder = async (req, res) => {
         size:  item.size  || "",
         color: item.color || "",
         image: product.images?.[0] || "",
+        fabricCost,
+        printingCost,
+        packagingCost,
+        brandingCost,
+        deliveryCost,
+        adsCost,
+        miscCost,
+        unitCost,
       });
 
       itemsPrice += product.price * item.quantity;
@@ -57,6 +74,9 @@ export const createOrder = async (req, res) => {
     const shippingPrice  = clientShippingPrice ?? 250;
     const discountAmount = couponDiscount ?? 0;
     const totalPrice     = itemsPrice + shippingPrice - discountAmount;
+
+    const totalCost = formattedItems.reduce((sum, item) => sum + (item.unitCost * item.quantity), 0);
+    const netProfit = totalPrice - totalCost;
 
     const orderData = {
       orderItems: formattedItems,
@@ -67,6 +87,8 @@ export const createOrder = async (req, res) => {
       couponCode:     couponCode || "",
       couponDiscount: discountAmount,
       totalPrice,
+      totalCost,
+      netProfit,
     };
 
     if (req.user) {
