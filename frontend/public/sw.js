@@ -239,7 +239,9 @@ async function handleAPIRequest(request) {
     throw new Error("Server Error");
 
   } catch (error) {
-    console.warn('[SW] API Failed, checking cache...', error.message);
+    if (error.name !== 'AbortError') {
+      console.warn('[SW] API Failed, checking cache...', error.message);
+    }
 
     const cachedResponse = await caches.match(request);
     if (cachedResponse) return cachedResponse;

@@ -5,6 +5,25 @@ import { ToastContainer, toast } from "react-toastify";
 // SpeedInsights will be imported in production only
 import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy, useEffect } from "react";
+
+// Wrapper to catch chunk load errors and force a refresh to get the new chunks
+const lazyWithRetry = (componentImport) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenForceRefreshed = JSON.parse(
+      window.sessionStorage.getItem("page-has-been-force-refreshed") || "false"
+    );
+    try {
+      const component = await componentImport();
+      window.sessionStorage.setItem("page-has-been-force-refreshed", "false");
+      return component;
+    } catch (error) {
+      if (!pageHasAlreadyBeenForceRefreshed) {
+        window.sessionStorage.setItem("page-has-been-force-refreshed", "true");
+        window.location.reload();
+      }
+      throw error;
+    }
+  });
 import LoadingSpinner from "./components/LoadingSpinner";
 import { useAuth } from "./context/AuthContext";
 // import { useTheme } from "./context/ThemeContext";
@@ -25,32 +44,32 @@ import SeoManager from "./components/SeoManager";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 /* LAZY PAGES */
-const Home = lazy(() => import("./pages/Home"));
-const AboutUs = lazy(() => import("./pages/AboutUs"));
-const Shop = lazy(() => import("./pages/Shop"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
-const Cart = lazy(() => import("./pages/Cart"));
-const Checkout = lazy(() => import("./pages/Checkout"));
-const Login = lazy(() => import("./pages/Login"));
-const Signup = lazy(() => import("./pages/Signup"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
-const SupportChat = lazy(() => import("./pages/SupportChat"));
-const CustomPage = lazy(() => import("./pages/CustomPage"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const MyOrders = lazy(() => import("./pages/MyOrders"));
-const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const Home = lazyWithRetry(() => import("./pages/Home"));
+const AboutUs = lazyWithRetry(() => import("./pages/AboutUs"));
+const Shop = lazyWithRetry(() => import("./pages/Shop"));
+const ProductDetail = lazyWithRetry(() => import("./pages/ProductDetail"));
+const Cart = lazyWithRetry(() => import("./pages/Cart"));
+const Checkout = lazyWithRetry(() => import("./pages/Checkout"));
+const Login = lazyWithRetry(() => import("./pages/Login"));
+const Signup = lazyWithRetry(() => import("./pages/Signup"));
+const ForgotPassword = lazyWithRetry(() => import("./pages/ForgotPassword"));
+const SupportChat = lazyWithRetry(() => import("./pages/SupportChat"));
+const CustomPage = lazyWithRetry(() => import("./pages/CustomPage"));
+const NotFound = lazyWithRetry(() => import("./pages/NotFound"));
+const MyOrders = lazyWithRetry(() => import("./pages/MyOrders"));
+const OrderSuccess = lazyWithRetry(() => import("./pages/OrderSuccess"));
 
 /* ADMIN */
-const AdminLayout = lazy(() => import("./admin/AdminLayout"));
-const Dashboard = lazy(() => import("./admin/AdminDashboard"));
-const ProductList = lazy(() => import("./admin/products/ProductList"));
-const ProductForm = lazy(() => import("./admin/products/ProductForm"));
-const CategoryList = lazy(() => import("./admin/category/CategoryList"));
-const SubCategoryList = lazy(() => import("./admin/subcategory/SubCategoryList"));
-const Users = lazy(() => import("./admin/user/User"));
-const OrderList = lazy(() => import("./admin/orders/OrderList"));
-const SiteSettingsPage = lazy(() => import("./admin/settings/SiteSettings"));
-const Analytics = lazy(() => import("./admin/analytics/Analytics"));
+const AdminLayout = lazyWithRetry(() => import("./admin/AdminLayout"));
+const Dashboard = lazyWithRetry(() => import("./admin/AdminDashboard"));
+const ProductList = lazyWithRetry(() => import("./admin/products/ProductList"));
+const ProductForm = lazyWithRetry(() => import("./admin/products/ProductForm"));
+const CategoryList = lazyWithRetry(() => import("./admin/category/CategoryList"));
+const SubCategoryList = lazyWithRetry(() => import("./admin/subcategory/SubCategoryList"));
+const Users = lazyWithRetry(() => import("./admin/user/User"));
+const OrderList = lazyWithRetry(() => import("./admin/orders/OrderList"));
+const SiteSettingsPage = lazyWithRetry(() => import("./admin/settings/SiteSettings"));
+const Analytics = lazyWithRetry(() => import("./admin/analytics/Analytics"));
 
 import { registerImageCache } from "./utils/imageCache";
 import { keepAliveManager } from "./utils/keepAlive";
