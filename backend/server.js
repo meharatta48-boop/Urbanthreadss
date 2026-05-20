@@ -4,58 +4,55 @@ dotenv.config();
 import colors from "colors";
 import app from "./app.js";
 import connectDB from "./config/db.js";
-connectDB();
+import * as https from "https";
 
-/* ===================== START ===================== */
-const PORT = parseInt(process.env.PORT || "5001", 10);
+(async () => {
+  await connectDB();
 
-const server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`.bgCyan.bold);
-});
-
-// Keep-alive ping system to prevent Render from sleeping
-import https from "https";
-setInterval(() => {
-  https.get("https://urbanthreadss.onrender.com/api/health", (res) => {
-    console.log(`Keep-alive ping: ${res.statusCode}`.green);
-  }).on("error", (e) => {
-    console.log(`Keep-alive ping error: ${e.message}`.red);
+  const PORT = parseInt(process.env.PORT || "5001", 10);
+  const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`.bgCyan.bold);
   });
-}, 14 * 60 * 1000); // 14 minutes
 
-/* ── Permanent fix: if port is busy, kill the occupying process & retry ── */
-server.on("error", async (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.log(`⚠️  Port ${PORT} busy — killing old process...`.yellow);
-    try {
-      const { execSync } = await import("child_process");
-      // Windows: find PID using netstat and kill it
-      const out = execSync(`netstat -ano | findstr :${PORT}`, { encoding: "utf8" });
-      const lines = out.trim().split("\n");
-      const pids = new Set();
-      lines.forEach((line) => {
-        const parts = line.trim().split(/\s+/);
-        const pid = parts[parts.length - 1];
-        if (pid && pid !== "0") pids.add(pid);
-      });
-      pids.forEach((pid) => {
-        try {
-          execSync(`taskkill /PID ${pid} /F`, { stdio: "ignore" });
-          console.log(`✅ Killed PID ${pid}`.green);
-        } catch {}
-      });
-      // Retry after 1 second
-      setTimeout(() => {
-        server.listen(PORT, () => {
-          console.log(`✅ Server restarted on port ${PORT}`.bgGreen.bold);
+  // Keep-alive ping system to prevent Render from sleeping
+  setInterval(() => {
+    https.get("https://urbanthreadss.onrender.com/api/health", (res) => {
+      console.log(`Keep-alive ping: ${res.statusCode}`.green);
+    }).on("error", (e) => {
+      console.log(`Keep-alive ping error: ${e.message}`.red);
+    });
+  }, 14 * 60 * 1000);
+
+  // Permanent fix: if port is busy, kill the occupying process & retry
+  server.on("error", async (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.log(`⚠️  Port ${PORT} busy — killing old process...`.yellow);
+      try {
+        const { execSync } = await import("child_process");
+        const out = execSync(`netstat -ano | findstr :${PORT}`, { encoding: "utf8" });
+        const lines = out.trim().split("\n");
+        const pids = new Set();
+        lines.forEach((line) => {
+          const parts = line.trim().split(/\s+/);
+          const pid = parts[parts.length - 1];
+          if (pid && pid !== "0") pids.add(pid);
         });
-      }, 1000);
-    } catch (e) {
-      console.error("Could not auto-kill process:", e.message);
+        pids.forEach((pid) => {
+          try {
+            execSync(`taskkill /PID ${pid} /F`, { stdio: "ignore" });
+            console.log(`✅ Killed PID ${pid}`.green);
+          } catch {}
+        });
+        setTimeout(() => {
+          server.listen(PORT, () => console.log(`✅ Server restarted on port ${PORT}`.bgGreen.bold));
+        }, 1000);
+      } catch (e) {
+        console.error("Could not auto‑kill process:", e.message);
+        process.exit(1);
+      }
+    } else {
+      console.error("Server error:", err);
       process.exit(1);
     }
-  } else {
-    console.error("Server error:", err);
-    process.exit(1);
-  }
-});
+  });
+})();
