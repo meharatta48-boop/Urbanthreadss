@@ -1,11 +1,5 @@
 import mongoose from "mongoose";
 
-// SpeedInsights are only loaded in production to avoid dev‑mode warnings
-let SpeedInsights = null;
-if (process.env.NODE_ENV === "production") {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  SpeedInsights = require("@vercel/speed-insights/react").SpeedInsights;
-}
 
 const connectDB = async () => {
   const maxRetries = 3;
