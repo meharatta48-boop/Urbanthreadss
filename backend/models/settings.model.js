@@ -114,8 +114,6 @@ const siteSettingsSchema = new mongoose.Schema(
     // ── Site Meta (favicon + tab title) ──
     siteTitle:  { type: String, default: "URBAN THREAD" },
     faviconUrl: { type: String, default: "" },  // path to uploaded favicon
-    appleTouchIconUrl: { type: String, default: "" }, // path to uploaded apple touch icon
-
 
     // ── Customer Reviews ──
     reviews: { type: [reviewSchema], default: [] },

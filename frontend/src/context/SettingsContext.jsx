@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 const CACHE_KEY = "ut_settings_cache";
 // Increment this whenever new fields are added to the settings model
 // This forces all browsers to refetch fresh settings and clears old cache
-const CACHE_VERSION = "v6_apple_touch_icon"; // bumped: apple-touch-icon field added
+const CACHE_VERSION = "v5_light_fix"; // bumped: dark defaults fix — clears old cache
 const CACHE_VER_KEY = "ut_settings_ver";
 
 const SettingsContext = createContext({});

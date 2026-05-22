@@ -14,8 +14,7 @@ const API_BASE = SERVER_URL;
 
 export default function ThemeInjector() {
   const { settings } = useSettings();
-  const lastFaviconHref    = useRef(""); // track what's currently injected
-  const lastAppleTouchHref = useRef(""); // track apple-touch-icon href
+  const lastFaviconHref = useRef(""); // track what's currently injected
 
   useEffect(() => {
     if (!settings) return;
@@ -58,10 +57,9 @@ export default function ThemeInjector() {
       announcementBg    = "#c9a84c",
       announcementColor = "#000000",
       // Meta
-      siteTitle          = "URBAN THREAD",
-      faviconUrl         = "",
-      appleTouchIconUrl  = "",
-      brandName          = "URBAN THREAD",
+      siteTitle  = "URBAN THREAD",
+      faviconUrl = "",
+      brandName  = "URBAN THREAD",
       // Custom
       customCSS = "",
     } = settings;
@@ -107,29 +105,6 @@ export default function ThemeInjector() {
         ? faviconHref + "?t=" + Date.now()  // cache-bust only custom favicon
         : faviconHref;                        // static /logo.png — no timestamp needed
       document.head.appendChild(newFavicon);
-    }
-
-    // ── 3. Apple Touch Icon (iOS / Android home screen icon) ──
-    const appleTouchHref = appleTouchIconUrl
-      ? resolveMediaUrl(appleTouchIconUrl, API_BASE)
-      : faviconUrl
-        ? resolveMediaUrl(faviconUrl, API_BASE)  // fall back to favicon
-        : "";
-
-    if (lastAppleTouchHref.current !== appleTouchHref) {
-      lastAppleTouchHref.current = appleTouchHref;
-      // Remove any existing apple-touch-icon links
-      document
-        .querySelectorAll("link[rel='apple-touch-icon'], link[rel='apple-touch-icon-precomposed']")
-        .forEach((el) => el.parentNode.removeChild(el));
-
-      if (appleTouchHref) {
-        const appleLink = document.createElement("link");
-        appleLink.rel  = "apple-touch-icon";
-        appleLink.sizes = "180x180";
-        appleLink.href = appleTouchHref + "?t=" + Date.now(); // always cache-bust
-        document.head.appendChild(appleLink);
-      }
     }
 
     const css = `
