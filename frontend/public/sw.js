@@ -3,22 +3,22 @@
  * Handles offline caching, push notifications, and advanced PWA features
  */
 
-const CACHE_NAME = 'urban-thread-images-v1';
-const ASSETS_CACHE = 'urban-thread-assets-v1';
-const DYNAMIC_CACHE = 'urban-thread-dynamic-v1';
-const OFFLINE_CACHE = 'urban-thread-offline-v1';
+const CACHE_NAME = 'urban-thread-images-v2';
+const ASSETS_CACHE = 'urban-thread-assets-v2';
+const DYNAMIC_CACHE = 'urban-thread-dynamic-v2';
+const OFFLINE_CACHE = 'urban-thread-offline-v2';
 const NETWORK_TIMEOUT = 10000; // API Timeout
 const NAV_TIMEOUT = 3000; // Navigation Timeout for faster shell loading
 const MAX_CACHE_ITEMS = 50;
 const MAX_DYNAMIC_ITEMS = 100;
 
 // Critical assets to cache immediately
+// NOTE: Do NOT cache '/' or '/index.html' here.
+// HTML files reference hashed JS/CSS assets that change on every build.
+// Caching stale HTML causes "Failed to load module script" MIME errors for new users.
 const CRITICAL_ASSETS = [
-  '/',
-  '/index.html',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/logo1.png'
 ];
 
 // API endpoints that should be cached
@@ -262,22 +262,22 @@ async function handleAPIRequest(request) {
 }
 
 async function handleNavigationRequest(request) {
-  const cachedResponse = await caches.match(request);
-  
-  // Stale-While-Revalidate for navigation (Immediate load from cache, update in background)
-  const networkFetch = fetch(request, {
-    signal: AbortSignal.timeout(NAV_TIMEOUT)
-  }).then(async (networkResponse) => {
+  // NETWORK FIRST for navigation (HTML pages).
+  // We must NEVER serve stale cached HTML because index.html contains hashed
+  // JS/CSS filenames that change on every build. Serving old HTML causes
+  // "Failed to load module script" MIME errors for new users.
+  try {
+    const networkResponse = await fetch(request, {
+      signal: AbortSignal.timeout(NAV_TIMEOUT)
+    });
     if (networkResponse && networkResponse.status === 200) {
-      const cache = await caches.open(ASSETS_CACHE);
-      await cache.put(request, networkResponse.clone());
+      return networkResponse;
     }
-    return networkResponse;
-  }).catch(() => {
+    throw new Error('Network response not ok');
+  } catch {
+    // Only fall back to offline page if network completely fails
     return caches.match('/offline');
-  });
-
-  return cachedResponse || networkFetch;
+  }
 }
 
 async function handleGeneralRequest(request) {
