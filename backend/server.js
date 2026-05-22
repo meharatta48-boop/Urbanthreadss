@@ -31,6 +31,11 @@ import * as https from "https";
     });
   }, 14 * 60 * 1000);
 
+  const PORT = process.env.PORT || 5001;
+  const server = app.listen(PORT, () => {
+    console.log(`✅ Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`.bgGreen.bold);
+  });
+
   // Permanent fix: if port is busy, kill the occupying process & retry
   server.on("error", async (err) => {
     if (err.code === "EADDRINUSE") {

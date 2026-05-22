@@ -3,6 +3,7 @@ import crypto from "crypto";
 import User from "../models/user.model.js";
 import generateToken from "../utils/generateToken.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
+import { sendNewRegistrationEmail } from "../services/email.service.js";
 
 const RESET_TOKEN_TTL_MS = 1000 * 60 * 30;
 const hashResetToken = (token) =>
@@ -10,7 +11,7 @@ const hashResetToken = (token) =>
 
 /* =====================
    SIGNUP
-===================== */
+ ===================== */
 export const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -30,6 +31,11 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       role: "user", // default role
+    });
+
+    // Fire email trigger asynchronously so we do not block user signup
+    sendNewRegistrationEmail(user).catch((err) => {
+      console.error("[EMAIL ERROR] Registration email notification failed:", err.message);
     });
 
     return sendSuccess(res, {
