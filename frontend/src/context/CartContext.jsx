@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid"; // ✅ Vite compatible UUID
 import { metaTracker } from "../utils/metaTracking";
-import api from "../services/api";
 
 const CartContext = createContext();
 
@@ -30,19 +29,6 @@ export const CartProvider = ({ children }) => {
     }
 
     metaTracker.trackAddToCart(product, product.quantity || 1, product.price);
-
-    // Call notification API in a non-blocking fire-and-forget manner
-    api.post("/notifications/cart-add", {
-      product: {
-        name: product.name,
-        price: product.price,
-        quantity: product.quantity || 1,
-        size: product.size || "",
-        color: product.color || "",
-      }
-    }).catch(err => {
-      console.warn("[Cart Notification] Skip sending add to cart notification:", err.message);
-    });
 
     setCart((prev) => {
       const exists = prev.find(

@@ -1,7 +1,6 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
-import { sendNewOrderEmail } from "../services/email.service.js";
 
 const MAX_LIMIT = 100;
 const parsePositiveInt = (value, fallback) => {
@@ -104,17 +103,6 @@ export const createOrder = async (req, res) => {
     }
 
     const order = await Order.create(orderData);
-
-    // Populate user details asynchronously so the email service gets correct name/email fields
-    if (order.user) {
-      await order.populate("user", "name email");
-    }
-
-    // Fire email trigger asynchronously so order creation returns quickly
-    sendNewOrderEmail(order).catch((err) => {
-      console.error("[EMAIL ERROR] Order placement email notification failed:", err.message);
-    });
-
     return sendSuccess(res, { order, orderId: order._id }, 201);
   } catch (error) {
     console.error("CREATE ORDER ERROR:", error);

@@ -42,22 +42,3 @@ test("product endpoint validates invalid product id", async () => {
   assert.equal(response.statusCode, 400);
   assert.equal(response.body.success, false);
 });
-
-test("cart-add notification returns success envelope", async () => {
-  const response = await request(app)
-    .post("/api/notifications/cart-add")
-    .send({
-      product: {
-        name: "Test Premium Streetwear Hoodie",
-        price: 3500,
-        quantity: 1,
-        size: "L",
-        color: "Black",
-      },
-    });
-
-  assert.equal(response.statusCode, 200);
-  assert.equal(response.body.success, true);
-  assert.equal(response.body.message, "Notification queued");
-});
-
