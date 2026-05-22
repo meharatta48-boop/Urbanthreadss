@@ -1227,6 +1227,84 @@ function ImagesTab({ token, settings, uploadHeroImages, deleteHeroImage, uploadB
               </div>
             </div>
           </div>
+
+          {/* APPLE TOUCH ICON */}
+          <div className="border-t border-(--border) pt-5">
+            <p className="text-xs text-(--text-muted) uppercase tracking-wider mb-1">
+              📱 Apple Touch Icon (iOS / Android Home Screen)
+            </p>
+            <p className="text-[#333] text-xs mb-3">
+              Shown when a user adds your site to their iPhone/iPad home screen.
+              Recommended: <strong>180×180px PNG</strong>. Falls back to favicon if not set.
+            </p>
+            <div className="flex items-center gap-6 flex-wrap">
+              {/* Current apple-touch-icon preview */}
+              <div className="w-16 h-16 rounded-2xl border border-(--border-light) bg-(--bg-elevated) flex items-center justify-center overflow-hidden shrink-0"
+                   style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.18)" }}>
+                {settings?.appleTouchIconUrl ? (
+                  <img
+                    src={mediaUrl(settings.appleTouchIconUrl)}
+                    alt="Apple Touch Icon"
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                ) : settings?.faviconUrl ? (
+                  <img
+                    src={mediaUrl(settings.faviconUrl)}
+                    alt="Fallback (favicon)"
+                    className="w-10 h-10 object-contain"
+                    onError={(e) => { e.target.style.display = "none"; }}
+                  />
+                ) : (
+                  <span className="font-display font-bold gold-text text-2xl">U</span>
+                )}
+              </div>
+
+              <div className="flex-1 min-w-50">
+                <AppleTouchIconUploader
+                  token={token}
+                  fetchSettings={fetchSettings}
+                  settings={settings}
+                  onDelete={async () => {
+                    if (!window.confirm("Delete Apple Touch Icon?")) return;
+                    try {
+                      const res = await deleteSettingImage("appleTouchIconUrl", token);
+                      if (res.success) { toast.success("Apple Touch Icon deleted"); fetchSettings?.(); }
+                    } catch { toast.error("Delete failed"); }
+                  }}
+                />
+                <p className="text-[#333] text-xs mt-2">
+                  PNG recommended • 180×180px<br />
+                  <span className="text-[#222]">If not set, favicon will be used as fallback</span>
+                </p>
+              </div>
+            </div>
+
+            {/* iOS Home Screen mockup */}
+            <div className="mt-4 bg-[#050505] border border-(--border) rounded-xl p-4">
+              <p className="text-[#333] text-xs uppercase tracking-wider mb-3">iOS Preview</p>
+              <div className="flex items-end gap-3">
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-[#222] bg-[#111] flex items-center justify-center"
+                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.5)" }}>
+                    {(settings?.appleTouchIconUrl || settings?.faviconUrl) ? (
+                      <img
+                        src={mediaUrl(settings.appleTouchIconUrl || settings.faviconUrl)}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display = "none"; }}
+                      />
+                    ) : (
+                      <span className="font-display gold-text font-bold text-xl">U</span>
+                    )}
+                  </div>
+                  <span className="text-[#555] text-[9px] truncate max-w-14 text-center">
+                    {form?.siteTitle || settings?.brandName || "Urban Thread"}
+                  </span>
+                </div>
+                <div className="text-[#222] text-xs italic">← Home Screen</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1596,6 +1674,57 @@ function FaviconUploader({ token, fetchSettings, settings, onDelete }) {
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
           >
             <FiTrash2 size={12} /> Delete Favicon
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ————————————————————————————————————
+   APPLE TOUCH ICON UPLOADER
+———————————————————————————————————— */
+function AppleTouchIconUploader({ token, fetchSettings, settings, onDelete }) {
+  const inputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("image", file);
+      fd.append("field", "appleTouchIconUrl");
+      const res = await api.post("/settings/logo", fd, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+      });
+      if (res.data.success) {
+        toast.success("Apple Touch Icon updated!");
+        fetchSettings && fetchSettings();
+      } else toast.error("Upload failed");
+    } catch { toast.error("Upload error"); }
+    finally { setUploading(false); }
+  };
+
+  return (
+    <div className="flex items-center gap-3 flex-wrap">
+      <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden"
+        onChange={(e) => handleUpload(e.target.files[0])} />
+      <button onClick={() => inputRef.current?.click()} disabled={uploading}
+        className="btn-outline flex items-center gap-2" style={{ padding: "10px 20px", fontSize: "0.82rem" }}>
+        {uploading
+          ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+          : <FiUpload size={14} />}
+        {uploading ? "Uploading..." : "Upload Touch Icon"}
+      </button>
+      {settings?.appleTouchIconUrl && (
+        <>
+          <span className="text-green-400 text-xs">✓ Custom touch icon set</span>
+          <button
+            onClick={onDelete}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-red-900/30 text-red-400 hover:bg-red-900/10 transition-all"
+          >
+            <FiTrash2 size={12} /> Delete
           </button>
         </>
       )}
