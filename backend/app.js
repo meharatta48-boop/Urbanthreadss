@@ -123,6 +123,9 @@ if (fs.existsSync(frontendPath)) {
 
   // SPA fallback - serve index.html for all non-API routes
   app.get("*", (req, res) => {
+    if (path.extname(req.path)) {
+      return res.status(404).send("Not Found");
+    }
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
