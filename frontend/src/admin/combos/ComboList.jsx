@@ -205,19 +205,21 @@ export default function ComboList() {
                       /* COMBO ROW */
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          {/* Image Box */}
-                          <div className="relative w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-(--bg-deep) border border-(--border) aspect-square">
+                           {/* Image Box */}
+                          <div className="relative w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square">
                             {c.images?.length ? (
                               <LazyImage
                                 src={getImageUrl(c.images[0])}
                                 alt={c.name}
                                 className="absolute inset-0 w-full h-full object-cover object-center"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
                               />
                             ) : p1?.images?.length ? (
                               <LazyImage
                                 src={getImageUrl(p1.images[0])}
                                 alt={c.name}
                                 className="absolute inset-0 w-full h-full object-cover object-center"
+                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
                               />
                             ) : (
                               <div className="absolute inset-0 w-full h-full flex items-center justify-center text-(--text-muted)">

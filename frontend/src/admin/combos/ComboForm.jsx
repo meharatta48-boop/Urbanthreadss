@@ -4,6 +4,7 @@ import { FiArrowLeft, FiSave, FiPlus, FiTrash2, FiImage, FiLoader, FiAlertCircle
 import { toast } from "react-toastify";
 import api, { SERVER_URL } from "../../services/api";
 import { getImageUrl } from "../../utils/imageUrl";
+import LazyImage from "../../components/LazyImage";
 
 export default function ComboForm() {
   const { id } = useParams();
@@ -499,31 +500,41 @@ export default function ComboForm() {
 
             {/* PREVIEWS CONTAINER */}
             {(imagesToKeep.length > 0 || imagePreviews.length > 0) && (
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+              <div className="flex flex-wrap gap-4">
                 {/* Existing Images */}
                 {imagesToKeep.map((img) => (
-                  <div key={img} className="relative aspect-square border border-(--border) rounded-xl overflow-hidden group">
-                    <img src={getImageUrl(img)} alt="Preview" className="w-full h-full object-cover" />
+                  <div key={img} className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square group">
+                    <LazyImage
+                      src={getImageUrl(img)}
+                      alt="Preview"
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                     <button
                       type="button"
                       onClick={() => handleRemoveExistingImage(img)}
-                      className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     >
-                      <FiTrash2 size={10} />
+                      <FiTrash2 size={12} />
                     </button>
                   </div>
                 ))}
 
                 {/* New Previews */}
                 {imagePreviews.map((preview, idx) => (
-                  <div key={idx} className="relative aspect-square border border-(--border) rounded-xl overflow-hidden group bg-black/10">
-                    <img src={preview} alt="New Preview" className="w-full h-full object-cover" />
+                  <div key={idx} className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square group">
+                    <LazyImage
+                      src={preview}
+                      alt="New Preview"
+                      className="absolute inset-0 w-full h-full object-cover object-center"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                     <button
                       type="button"
                       onClick={() => handleRemoveNewImage(idx)}
-                      className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     >
-                      <FiTrash2 size={10} />
+                      <FiTrash2 size={12} />
                     </button>
                   </div>
                 ))}
