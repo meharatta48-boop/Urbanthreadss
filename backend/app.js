@@ -23,6 +23,7 @@ import navLinkRoutes from "./routes/navLink.routes.js";
 import customPageRoutes from "./routes/customPage.routes.js";
 import seoRoutes from "./routes/seo.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
+import comboRoutes from "./routes/comboOffer.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -97,6 +98,7 @@ app.use("/api/nav-links", navLinkRoutes);
 app.use("/api/pages", customPageRoutes);
 app.use("/api/seo", seoRoutes);
 app.use("/api/meta", metaRoutes);
+app.use("/api/combos", comboRoutes);
 
 // Serve static files from frontend build if available
 const frontendPath = path.join(__dirname, "../frontend/dist");

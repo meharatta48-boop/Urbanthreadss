@@ -1,5 +1,6 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
+import ComboOffer from "../models/comboOffer.model.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
 
 const MAX_LIMIT = 100;
@@ -28,47 +29,115 @@ export const createOrder = async (req, res) => {
     const formattedItems = [];
 
     for (const item of orderItems) {
-      // Atomic stock check + decrement — prevents race condition
-      const product = await Product.findOneAndUpdate(
-        { _id: item.product, isActive: true, stock: { $gte: item.quantity } },
-        { $inc: { stock: -item.quantity } },
-        { new: true }
-      );
-      if (!product) {
-        // Check if product exists at all (to give a helpful error)
-        const exists = await Product.findById(item.product);
-        if (!exists) return sendError(res, `Product not found: ${item.product}`, 404);
-        return sendError(res, `${exists.name} ka stock khatam hai`, 400);
+      if (item.isCombo) {
+        // Handle Combo Offer item
+        const comboOffer = await ComboOffer.findOneAndUpdate(
+          { _id: item.comboOffer, isActive: true, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { new: true }
+        ).populate("products.product");
+
+        if (!comboOffer) {
+          const exists = await ComboOffer.findById(item.comboOffer);
+          if (!exists) return sendError(res, `Combo offer not found: ${item.comboOffer}`, 404);
+          return sendError(res, `${exists.name} stock is insufficient`, 400);
+        }
+
+        if (!item.comboItems || item.comboItems.length === 0) {
+          return sendError(res, "Combo items are required inside combo order item", 400);
+        }
+
+        for (const comboSubItem of item.comboItems) {
+          const product = await Product.findOneAndUpdate(
+            { _id: comboSubItem.product, isActive: true, stock: { $gte: item.quantity } },
+            { $inc: { stock: -item.quantity } },
+            { new: true }
+          );
+
+          if (!product) {
+            const exists = await Product.findById(comboSubItem.product);
+            const pName = exists ? exists.name : comboSubItem.product;
+            return sendError(res, `${pName} stock is insufficient for combo`, 400);
+          }
+
+          const fabricCost = product.fabricCost || 0;
+          const printingCost = product.printingCost || 0;
+          const packagingCost = product.packagingCost || 0;
+          const brandingCost = product.brandingCost || 0;
+          const deliveryCost = product.deliveryCost || 0;
+          const adsCost = product.adsCost || 0;
+          const miscCost = product.miscCost || 0;
+          const unitCost = fabricCost + printingCost + packagingCost + brandingCost + deliveryCost + adsCost + miscCost;
+
+          // Split the combo price equally among items in this combo
+          const splitPrice = comboOffer.price / item.comboItems.length;
+
+          formattedItems.push({
+            product: product._id,
+            name: `${comboOffer.name} - ${product.name}`,
+            price: splitPrice,
+            quantity: item.quantity,
+            size: comboSubItem.size || "",
+            color: comboSubItem.color || "",
+            image: product.images?.[0] || comboOffer.images?.[0] || "",
+            isCombo: true,
+            comboOffer: comboOffer._id,
+            comboName: comboOffer.name,
+            fabricCost,
+            printingCost,
+            packagingCost,
+            brandingCost,
+            deliveryCost,
+            adsCost,
+            miscCost,
+            unitCost,
+          });
+        }
+
+        itemsPrice += comboOffer.price * item.quantity;
+      } else {
+        // Standard item
+        const product = await Product.findOneAndUpdate(
+          { _id: item.product, isActive: true, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { new: true }
+        );
+        if (!product) {
+          // Check if product exists at all (to give a helpful error)
+          const exists = await Product.findById(item.product);
+          if (!exists) return sendError(res, `Product not found: ${item.product}`, 404);
+          return sendError(res, `${exists.name} ka stock khatam hai`, 400);
+        }
+
+        const fabricCost = product.fabricCost || 0;
+        const printingCost = product.printingCost || 0;
+        const packagingCost = product.packagingCost || 0;
+        const brandingCost = product.brandingCost || 0;
+        const deliveryCost = product.deliveryCost || 0;
+        const adsCost = product.adsCost || 0;
+        const miscCost = product.miscCost || 0;
+        const unitCost = fabricCost + printingCost + packagingCost + brandingCost + deliveryCost + adsCost + miscCost;
+
+        formattedItems.push({
+          product: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: item.quantity,
+          size:  item.size  || "",
+          color: item.color || "",
+          image: product.images?.[0] || "",
+          fabricCost,
+          printingCost,
+          packagingCost,
+          brandingCost,
+          deliveryCost,
+          adsCost,
+          miscCost,
+          unitCost,
+        });
+
+        itemsPrice += product.price * item.quantity;
       }
-
-      const fabricCost = product.fabricCost || 0;
-      const printingCost = product.printingCost || 0;
-      const packagingCost = product.packagingCost || 0;
-      const brandingCost = product.brandingCost || 0;
-      const deliveryCost = product.deliveryCost || 0;
-      const adsCost = product.adsCost || 0;
-      const miscCost = product.miscCost || 0;
-      const unitCost = fabricCost + printingCost + packagingCost + brandingCost + deliveryCost + adsCost + miscCost;
-
-      formattedItems.push({
-        product: product._id,
-        name: product.name,
-        price: product.price,
-        quantity: item.quantity,
-        size:  item.size  || "",
-        color: item.color || "",
-        image: product.images?.[0] || "",
-        fabricCost,
-        printingCost,
-        packagingCost,
-        brandingCost,
-        deliveryCost,
-        adsCost,
-        miscCost,
-        unitCost,
-      });
-
-      itemsPrice += product.price * item.quantity;
     }
 
     const shippingPrice  = clientShippingPrice ?? 250;

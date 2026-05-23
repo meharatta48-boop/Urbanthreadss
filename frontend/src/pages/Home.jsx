@@ -1,5 +1,6 @@
 import Hero from "../components/home/Hero";
 import FeaturedProducts from "../components/home/FeaturedProducts";
+import ComboOffers from "../components/home/ComboOffers";
 import BrandStory from "../components/home/BrandStory";
 import Stats from "../components/home/Stats";
 import Reviews from "../components/home/Reviews";
@@ -15,6 +16,7 @@ export default function Home() {
       {s.showHero     !== false && <Hero />}
       {s.showBrandStory !== false && <BrandStory />}
       {s.showFeatured !== false && <FeaturedProducts />}
+      <ComboOffers />
       {s.showStats    !== false && <Stats />}
       {s.showReviews  !== false && <Reviews />}
       {s.showNewsletter !== false && <Newsletter />}

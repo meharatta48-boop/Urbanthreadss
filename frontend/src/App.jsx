@@ -64,6 +64,8 @@ const AdminLayout = lazyWithRetry(() => import("./admin/AdminLayout"));
 const Dashboard = lazyWithRetry(() => import("./admin/AdminDashboard"));
 const ProductList = lazyWithRetry(() => import("./admin/products/ProductList"));
 const ProductForm = lazyWithRetry(() => import("./admin/products/ProductForm"));
+const ComboList = lazyWithRetry(() => import("./admin/combos/ComboList"));
+const ComboForm = lazyWithRetry(() => import("./admin/combos/ComboForm"));
 const CategoryList = lazyWithRetry(() => import("./admin/category/CategoryList"));
 const SubCategoryList = lazyWithRetry(() => import("./admin/subcategory/SubCategoryList"));
 const Users = lazyWithRetry(() => import("./admin/user/User"));
@@ -261,6 +263,9 @@ export default function App() {
               <Route path="products" element={<ProductList />} />
               <Route path="products/new" element={<ProductForm />} />
               <Route path="products/:id/edit" element={<ProductForm />} />
+              <Route path="combos" element={<ComboList />} />
+              <Route path="combos/new" element={<ComboForm />} />
+              <Route path="combos/:id/edit" element={<ComboForm />} />
               <Route path="categories" element={<CategoryList />} />
               <Route path="subcategories" element={<SubCategoryList />} />
               <Route path="users" element={<Users />} />

@@ -154,12 +154,27 @@ export default function Checkout() {
         method: "POST",
         headers,
         body: JSON.stringify({
-          orderItems: cart.map((i) => ({
-            product: i._id,
-            quantity: i.quantity,
-            size: i.size || "",
-            color: i.color || "",
-          })),
+          orderItems: cart.map((i) => {
+            if (i.isCombo) {
+              return {
+                isCombo: true,
+                comboOffer: i._id,
+                quantity: i.quantity,
+                comboItems: i.comboItems.map((ci) => ({
+                  product: ci.product,
+                  size: ci.size || "",
+                  color: ci.color || "",
+                })),
+              };
+            } else {
+              return {
+                product: i._id,
+                quantity: i.quantity,
+                size: i.size || "",
+                color: i.color || "",
+              };
+            }
+          }),
           shippingAddress: {
             fullName: form.name,
             address: form.address,
@@ -425,10 +440,20 @@ export default function Checkout() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate" style={{ color: "var(--text-primary)" }}>{item.name}</p>
-                      {(item.size || item.color) && (
-                        <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>{[item.size, item.color].filter(Boolean).join(" · ")}</p>
+                      {item.isCombo ? (
+                        <div className="mt-1 space-y-0.5 border-l-2 border-(--gold)/30 pl-2">
+                          {item.comboItems.map((ci, idx) => (
+                            <p key={idx} className="text-[9px]" style={{ color: "var(--text-muted)" }}>
+                              <span className="text-(--gold)" style={{ color: "var(--gold)" }}>{ci.name}</span> ({ci.color} · {ci.size})
+                            </p>
+                          ))}
+                        </div>
+                      ) : (
+                        (item.size || item.color) && (
+                          <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>{[item.size, item.color].filter(Boolean).join(" · ")}</p>
+                        )
                       )}
-                      <p className="text-xs" style={{ color: "var(--text-muted)" }}>x{item.quantity}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>x{item.quantity}</p>
                     </div>
                     <span className="text-xs whitespace-nowrap font-medium" style={{ color: "var(--text-secondary)" }}>
                       Rs. {(item.price * item.quantity).toLocaleString()}

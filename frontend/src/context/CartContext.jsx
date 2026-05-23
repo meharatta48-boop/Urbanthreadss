@@ -20,6 +20,35 @@ export const CartProvider = ({ children }) => {
 
   // Add product to cart
   const addToCart = (product) => {
+    if (product.isCombo) {
+      setCart((prev) => {
+        const exists = prev.find(
+          (item) =>
+            item.isCombo &&
+            item._id === product._id &&
+            JSON.stringify(item.comboItems) === JSON.stringify(product.comboItems)
+        );
+
+        if (exists) {
+          return prev.map((item) =>
+            item === exists
+              ? { ...item, quantity: item.quantity + (product.quantity || 1) }
+              : item
+          );
+        }
+
+        return [
+          ...prev,
+          {
+            ...product,
+            quantity: product.quantity || 1,
+            cartId: v4(),
+          },
+        ];
+      });
+      return;
+    }
+
     // strict validation: don't allow adding to cart if product requires size/color but it's not provided
     if (product.sizes?.length > 0 && !product.size) {
       return;
@@ -33,6 +62,7 @@ export const CartProvider = ({ children }) => {
     setCart((prev) => {
       const exists = prev.find(
         (item) =>
+          !item.isCombo &&
           item._id === product._id &&
           item.size === product.size &&
           item.color === product.color

@@ -14,6 +14,7 @@ const menu = [
   { label: "Dashboard",      to: "/admin-dashboard",               Icon: FiGrid,        end: true, description: "Stats & Overview" },
   { label: "Orders",         to: "/admin-dashboard/orders",        Icon: FiShoppingBag,            description: "Manage Orders", badge: "pending" },
   { label: "Products",       to: "/admin-dashboard/products",      Icon: FiPackage,                description: "Product Catalog" },
+  { label: "Combo Offers",   to: "/admin-dashboard/combos",        Icon: FiTag,                    description: "Mix & Match Deals" },
   { label: "Analytics",      to: "/admin-dashboard/analytics",     Icon: FiBarChart2,              description: "Charts & Insights" },
   { label: "Categories",     to: "/admin-dashboard/categories",    Icon: FiLayers,                 description: "Seasons & Collections" },
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", Icon: FiTag,                    description: "Product Types" },
