@@ -13,11 +13,7 @@ import {
 
 const router = express.Router();
 
-/* PUBLIC */
-router.get("/", getComboOffers);
-router.get("/:id", getComboOfferById);
-
-/* ADMIN ONLY */
+/* ADMIN ONLY — must be declared BEFORE /:id to avoid route collision */
 const comboFields = productUpload.fields([
   { name: "images", maxCount: 8 }
 ]);
@@ -26,5 +22,9 @@ router.get("/admin/all", protect, adminOnly, getAllComboOffersAdmin);
 router.post("/", protect, adminOnly, comboFields, createComboOffer);
 router.put("/:id", protect, adminOnly, comboFields, updateComboOffer);
 router.delete("/:id", protect, adminOnly, deleteComboOffer);
+
+/* PUBLIC — /:id wildcard must come LAST */
+router.get("/", getComboOffers);
+router.get("/:id", getComboOfferById);
 
 export default router;
