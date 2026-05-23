@@ -213,39 +213,53 @@ export default function ComboOffers() {
                   </div>
                 )}
 
-                {/* IMAGES SIDE BY SIDE (lg:col-span-5) */}
-                <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-                  {/* PRODUCT 1 IMAGE */}
-                  <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group">
-                    <LazyImage
-                      src={getCartImageUrl(p1.images?.[0])}
-                      alt={p1.name}
-                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                      <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">Item #1</span>
-                      <p className="text-white text-xs font-semibold truncate">{p1.name}</p>
+                {/* IMAGES (lg:col-span-5) */}
+                <div className="lg:col-span-5">
+                  {combo.images && combo.images.length > 0 ? (
+                    <div className="relative rounded-xl overflow-hidden aspect-[4/3] sm:aspect-[3/4] border border-(--border) group bg-black/10">
+                      <LazyImage
+                        src={getCartImageUrl(combo.images[0])}
+                        alt={combo.name}
+                        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      />
                     </div>
-                  </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* PRODUCT 1 IMAGE */}
+                      <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group bg-black/10">
+                        <LazyImage
+                          src={getCartImageUrl(p1.images?.[0])}
+                          alt={p1.name}
+                          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
+                          <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">Item #1</span>
+                          <p className="text-white text-xs font-semibold truncate">{p1.name}</p>
+                        </div>
+                      </div>
 
-                  {/* PRODUCT 2 IMAGE */}
-                  <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group">
-                    <LazyImage
-                      src={getCartImageUrl(p2.images?.[0])}
-                      alt={p2.name}
-                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                      <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">Item #2</span>
-                      <p className="text-white text-xs font-semibold truncate">{p2.name}</p>
+                      {/* PRODUCT 2 IMAGE */}
+                      <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group bg-black/10">
+                        <LazyImage
+                          src={getCartImageUrl(p2.images?.[0])}
+                          alt={p2.name}
+                          className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
+                          <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">Item #2</span>
+                          <p className="text-white text-xs font-semibold truncate">{p2.name}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* PLUS CONNECTOR ICON FOR VISUAL FLUSH */}
-                <div className="hidden lg:flex absolute left-[39%] top-1/2 -translate-y-1/2 bg-(--gold) w-8 h-8 rounded-full items-center justify-center text-black font-extrabold border border-black z-20 shadow-md">
-                  +
-                </div>
+                {(!combo.images || combo.images.length === 0) && (
+                  <div className="hidden lg:flex absolute left-[39%] top-1/2 -translate-y-1/2 bg-(--gold) w-8 h-8 rounded-full items-center justify-center text-black font-extrabold border border-black z-20 shadow-md">
+                    +
+                  </div>
+                )}
 
                 {/* SELECTORS & INFO (lg:col-span-7) */}
                 <div className="lg:col-span-7 flex flex-col justify-between h-full space-y-6 lg:pl-4">

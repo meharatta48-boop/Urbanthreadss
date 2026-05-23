@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useSettings } from "../../context/SettingsContext";
-import { SERVER_URL } from "../../services/api";
+import { getImageUrl } from "../../utils/imageUrl";
 
 export default function PromotionalPopup() {
   const { settings } = useSettings();
@@ -49,7 +49,7 @@ export default function PromotionalPopup() {
             {settings?.popupImage && (
               <div className="w-full h-48 sm:h-64 relative">
                 <img
-                  src={`${SERVER_URL}${settings.popupImage}`}
+                  src={getImageUrl(settings.popupImage)}
                   alt="Promo"
                   className="w-full h-full object-cover"
                 />

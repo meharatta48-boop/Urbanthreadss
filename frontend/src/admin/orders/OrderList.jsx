@@ -10,6 +10,7 @@ import {
   FiSquare
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
+import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
 
 const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered", "cancelled"];
 const STATUS_STYLE = {
@@ -526,7 +527,7 @@ export default function OrderList() {
                                               <div className="flex items-center gap-2">
                                                 <div className="relative w-8 h-8 shrink-0 rounded overflow-hidden bg-(--bg-deep) border border-(--border) aspect-square">
                                                   {item.image ? (
-                                                    <LazyImage src={`${SERVER_URL}${item.image}`} alt={item.name} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                                    <LazyImage src={getCartImageUrl(item.image)} alt={item.name} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                                   ) : (
                                                     <div className="absolute inset-0 w-full h-full flex items-center justify-center text-(--text-muted)"><FiPackage size={12} /></div>
                                                   )}
