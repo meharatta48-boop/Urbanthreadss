@@ -2,7 +2,22 @@ import { body, param, query } from "express-validator";
 
 export const createOrderValidation = [
   body("orderItems").isArray({ min: 1 }).withMessage("orderItems are required"),
-  body("orderItems.*.product").isMongoId().withMessage("Invalid product id"),
+  body("orderItems.*.product")
+    .if((value, { req, path }) => {
+      const index = path.match(/\d+/)?.[0];
+      const item = req.body.orderItems?.[index];
+      return !item?.isCombo;
+    })
+    .isMongoId()
+    .withMessage("Invalid product id"),
+  body("orderItems.*.comboOffer")
+    .if((value, { req, path }) => {
+      const index = path.match(/\d+/)?.[0];
+      const item = req.body.orderItems?.[index];
+      return !!item?.isCombo;
+    })
+    .isMongoId()
+    .withMessage("Invalid combo offer id"),
   body("orderItems.*.quantity")
     .isInt({ min: 1 })
     .withMessage("Item quantity must be at least 1"),

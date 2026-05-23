@@ -89,18 +89,28 @@ export default function Cart() {
                         {item.name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {item.size && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
-                            Size: {item.size}
-                          </span>
-                        )}
-                        {item.color && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
-                            Color: {item.color}
-                          </span>
-                        )}
-                      </div>
+                      {item.isCombo ? (
+                        <div className="mt-1.5 space-y-1 border-l-2 border-(--gold)/30 pl-2.5">
+                          {item.comboItems.map((ci, idx) => (
+                            <p key={idx} className="text-[11px] leading-tight text-(--text-muted)">
+                              <span className="text-(--gold)" style={{ color: "var(--gold)" }}>{ci.name}</span> ({ci.color} · {ci.size})
+                            </p>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {item.size && (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
+                              Size: {item.size}
+                            </span>
+                          )}
+                          {item.color && (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/5 border border-white/5 opacity-60">
+                              Color: {item.color}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* PRICE & QUANTITY WITH EXTRA GAP (Added gap-4 and flex-wrap for responsiveness) */}
