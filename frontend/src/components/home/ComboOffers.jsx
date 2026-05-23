@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiShoppingCart, FiTag, FiLoader, FiPlus, FiMinus, FiCheckCircle } from "react-icons/fi";
-import api, { SERVER_URL } from "../../services/api";
+import { FiShoppingCart, FiTag, FiLoader, FiPlus, FiMinus } from "react-icons/fi";
+import api from "../../services/api";
 import { useCart } from "../../context/CartContext";
 import { toast } from "react-toastify";
 import LazyImage from "../LazyImage";
@@ -11,13 +11,14 @@ import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
 export default function ComboOffers() {
   const [combos, setCombos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selections, setSelections] = useState({}); // { comboId: { product1: { color, size }, product2: { color, size }, quantity } }
+  const [selections, setSelections] = useState({});
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
-    api.get("/combos")
+    api
+      .get("/combos")
       .then((res) => {
         const activeCombos = res.data.data || [];
         setCombos(activeCombos);
@@ -28,12 +29,12 @@ export default function ComboOffers() {
           if (c.products && c.products.length >= 2) {
             const p1 = c.products[0];
             const p2 = c.products[1];
-            
+
             // Fallback colors/sizes if combo limits are empty
-            const colors1 = p1.colors?.length ? p1.colors : (p1.product?.colors || []);
-            const sizes1 = p1.sizes?.length ? p1.sizes : (p1.product?.sizes || []);
-            const colors2 = p2.colors?.length ? p2.colors : (p2.product?.colors || []);
-            const sizes2 = p2.sizes?.length ? p2.sizes : (p2.product?.sizes || []);
+            const colors1 = p1.colors?.length ? p1.colors : p1.product?.colors || [];
+            const sizes1 = p1.sizes?.length ? p1.sizes : p1.product?.sizes || [];
+            const colors2 = p2.colors?.length ? p2.colors : p2.product?.colors || [];
+            const sizes2 = p2.sizes?.length ? p2.sizes : p2.product?.sizes || [];
 
             initialSelections[c._id] = {
               0: {
@@ -119,7 +120,9 @@ export default function ComboOffers() {
       name: combo.name,
       price: combo.price,
       quantity,
-      images: combo.images?.length ? combo.images : [p1.images?.[0], p2.images?.[0]].filter(Boolean),
+      images: combo.images?.length
+        ? combo.images
+        : [p1.images?.[0], p2.images?.[0]].filter(Boolean),
       comboItems: [
         {
           product: p1._id,
@@ -140,7 +143,7 @@ export default function ComboOffers() {
 
     addToCart(comboCartItem);
     toast.success(`🎉 Combo "${combo.name}" added to cart!`);
-    
+
     // Redirect to Checkout page as per requirements
     setTimeout(() => {
       navigate("/checkout");
@@ -151,7 +154,9 @@ export default function ComboOffers() {
     return (
       <div className="py-20 flex flex-col items-center justify-center bg-(--bg-deep)">
         <FiLoader className="animate-spin text-(--gold)" size={32} />
-        <p className="text-(--text-muted) text-sm mt-3">Loading premium combo offers...</p>
+        <p className="text-(--text-muted) text-sm mt-3">
+          Loading premium combo offers...
+        </p>
       </div>
     );
   }
@@ -159,43 +164,69 @@ export default function ComboOffers() {
   if (!combos.length) return null;
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden" style={{ background: "var(--bg-deep)" }}>
+    <section
+      className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden"
+      style={{ background: "var(--bg-deep)" }}
+    >
       {/* BACKGROUND SHADOW GLOW */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-(--gold)/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* HEADER */}
         <div className="text-center mb-12 sm:mb-16">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
             <span className="section-label mb-2 inline-flex items-center gap-1.5 bg-(--gold)/10 px-3 py-1 rounded-full text-xs font-semibold text-(--gold)">
               <FiTag size={12} /> Special Promotion
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
+            <h2
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight"
+              style={{ color: "var(--text-primary)" }}
+            >
               Mix & Match <span className="gold-text">Combo Offers</span>
             </h2>
-            <p className="text-sm max-w-lg mx-auto mt-3" style={{ color: "var(--text-secondary)" }}>
-              Double the style, double the savings. Customize your favorite colors and sizes together in a discounted package!
+            <p
+              className="text-sm max-w-lg mx-auto mt-3"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Double the style, double the savings. Customize your favorite colors
+              and sizes together in a discounted package!
             </p>
           </motion.div>
         </div>
 
         {/* COMBOS GRID */}
         <div className="space-y-12 sm:space-y-16">
-          {combos.map((combo, idx) => {
+          {combos.map((combo) => {
             const p1 = combo.products[0]?.product;
             const p2 = combo.products[1]?.product;
             if (!p1 || !p2) return null;
 
             const sel = selections[combo._id] || { 0: {}, 1: {}, quantity: 1 };
-            const discountPercent = combo.comparePrice > combo.price 
-              ? Math.round(((combo.comparePrice - combo.price) / combo.comparePrice) * 100)
-              : 0;
+            const discountPercent =
+              combo.comparePrice > combo.price
+                ? Math.round(
+                  ((combo.comparePrice - combo.price) / combo.comparePrice) *
+                  100
+                )
+                : 0;
 
-            // Resolve variants (prefer custom combo limits, fallback to product data)
-            const colors1 = combo.products[0].colors?.length ? combo.products[0].colors : (p1.colors || []);
-            const sizes1 = combo.products[0].sizes?.length ? combo.products[0].sizes : (p1.sizes || []);
-            const colors2 = combo.products[1].colors?.length ? combo.products[1].colors : (p2.colors || []);
-            const sizes2 = combo.products[1].sizes?.length ? combo.products[1].sizes : (p2.sizes || []);
+            const colors1 = combo.products[0].colors?.length
+              ? combo.products[0].colors
+              : p1.colors || [];
+            const sizes1 = combo.products[0].sizes?.length
+              ? combo.products[0].sizes
+              : p1.sizes || [];
+            const colors2 = combo.products[1].colors?.length
+              ? combo.products[1].colors
+              : p2.colors || [];
+            const sizes2 = combo.products[1].sizes?.length
+              ? combo.products[1].sizes
+              : p2.sizes || [];
 
             return (
               <motion.div
@@ -204,90 +235,126 @@ export default function ComboOffers() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="grid lg:grid-cols-12 gap-8 items-center bg-(--bg-surface) p-6 sm:p-10 rounded-2xl border border-(--border) shadow-xl relative overflow-hidden"
+                className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center bg-(--bg-surface) p-5 sm:p-10 rounded-2xl border border-(--border) shadow-xl relative overflow-hidden"
               >
                 {/* COMBO DISCOUNT BADGE */}
                 {discountPercent > 0 && (
-                  <div className="absolute top-4 right-4 bg-red-600 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                  <div className="absolute top-4 right-4 z-30 bg-red-600 text-white font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
                     Save {discountPercent}%
                   </div>
                 )}
 
-                {/* IMAGES SIDE BY SIDE (lg:col-span-5) */}
-                <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-                  {/* PRODUCT 1 / COMBO IMAGE 1 */}
-                  <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group bg-black/10">
+                {/* IMAGES SIDE BY SIDE (PRO MOBILE LOOK) */}
+                <div className="lg:col-span-5 flex items-center justify-center gap-3 sm:gap-6 relative w-full pt-4 lg:pt-0">
+                  {/* PRODUCT 1 */}
+                  <div className="relative w-32 h-32 sm:w-44 sm:h-44 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square shadow-lg group">
                     <LazyImage
                       src={getCartImageUrl(combo.images?.[0] || p1.images?.[0])}
                       alt={p1.name}
-                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                      <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-2 sm:p-3">
+                      <span className="text-[9px] sm:text-[10px] text-(--gold) font-bold tracking-widest uppercase shadow-black">
                         {combo.images?.[0] ? "Promo Item 1" : "Item #1"}
                       </span>
-                      <p className="text-white text-xs font-semibold truncate">{p1.name}</p>
+                      <p className="text-white text-[10px] sm:text-xs font-semibold truncate">
+                        {p1.name}
+                      </p>
                     </div>
                   </div>
 
-                  {/* PRODUCT 2 / COMBO IMAGE 2 */}
-                  <div className="relative rounded-xl overflow-hidden aspect-[3/4] border border-(--border) group bg-black/10">
+                  {/* PLUS ICON BETWEEN IMAGES */}
+                  <div className="bg-(--gold) w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-black font-extrabold border-2 border-black z-20 shadow-xl shrink-0">
+                    <FiPlus size={20} className="sm:w-6 sm:h-6" />
+                  </div>
+
+                  {/* PRODUCT 2 */}
+                  <div className="relative w-32 h-32 sm:w-44 sm:h-44 shrink-0 rounded-xl overflow-hidden bg-black/10 border border-white/5 aspect-square shadow-lg group">
                     <LazyImage
                       src={getCartImageUrl(combo.images?.[1] || p2.images?.[0])}
                       alt={p2.name}
-                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-3">
-                      <span className="text-[10px] text-(--gold) font-bold tracking-widest uppercase">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-2 sm:p-3">
+                      <span className="text-[9px] sm:text-[10px] text-(--gold) font-bold tracking-widest uppercase">
                         {combo.images?.[1] ? "Promo Item 2" : "Item #2"}
                       </span>
-                      <p className="text-white text-xs font-semibold truncate">{p2.name}</p>
+                      <p className="text-white text-[10px] sm:text-xs font-semibold truncate">
+                        {p2.name}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* PLUS CONNECTOR ICON FOR VISUAL FLUSH */}
-                <div className="hidden lg:flex absolute left-[39%] top-1/2 -translate-y-1/2 bg-(--gold) w-8 h-8 rounded-full items-center justify-center text-black font-extrabold border border-black z-20 shadow-md">
-                  +
-                </div>
-
                 {/* SELECTORS & INFO (lg:col-span-7) */}
-                <div className="lg:col-span-7 flex flex-col justify-between h-full space-y-6 lg:pl-4">
+                <div className="lg:col-span-7 flex flex-col justify-between h-full space-y-6">
                   <div>
-                    <h3 className="font-display text-2xl sm:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+                    <h3
+                      className="font-display text-2xl sm:text-3xl font-bold"
+                      style={{ color: "var(--text-primary)" }}
+                    >
                       {combo.name}
                     </h3>
                     {combo.description && (
-                      <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
+                      <p
+                        className="text-xs mt-2"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
                         {combo.description}
                       </p>
                     )}
                   </div>
 
                   {/* VARIANT CONTROLS */}
-                  <div className="grid sm:grid-cols-2 gap-6 p-4 rounded-xl border border-(--border)" style={{ background: "rgba(255,255,255,0.01)" }}>
+                  <div
+                    className="grid sm:grid-cols-2 gap-6 p-4 sm:p-5 rounded-xl border border-(--border)"
+                    style={{ background: "rgba(255,255,255,0.02)" }}
+                  >
                     {/* PRODUCT 1 CONTROLS */}
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">1</span>
-                        <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-primary)" }}>{p1.name}</h4>
+                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">
+                          1
+                        </span>
+                        <h4
+                          className="text-xs font-bold uppercase tracking-wider truncate"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          {p1.name}
+                        </h4>
                       </div>
 
                       {/* Product 1 Color */}
                       {colors1.length > 0 && (
                         <div>
-                          <label className="block text-[10px] uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>Select Color</label>
+                          <label
+                            className="block text-[10px] uppercase tracking-wider mb-1.5"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            Select Color
+                          </label>
                           <div className="flex flex-wrap gap-1.5">
                             {colors1.map((c) => (
                               <button
                                 key={c}
                                 type="button"
-                                onClick={() => handleSelectionChange(combo._id, 0, "color", c)}
-                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${
-                                  sel[0].color === c
+                                onClick={() =>
+                                  handleSelectionChange(combo._id, 0, "color", c)
+                                }
+                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${sel[0].color === c
                                     ? "bg-(--gold) text-black border-(--gold) shadow-sm"
                                     : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                }`}
+                                  }`}
                               >
                                 {c}
                               </button>
@@ -299,18 +366,24 @@ export default function ComboOffers() {
                       {/* Product 1 Size */}
                       {sizes1.length > 0 && (
                         <div>
-                          <label className="block text-[10px] uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>Select Size</label>
+                          <label
+                            className="block text-[10px] uppercase tracking-wider mb-1.5"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            Select Size
+                          </label>
                           <div className="flex flex-wrap gap-1.5">
                             {sizes1.map((s) => (
                               <button
                                 key={s}
                                 type="button"
-                                onClick={() => handleSelectionChange(combo._id, 0, "size", s)}
-                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${
-                                  sel[0].size === s
+                                onClick={() =>
+                                  handleSelectionChange(combo._id, 0, "size", s)
+                                }
+                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${sel[0].size === s
                                     ? "bg-(--gold) text-black border-(--gold) shadow-sm"
                                     : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                }`}
+                                  }`}
                               >
                                 {s}
                               </button>
@@ -323,25 +396,38 @@ export default function ComboOffers() {
                     {/* PRODUCT 2 CONTROLS */}
                     <div className="space-y-4 border-t sm:border-t-0 sm:border-l border-(--border) pt-4 sm:pt-0 sm:pl-6">
                       <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">2</span>
-                        <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: "var(--text-primary)" }}>{p2.name}</h4>
+                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">
+                          2
+                        </span>
+                        <h4
+                          className="text-xs font-bold uppercase tracking-wider truncate"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          {p2.name}
+                        </h4>
                       </div>
 
                       {/* Product 2 Color */}
                       {colors2.length > 0 && (
                         <div>
-                          <label className="block text-[10px] uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>Select Color</label>
+                          <label
+                            className="block text-[10px] uppercase tracking-wider mb-1.5"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            Select Color
+                          </label>
                           <div className="flex flex-wrap gap-1.5">
                             {colors2.map((c) => (
                               <button
                                 key={c}
                                 type="button"
-                                onClick={() => handleSelectionChange(combo._id, 1, "color", c)}
-                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${
-                                  sel[1].color === c
+                                onClick={() =>
+                                  handleSelectionChange(combo._id, 1, "color", c)
+                                }
+                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${sel[1].color === c
                                     ? "bg-(--gold) text-black border-(--gold) shadow-sm"
                                     : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                }`}
+                                  }`}
                               >
                                 {c}
                               </button>
@@ -353,18 +439,24 @@ export default function ComboOffers() {
                       {/* Product 2 Size */}
                       {sizes2.length > 0 && (
                         <div>
-                          <label className="block text-[10px] uppercase tracking-wider mb-1.5" style={{ color: "var(--text-muted)" }}>Select Size</label>
+                          <label
+                            className="block text-[10px] uppercase tracking-wider mb-1.5"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            Select Size
+                          </label>
                           <div className="flex flex-wrap gap-1.5">
                             {sizes2.map((s) => (
                               <button
                                 key={s}
                                 type="button"
-                                onClick={() => handleSelectionChange(combo._id, 1, "size", s)}
-                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${
-                                  sel[1].size === s
+                                onClick={() =>
+                                  handleSelectionChange(combo._id, 1, "size", s)
+                                }
+                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${sel[1].size === s
                                     ? "bg-(--gold) text-black border-(--gold) shadow-sm"
                                     : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                }`}
+                                  }`}
                               >
                                 {s}
                               </button>
@@ -376,29 +468,41 @@ export default function ComboOffers() {
                   </div>
 
                   {/* PRICE & ADD TO CART CONTAINER */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-(--border)">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                     <div>
-                      <p className="text-[10px] uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Combo Price</p>
+                      <p
+                        className="text-[10px] uppercase tracking-wider"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        Combo Price
+                      </p>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-2xl sm:text-3xl font-display font-black text-(--gold)" style={{ color: "var(--gold)" }}>
+                        <span
+                          className="text-2xl sm:text-3xl font-display font-black text-(--gold)"
+                          style={{ color: "var(--gold)" }}
+                        >
                           Rs. {combo.price?.toLocaleString()}
                         </span>
                         {combo.comparePrice > combo.price && (
-                          <span className="line-through text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+                          <span
+                            className="line-through text-xs font-medium"
+                            style={{ color: "var(--text-muted)" }}
+                          >
                             Rs. {combo.comparePrice?.toLocaleString()}
                           </span>
                         )}
                       </div>
                       {combo.comparePrice > combo.price && (
                         <p className="text-[10px] text-green-500 font-bold mt-0.5">
-                          You Save Rs. {(combo.comparePrice - combo.price).toLocaleString()}!
+                          You Save Rs.{" "}
+                          {(combo.comparePrice - combo.price).toLocaleString()}!
                         </p>
                       )}
                     </div>
 
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                       {/* Quantity Selector */}
-                      <div className="flex items-center rounded-xl border border-(--border) bg-black/25 overflow-hidden h-11">
+                      <div className="flex items-center rounded-xl border border-(--border) bg-black/25 overflow-hidden h-11 shrink-0">
                         <button
                           type="button"
                           onClick={() => handleQuantityChange(combo._id, -1)}
@@ -406,7 +510,10 @@ export default function ComboOffers() {
                         >
                           <FiMinus size={12} />
                         </button>
-                        <span className="px-4 font-bold text-sm w-12 text-center" style={{ color: "var(--text-primary)" }}>
+                        <span
+                          className="px-3 font-bold text-sm w-10 text-center"
+                          style={{ color: "var(--text-primary)" }}
+                        >
                           {sel.quantity || 1}
                         </span>
                         <button
@@ -422,10 +529,10 @@ export default function ComboOffers() {
                       <button
                         type="button"
                         onClick={() => handleAddComboToCart(combo)}
-                        className="btn-gold flex-1 sm:flex-initial flex items-center justify-center gap-2 h-11 px-6 text-sm font-bold shadow-lg shadow-(--gold)/10"
+                        className="btn-gold flex-1 sm:flex-initial flex items-center justify-center gap-2 h-11 px-6 text-sm font-bold shadow-lg shadow-(--gold)/10 shrink-0"
                         style={{ minWidth: "160px" }}
                       >
-                        <FiShoppingCart size={14} /> Buy Combo Deal
+                        <FiShoppingCart size={14} /> Buy Deal
                       </button>
                     </div>
                   </div>
