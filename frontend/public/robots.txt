@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard/
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /order-success/
+
+Sitemap: https://urbanthreadss.store/sitemap.xml
