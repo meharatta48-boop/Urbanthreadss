@@ -25,6 +25,66 @@ const getPhone = (o) => o.shippingAddress?.phone || o.guestInfo?.phone || "";
 const getEmail = (o) => o.user?.email || o.guestInfo?.email || "";
 const getName  = (o) => o.user?.name || o.guestInfo?.name || o.shippingAddress?.fullName || "Guest";
 
+const getWhatsAppMessageLink = (order) => {
+  const phone = getPhone(order);
+  if (!phone) return "";
+  
+  const cleanPhone = phone.replace(/\D/g, "").replace(/^0/, "92");
+  const name = getName(order);
+  const orderId = order._id.slice(-8).toUpperCase();
+  const date = new Date(order.createdAt).toLocaleDateString("en-PK", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+  
+  const paymentMethod = order.paymentMethod || "COD";
+  
+  let address = "N/A";
+  if (order.shippingAddress) {
+    const parts = [
+      order.shippingAddress.address,
+      order.shippingAddress.city,
+      order.shippingAddress.province
+    ].filter(Boolean);
+    address = parts.join(", ");
+  }
+
+  const itemsList = (order.orderItems || [])
+    .map((item) => {
+      const variant = [item.size, item.color].filter(Boolean).join(", ");
+      return `• *${item.name}*${variant ? ` (${variant})` : ""} - Qty: ${item.quantity} - Rs. ${item.price.toLocaleString()}`;
+    })
+    .join("\n");
+  
+  const text = `Assalam-o-Alaikum! 🌸
+
+Aapka Order mil gaya hai aur process kiya ja raha hai. Details ye hain:
+
+📋 *Order Details:*
+- *Order ID:* #${orderId}
+- *Date:* ${date}
+- *Status:* ${order.orderStatus.toUpperCase()}
+- *Payment Method:* ${paymentMethod}
+
+👤 *Customer Details:*
+- *Name:* ${name}
+- *Phone:* ${phone}
+- *Address:* ${address}
+
+📦 *Items Ordered:*
+${itemsList}
+
+💵 *Payment Summary:*
+- *Subtotal:* Rs. ${(order.itemsPrice || 0).toLocaleString()}
+- *Delivery Charges:* Rs. ${(order.shippingPrice ?? 250).toLocaleString()}
+${order.couponDiscount ? `- *Discount:* - Rs. ${order.couponDiscount.toLocaleString()}\n` : ""}- *Grand Total:* Rs. ${(order.totalPrice || 0).toLocaleString()}
+
+Shukriya for shopping with Urban Thread! ❤️`;
+
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
+};
+
 function StatusBadge({ status }) {
   const s = STATUS_STYLE[status] || STATUS_STYLE.pending;
   return (
@@ -409,7 +469,7 @@ export default function OrderList() {
                         <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1.5">
                             {phone && (
-                              <a href={`https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "92")}?text=${encodeURIComponent(`Salaam! Aapka order #${order._id.slice(-8).toUpperCase()} ka update dena tha.`)}`}
+                              <a href={getWhatsAppMessageLink(order)}
                                 target="_blank" rel="noopener noreferrer"
                                 className="w-7 h-7 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                                 style={{ background: "rgba(22,163,74,0.1)", color: "#16a34a" }}
@@ -473,7 +533,17 @@ export default function OrderList() {
                                     </div>
                                     <div>
                                       <p className="text-(--text-muted) text-[10px]">Phone</p>
-                                      <a href={`tel:${phone}`} className="text-[#16a34a] text-sm hover:underline">{phone || "—"}</a>
+                                      <div className="flex items-center gap-2">
+                                        <a href={`tel:${phone}`} className="text-[#16a34a] text-sm hover:underline">{phone || "—"}</a>
+                                        {phone && (
+                                          <a href={getWhatsAppMessageLink(order)}
+                                            target="_blank" rel="noopener noreferrer"
+                                            className="text-[#16a34a] hover:scale-110 transition-transform"
+                                            title="Chat on WhatsApp">
+                                            <FiMessageCircle size={13} />
+                                          </a>
+                                        )}
+                                      </div>
                                     </div>
                                     <div>
                                       <p className="text-(--text-muted) text-[10px]">Email</p>
