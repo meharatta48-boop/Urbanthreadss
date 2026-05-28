@@ -35,7 +35,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { settings } = useSettings();
-  const brandName = settings?.brandName || "URBAN THREAD";
+  const brandName = settings?.brandName || "URBAN THREADS";
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 {
-  "name": "Urban Thread - Premium Fashion",
-  "short_name": "Urban Thread",
+  "name": "Urban Threads - Premium Fashion",
+  "short_name": "Urban Threads",
   "description": "Premium fashion and lifestyle ecommerce platform",
   "start_url": "/",
   "display": "standalone",
@@ -9,8 +9,24 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
-  "categories": ["shopping", "fashion", "lifestyle"],
+  "categories": [
+    "shopping",
+    "fashion",
+    "lifestyle"
+  ],
   "icons": [
+    {
+      "src": "/icons/icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/icons/icon-72x72.png",
       "sizes": "72x72",

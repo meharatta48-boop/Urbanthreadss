@@ -34,9 +34,9 @@ interface StructuredData {
 
 class SEOManager {
   private static instance: SEOManager;
-  private siteName: string = 'Urban Thread';
+  private siteName: string = 'Urban Threads';
   private defaultImage: string = '/icons/icon-512x512.png';
-  private siteUrl: string = 'https://urbanthread.com';
+  private siteUrl: string = 'https://urbanthreadss.store';
 
   static getInstance(): SEOManager {
     if (!SEOManager.instance) {
@@ -60,14 +60,14 @@ class SEOManager {
   // Product-specific SEO
   public updateProductSEO(product: any): void {
     const seoData: SEOData = {
-      title: `${product.name} - Urban Thread`,
-      description: product.description || `Shop ${product.name} at Urban Thread. Premium quality fashion at affordable prices.`,
+      title: `${product.name} - Urban Threads`,
+      description: product.description || `Shop ${product.name} at Urban Threads. Premium quality fashion at affordable prices.`,
       keywords: [
         product.name,
         product.category?.name,
         'fashion',
         'clothing',
-        'urban thread',
+        'urban threads',
         'pakistan',
         'online shopping',
         ...(product.tags || [])
@@ -78,7 +78,7 @@ class SEOManager {
       price: product.price,
       currency: 'PKR',
       availability: product.stock > 0 ? 'in stock' : 'out of stock',
-      brand: 'Urban Thread',
+      brand: 'Urban Threads',
       category: product.category?.name
     };
 
@@ -88,13 +88,13 @@ class SEOManager {
   // Category-specific SEO
   public updateCategorySEO(category: any): void {
     const seoData: SEOData = {
-      title: `${category.name} - Urban Thread`,
-      description: `Browse our collection of ${category.name}. Premium fashion items at Urban Thread.`,
+      title: `${category.name} - Urban Threads`,
+      description: `Browse our collection of ${category.name}. Premium fashion items at Urban Threads.`,
       keywords: [
         category.name,
         'fashion',
         'clothing',
-        'urban thread',
+        'urban threads',
         'pakistan',
         'online shopping',
         category.name.toLowerCase()
@@ -110,10 +110,10 @@ class SEOManager {
   // Homepage SEO
   public updateHomepageSEO(): void {
     const seoData: SEOData = {
-      title: 'Urban Thread - Premium Fashion & Lifestyle',
-      description: 'Discover premium fashion and lifestyle products at Urban Thread. Quality clothing, accessories, and more with nationwide delivery across Pakistan.',
+      title: 'Urban Threads - Premium Fashion & Lifestyle',
+      description: 'Discover premium fashion and lifestyle products at Urban Threads. Quality clothing, accessories, and more with nationwide delivery across Pakistan.',
       keywords: [
-        'urban thread',
+        'urban threads',
         'fashion',
         'clothing',
         'pakistan',
@@ -371,7 +371,7 @@ class SEOManager {
   public async shareProduct(product: any): Promise<void> {
     const shareData = {
       title: product.name,
-      text: `Check out ${product.name} on Urban Thread`,
+      text: `Check out ${product.name} on Urban Threads`,
       url: `${this.siteUrl}/product/${product._id}`
     };
 

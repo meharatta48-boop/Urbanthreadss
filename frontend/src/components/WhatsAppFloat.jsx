@@ -11,7 +11,7 @@ export default function WhatsAppFloat() {
 
   const number = settings?.whatsapp || DEFAULT_WHATSAPP;
   const message = encodeURIComponent(
-    `Assalam-o-Alaikum! ${settings?.brandName || "Urban Thread"} se inquiry karna chahta/chahti hoon. 🙏`
+    `Assalam-o-Alaikum! ${settings?.brandName || "Urban Threads"} se inquiry karna chahta/chahti hoon. 🙏`
   );
   const href = `https://wa.me/${number}?text=${message}`;
 

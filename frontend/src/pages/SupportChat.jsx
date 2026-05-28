@@ -32,7 +32,7 @@ const QUICK_CHIPS = [
 
 export default function SupportChat() {
   const { settings } = useSettings();
-  const brand = settings?.brandName || "Urban Thread";
+  const brand = settings?.brandName || "Urban Threads";
 
   const [messages, setMessages] = useState([
     { from: "support", text: `Assalam-o-Alaikum! 👋 ${brand} mein khush amdeed.\n\nHum aapki kaise madad kar sakte hain?`, time: new Date() },
@@ -78,7 +78,7 @@ export default function SupportChat() {
 
   const wa      = `https://wa.me/${(settings?.whatsapp || "923001234567").replace(/\D/g, "")}?text=Assalam-o-Alaikum! Mujhe madad chahiye.`;
   const phone   = settings?.phone   || "+92 300 1234567";
-  const email   = settings?.email   || "info@urbanthread.pk";
+  const email   = settings?.email   || "info@urbanthreadss.store";
   const address = settings?.address || "Lahore, Pakistan";
   const hours   = settings?.supportHours || "Mon–Sat: 9am – 9pm";
   const fmtTime = (d) => new Date(d).toLocaleTimeString("en-PK", { hour: "2-digit", minute: "2-digit" });

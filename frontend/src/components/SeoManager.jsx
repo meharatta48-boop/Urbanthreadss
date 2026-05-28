@@ -64,10 +64,10 @@ export default function SeoManager() {
   useEffect(() => {
     if (!settings) return;
 
-    const siteName = safeText(settings.brandName, "Urban Thread");
+    const siteName = safeText(settings.brandName, "Urban Threads");
     const siteTitle = safeText(settings.siteTitle, siteName);
     const baseDesc = safeText(settings.defaultMetaDesc, "Premium streetwear from Pakistan.");
-    const baseKeywords = safeText(settings.metaKeywords, "streetwear, pakistan fashion, urban thread");
+    const baseKeywords = safeText(settings.metaKeywords, "streetwear, pakistan fashion, urban threads");
     const locale = safeText(settings.seoLocale, "en_PK");
     const geoRegion = safeText(settings.seoGeoRegion, "PK-PB");
     const geoPlacename = safeText(settings.seoGeoPlacename, "Lahore");

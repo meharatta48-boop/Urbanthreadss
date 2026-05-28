@@ -80,7 +80,7 @@ ${itemsList}
 - *Delivery Charges:* Rs. ${(order.shippingPrice ?? 250).toLocaleString()}
 ${order.couponDiscount ? `- *Discount:* - Rs. ${order.couponDiscount.toLocaleString()}\n` : ""}- *Grand Total:* Rs. ${(order.totalPrice || 0).toLocaleString()}
 
-Shukriya for shopping with Urban Thread! ❤️`;
+Shukriya for shopping with Urban Threads! ❤️`;
 
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
 };
