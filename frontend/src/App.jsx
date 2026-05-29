@@ -55,6 +55,7 @@ const Signup = lazyWithRetry(() => import("./pages/Signup"));
 const ForgotPassword = lazyWithRetry(() => import("./pages/ForgotPassword"));
 const SupportChat = lazyWithRetry(() => import("./pages/SupportChat"));
 const CustomPage = lazyWithRetry(() => import("./pages/CustomPage"));
+const PolicyPage = lazyWithRetry(() => import("./pages/PolicyPage"));
 const NotFound = lazyWithRetry(() => import("./pages/NotFound"));
 const MyOrders = lazyWithRetry(() => import("./pages/MyOrders"));
 const OrderSuccess = lazyWithRetry(() => import("./pages/OrderSuccess"));
@@ -229,6 +230,10 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/support" element={<SupportChat />} />
             <Route path="/page/:slug" element={<CustomPage />} />
+            <Route path="/privacy" element={<PolicyPage type="privacy" />} />
+            <Route path="/terms" element={<PolicyPage type="terms" />} />
+            <Route path="/returns" element={<PolicyPage type="returns" />} />
+            <Route path="/shipping" element={<PolicyPage type="shipping" />} />
 
             {/* AUTH */}
             <Route

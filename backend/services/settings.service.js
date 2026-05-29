@@ -11,6 +11,10 @@ const RICH_TEXT_FIELDS = [
   "invoiceThankYou",
   "invoiceFooterNote",
   "invoiceNote",
+  "privacyPolicyContent",
+  "termsOfServiceContent",
+  "returnPolicyContent",
+  "shippingInfoContent",
 ];
 
 export const prepareSettingsPatch = (payload = {}) => {

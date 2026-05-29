@@ -7,12 +7,13 @@ import api from "../../services/api";
 import { DesignStudioTab, SectionsTab, AnnouncementTab, CustomCSSTab, TypographySizesTab, ImageSizesTab, IconsTab } from "./DesignTabs";
 import NavigationTab from "./NavigationTab";
 import PagesTab from "./PagesTab";
+import PoliciesTab from "./PoliciesTab";
 import {
   FiSave, FiGlobe, FiHome, FiAlignLeft, FiPhone,
   FiShoppingCart, FiCheckCircle, FiImage, FiUpload,
   FiTrash2, FiX, FiStar, FiMessageSquare, FiPlus, FiEdit2, FiLayout,
   FiDroplet, FiType, FiEye, FiCode, FiZap, FiToggleLeft, FiToggleRight,
-  FiSearch, FiDownload, FiNavigation, FiFileText, FiSliders, FiUser,
+  FiSearch, FiDownload, FiNavigation, FiFileText, FiSliders, FiUser, FiBookOpen,
 } from "react-icons/fi";
 
 import { SERVER_URL } from "../../services/api";
@@ -26,6 +27,7 @@ const tabs = [
   { id: "about",      label: "About Page",   icon: <FiFileText />,     desc: "About Us page content & images" },
   { id: "navigation", label: "Navigation",   icon: <FiNavigation />,   desc: "Nav links add, reorder, hide" },
   { id: "pages",      label: "Pages",        icon: <FiFileText />,     desc: "Custom pages create/edit/delete" },
+  { id: "policies",   label: "Policies",     icon: <FiBookOpen />,     desc: "Privacy, Terms, Returns, Shipping pages control" },
   { id: "shop",       label: "Shop",         icon: <FiShoppingCart />, desc: "Delivery, coupons, contact, social" },
   { id: "appearance", label: "Appearance",   icon: <FiDroplet />,      desc: "Colors, fonts, icons, CSS" },
   { id: "reviews",    label: "Reviews",      icon: <FiStar />,         desc: "Customer reviews management" },
@@ -304,13 +306,16 @@ export default function SiteSettingsPage() {
                 <AboutUsTab form={form} set={set} token={token} settings={settings} fetchSettings={fetchSettings} mediaUrl={mediaUrl} uploadLogo={uploadLogo} deleteSettingImage={deleteSettingImage} />
               )}
 
-              {/* â”€â”€ Navigation: nav links manager â”€â”€ */}
+              {/* ── Navigation: nav links manager ── */}
               {activeTab === "navigation" && <NavigationTab />}
 
-              {/* â”€â”€ Pages: custom pages CRUD â”€â”€ */}
+              {/* ── Pages: custom pages CRUD ── */}
               {activeTab === "pages" && <PagesTab />}
 
-              {/* â”€â”€ Shop: shop settings + contact + social â”€â”€ */}
+              {/* ── Policies ── */}
+              {activeTab === "policies" && <PoliciesTab form={form} set={set} />}
+
+              {/* ── Shop: shop settings + contact + social ── */}
               {activeTab === "shop" && (
                 <div className="space-y-6">
                   <ShopTab form={form} set={set} />

@@ -269,6 +269,46 @@ const siteSettingsSchema = new mongoose.Schema(
       ],
     },
 
+    // ── Privacy Policy Settings ──
+    privacyPolicyTitle: { type: String, default: "Privacy Policy" },
+    privacyPolicyContent: {
+      type: String,
+      default: "<h2>1. Information We Collect</h2><p>At Urban Thread, we collect your name, email, phone number, and physical shipping address when you place a Cash on Delivery (COD) order. This information is required to process and ship your streetwear products securely across Pakistan.</p><h2>2. How We Use Your Data</h2><p>We use your delivery details solely to deliver your orders through our courier partners and to send tracking updates via SMS or email. We do not sell, rent, or share your private information with third-party advertisers.</p><h2>3. Secure Payments</h2><p>Since we primarily offer Cash on Delivery (COD) inside Pakistan, your payment transaction is processed safely in person. For any online prepaid transactions, we use encrypted and secure gateways to safeguard your details.</p><h2>4. Cookies & Analytics</h2><p>Our website uses browser cookies to remember your shopping cart items and analyze site traffic to offer a premium shopping experience.</p>"
+    },
+    privacyPolicyMetaTitle: { type: String, default: "Privacy Policy | Urban Thread Streetwear" },
+    privacyPolicyMetaDesc: { type: String, default: "Read the Privacy Policy of Urban Thread. Learn how we secure your order details and protect your personal information in Pakistan." },
+    privacyPolicyEnabled: { type: Boolean, default: true },
+
+    // ── Terms of Service Settings ──
+    termsOfServiceTitle: { type: String, default: "Terms of Service" },
+    termsOfServiceContent: {
+      type: String,
+      default: "<h2>1. Introduction</h2><p>Welcome to Urban Thread! By accessing our website or purchasing our products, you agree to follow these Terms of Service. These terms apply to all visitors, buyers, and administrators of the site.</p><h2>2. Cash on Delivery (COD) and Orders</h2><p>All streetwear orders placed are subject to stock availability and price confirmation. When you place a Cash on Delivery (COD) order, please ensure you are available to receive the package and provide exact change to the delivery agent.</p><h2>3. Accurate Delivery Details</h2><p>To avoid delivery delays across Pakistan, please provide a complete address, including house number, street name, sector/area, and city, along with an active phone number.</p><h2>4. Intellectual Property</h2><p>All designs, photos, graphics, and logos on this website are the intellectual property of Urban Thread. You are not allowed to copy or reuse them for commercial purposes without our written permission.</p>"
+    },
+    termsOfServiceMetaTitle: { type: String, default: "Terms of Service | Urban Thread Streetwear" },
+    termsOfServiceMetaDesc: { type: String, default: "Understand the Terms of Service for using the Urban Thread online store. Guidelines for Cash on Delivery, ordering rules, and user agreements in Pakistan." },
+    termsOfServiceEnabled: { type: Boolean, default: true },
+
+    // ── Return Policy Settings ──
+    returnPolicyTitle: { type: String, default: "Return & Exchange Policy" },
+    returnPolicyContent: {
+      type: String,
+      default: "<h2>1. 7-Day Easy Returns</h2><p>We want you to love your streetwear! If a product doesn't fit or meet your expectations, you can return or exchange it within 7 days of delivery. No difficult legal procedures required.</p><h2>2. Eligibility for Returns</h2><p>To be eligible for an exchange or return, your apparel must be unworn, unwashed, and in the exact same condition that you received it. Hang tags and original packaging must be intact.</p><h2>3. How to Initiate a Return</h2><p>Simply send a message to our WhatsApp Support (+92 300 1234567) or open a Support Ticket on our website. Please share your Order ID and photos of the item. Our friendly team will guide you through the process.</p><h2>4. Delivery Charges</h2><p>The customer is responsible for shipping the item back to our Lahore warehouse. In case we sent a wrong or damaged item, Urban Thread will cover the return delivery costs.</p>"
+    },
+    returnPolicyMetaTitle: { type: String, default: "Return & Exchange Policy | Urban Thread Streetwear" },
+    returnPolicyMetaDesc: { type: String, default: "Read our simple 7-day return and exchange policy. Easily return or exchange your unworn streetwear via WhatsApp support or support ticket." },
+    returnPolicyEnabled: { type: Boolean, default: true },
+
+    // ── Shipping Info Settings ──
+    shippingInfoTitle: { type: String, default: "Shipping Information" },
+    shippingInfoContent: {
+      type: String,
+      default: "<h2>1. Nationwide Delivery</h2><p>We deliver premium streetwear to Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Peshawar, Multan, and all other cities and towns across Pakistan.</p><h2>2. Cash on Delivery (COD)</h2><p>To give you peace of mind, we offer Cash on Delivery (COD). You only pay when the parcel is delivered to your doorstep by our courier partner.</p><h2>3. Shipping Charges</h2><p>We charge a flat rate of Rs. 250 for delivery nationwide. <strong>Good news!</strong> We offer free shipping on all orders above Rs. 2000.</p><h2>4. Delivery Times</h2><p>Orders inside Lahore typically take 2 to 3 business days. Deliveries to other major cities like Karachi and Islamabad take 3 to 5 business days. Remote areas may take up to 6 business days.</p><h2>5. Order Tracking</h2><p>Once your streetwear drop is shipped, you will receive a tracking link via SMS or email so you can check your parcel's location in real-time.</p>"
+    },
+    shippingInfoMetaTitle: { type: String, default: "Shipping Information & Delivery Times | Urban Thread" },
+    shippingInfoMetaDesc: { type: String, default: "Get details about Cash on Delivery (COD), shipping charges, and delivery times for Lahore, Karachi, Islamabad, and all other cities in Pakistan." },
+    shippingInfoEnabled: { type: Boolean, default: true },
+
 
   },
   { timestamps: true }
