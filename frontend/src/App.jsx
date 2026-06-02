@@ -101,12 +101,13 @@ function SocialPreviewRedirect() {
 function Layout({ children }) {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin-dashboard");
+  const isAuthPage = ["/login", "/signup", "/forgot-password"].includes(pathname.replace(/\/$/, ""));
 
   return (
     <>
       <ThemeInjector />
 
-      {!isAdmin && (
+      {!isAdmin && !isAuthPage && (
         <header className="sticky top-0 z-50 w-full bg-(--bg-deep)">
           <CouponBanner />
           <Navbar />
@@ -117,7 +118,7 @@ function Layout({ children }) {
         {children}
       </main>
 
-      {!isAdmin && (
+      {!isAdmin && !isAuthPage && (
         <>
           <Footer />
           <WhatsAppFloat />
