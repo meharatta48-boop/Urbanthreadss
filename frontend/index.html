@@ -4,6 +4,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Auto-reload on chunk/asset loading failures (e.g. after a new deployment)
+    window.addEventListener('error', function (e) {
+      const target = e.target;
+      if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+        const url = target.src || target.href;
+        if (url && (url.includes('/assets/') || url.includes('.js') || url.includes('.css'))) {
+          console.warn('Critical asset load failed, reloading page...', url);
+          const lastReload = sessionStorage.getItem('last-asset-error-reload');
+          const now = Date.now();
+          // Avoid infinite loops (reload at most once every 10 seconds)
+          if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+            sessionStorage.setItem('last-asset-error-reload', now.toString());
+            window.location.reload();
+          }
+        }
+      }
+    }, true);
+  </script>
   <meta name="google-site-verification" content="U8Ub_y6L5JHFkaGiiTnzTCmcToSad6-djkWlMfSnCw0" />
 
   <link rel="icon" type="image/png" sizes="32x32" href="/ut.png" />
