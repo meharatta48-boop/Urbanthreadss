@@ -19,13 +19,6 @@ const titleMap = {
   "/admin-dashboard/users": "Users",
   "/admin-dashboard/settings": "Site Settings",
   "/admin-dashboard/analytics": "Analytics",
-  "/admin-dashboard/marketing": "Marketing Center",
-  "/admin-dashboard/content": "Content CMS",
-  "/admin-dashboard/ai-tools": "AI Tools",
-  "/admin-dashboard/seo": "SEO Center",
-  "/admin-dashboard/automations": "Automation Center",
-  "/admin-dashboard/finance": "Finance Center",
-  "/admin-dashboard/security": "Security Center",
 };
 
 const iconMap = {
@@ -38,32 +31,18 @@ const iconMap = {
   "/admin-dashboard/users": "👥",
   "/admin-dashboard/settings": "⚙️",
   "/admin-dashboard/analytics": "📊",
-  "/admin-dashboard/marketing": "🎯",
-  "/admin-dashboard/content": "📝",
-  "/admin-dashboard/ai-tools": "🤖",
-  "/admin-dashboard/seo": "🔍",
-  "/admin-dashboard/automations": "📬",
-  "/admin-dashboard/finance": "💰",
-  "/admin-dashboard/security": "🛡️",
 };
 
 const quickLinks = [
-  { label: "Dashboard",        to: "/admin-dashboard",               keywords: "home stats revenue overview" },
-  { label: "Orders",           to: "/admin-dashboard/orders",        keywords: "orders shipping pending delivery" },
-  { label: "Products",         to: "/admin-dashboard/products",      keywords: "products catalog stock list" },
-  { label: "Add Product",      to: "/admin-dashboard/products/new",  keywords: "new create product add" },
-  { label: "Analytics",        to: "/admin-dashboard/analytics",     keywords: "analytics charts revenue trend kpi" },
-  { label: "Categories",       to: "/admin-dashboard/categories",    keywords: "category season collection" },
-  { label: "Sub-Categories",   to: "/admin-dashboard/subcategories", keywords: "subcategory men women kids" },
-  { label: "Users",            to: "/admin-dashboard/users",         keywords: "customers users accounts loyalty" },
-  { label: "Site Settings",    to: "/admin-dashboard/settings",      keywords: "settings design seo popup config" },
-  { label: "Marketing Center", to: "/admin-dashboard/marketing",     keywords: "coupons flash sales upsell abandoned cart promo" },
-  { label: "Content CMS",      to: "/admin-dashboard/content",       keywords: "blog faq pages cms content" },
-  { label: "AI Tools",         to: "/admin-dashboard/ai-tools",      keywords: "ai artificial intelligence description seo copy" },
-  { label: "SEO Center",       to: "/admin-dashboard/seo",           keywords: "seo meta robots sitemap search engine" },
-  { label: "Automations",      to: "/admin-dashboard/automations",   keywords: "email whatsapp sms automation trigger workflow" },
-  { label: "Finance Center",   to: "/admin-dashboard/finance",       keywords: "finance profit loss expense tax revenue report" },
-  { label: "Security Center",  to: "/admin-dashboard/security",      keywords: "security logs activity backup roles" },
+  { label: "Dashboard",      to: "/admin-dashboard",               keywords: "home stats revenue overview" },
+  { label: "Orders",         to: "/admin-dashboard/orders",        keywords: "orders shipping pending delivery" },
+  { label: "Products",       to: "/admin-dashboard/products",      keywords: "products catalog stock list" },
+  { label: "Add Product",    to: "/admin-dashboard/products/new",  keywords: "new create product add" },
+  { label: "Analytics",      to: "/admin-dashboard/analytics",     keywords: "analytics charts revenue trend kpi" },
+  { label: "Categories",     to: "/admin-dashboard/categories",    keywords: "category season collection" },
+  { label: "Sub-Categories", to: "/admin-dashboard/subcategories", keywords: "subcategory men women kids" },
+  { label: "Users",          to: "/admin-dashboard/users",         keywords: "customers users accounts" },
+  { label: "Site Settings",  to: "/admin-dashboard/settings",      keywords: "settings design seo popup config" },
 ];
 
 export default function AdminLayout() {

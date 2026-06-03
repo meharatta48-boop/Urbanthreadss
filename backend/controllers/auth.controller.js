@@ -185,13 +185,12 @@ export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
       .sort({ createdAt: -1 })
-      .select("name email role isActive phone loyaltyPoints storeCredit customerSegment createdAt");
+      .select("name email role isActive createdAt");
     return sendSuccess(res, { users });
   } catch (error) {
     return sendError(res, error.message);
   }
 };
-
 
 /* =====================
    UPDATE USER ROLE (admin only)
@@ -269,38 +268,6 @@ export const deleteUser = async (req, res) => {
     return sendSuccess(res, {
       message: "User deleted successfully",
     });
-  } catch (error) {
-    return sendError(res, error.message);
-  }
-};
-
-/* =====================
-   UPDATE USER PROFILE (admin only)
-   PUT /api/auth/users/:userId/profile
-   Updates: loyaltyPoints, storeCredit, customerSegment, phone
-===================== */
-export const updateUserProfile = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { loyaltyPoints, storeCredit, customerSegment, phone } = req.body;
-
-    const allowedSegments = ["new", "regular", "vip"];
-    if (customerSegment && !allowedSegments.includes(customerSegment)) {
-      return sendError(res, "Invalid segment. Must be new, regular, or vip", 400);
-    }
-
-    const updates = {};
-    if (loyaltyPoints !== undefined) updates.loyaltyPoints = Math.max(0, Number(loyaltyPoints) || 0);
-    if (storeCredit !== undefined)   updates.storeCredit   = Math.max(0, Number(storeCredit)   || 0);
-    if (customerSegment !== undefined) updates.customerSegment = customerSegment;
-    if (phone !== undefined) updates.phone = String(phone).trim();
-
-    const user = await User.findByIdAndUpdate(userId, updates, { new: true })
-      .select("name email role isActive phone loyaltyPoints storeCredit customerSegment createdAt");
-
-    if (!user) return sendError(res, "User not found", 404);
-
-    return sendSuccess(res, { message: "User profile updated", user });
   } catch (error) {
     return sendError(res, error.message);
   }

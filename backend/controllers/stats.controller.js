@@ -64,14 +64,6 @@ export const getAdvancedStats = async (req, res) => {
     const now = new Date();
 
     // ── Last 7 days: daily order count + revenue ──
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-    sevenDaysAgo.setHours(0, 0, 0, 0);
-
-    const ordersPast7Days = await Order.find({
-      createdAt: { $gte: sevenDaysAgo }
-    }).select("totalPrice orderStatus createdAt").lean();
-
     const last7 = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(now);
@@ -79,9 +71,7 @@ export const getAdvancedStats = async (req, res) => {
       const start = new Date(date.setHours(0, 0, 0, 0));
       const end   = new Date(date.setHours(23, 59, 59, 999));
 
-      const dayOrders = ordersPast7Days.filter(
-        (o) => new Date(o.createdAt) >= start && new Date(o.createdAt) <= end
-      );
+      const dayOrders = await Order.find({ createdAt: { $gte: start, $lte: end } }).lean();
       const dayRevenue = dayOrders
         .filter((o) => o.orderStatus === "delivered")
         .reduce((s, o) => s + (o.totalPrice || 0), 0);
@@ -91,74 +81,44 @@ export const getAdvancedStats = async (req, res) => {
     }
 
     // ── Last 6 months: monthly revenue ──
-    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-    sixMonthsAgo.setHours(0, 0, 0, 0);
-
-    const monthlyAgg = await Order.aggregate([
-      {
-        $match: {
-          orderStatus: "delivered",
-          createdAt: { $gte: sixMonthsAgo }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
-          },
-          revenue: { $sum: "$totalPrice" },
-          orders: { $sum: 1 }
-        }
-      }
-    ]);
-
-    const monthlyMap = {};
-    monthlyAgg.forEach((item) => {
-      const key = `${item._id.year}-${item._id.month}`;
-      monthlyMap[key] = item;
-    });
-
     const last6Months = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const year = d.getFullYear();
-      const month = d.getMonth() + 1;
-      const key = `${year}-${month}`;
-      const entry = monthlyMap[key] || { revenue: 0, orders: 0 };
-      const monthLabel = d.toLocaleDateString("en-PK", { month: "short", year: "2-digit" });
-      last6Months.push({ month: monthLabel, revenue: entry.revenue, orders: entry.orders });
+      const start = new Date(d.getFullYear(), d.getMonth(), 1);
+      const end   = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+
+      const monthOrders = await Order.find({
+        orderStatus: "delivered",
+        createdAt: { $gte: start, $lte: end },
+      }).lean();
+
+      const monthRevenue = monthOrders.reduce((s, o) => s + (o.totalPrice || 0), 0);
+      const monthLabel   = start.toLocaleDateString("en-PK", { month: "short", year: "2-digit" });
+      last6Months.push({ month: monthLabel, revenue: monthRevenue, orders: monthOrders.length });
     }
 
     // ── Top 5 selling products ──
-    const topProducts = await Order.aggregate([
-      { $match: { orderStatus: "delivered" } },
-      { $unwind: "$orderItems" },
-      {
-        $group: {
-          _id: "$orderItems.product",
-          name: { $first: "$orderItems.name" },
-          qty: { $sum: "$orderItems.quantity" },
-          revenue: { $sum: { $multiply: ["$orderItems.price", "$orderItems.quantity"] } }
-        }
-      },
-      { $sort: { revenue: -1 } },
-      { $limit: 5 }
-    ]);
-
-    const formattedTopProducts = topProducts.map((p) => ({
-      id: String(p._id),
-      name: p.name,
-      qty: p.qty,
-      revenue: p.revenue
-    }));
+    const allDelivered = await Order.find({ orderStatus: "delivered" }, "orderItems").lean();
+    const productMap   = {};
+    allDelivered.forEach((order) => {
+      order.orderItems?.forEach((item) => {
+        const key = String(item.product);
+        if (!productMap[key]) productMap[key] = { name: item.name, qty: 0, revenue: 0 };
+        productMap[key].qty     += item.quantity;
+        productMap[key].revenue += item.price * item.quantity;
+      });
+    });
+    const topProducts = Object.entries(productMap)
+      .map(([id, data]) => ({ id, ...data }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
 
     // ── Today's stats ──
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
     const todayEnd   = new Date(); todayEnd.setHours(23, 59, 59, 999);
     const [todayOrders, todayDelivered] = await Promise.all([
       Order.countDocuments({ createdAt: { $gte: todayStart, $lte: todayEnd } }),
-      Order.find({ orderStatus: "delivered", deliveredAt: { $gte: todayStart, $lte: todayEnd } }).select("totalPrice").lean(),
+      Order.find({ orderStatus: "delivered", deliveredAt: { $gte: todayStart, $lte: todayEnd } }),
     ]);
     const todayRevenue = todayDelivered.reduce((s, o) => s + (o.totalPrice || 0), 0);
 
@@ -167,7 +127,7 @@ export const getAdvancedStats = async (req, res) => {
     const thisMonthOrders = await Order.find({
       orderStatus: "delivered",
       createdAt: { $gte: monthStart },
-    }).select("totalPrice").lean();
+    }).lean();
     const thisMonthRevenue = thisMonthOrders.reduce((s, o) => s + (o.totalPrice || 0), 0);
 
     // ── Total counts ──
@@ -192,23 +152,14 @@ export const getAdvancedStats = async (req, res) => {
     ]);
 
     // ── Low stock count ──
-    const [lowStockCount, outOfStockCount] = await Promise.all([
-      Product.countDocuments({ stock: { $gte: 0, $lte: 5 } }),
-      Product.countDocuments({ stock: 0 }),
-    ]);
+    const allProducts = await Product.find({}, "stock").lean();
+    const lowStockCount = allProducts.filter((p) => p.stock >= 0 && p.stock <= 5).length;
+    const outOfStockCount = allProducts.filter((p) => p.stock === 0).length;
 
     // ── Avg order value (delivered only) ──
-    const deliveredStats = await Order.aggregate([
-      { $match: { orderStatus: "delivered" } },
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: "$totalPrice" }
-        }
-      }
-    ]);
-    const totalRevenue = deliveredStats[0]?.totalRevenue || 0;
-    const avgOrderValue = delivered > 0 ? Math.round(totalRevenue / delivered) : 0;
+    const avgOrderValue = delivered > 0
+      ? Math.round(allDelivered.reduce((s, o) => s + (o.totalPrice || 0), 0) / delivered)
+      : 0;
 
     // ── Last 30 days revenue via aggregation (single query) ──
     const thirtyDaysAgo = new Date(now);
@@ -252,6 +203,7 @@ export const getAdvancedStats = async (req, res) => {
       last30Days.push({ date: label, orders: entry.orders, revenue: entry.revenue });
     }
 
+    const totalRevenue = allDelivered.reduce((s, o) => s + (o.totalPrice || 0), 0);
     const conversionRate = totalOrders > 0
       ? Math.round((delivered / totalOrders) * 100) : 0;
     const cancelRate = totalOrders > 0
@@ -278,7 +230,7 @@ export const getAdvancedStats = async (req, res) => {
         last7Days: last7,
         last6Months,
         last30Days,
-        topProducts: formattedTopProducts,
+        topProducts,
       },
     });
   } catch (error) {
@@ -341,30 +293,10 @@ export const getProfitAnalytics = async (req, res) => {
       };
     });
 
-    // 2. Fetch all orders with query projections to minimize memory payload
-    const orders = await Order.find({}, "orderItems totalPrice orderStatus paymentMethod paymentStatus createdAt").lean();
+    // 2. Fetch all orders (lean, for processing)
+    const orders = await Order.find().sort({ createdAt: -1 }).lean();
 
-    // 3. Pre-calculate sales metrics per product across all delivered orders to avoid O(N * M) loops
-    const salesMap = {};
-    orders.forEach((o) => {
-      if (o.orderStatus === "delivered") {
-        o.orderItems?.forEach((item) => {
-          if (!item.product) return;
-          const pId = item.product.toString();
-          if (!salesMap[pId]) {
-            salesMap[pId] = { qtySold: 0, revenueGenerated: 0, profitGenerated: 0 };
-          }
-          salesMap[pId].qtySold += item.quantity;
-          salesMap[pId].revenueGenerated += item.price * item.quantity;
-          
-          const totalCost = productMap[pId]?.totalCost || 0;
-          const uCost = (item.unitCost !== undefined && item.unitCost > 0) ? item.unitCost : totalCost;
-          salesMap[pId].profitGenerated += (item.price - uCost) * item.quantity;
-        });
-      }
-    });
-
-    // 4. Overall Totals
+    // 3. Overall Totals
     let totalRevenue = 0;
     let totalProfit = 0;
     let codPendingAmount = 0;
@@ -374,6 +306,7 @@ export const getProfitAnalytics = async (req, res) => {
       // Calculate order costs & profits
       let orderCost = 0;
       order.orderItems?.forEach((item) => {
+        // Fallback: use snapshotted unitCost if available, else look up current product cost
         const uCost =
           item.unitCost !== undefined && item.unitCost > 0
             ? item.unitCost
@@ -396,7 +329,7 @@ export const getProfitAnalytics = async (req, res) => {
       }
     });
 
-    // 5. Monthly Profit & Sales Trend (Last 6 Months)
+    // 4. Monthly Profit & Sales Trend (Last 6 Months)
     const now = new Date();
     const last6Months = [];
     for (let i = 5; i >= 0; i--) {
@@ -432,7 +365,7 @@ export const getProfitAnalytics = async (req, res) => {
       });
     }
 
-    // 6. Business Goal Status
+    // 5. Business Goal Status
     let goal = await BusinessGoal.findOne();
     if (!goal) {
       goal = await BusinessGoal.create({
@@ -468,7 +401,7 @@ export const getProfitAnalytics = async (req, res) => {
     const remainingProfit = Math.max(0, goal.targetProfit - goalProfit);
     const monthlyRequiredProfit = remainingMonths > 0 ? Math.round(remainingProfit / remainingMonths) : remainingProfit;
 
-    // 7. Return & Loss Tracking
+    // 6. Return & Loss Tracking
     const cancelledOrders = orders.filter((o) => o.orderStatus === "cancelled");
     const cancelledCount = cancelledOrders.length;
     const lostRevenue = cancelledOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
@@ -483,10 +416,17 @@ export const getProfitAnalytics = async (req, res) => {
       });
     });
 
-    // 8. Product Performance Analytics (optimized lookup)
+    // 7. Product Performance Analytics
     const productStats = products.map((p) => {
       const pId = p._id.toString();
-      const totalCost = productMap[pId]?.totalCost || 0;
+      const totalCost =
+        (p.fabricCost || 0) +
+        (p.printingCost || 0) +
+        (p.packagingCost || 0) +
+        (p.brandingCost || 0) +
+        (p.deliveryCost || 0) +
+        (p.adsCost || 0) +
+        (p.miscCost || 0);
 
       const sellingPrice = p.price || 0;
       const unitProfit = sellingPrice - totalCost;
@@ -497,7 +437,23 @@ export const getProfitAnalytics = async (req, res) => {
       if (marginPct >= 30) marginStatus = "Green";
       else if (marginPct >= 10) marginStatus = "Yellow";
 
-      const sales = salesMap[pId] || { qtySold: 0, revenueGenerated: 0, profitGenerated: 0 };
+      let qtySold = 0;
+      let revenueGenerated = 0;
+      let profitGenerated = 0;
+
+      orders.forEach((o) => {
+        if (o.orderStatus === "delivered") {
+          o.orderItems?.forEach((item) => {
+            if (item.product?.toString() === pId) {
+              qtySold += item.quantity;
+              revenueGenerated += item.price * item.quantity;
+              const uCost =
+                item.unitCost !== undefined && item.unitCost > 0 ? item.unitCost : totalCost;
+              profitGenerated += (item.price - uCost) * item.quantity;
+            }
+          });
+        }
+      });
 
       return {
         _id: p._id,
@@ -517,9 +473,9 @@ export const getProfitAnalytics = async (req, res) => {
         marginPct,
         roiPct,
         marginStatus,
-        qtySold: sales.qtySold,
-        revenueGenerated: sales.revenueGenerated,
-        profitGenerated: sales.profitGenerated,
+        qtySold,
+        revenueGenerated,
+        profitGenerated,
       };
     });
 
