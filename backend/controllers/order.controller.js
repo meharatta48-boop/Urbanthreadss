@@ -391,3 +391,83 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+/* ─── ADMIN — UPDATE ORDER TRACKING ─── */
+export const updateOrderTracking = async (req, res) => {
+  try {
+    const { trackingNumber, courierPartner } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    if (trackingNumber !== undefined) order.trackingNumber = trackingNumber;
+    if (courierPartner !== undefined) order.courierPartner = courierPartner;
+
+    await order.save();
+    res.json({ success: true, message: "Tracking details updated", order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ─── USER/ADMIN — REQUEST ORDER RETURN ─── */
+export const requestOrderReturn = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    order.returnStatus = "requested";
+    order.returnReason = reason || "No reason specified";
+
+    await order.save();
+    res.json({ success: true, message: "Return requested successfully", order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ─── ADMIN — UPDATE RETURN STATUS ─── */
+export const updateReturnStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    order.returnStatus = status;
+
+    // Restore stock if returned
+    if (status === "received" || status === "approved") {
+      for (const item of order.orderItems) {
+        await Product.findByIdAndUpdate(item.product, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+
+    await order.save();
+    res.json({ success: true, message: "Return status updated", order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ─── ADMIN — PROCESS ORDER REFUND ─── */
+export const processOrderRefund = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    order.refundAmount = Number(amount) || 0;
+    order.returnStatus = "refunded";
+
+    // Adjust netProfit
+    order.netProfit = (order.totalPrice - order.refundAmount) - order.totalCost;
+
+    await order.save();
+    res.json({ success: true, message: "Refund processed successfully", order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+

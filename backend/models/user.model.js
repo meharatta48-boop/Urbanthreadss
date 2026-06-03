@@ -35,6 +35,23 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    phone: {
+      type: String,
+      default: "",
+    },
+    loyaltyPoints: {
+      type: Number,
+      default: 0,
+    },
+    storeCredit: {
+      type: Number,
+      default: 0,
+    },
+    customerSegment: {
+      type: String,
+      enum: ["new", "regular", "vip"],
+      default: "new",
+    },
     passwordResetTokenHash: {
       type: String,
       default: null,

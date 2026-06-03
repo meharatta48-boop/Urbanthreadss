@@ -73,6 +73,13 @@ const Users = lazyWithRetry(() => import("./admin/user/User"));
 const OrderList = lazyWithRetry(() => import("./admin/orders/OrderList"));
 const SiteSettingsPage = lazyWithRetry(() => import("./admin/settings/SiteSettings"));
 const Analytics = lazyWithRetry(() => import("./admin/analytics/Analytics"));
+const MarketingCenter = lazyWithRetry(() => import("./admin/marketing/MarketingCenter"));
+const ContentManager = lazyWithRetry(() => import("./admin/content/ContentManager"));
+const AiTools = lazyWithRetry(() => import("./admin/ai/AiTools"));
+const SeoCenter = lazyWithRetry(() => import("./admin/seo/SeoCenter"));
+const AutomationCenter = lazyWithRetry(() => import("./admin/automations/AutomationCenter"));
+const FinanceCenter = lazyWithRetry(() => import("./admin/finance/FinanceCenter"));
+const SecurityCenter = lazyWithRetry(() => import("./admin/security/SecurityCenter"));
 
 import { registerImageCache } from "./utils/imageCache";
 import { keepAliveManager } from "./utils/keepAlive";
@@ -277,6 +284,13 @@ export default function App() {
               <Route path="users" element={<Users />} />
               <Route path="settings" element={<SiteSettingsPage />} />
               <Route path="analytics" element={<Analytics />} />
+              <Route path="marketing" element={<MarketingCenter />} />
+              <Route path="content" element={<ContentManager />} />
+              <Route path="ai-tools" element={<AiTools />} />
+              <Route path="seo" element={<SeoCenter />} />
+              <Route path="automations" element={<AutomationCenter />} />
+              <Route path="finance" element={<FinanceCenter />} />
+              <Route path="security" element={<SecurityCenter />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

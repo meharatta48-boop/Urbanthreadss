@@ -24,6 +24,11 @@ import customPageRoutes from "./routes/customPage.routes.js";
 import seoRoutes from "./routes/seo.routes.js";
 import metaRoutes from "./routes/meta.routes.js";
 import comboRoutes from "./routes/comboOffer.routes.js";
+import blogRoutes from "./routes/blog.routes.js";
+import faqRoutes from "./routes/faq.routes.js";
+import couponRoutes from "./routes/coupon.routes.js";
+import expenseRoutes from "./routes/expense.routes.js";
+import activityLogRoutes from "./routes/activityLog.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -99,6 +104,11 @@ app.use("/api/pages", customPageRoutes);
 app.use("/api/seo", seoRoutes);
 app.use("/api/meta", metaRoutes);
 app.use("/api/combos", comboRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/faqs", faqRoutes);
+app.use("/api/coupons", couponRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/activity-logs", activityLogRoutes);
 
 // Serve static files from frontend build if available
 const frontendPath = path.join(__dirname, "../frontend/dist");

@@ -8,6 +8,7 @@ import {
   updateUserRole,
   toggleUserStatus,
   deleteUser,
+  updateUserProfile,
 } from "../controllers/auth.controller.js";
 import protect from "../middleware/auth.middleware.js";
 import adminOnly from "../middleware/admin.middleware.js";
@@ -37,5 +38,7 @@ router.put("/users/:userId/role", protect, adminOnly, updateUserRole);
 router.put("/users/:userId/status", protect, adminOnly, toggleUserStatus);
 // DELETE /api/auth/users/:userId — admin only
 router.delete("/users/:userId", protect, adminOnly, deleteUser);
+// PUT /api/auth/users/:userId/profile — admin only (loyalty, credit, segment, phone)
+router.put("/users/:userId/profile", protect, adminOnly, updateUserProfile);
 
 export default router;

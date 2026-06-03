@@ -3,6 +3,7 @@ import {
   createOrder, getMyOrders, getOrderById,
   getAllOrders, markOrderPaid, updateOrderStatus,
   bulkUpdateStatus, deleteOrder,
+  updateOrderTracking, requestOrderReturn, updateReturnStatus, processOrderRefund,
 } from "../controllers/order.controller.js";
 
 import protect from "../middleware/auth.middleware.js";
@@ -38,7 +39,13 @@ router.get("/",              protect, adminOnly, orderPaginationValidation, vali
 router.put("/bulk-status",   protect, adminOnly, bulkUpdateStatus);
 router.put("/:id/pay",       protect, adminOnly, orderIdParamValidation, validateRequest, markOrderPaid);
 router.put("/:id/status",    protect, adminOnly, updateOrderStatusValidation, validateRequest, updateOrderStatus);
+router.put("/:id/tracking",  protect, adminOnly, updateOrderTracking);
+router.put("/:id/return",    protect, adminOnly, updateReturnStatus);
+router.put("/:id/refund",    protect, adminOnly, processOrderRefund);
 router.delete("/:id",        protect, orderIdParamValidation, validateRequest, deleteOrder);
+
+/* ── USER ROUTES ── */
+router.post("/:id/return",   protect, requestOrderReturn);
 
 /* ── USER ROUTES ── */
 router.post("/",      optionalAuth, createOrderValidation, validateRequest, createOrder);

@@ -64,6 +64,15 @@ const orderSchema = new mongoose.Schema(
     paidAt:       { type: Date },
     deliveredAt:  { type: Date },
     note:         { type: String, default: "" },
+    returnStatus: {
+      type: String,
+      enum: ["none", "requested", "approved", "rejected", "received", "refunded"],
+      default: "none",
+    },
+    returnReason: { type: String, default: "" },
+    refundAmount: { type: Number, default: 0 },
+    trackingNumber: { type: String, default: "" },
+    courierPartner: { type: String, default: "" },
   },
   { timestamps: true }
 );
