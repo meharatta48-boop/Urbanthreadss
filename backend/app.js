@@ -136,6 +136,7 @@ if (fs.existsSync(frontendPath)) {
     if (req.path.startsWith("/api") || req.path.includes(".") || req.path.startsWith("/assets")) {
       return next();
     }
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }

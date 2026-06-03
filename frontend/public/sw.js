@@ -3,10 +3,10 @@
  * Handles offline caching, push notifications, and advanced PWA features
  */
 
-const CACHE_NAME = 'urban-thread-images-v2';
-const ASSETS_CACHE = 'urban-thread-assets-v2';
-const DYNAMIC_CACHE = 'urban-thread-dynamic-v2';
-const OFFLINE_CACHE = 'urban-thread-offline-v2';
+const CACHE_NAME = 'urban-thread-images-v3';
+const ASSETS_CACHE = 'urban-thread-assets-v3';
+const DYNAMIC_CACHE = 'urban-thread-dynamic-v3';
+const OFFLINE_CACHE = 'urban-thread-offline-v3';
 const NETWORK_TIMEOUT = 10000; // API Timeout
 const NAV_TIMEOUT = 3000; // Navigation Timeout for faster shell loading
 const MAX_CACHE_ITEMS = 50;
@@ -333,9 +333,18 @@ async function handleGeneralRequest(request) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse && networkResponse.status === 200) {
-      const cache = await caches.open(DYNAMIC_CACHE);
-      await cache.put(request, networkResponse.clone());
-      limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS);
+      // Exclude HTML files, root, and document responses from dynamic cache to prevent stale HTML caching
+      const url = new URL(request.url);
+      const isHtml = request.destination === 'document' ||
+                     url.pathname === '/' ||
+                     url.pathname.endsWith('.html') ||
+                     networkResponse.headers.get('content-type')?.includes('text/html');
+
+      if (!isHtml) {
+        const cache = await caches.open(DYNAMIC_CACHE);
+        await cache.put(request, networkResponse.clone());
+        limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS);
+      }
     }
     return networkResponse;
   } catch (error) {
