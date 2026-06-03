@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiShoppingCart, FiHeart, FiZoomIn, FiMinus, FiPlus, FiCheck } from 'react-icons/fi';
 import LazyImage from './LazyImage';
-import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { getThumbnailUrl, getProductImageUrl } from '../utils/cloudinaryOptimized';
 import { toast } from 'react-toastify';
 
