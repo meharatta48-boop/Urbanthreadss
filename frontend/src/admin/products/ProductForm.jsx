@@ -542,29 +542,9 @@ export default function ProductForm() {
 
             {/* DESCRIPTION */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs text-(--text-muted) uppercase tracking-wider">
-                  Description
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!form.name.trim()) {
-                      toast.warning("Pehle product name likhein!");
-                      return;
-                    }
-                    toast.info("AI Description generate ho rahi hai...");
-                    setTimeout(() => {
-                      const desc = `Introducing the **${form.name}** — a premium dropshift design engineered for the urban landscape. Crafted from high-density, 100% breathable terry cotton, this piece blends supreme comfort with an edgy, structured silhouette. Features durable double-needle stitching, ribbed trims, and a relaxed modern fit built to last. Designed in Pakistan for fashion forward statement.`;
-                      setForm((prev) => ({ ...prev, description: desc }));
-                      toast.success("AI description generate ho gayi! 🎉");
-                    }, 1000);
-                  }}
-                  className="text-[10px] font-bold text-(--gold) border border-(--gold)/30 bg-(--gold)/5 px-2 py-0.5 rounded-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 cursor-pointer"
-                >
-                  ✨ AI Generate Description
-                </button>
-              </div>
+              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
+                Description
+              </label>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}

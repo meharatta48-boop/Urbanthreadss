@@ -135,18 +135,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(new Date());
   const [timeRange, setTimeRange] = useState("7d"); // Custom State for filter analytics visually
-  const [liveVisitors, setLiveVisitors] = useState(17);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setLiveVisitors((prev) => {
-        const change = Math.random() > 0.5 ? 1 : -1;
-        const next = prev + change;
-        return next < 5 ? 5 : next > 35 ? 35 : next;
-      });
-    }, 4500);
-    return () => clearInterval(id);
-  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -250,15 +238,9 @@ export default function Dashboard() {
           <h2 className="font-display text-2xl sm:text-3xl font-black text-(--text-primary) tracking-tight">
             {user?.name?.split(" ")[0] || "Admin"} Dashboard
           </h2>
-          <p className="text-(--text-muted) text-[11px] mt-1 flex items-center gap-3 font-mono flex-wrap">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Last updated: {refresh.toLocaleTimeString("en-PK")}
-            </span>
-            <span className="flex items-center gap-1.5 text-purple-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-              Live Visitors: {liveVisitors} active
-            </span>
+          <p className="text-(--text-muted) text-[11px] mt-1 flex items-center gap-1.5 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Last updated: {refresh.toLocaleTimeString("en-PK")}
           </p>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
@@ -413,35 +395,6 @@ export default function Dashboard() {
           <BarChart data={data.last6Months} valueKey="revenue" labelKey="month" color="#818cf8" />
         </div>
       )}
-
-      {/* REAL-TIME CONVERSION FUNNEL & LIVE TRACKER */}
-      <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm space-y-4">
-        <div className="flex justify-between items-center border-b border-(--border)/50 pb-3">
-          <h3 className="text-(--text-primary) font-bold text-sm flex items-center gap-2">
-            <span className="text-(--gold)">⚡</span> Real-Time Conversion Funnel
-          </h3>
-          <span className="text-[10px] text-(--text-muted) font-mono">Session to Order conversion mapping</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
-          {[
-            { label: "Sessions", count: "1,240", rate: "100%" },
-            { label: "Add to Cart", count: "480", rate: "38.7%" },
-            { label: "Checkout Reach", count: "210", rate: "16.9%" },
-            { label: "Purchases", count: `${data?.totalOrders || 0}`, rate: `${data ? ((data.ordersByStatus?.delivered / data.totalOrders) * 100).toFixed(1) : 0}%` }
-          ].map((step, idx) => (
-            <div key={idx} className="p-4 rounded-xl bg-(--bg-elevated) border border-(--border) space-y-1 relative">
-              <p className="text-(--text-muted) text-[10px] uppercase tracking-wider">{step.label}</p>
-              <p className="text-xl font-bold font-mono text-(--text-primary)">{step.count}</p>
-              <p className="text-[10px] text-(--gold) font-semibold">Rate: {step.rate}</p>
-              {idx < 3 && (
-                <div className="hidden sm:block absolute top-1/2 -right-3 -translate-y-1/2 text-(--text-muted) z-10 text-lg">
-                  →
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* BOTTOM ACTIONABLE TABLES ROW */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
