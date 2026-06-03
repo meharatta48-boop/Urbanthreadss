@@ -132,7 +132,10 @@ if (fs.existsSync(frontendPath)) {
   }));
 
   // SPA fallback - serve index.html for all non-API routes
-  app.get("*", (req, res) => {
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path.includes(".") || req.path.startsWith("/assets")) {
+      return next();
+    }
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }

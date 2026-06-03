@@ -154,7 +154,9 @@ self.addEventListener('fetch', (event) => {
   // 1. Google Fonts Fix (Opaque responses bypass)
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
-      caches.match(request).then((cached) => cached || fetch(request))
+      caches.match(request)
+        .then((cached) => cached || fetch(request))
+        .catch(() => new Response('Offline', { status: 503 }))
     );
     return;
   }
@@ -214,7 +216,22 @@ async function handleImageRequest(request) {
     return networkResponse;
   } catch (error) {
     console.log('[SW] Image request failed, trying cache:', error);
-    return caches.match(request) || new Response('Image not available offline', { status: 404 });
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    // Return a transparent 1x1 pixel image or a basic Response to avoid TypeError
+    return new Response(
+      new Uint8Array([
+        0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+        0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+        0x08, 0x06, 0x00, 0x00, 0x00, 0x1f, 0x15, 0xc4, 0x89, 0x00, 0x00, 0x00,
+        0x0d, 0x49, 0x44, 0x41, 0x54, 0x18, 0x57, 0x63, 0x60, 0x60, 0x60, 0x60,
+        0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x57, 0x21, 0xf5, 0xa1, 0x00, 0x00,
+        0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82
+      ]),
+      { headers: { 'Content-Type': 'image/png' } }
+    );
   }
 }
 
@@ -276,7 +293,36 @@ async function handleNavigationRequest(request) {
     throw new Error('Network response not ok');
   } catch {
     // Only fall back to offline page if network completely fails
-    return caches.match('/offline');
+    const offlineCached = await caches.match('/offline');
+    if (offlineCached) {
+      return offlineCached;
+    }
+    return new Response(
+      `<!DOCTYPE html>
+       <html>
+         <head>
+           <title>Offline</title>
+           <meta charset="utf-8">
+           <meta name="viewport" content="width=device-width, initial-scale=1">
+           <style>
+             body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f8f9fa; color: #333; text-align: center; }
+             .container { max-width: 400px; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+             h1 { color: #c9a84c; margin-top: 0; }
+           </style>
+         </head>
+         <body>
+           <div class="container">
+             <h1>You're Offline</h1>
+             <p>It looks like you've lost your internet connection and the cached offline page is not available.</p>
+             <button onclick="window.location.reload()" style="background:#c9a84c;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;">Try Again</button>
+           </div>
+         </body>
+       </html>`,
+      {
+        status: 503,
+        headers: { 'Content-Type': 'text/html' }
+      }
+    );
   }
 }
 
@@ -292,8 +338,9 @@ async function handleGeneralRequest(request) {
       limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS);
     }
     return networkResponse;
-  } catch {
-    return null;
+  } catch (error) {
+    console.warn('[SW] General request failed:', error);
+    return new Response('Network error', { status: 503, statusText: 'Service Unavailable' });
   }
 }
 
