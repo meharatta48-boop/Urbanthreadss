@@ -19,6 +19,13 @@ const titleMap = {
   "/admin-dashboard/users": "Users",
   "/admin-dashboard/settings": "Site Settings",
   "/admin-dashboard/analytics": "Analytics",
+  "/admin-dashboard/marketing": "Marketing Center",
+  "/admin-dashboard/content": "Content Management",
+  "/admin-dashboard/ai-tools": "AI Co-Pilot Tools",
+  "/admin-dashboard/seo": "SEO Center",
+  "/admin-dashboard/automations": "Automation Center",
+  "/admin-dashboard/finance": "Finance Center",
+  "/admin-dashboard/security": "Security Center",
 };
 
 const iconMap = {
@@ -31,6 +38,13 @@ const iconMap = {
   "/admin-dashboard/users": "👥",
   "/admin-dashboard/settings": "⚙️",
   "/admin-dashboard/analytics": "📊",
+  "/admin-dashboard/marketing": "🎫",
+  "/admin-dashboard/content": "📝",
+  "/admin-dashboard/ai-tools": "🤖",
+  "/admin-dashboard/seo": "🔍",
+  "/admin-dashboard/automations": "⚡",
+  "/admin-dashboard/finance": "💵",
+  "/admin-dashboard/security": "🛡️",
 };
 
 const quickLinks = [
@@ -43,6 +57,13 @@ const quickLinks = [
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", keywords: "subcategory men women kids" },
   { label: "Users",          to: "/admin-dashboard/users",         keywords: "customers users accounts" },
   { label: "Site Settings",  to: "/admin-dashboard/settings",      keywords: "settings design seo popup config" },
+  { label: "Marketing",      to: "/admin-dashboard/marketing",     keywords: "coupons discount sale campaigns" },
+  { label: "Content Hub",    to: "/admin-dashboard/content",       keywords: "blog articles faqs media photos" },
+  { label: "AI Co-Pilot",    to: "/admin-dashboard/ai-tools",      keywords: "ai product descriptions content write" },
+  { label: "SEO Center",     to: "/admin-dashboard/seo",           keywords: "seo keywords sitemap robots index tags" },
+  { label: "Automations",    to: "/admin-dashboard/automations",   keywords: "automation emails whatsapp sms alerts triggers" },
+  { label: "Finance Hub",    to: "/admin-dashboard/finance",       keywords: "profit loss expenses tax calculations ledger" },
+  { label: "Security Hub",   to: "/admin-dashboard/security",      keywords: "security roles login password backups history logs" },
 ];
 
 export default function AdminLayout() {

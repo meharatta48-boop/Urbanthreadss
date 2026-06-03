@@ -7,7 +7,8 @@ import {
   FiRefreshCw, FiPhone, FiMail, FiMapPin, FiSearch,
   FiChevronDown, FiChevronUp, FiPackage, FiUser,
   FiTrash2, FiMessageCircle, FiPrinter, FiCheckSquare,
-  FiSquare
+  FiSquare, FiTruck, FiRotateCcw, FiDollarSign, FiSave,
+  FiAlertTriangle, FiCheckCircle, FiXCircle, FiTag
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
 import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
@@ -212,6 +213,78 @@ function printInvoice(order) {
   win.document.close();
 }
 
+function printShippingLabel(order) {
+  const name = getName(order);
+  const phone = getPhone(order);
+  const addr = order.shippingAddress;
+  const invoiceNo = order._id.slice(-10).toUpperCase();
+  const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", {
+    day: "numeric", month: "short", year: "numeric"
+  });
+
+  const win = window.open("", "_blank", "width=600,height=400");
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Shipping Label #${invoiceNo}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Courier New', monospace; font-size: 12px; color: #000; padding: 20px; background: #fff; }
+    .label-box { border: 3px solid #000; padding: 15px; max-width: 450px; margin: auto; }
+    .header { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 18px; font-weight: bold; }
+    .cod-badge { border: 2px solid #000; padding: 4px 8px; font-weight: bold; font-size: 16px; }
+    .meta-row { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding: 6px 0; }
+    .address-section { margin-top: 10px; padding: 10px 0; border-bottom: 1px solid #000; }
+    .barcode { text-align: center; margin: 15px 0; font-size: 20px; letter-spacing: 5px; font-weight: bold; }
+    .footer { text-align: center; font-size: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="label-box">
+    <div class="header">
+      <div class="brand">URBAN THREADS</div>
+      <div class="cod-badge">${order.paymentMethod === "COD" ? "COD" : "PAID"}</div>
+    </div>
+    <div class="meta-row">
+      <span>Order: #${invoiceNo}</span>
+      <span>Date: ${orderDate}</span>
+    </div>
+    <div class="meta-row">
+      <span>Weight: 0.5 Kg</span>
+      <span>Amount: Rs. ${order.totalPrice.toLocaleString()}</span>
+    </div>
+    <div class="address-section">
+      <p style="font-weight: bold; font-size: 14px;">SHIP TO:</p>
+      <p style="margin-top: 5px; font-size: 13px;"><strong>${addr?.fullName || name}</strong></p>
+      <p style="margin-top: 3px;">${addr?.address || "N/A"}</p>
+      <p>${addr?.city || "Pakistan"}</p>
+      <p>Phone: ${phone || "N/A"}</p>
+    </div>
+    <div class="barcode">
+      ||||| | ||| |||| | ||
+      <p style="font-size: 10px; letter-spacing: normal; margin-top: 5px;">*${order._id.slice(-12).toUpperCase()}*</p>
+    </div>
+    <div class="footer">
+      <p>Thank you for shopping with us! Standard delivery rules apply.</p>
+    </div>
+  </div>
+</body>
+</html>`);
+  win.document.close();
+}
+
+const RETURN_STATUS_OPTIONS = ["requested", "approved", "rejected", "received", "refunded"];
+const RETURN_STATUS_STYLE = {
+  requested: { bg: "rgba(245,158,11,0.1)",  border: "rgba(245,158,11,0.2)",  text: "#f59e0b" },
+  approved:  { bg: "rgba(74,222,128,0.1)",  border: "rgba(74,222,128,0.2)",  text: "#4ade80" },
+  rejected:  { bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.2)", text: "#f87171" },
+  received:  { bg: "rgba(129,140,248,0.1)", border: "rgba(129,140,248,0.2)", text: "#818cf8" },
+  refunded:  { bg: "rgba(201,168,76,0.1)",  border: "rgba(201,168,76,0.2)",  text: "#c9a84c" },
+};
+const COURIERS = ["TCS", "Leopards", "Rider", "Pakistan Post", "M&P", "Swyft", "BlueEx", "FedEx", "DHL", "Other"];
+
 export default function OrderList() {
   const { fetchSettings } = useSettings();
   const [orders, setOrders]     = useState([]);
@@ -221,6 +294,10 @@ export default function OrderList() {
   const [expanded, setExpanded] = useState(null);
   const [selected, setSelected] = useState([]);
   const [bulkStatus, setBulkStatus] = useState("processing");
+  const [trackingInputs, setTrackingInputs] = useState({});
+  const [refundInputs, setRefundInputs]     = useState({});
+  const [savingTracking, setSavingTracking] = useState(null);
+  const [savingRefund, setSavingRefund]     = useState(null);
 
   // Always fetch fresh settings so invoice fields are up-to-date
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
@@ -229,13 +306,50 @@ export default function OrderList() {
     setLoading(true);
     try {
       const { data } = await api.get("/orders");
-      if (data.success) setOrders(data.orders);
+      if (data.success) {
+        setOrders(data.orders);
+        // Pre-populate tracking inputs from existing data
+        const inputs = {};
+        data.orders.forEach(o => {
+          inputs[o._id] = {
+            trackingNumber: o.trackingNumber || "",
+            courierPartner: o.courierPartner || "",
+          };
+        });
+        setTrackingInputs(inputs);
+      }
     } catch { toast.error("Orders load error"); }
     finally { setLoading(false); }
 
   }, []);
 
   useEffect(() => { fetchOrders(); }, [fetchOrders]);
+
+  const getTrackingInput = (id) => trackingInputs[id] || { trackingNumber: "", courierPartner: "" };
+  const setTrackingField = (id, field, value) => setTrackingInputs(prev => ({
+    ...prev, [id]: { ...getTrackingInput(id), [field]: value }
+  }));
+
+  const saveTracking = async (id) => {
+    const { trackingNumber, courierPartner } = getTrackingInput(id);
+    if (!trackingNumber.trim()) return toast.warn("Enter a tracking number");
+    setSavingTracking(id);
+    try {
+      await handleUpdateTracking(id, trackingNumber.trim(), courierPartner);
+      toast.success("Tracking info saved!");
+    } finally { setSavingTracking(null); }
+  };
+
+  const saveRefund = async (id) => {
+    const amount = refundInputs[id];
+    if (!amount || isNaN(amount) || Number(amount) <= 0) return toast.warn("Enter a valid refund amount");
+    setSavingRefund(id);
+    try {
+      await handleProcessRefund(id, Number(amount));
+      toast.success(`Refund of Rs. ${Number(amount).toLocaleString()} processed!`);
+      setRefundInputs(prev => ({ ...prev, [id]: "" }));
+    } finally { setSavingRefund(null); }
+  };
 
   const updateStatus = async (id, status) => {
     try {
@@ -254,6 +368,32 @@ export default function OrderList() {
       toast.success("Order deleted");
       setOrders((prev) => prev.filter((o) => o._id !== id));
     } catch { toast.error("Delete fail"); }
+  };
+
+  const handleUpdateTracking = async (id, trackingNumber, courierPartner) => {
+    try {
+      await api.put(`/orders/${id}/tracking`, { trackingNumber, courierPartner });
+      setOrders((prev) => prev.map((o) => o._id === id ? { ...o, trackingNumber, courierPartner } : o));
+    } catch { /* silent */ }
+  };
+
+  const handleUpdateReturnStatus = async (id, status) => {
+    try {
+      const { data } = await api.put(`/orders/${id}/return`, { status });
+      if (data.success) {
+        toast.success(`Return → ${status}`);
+        setOrders((prev) => prev.map((o) => o._id === id ? { ...o, returnStatus: status } : o));
+      }
+    } catch { toast.error("Return status update failed"); }
+  };
+
+  const handleProcessRefund = async (id, amount) => {
+    try {
+      const { data } = await api.put(`/orders/${id}/refund`, { amount });
+      if (data.success) {
+        setOrders((prev) => prev.map((o) => o._id === id ? { ...o, refundAmount: Number(amount), returnStatus: "refunded" } : o));
+      }
+    } catch { toast.error("Refund failed"); }
   };
 
   const bulkUpdate = async () => {
@@ -515,10 +655,16 @@ export default function OrderList() {
                                       </span>
                                     </div>
                                   </div>
-                                  <button onClick={() => printInvoice(order)}
-                                    className="mt-4 w-full flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all">
-                                    <FiPrinter size={14} /> Print Invoice
-                                  </button>
+                                  <div className="mt-4 grid grid-cols-2 gap-2">
+                                    <button onClick={() => printInvoice(order)}
+                                      className="flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all text-sm">
+                                      <FiPrinter size={13} /> Print Invoice
+                                    </button>
+                                    <button onClick={() => printShippingLabel(order)}
+                                      className="flex items-center justify-center gap-2 bg-(--bg-elevated) hover:bg-(--border) text-(--text-primary) font-bold py-2.5 px-4 rounded-lg transition-all border border-(--border) text-sm">
+                                      <FiTruck size={13} /> Shipping Label
+                                    </button>
+                                  </div>
                                 </div>
 
                                 {/* CUSTOMER & DELIVERY INFO */}
@@ -641,6 +787,145 @@ export default function OrderList() {
                                     </div>
                                   </div>
                                 </div>
+
+                                {/* ── COURIER TRACKING PANEL ── */}
+                                <div className="bg-(--bg-surface) border border-(--border) rounded-xl p-4">
+                                  <p className="text-(--text-muted) text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5 mb-3">
+                                    <FiTruck size={11} /> Courier Tracking
+                                  </p>
+                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div>
+                                      <label className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1 block">Courier Partner</label>
+                                      <select
+                                        value={getTrackingInput(order._id).courierPartner}
+                                        onChange={e => setTrackingField(order._id, "courierPartner", e.target.value)}
+                                        className="lux-select text-sm w-full"
+                                        style={{ padding: "8px 32px 8px 12px" }}
+                                      >
+                                        <option value="">-- Select Courier --</option>
+                                        {COURIERS.map(c => <option key={c} value={c}>{c}</option>)}
+                                      </select>
+                                    </div>
+                                    <div className="sm:col-span-2">
+                                      <label className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1 block">Tracking Number</label>
+                                      <div className="flex gap-2">
+                                        <input
+                                          value={getTrackingInput(order._id).trackingNumber}
+                                          onChange={e => setTrackingField(order._id, "trackingNumber", e.target.value)}
+                                          placeholder="e.g. TCS123456789"
+                                          className="lux-input flex-1 text-sm"
+                                          style={{ padding: "9px 14px" }}
+                                        />
+                                        <button
+                                          onClick={() => saveTracking(order._id)}
+                                          disabled={savingTracking === order._id}
+                                          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-(--gold) text-black font-bold text-xs hover:opacity-90 disabled:opacity-50 transition-all shrink-0"
+                                        >
+                                          {savingTracking === order._id ? <FiRefreshCw size={12} className="animate-spin" /> : <FiSave size={12} />}
+                                          Save
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  {(order.trackingNumber || order.courierPartner) && (
+                                    <div className="mt-3 flex items-center gap-2 text-xs">
+                                      <FiTag size={11} className="text-(--gold)" />
+                                      <span className="text-(--text-muted)">Current:</span>
+                                      {order.courierPartner && <span className="text-(--text-primary) font-semibold">{order.courierPartner}</span>}
+                                      {order.trackingNumber && <span className="text-[#818cf8] font-mono">{order.trackingNumber}</span>}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* ── RETURN & REFUND PANEL ── */}
+                                <div className="bg-(--bg-surface) border border-(--border) rounded-xl p-4">
+                                  <p className="text-(--text-muted) text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5 mb-3">
+                                    <FiRotateCcw size={11} /> Return & Refund Management
+                                  </p>
+
+                                  {/* Current return status display */}
+                                  <div className="flex flex-wrap items-center gap-3 mb-4">
+                                    <div>
+                                      <p className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1">Return Status</p>
+                                      {order.returnStatus ? (
+                                        <span className="text-xs font-bold px-2.5 py-1 rounded-lg capitalize"
+                                          style={{
+                                            background: RETURN_STATUS_STYLE[order.returnStatus]?.bg || "rgba(100,100,100,0.1)",
+                                            border: `1px solid ${RETURN_STATUS_STYLE[order.returnStatus]?.border || "#666"}`,
+                                            color: RETURN_STATUS_STYLE[order.returnStatus]?.text || "#aaa"
+                                          }}>
+                                          {order.returnStatus}
+                                        </span>
+                                      ) : (
+                                        <span className="text-(--text-muted) text-xs">No return requested</span>
+                                      )}
+                                    </div>
+                                    {order.refundAmount > 0 && (
+                                      <div>
+                                        <p className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1">Refunded</p>
+                                        <span className="text-[#4ade80] font-bold text-sm">Rs. {order.refundAmount.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    {order.returnReason && (
+                                      <div className="flex-1 min-w-[200px]">
+                                        <p className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1">Return Reason</p>
+                                        <p className="text-(--text-secondary) text-xs italic">{order.returnReason}</p>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Return status update */}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1 block">Update Return Status</label>
+                                      <div className="flex gap-2">
+                                        <select
+                                          defaultValue={order.returnStatus || "requested"}
+                                          id={`return-status-${order._id}`}
+                                          className="lux-select text-sm flex-1"
+                                          style={{ padding: "8px 28px 8px 10px" }}
+                                        >
+                                          {RETURN_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                                        </select>
+                                        <button
+                                          onClick={() => {
+                                            const sel = document.getElementById(`return-status-${order._id}`);
+                                            handleUpdateReturnStatus(order._id, sel.value);
+                                          }}
+                                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/10 text-xs font-bold transition-all shrink-0"
+                                        >
+                                          <FiCheckCircle size={12} /> Apply
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    {/* Refund processing */}
+                                    <div>
+                                      <label className="text-(--text-muted) text-[10px] uppercase tracking-wider mb-1 block">Process Refund (Rs.)</label>
+                                      <div className="flex gap-2">
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          max={order.totalPrice}
+                                          value={refundInputs[order._id] || ""}
+                                          onChange={e => setRefundInputs(prev => ({ ...prev, [order._id]: e.target.value }))}
+                                          placeholder={`Max: Rs. ${order.totalPrice?.toLocaleString()}`}
+                                          className="lux-input flex-1 text-sm"
+                                          style={{ padding: "9px 14px" }}
+                                        />
+                                        <button
+                                          onClick={() => saveRefund(order._id)}
+                                          disabled={savingRefund === order._id}
+                                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#4ade80]/10 border border-[#4ade80]/30 text-[#4ade80] hover:bg-[#4ade80]/20 text-xs font-bold transition-all disabled:opacity-50 shrink-0"
+                                        >
+                                          {savingRefund === order._id ? <FiRefreshCw size={12} className="animate-spin" /> : <FiDollarSign size={12} />}
+                                          Refund
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
                               </div>
                             </td>
                           </motion.tr>

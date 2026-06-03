@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
   FiGrid, FiShoppingBag, FiPackage, FiUsers,
   FiLayers, FiTag, FiLogOut, FiChevronRight, FiSettings, FiExternalLink,
-  FiBarChart2
+  FiBarChart2, FiZap, FiBookOpen, FiGlobe, FiSmartphone, FiDollarSign, FiShield
 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
@@ -19,6 +19,13 @@ const menu = [
   { label: "Categories",     to: "/admin-dashboard/categories",    Icon: FiLayers,                 description: "Seasons & Collections" },
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", Icon: FiTag,                    description: "Product Types" },
   { label: "Users",          to: "/admin-dashboard/users",         Icon: FiUsers,                  description: "Customer Management" },
+  { label: "Marketing",      to: "/admin-dashboard/marketing",     Icon: FiTag,                    description: "Coupons & Campaigns" },
+  { label: "Content Hub",    to: "/admin-dashboard/content",       Icon: FiBookOpen,               description: "Blog, FAQs & Media" },
+  { label: "AI Co-Pilot",    to: "/admin-dashboard/ai-tools",      Icon: FiZap,                    description: "AI Description & SEO" },
+  { label: "SEO Center",     to: "/admin-dashboard/seo",           Icon: FiGlobe,                  description: "Meta tags & Sitemap" },
+  { label: "Automations",    to: "/admin-dashboard/automations",   Icon: FiSmartphone,             description: "Email & SMS Workflows" },
+  { label: "Finance Hub",    to: "/admin-dashboard/finance",       Icon: FiDollarSign,             description: "Margins & Expense Logs" },
+  { label: "Security Hub",   to: "/admin-dashboard/security",      Icon: FiShield,                 description: "Admin Roles & Logs" },
 ];
 
 export default function Sidebar() {
