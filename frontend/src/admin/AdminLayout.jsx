@@ -19,6 +19,13 @@ const titleMap = {
   "/admin-dashboard/users": "Users",
   "/admin-dashboard/settings": "Site Settings",
   "/admin-dashboard/analytics": "Analytics",
+  "/admin-dashboard/marketing": "Marketing Center",
+  "/admin-dashboard/content": "Content Manager",
+  "/admin-dashboard/ai-tools": "AI Tools",
+  "/admin-dashboard/seo": "SEO Center",
+  "/admin-dashboard/automations": "Automation Center",
+  "/admin-dashboard/finance": "Finance Center",
+  "/admin-dashboard/security": "Security Center",
 };
 
 const iconMap = {
@@ -31,6 +38,13 @@ const iconMap = {
   "/admin-dashboard/users": "👥",
   "/admin-dashboard/settings": "⚙️",
   "/admin-dashboard/analytics": "📊",
+  "/admin-dashboard/marketing": "🎫",
+  "/admin-dashboard/content": "📖",
+  "/admin-dashboard/ai-tools": "🤖",
+  "/admin-dashboard/seo": "🔍",
+  "/admin-dashboard/automations": "✉️",
+  "/admin-dashboard/finance": "📊",
+  "/admin-dashboard/security": "🛡️",
 };
 
 const quickLinks = [
@@ -43,6 +57,13 @@ const quickLinks = [
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", keywords: "subcategory men women kids" },
   { label: "Users",          to: "/admin-dashboard/users",         keywords: "customers users accounts" },
   { label: "Site Settings",  to: "/admin-dashboard/settings",      keywords: "settings design seo popup config" },
+  { label: "Marketing Center", to: "/admin-dashboard/marketing",    keywords: "marketing coupon discount flash sale shipping rules upsells" },
+  { label: "Content Manager",  to: "/admin-dashboard/content",      keywords: "content blogs faqs custom pages media library" },
+  { label: "AI Tools",         to: "/admin-dashboard/ai-tools",     keywords: "ai tools copywriting product description generator tags" },
+  { label: "SEO Center",       to: "/admin-dashboard/seo",          keywords: "seo meta title keywords sitemap robots schema markup health" },
+  { label: "Automations",      to: "/admin-dashboard/automations",  keywords: "automations emails whatsapp sms push notifications campaign" },
+  { label: "Finance Center",   to: "/admin-dashboard/finance",      keywords: "finance expense ledger tax profit loss revenue report" },
+  { label: "Security Center",  to: "/admin-dashboard/security",     keywords: "security roles admin permissions activity audit logs backups" },
 ];
 
 export default function AdminLayout() {

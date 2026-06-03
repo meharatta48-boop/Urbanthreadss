@@ -142,6 +142,9 @@ export const validateCoupon = async (req, res) => {
       discountAmount = coupon.discountValue;
     }
 
+    // ✅ Increment usageCount on successful validation
+    await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usageCount: 1 } });
+
     res.status(200).json({
       success: true,
       message: "Coupon applied successfully!",
@@ -156,3 +159,4 @@ export const validateCoupon = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to validate coupon" });
   }
 };
+

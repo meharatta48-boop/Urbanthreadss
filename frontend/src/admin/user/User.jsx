@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
 import { toast } from "react-toastify";
 
 import { FiUsers, FiUser, FiMail, FiSearch, FiRefreshCw, FiAward, FiCheck, FiSlash, FiTrash2 } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function UserList() {
   const { users: adminUsers } = useAuth();
@@ -14,6 +14,7 @@ export default function UserList() {
   const [updatingRole, setUpdatingRole] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(null);
   const [deletingUser, setDeletingUser] = useState(null);
+  const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
     setUsers(adminUsers || []);
@@ -158,91 +159,201 @@ export default function UserList() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((user, i) => (
-                  <motion.tr
-                    key={user._id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: i * 0.03 }}
-                    className="border-t border-(--border) hover:bg-(--bg-elevated)/30 transition-colors"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center text-black font-bold text-xs shrink-0">
-                          {user.name?.charAt(0)?.toUpperCase() || "?"}
-                        </div>
-                        <span className="text-(--text-primary) font-medium text-sm">{user.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2 text-(--text-secondary) text-sm">
-                        <FiMail size={13} /> {user.email}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
-                        user.role === "admin"
-                          ? "text-(--gold) bg-(--gold)/10 border border-(--gold)/20"
-                          : "text-(--text-muted) bg-(--bg-surface) border border-(--border)"
-                      }`}>
-                        {user.role || "user"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={user.isActive !== false ? "badge-delivered" : "badge-cancelled"}>
-                        {user.isActive !== false ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-(--text-muted) text-xs">
-                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-PK") : "—"}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {user.role === "user" ? (
-                          <button
-                            onClick={() => handleRoleChange(user._id, "admin")}
-                            disabled={updatingRole === user._id}
-                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/10 disabled:opacity-50 transition-all"
-                            title="Make Admin"
+                {filtered.map((user, i) => {
+                  const isOpen = expanded === user._id;
+                  return (
+                    <React.Fragment key={user._id}>
+                      <motion.tr
+                        key={user._id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: i * 0.03 }}
+                        className={`border-t border-(--border) cursor-pointer transition-colors ${isOpen ? "bg-(--bg-surface)" : "hover:bg-(--bg-elevated)/30"}`}
+                        onClick={() => setExpanded(isOpen ? null : user._id)}
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg gold-gradient flex items-center justify-center text-black font-bold text-xs shrink-0">
+                              {user.name?.charAt(0)?.toUpperCase() || "?"}
+                            </div>
+                            <div>
+                              <span className="text-(--text-primary) font-medium text-sm block">{user.name}</span>
+                              {user.customerSegment && (
+                                <span className={`text-[9px] font-bold px-1 py-0.2 rounded uppercase ${
+                                  user.customerSegment === "vip"
+                                    ? "bg-purple-500/10 text-purple-400 border border-purple-500/20"
+                                    : user.customerSegment === "regular"
+                                    ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                    : "bg-slate-500/10 text-slate-400"
+                                }`}>
+                                  {user.customerSegment}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2 text-(--text-secondary) text-sm">
+                            <FiMail size={13} /> {user.email}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                            user.role === "admin"
+                              ? "text-(--gold) bg-(--gold)/10 border border-(--gold)/20"
+                              : "text-(--text-muted) bg-(--bg-surface) border border-(--border)"
+                          }`}>
+                            {user.role || "user"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={user.isActive !== false ? "badge-delivered" : "badge-cancelled"}>
+                            {user.isActive !== false ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-(--text-muted) text-xs">
+                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-PK") : "—"}
+                        </td>
+                        <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center gap-2">
+                            {user.role === "user" ? (
+                              <button
+                                onClick={() => handleRoleChange(user._id, "admin")}
+                                disabled={updatingRole === user._id}
+                                className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--gold)/30 text-(--gold) hover:bg-(--gold)/10 disabled:opacity-50 transition-all"
+                                title="Make Admin"
+                              >
+                                <FiAward size={12} /> {updatingRole === user._id ? "..." : "Admin"}
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleRoleChange(user._id, "user")}
+                                disabled={updatingRole === user._id}
+                                className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--border) text-(--gold) hover:bg-(--gold)/5 disabled:opacity-50 transition-all"
+                                title="Remove Admin"
+                              >
+                                <FiCheck size={12} /> {updatingRole === user._id ? "..." : "User"}
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => handleStatusToggle(user._id, user.isActive !== false)}
+                              disabled={updatingStatus === user._id}
+                              className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+                                user.isActive !== false 
+                                  ? "border-red-500/30 text-red-400 hover:bg-red-500/10" 
+                                  : "border-green-500/30 text-green-400 hover:bg-green-500/10"
+                              }`}
+                              title={user.isActive !== false ? "Block User" : "Unblock User"}
+                            >
+                              <FiSlash size={12} /> {updatingStatus === user._id ? "..." : (user.isActive !== false ? "Block" : "Unblock")}
+                            </button>
+
+                            <button
+                              onClick={() => handleDelete(user._id)}
+                              disabled={deletingUser === user._id}
+                              className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-all"
+                              title="Delete User"
+                            >
+                              <FiTrash2 size={12} /> {deletingUser === user._id ? "..." : "Delete"}
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+
+                      {/* EXPANDED DETAILS */}
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.tr
+                            key={`${user._id}-detail`}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-(--bg-deep)"
                           >
-                            <FiAward size={12} /> {updatingRole === user._id ? "..." : "Admin"}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => handleRoleChange(user._id, "user")}
-                            disabled={updatingRole === user._id}
-                            className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-(--border) text-(--gold) hover:bg-(--gold)/5 disabled:opacity-50 transition-all"
-                            title="Remove Admin"
-                          >
-                            <FiCheck size={12} /> {updatingRole === user._id ? "..." : "User"}
-                          </button>
+                            <td colSpan={6} className="px-6 py-4 border-t border-(--border)">
+                              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4" onClick={(e) => e.stopPropagation()}>
+                                <div>
+                                  <label className="text-[10px] text-(--text-muted) uppercase font-bold block mb-1">Loyalty Points</label>
+                                  <input
+                                    type="number"
+                                    value={user.loyaltyPoints || 0}
+                                    onChange={(e) => {
+                                      const val = Number(e.target.value) || 0;
+                                      setUsers(prev => prev.map(u => u._id === user._id ? { ...u, loyaltyPoints: val } : u));
+                                    }}
+                                    onBlur={async (e) => {
+                                      try {
+                                        await api.put(`/auth/users/${user._id}/loyalty`, { loyaltyPoints: Number(e.target.value) });
+                                        toast.success("Points updated!");
+                                      } catch { toast.error("Fail to save"); }
+                                    }}
+                                    className="lux-input text-xs w-full py-1 px-2.5"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-[10px] text-(--text-muted) uppercase font-bold block mb-1">Store Credit (Rs.)</label>
+                                  <input
+                                    type="number"
+                                    value={user.storeCredit || 0}
+                                    onChange={(e) => {
+                                      const val = Number(e.target.value) || 0;
+                                      setUsers(prev => prev.map(u => u._id === user._id ? { ...u, storeCredit: val } : u));
+                                    }}
+                                    onBlur={async (e) => {
+                                      try {
+                                        await api.put(`/auth/users/${user._id}/credit`, { storeCredit: Number(e.target.value) });
+                                        toast.success("Credits updated!");
+                                      } catch { toast.error("Fail to save"); }
+                                    }}
+                                    className="lux-input text-xs w-full py-1 px-2.5"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="text-[10px] text-(--text-muted) uppercase font-bold block mb-1">Segment</label>
+                                  <select
+                                    value={user.customerSegment || "new"}
+                                    onChange={async (e) => {
+                                      const val = e.target.value;
+                                      try {
+                                        await api.put(`/auth/users/${user._id}/segment`, { customerSegment: val });
+                                        toast.success(`Segment → ${val}`);
+                                        setUsers(prev => prev.map(u => u._id === user._id ? { ...u, customerSegment: val } : u));
+                                      } catch { toast.error("Update failed"); }
+                                    }}
+                                    className="lux-select text-xs w-full py-1 px-2.5"
+                                  >
+                                    <option value="new">New Customer</option>
+                                    <option value="regular">Regular Shopper</option>
+                                    <option value="vip">VIP Client</option>
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="text-[10px] text-(--text-muted) uppercase font-bold block mb-1">Phone Number</label>
+                                  <input
+                                    value={user.phone || ""}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      setUsers(prev => prev.map(u => u._id === user._id ? { ...u, phone: val } : u));
+                                    }}
+                                    onBlur={async (e) => {
+                                      try {
+                                        await api.put(`/auth/users/${user._id}/phone`, { phone: e.target.value });
+                                        toast.success("Phone updated!");
+                                      } catch { toast.error("Fail to save"); }
+                                    }}
+                                    className="lux-input text-xs w-full py-1 px-2.5"
+                                    placeholder="+92 3xx xxxxxxx"
+                                  />
+                                </div>
+                              </div>
+                            </td>
+                          </motion.tr>
                         )}
-
-                        <button
-                          onClick={() => handleStatusToggle(user._id, user.isActive !== false)}
-                          disabled={updatingStatus === user._id}
-                          className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
-                            user.isActive !== false 
-                              ? "border-red-500/30 text-red-400 hover:bg-red-500/10" 
-                              : "border-green-500/30 text-green-400 hover:bg-green-500/10"
-                          }`}
-                          title={user.isActive !== false ? "Block User" : "Unblock User"}
-                        >
-                          <FiSlash size={12} /> {updatingStatus === user._id ? "..." : (user.isActive !== false ? "Block" : "Unblock")}
-                        </button>
-
-                        <button
-                          onClick={() => handleDelete(user._id)}
-                          disabled={deletingUser === user._id}
-                          className="flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 disabled:opacity-50 transition-all"
-                          title="Delete User"
-                        >
-                          <FiTrash2 size={12} /> {deletingUser === user._id ? "..." : "Delete"}
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
+                      </AnimatePresence>
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

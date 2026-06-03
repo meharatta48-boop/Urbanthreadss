@@ -285,13 +285,13 @@ export const getAllOrders = async (req, res) => {
 export const markOrderPaid = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order) return sendError(res, "Order not found", 404);
     order.paymentStatus = "paid";
     order.paidAt = new Date();
     await order.save();
-    res.json({ success: true, message: "Payment marked as paid" });
+    return sendSuccess(res, { message: "Payment marked as paid", order });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, err.message);
   }
 };
 
@@ -300,7 +300,7 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order) return sendError(res, "Order not found", 404);
 
     const prevStatus = order.orderStatus;
     order.orderStatus = status;
@@ -335,9 +335,9 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await order.save();
-    res.json({ success: true, message: "Order status updated", order });
+    return sendSuccess(res, { message: "Order status updated", order });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, err.message);
   }
 };
 
@@ -346,7 +346,7 @@ export const bulkUpdateStatus = async (req, res) => {
   try {
     const { orderIds, status } = req.body;
     if (!orderIds?.length || !status) {
-      return res.status(400).json({ success: false, message: "orderIds and status required" });
+      return sendError(res, "orderIds and status required", 400);
     }
 
     await Order.updateMany(
@@ -357,9 +357,9 @@ export const bulkUpdateStatus = async (req, res) => {
       }
     );
 
-    res.json({ success: true, message: `${orderIds.length} orders updated to ${status}` });
+    return sendSuccess(res, { message: `${orderIds.length} orders updated to ${status}` });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, err.message);
   }
 };
 
@@ -367,13 +367,13 @@ export const bulkUpdateStatus = async (req, res) => {
 export const deleteOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order) return sendError(res, "Order not found", 404);
 
     const isAdmin = req.user?.role === "admin";
     const isOwner = order.user && req.user && order.user.toString() === req.user._id.toString();
 
     if (!isAdmin && !isOwner) {
-      return res.status(403).json({ success: false, message: "Access denied" });
+      return sendError(res, "Access denied", 403);
     }
 
     // If deleting an active order, restore product stock
@@ -386,9 +386,9 @@ export const deleteOrder = async (req, res) => {
     }
 
     await order.deleteOne();
-    res.json({ success: true, message: "Order deleted" });
+    return sendSuccess(res, { message: "Order deleted" });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    return sendError(res, err.message);
   }
 };
 

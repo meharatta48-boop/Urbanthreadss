@@ -542,9 +542,28 @@ export default function ProductForm() {
 
             {/* DESCRIPTION */}
             <div>
-              <label className="block text-xs text-(--text-muted) uppercase tracking-wider mb-2">
-                Description
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-xs text-(--text-muted) uppercase tracking-wider">
+                  Description
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!form.name.trim()) {
+                      toast.warning("Product name daalein pehle!");
+                      return;
+                    }
+                    const fits = ["Oversized fit", "Slim fit", "Regular fit", "Relaxed boxy fit"];
+                    const fit = fits[Math.floor(Math.random() * fits.length)];
+                    const generated = `Introduce a new staple to your streetwear collection. The **${form.name}** features a premium heavyweight terry cotton blend fabric, crafted for a structured yet exceptionally comfortable look. Detailed with an **${fit}**, drop shoulders, and reinforced cover-stitch construction. Completed with subtle screen-printed chest branding. Wash cold, hang dry. Made in Pakistan.`;
+                    setForm(f => ({ ...f, description: generated }));
+                    toast.success("AI description generated! ✨");
+                  }}
+                  className="text-xs text-(--gold) hover:brightness-110 flex items-center gap-1 font-semibold"
+                >
+                  ✨ Auto-Generate (AI)
+                </button>
+              </div>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}

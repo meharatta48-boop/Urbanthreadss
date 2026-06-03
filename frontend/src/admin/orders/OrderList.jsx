@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import api, { SERVER_URL } from "../../services/api";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
@@ -212,6 +212,71 @@ function printInvoice(order) {
   win.document.close();
 }
 
+function printShippingLabel(order) {
+  const name = getName(order);
+  const phone = getPhone(order);
+  const addr = order.shippingAddress;
+  const orderNo = order._id.slice(-10).toUpperCase();
+  const dateStr = new Date(order.createdAt).toLocaleDateString("en-PK");
+
+  const win = window.open("", "_blank", "width=600,height=400");
+  win.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Shipping Label #${orderNo}</title>
+  <style>
+    body { font-family: monospace; font-size: 14px; margin: 20px; color: #000; }
+    .label-box { border: 4px solid #000; padding: 15px; max-width: 450px; margin: 0 auto; }
+    .title { font-size: 20px; font-weight: bold; text-align: center; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+    .section { border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+    .label { font-weight: bold; font-size: 11px; text-transform: uppercase; color: #555; }
+    .val { font-size: 16px; margin-top: 3px; }
+    .row { display: flex; justify-content: space-between; }
+    .barcode { font-size: 24px; letter-spacing: 5px; text-align: center; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="label-box">
+    <div class="title">URBAN THREADS SHIPMENT</div>
+    <div class="section">
+      <div class="label">TO:</div>
+      <div class="val"><strong>${addr?.fullName || name}</strong></div>
+      <div class="val">${addr?.address || "N/A"}</div>
+      <div class="val">${addr?.city || "N/A"}, Pakistan</div>
+    </div>
+    <div class="section">
+      <div class="row">
+        <div>
+          <div class="label">ORDER NUMBER</div>
+          <div class="val"><strong>#${orderNo}</strong></div>
+        </div>
+        <div>
+          <div class="label">PHONE</div>
+          <div class="val"><strong>${phone}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="row">
+        <div>
+          <div class="label">CARRIER</div>
+          <div class="val">${order.courierPartner || "COD (Leopard/TCS)"}</div>
+        </div>
+        <div>
+          <div class="label">TOTAL CHARGES</div>
+          <div class="val"><strong>Rs. ${order.totalPrice?.toLocaleString()}</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="barcode">||||| | ||||| | ||||| | ||</div>
+  </div>
+  <script>window.print();</script>
+</body>
+</html>`);
+  win.document.close();
+}
+
 export default function OrderList() {
   const { fetchSettings } = useSettings();
   const [orders, setOrders]     = useState([]);
@@ -395,7 +460,7 @@ export default function OrderList() {
                   const st      = STATUS_STYLE[order.orderStatus] || STATUS_STYLE.pending;
 
                   return (
-                    <>
+                    <React.Fragment key={order._id}>
                       <motion.tr key={order._id}
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.015 }}
@@ -515,14 +580,20 @@ export default function OrderList() {
                                       </span>
                                     </div>
                                   </div>
-                                  <button onClick={() => printInvoice(order)}
-                                    className="mt-4 w-full flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all">
-                                    <FiPrinter size={14} /> Print Invoice
-                                  </button>
+                                  <div className="flex gap-2">
+                                    <button onClick={() => printInvoice(order)}
+                                      className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all">
+                                      <FiPrinter size={14} /> Print Invoice
+                                    </button>
+                                    <button onClick={() => printShippingLabel(order)}
+                                      className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--border-light) text-(--text-primary) font-bold py-2.5 px-4 rounded-lg transition-all">
+                                      <FiPackage size={14} /> Shipping Label
+                                    </button>
+                                  </div>
                                 </div>
 
-                                {/* CUSTOMER & DELIVERY INFO */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                 {/* CUSTOMER & DELIVERY INFO */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                   <div className="bg-(--bg-surface) border border-(--border) rounded-xl p-4 space-y-2">
                                     <p className="text-(--text-muted) text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5">
                                       <FiUser size={11} /> Customer
@@ -567,6 +638,97 @@ export default function OrderList() {
                                         </div>
                                       </>
                                     ) : <p className="text-(--text-muted) text-sm">No address</p>}
+                                  </div>
+
+                                  <div className="bg-(--bg-surface) border border-(--border) rounded-xl p-4 space-y-3">
+                                    <p className="text-(--text-muted) text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                                      📦 Logistics & Returns
+                                    </p>
+                                    
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] text-(--text-muted) uppercase font-bold block">Courier & Tracking</label>
+                                      <div className="flex gap-1.5">
+                                        <input
+                                          placeholder="Courier"
+                                          value={order.courierPartner || ""}
+                                          onChange={(e) => {
+                                            const courier = e.target.value;
+                                            setOrders(prev => prev.map(o => o._id === order._id ? { ...o, courierPartner: courier } : o));
+                                          }}
+                                          onBlur={async (e) => {
+                                            try {
+                                              await api.put(`/orders/${order._id}/tracking`, { courierPartner: e.target.value });
+                                              toast.success("Courier updated!");
+                                            } catch { toast.error("Fail to save"); }
+                                          }}
+                                          className="lux-input text-[11px] py-1 px-2 flex-1"
+                                        />
+                                        <input
+                                          placeholder="Tracking ID"
+                                          value={order.trackingNumber || ""}
+                                          onChange={(e) => {
+                                            const track = e.target.value;
+                                            setOrders(prev => prev.map(o => o._id === order._id ? { ...o, trackingNumber: track } : o));
+                                          }}
+                                          onBlur={async (e) => {
+                                            try {
+                                              await api.put(`/orders/${order._id}/tracking`, { trackingNumber: e.target.value });
+                                              toast.success("Tracking updated!");
+                                            } catch { toast.error("Fail to save"); }
+                                          }}
+                                          className="lux-input text-[11px] py-1 px-2 flex-1"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="space-y-1 pt-1 border-t border-(--border)/45">
+                                      <label className="text-[10px] text-(--text-muted) uppercase font-bold block">Return Status</label>
+                                      <div className="flex items-center gap-1.5">
+                                        <select
+                                          value={order.returnStatus || "none"}
+                                          onChange={async (e) => {
+                                            const status = e.target.value;
+                                            try {
+                                              await api.put(`/orders/${order._id}/return`, { status });
+                                              toast.success(`Return status → ${status}`);
+                                              setOrders(prev => prev.map(o => o._id === order._id ? { ...o, returnStatus: status } : o));
+                                            } catch { toast.error("Update failed"); }
+                                          }}
+                                          className="lux-select text-[11px] py-1 px-2 flex-1"
+                                        >
+                                          <option value="none">No Return</option>
+                                          <option value="requested">Return Requested</option>
+                                          <option value="approved">Approved</option>
+                                          <option value="rejected">Rejected</option>
+                                          <option value="received">Received</option>
+                                          <option value="refunded">Refunded</option>
+                                        </select>
+                                      </div>
+                                      {order.returnReason && (
+                                        <p className="text-[10px] text-yellow-400 mt-1 font-light italic">Reason: "{order.returnReason}"</p>
+                                      )}
+                                    </div>
+
+                                    {order.returnStatus === "refunded" && (
+                                      <div className="space-y-1 pt-1 border-t border-(--border)/45">
+                                        <label className="text-[10px] text-(--text-muted) uppercase font-bold block">Refund Amount (Rs.)</label>
+                                        <input
+                                          type="number"
+                                          value={order.refundAmount || 0}
+                                          onChange={(e) => {
+                                            const amt = Number(e.target.value) || 0;
+                                            setOrders(prev => prev.map(o => o._id === order._id ? { ...o, refundAmount: amt } : o));
+                                          }}
+                                          onBlur={async (e) => {
+                                            try {
+                                              await api.put(`/orders/${order._id}/refund`, { amount: Number(e.target.value) });
+                                              toast.success("Refund processed!");
+                                            } catch { toast.error("Fail to save refund"); }
+                                          }}
+                                          className="lux-input text-[11px] py-1 px-2 w-full"
+                                        />
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
 
@@ -646,7 +808,7 @@ export default function OrderList() {
                           </motion.tr>
                         )}
                       </AnimatePresence>
-                    </>
+                    </React.Fragment>
                   );
                 })}
                 {filtered.length === 0 && !loading && (

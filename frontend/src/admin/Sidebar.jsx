@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
   FiGrid, FiShoppingBag, FiPackage, FiUsers,
   FiLayers, FiTag, FiLogOut, FiChevronRight, FiSettings, FiExternalLink,
-  FiBarChart2
+  FiBarChart2, FiBookOpen, FiCpu, FiSearch, FiMail, FiShield, FiPieChart
 } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
@@ -19,6 +19,13 @@ const menu = [
   { label: "Categories",     to: "/admin-dashboard/categories",    Icon: FiLayers,                 description: "Seasons & Collections" },
   { label: "Sub-Categories", to: "/admin-dashboard/subcategories", Icon: FiTag,                    description: "Product Types" },
   { label: "Users",          to: "/admin-dashboard/users",         Icon: FiUsers,                  description: "Customer Management" },
+  { label: "Marketing Center", to: "/admin-dashboard/marketing",    Icon: FiTag,                   description: "Discounts & Campaigns" },
+  { label: "Content Manager",  to: "/admin-dashboard/content",      Icon: FiBookOpen,              description: "Blog & FAQs" },
+  { label: "AI Tools",         to: "/admin-dashboard/ai-tools",     Icon: FiCpu,                   description: "AI Content Drafting" },
+  { label: "SEO Center",       to: "/admin-dashboard/seo",          Icon: FiSearch,                description: "Meta tags & Sitemap" },
+  { label: "Automations",      to: "/admin-dashboard/automations",  Icon: FiMail,                  description: "Email & WhatsApp Alerts" },
+  { label: "Finance Center",   to: "/admin-dashboard/finance",      Icon: FiPieChart,              description: "Expense & Tax Audit" },
+  { label: "Security Center",  to: "/admin-dashboard/security",     Icon: FiShield,                description: "Audit Logs & Roles" },
 ];
 
 export default function Sidebar() {

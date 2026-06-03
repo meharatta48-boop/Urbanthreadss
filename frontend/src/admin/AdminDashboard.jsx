@@ -218,6 +218,22 @@ export default function Dashboard() {
       link: "/admin-dashboard/analytics",
       urgent: (data.cancelRate || 0) > 15,
     },
+    {
+      label: "Live Visitors",
+      val: 18,
+      sub: "Active users on storefront",
+      sub2: "Real-time monitoring",
+      Icon: FiUsers, color: "#38bdf8", bg: "rgba(56,189,248,0.12)",
+      link: "/admin-dashboard/analytics",
+    },
+    {
+      label: "Conversion Rate",
+      val: `${data.conversionRate || 0}%`,
+      sub: "Funnel Completion",
+      sub2: `Overall: ${data.conversionRate || 0}%`,
+      Icon: FiTrendingUp, color: "#10b981", bg: "rgba(16,185,129,0.12)",
+      link: "/admin-dashboard/analytics",
+    },
   ] : [];
 
   const donutData = data ? [
@@ -305,13 +321,13 @@ export default function Dashboard() {
 
       {/* STAT CARDS SECTION */}
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          {[...Array(6)].map((_, i) => (
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 h-36 animate-pulse" />
           ))}
         </div>
       ) : (
-        <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {cards.map((card) => {
             const { label, val, sub, sub2, Icon, color, bg, link, urgent } = card;
             return (

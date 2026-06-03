@@ -2,9 +2,11 @@ import {
   BrowserRouter, Routes, Route, Navigate, useLocation, useParams,
 } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-// SpeedInsights will be imported in production only
 import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy, useEffect } from "react";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { useAuth } from "./context/AuthContext";
+import { useSettings } from "./context/SettingsContext";
 
 // Wrapper to catch chunk load errors and force a refresh to get the new chunks
 const lazyWithRetry = (componentImport) =>
@@ -24,11 +26,6 @@ const lazyWithRetry = (componentImport) =>
       throw error;
     }
   });
-import LoadingSpinner from "./components/LoadingSpinner";
-import { useAuth } from "./context/AuthContext";
-// import { useTheme } from "./context/ThemeContext";
-// import { SpeedInsights } from "@vercel/speed-insights/react";
-import { useSettings } from "./context/SettingsContext";
 
 /* LAYOUT */
 import Navbar from "./components/Navbar";

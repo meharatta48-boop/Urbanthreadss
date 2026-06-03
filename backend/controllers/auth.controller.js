@@ -76,7 +76,7 @@ export const login = async (req, res) => {
     if (user.role === "admin") {
       const users = await User.find()
         .sort({ createdAt: -1 })
-        .select("name email role isActive createdAt");
+        .select("name email role isActive createdAt loyaltyPoints storeCredit customerSegment phone");
 
       return sendSuccess(res, {
         token,
@@ -185,7 +185,7 @@ export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
       .sort({ createdAt: -1 })
-      .select("name email role isActive createdAt");
+      .select("name email role isActive createdAt loyaltyPoints storeCredit customerSegment phone");
     return sendSuccess(res, { users });
   } catch (error) {
     return sendError(res, error.message);
@@ -268,6 +268,94 @@ export const deleteUser = async (req, res) => {
     return sendSuccess(res, {
       message: "User deleted successfully",
     });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   UPDATE USER LOYALTY (admin only)
+   PUT /api/auth/users/:userId/loyalty
+===================== */
+export const updateUserLoyalty = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { loyaltyPoints } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { loyaltyPoints: Number(loyaltyPoints) || 0 },
+      { new: true }
+    );
+
+    if (!user) return sendError(res, "User not found", 404);
+    return sendSuccess(res, { message: "Loyalty points updated", user });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   UPDATE USER CREDIT (admin only)
+   PUT /api/auth/users/:userId/credit
+===================== */
+export const updateUserCredit = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { storeCredit } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { storeCredit: Number(storeCredit) || 0 },
+      { new: true }
+    );
+
+    if (!user) return sendError(res, "User not found", 404);
+    return sendSuccess(res, { message: "Store credits updated", user });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   UPDATE USER SEGMENT (admin only)
+   PUT /api/auth/users/:userId/segment
+===================== */
+export const updateUserSegment = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { customerSegment } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { customerSegment },
+      { new: true }
+    );
+
+    if (!user) return sendError(res, "User not found", 404);
+    return sendSuccess(res, { message: "Segment updated", user });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   UPDATE USER PHONE (admin only)
+   PUT /api/auth/users/:userId/phone
+===================== */
+export const updateUserPhone = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { phone } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { phone },
+      { new: true }
+    );
+
+    if (!user) return sendError(res, "User not found", 404);
+    return sendSuccess(res, { message: "Phone number updated", user });
   } catch (error) {
     return sendError(res, error.message);
   }
