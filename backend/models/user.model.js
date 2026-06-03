@@ -66,11 +66,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ── Performance indexes ──
-userSchema.index({ customerSegment: 1 });
-userSchema.index({ loyaltyPoints: -1 });
-userSchema.index({ isActive: 1 });
-userSchema.index({ role: 1, isActive: 1 });
-userSchema.index({ createdAt: -1 });
-
 export default mongoose.model("User", userSchema);

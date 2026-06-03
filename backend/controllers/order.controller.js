@@ -1,37 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import ComboOffer from "../models/comboOffer.model.js";
-import User from "../models/user.model.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
-
-/* ─── LOYALTY ENGINE ─── */
-// 1 point per Rs. 10 spent
-const POINTS_PER_RUPEE = 0.1;
-// Segment thresholds (by total delivered orders)
-const getSegment = (deliveredCount) => {
-  if (deliveredCount >= 10) return "vip";
-  if (deliveredCount >= 4)  return "loyal";
-  if (deliveredCount >= 1)  return "regular";
-  return "new";
-};
-
-const awardLoyaltyAndSegment = async (userId, orderTotal) => {
-  if (!userId) return; // guest orders — no loyalty
-  try {
-    const pointsEarned = Math.floor(orderTotal * POINTS_PER_RUPEE);
-    const deliveredCount = await Order.countDocuments({
-      user: userId,
-      orderStatus: "delivered",
-    });
-    const newSegment = getSegment(deliveredCount);
-    await User.findByIdAndUpdate(userId, {
-      $inc: { loyaltyPoints: pointsEarned },
-      $set: { customerSegment: newSegment },
-    });
-  } catch (e) {
-    console.error("Loyalty engine error:", e.message);
-  }
-};
 
 const MAX_LIMIT = 100;
 const parsePositiveInt = (value, fallback) => {
@@ -341,10 +311,6 @@ export const updateOrderStatus = async (req, res) => {
       if (order.paymentMethod === "COD") {
         order.paymentStatus = "paid";
         order.paidAt = new Date();
-      }
-      // ── Award loyalty points + update segment (only first-time delivery)
-      if (prevStatus !== "delivered") {
-        await awardLoyaltyAndSegment(order.user, order.totalPrice);
       }
     }
 

@@ -11,12 +11,6 @@ import { fileURLToPath } from "url";
 import errorHandler from "./middleware/error.middleware.js";
 import { requestContext, requestLogger } from "./middleware/requestContext.middleware.js";
 
-// ── Cache helper: 60s browser cache + 5min stale-while-revalidate ──
-const publicCache = (maxAge = 60, swr = 300) => (_req, res, next) => {
-  res.setHeader("Cache-Control", `public, max-age=${maxAge}, stale-while-revalidate=${swr}`);
-  next();
-};
-
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
@@ -99,19 +93,19 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
 
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/categories",   publicCache(120, 600), categoryRoutes);
-app.use("/api/subcategories", publicCache(120, 600), subCategoryRoutes);
-app.use("/api/products",     publicCache(60,  300),  productRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/subcategories", subCategoryRoutes);
+app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/stats", statsRoutes);
-app.use("/api/settings",   publicCache(300, 900), settingsRoutes);
-app.use("/api/nav-links",  publicCache(300, 900), navLinkRoutes);
-app.use("/api/pages",      publicCache(120, 600), customPageRoutes);
-app.use("/api/seo",        publicCache(300, 900), seoRoutes);
-app.use("/api/meta",       publicCache(300, 900), metaRoutes);
-app.use("/api/combos",     publicCache(60,  300),  comboRoutes);
-app.use("/api/blogs",      publicCache(120, 600), blogRoutes);
-app.use("/api/faqs",       publicCache(120, 600), faqRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/nav-links", navLinkRoutes);
+app.use("/api/pages", customPageRoutes);
+app.use("/api/seo", seoRoutes);
+app.use("/api/meta", metaRoutes);
+app.use("/api/combos", comboRoutes);
+app.use("/api/blogs", blogRoutes);
+app.use("/api/faqs", faqRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/activity-logs", activityLogRoutes);
