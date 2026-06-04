@@ -29,7 +29,6 @@ import faqRoutes from "./routes/faq.routes.js";
 import couponRoutes from "./routes/coupon.routes.js";
 import expenseRoutes from "./routes/expense.routes.js";
 import activityLogRoutes from "./routes/activityLog.routes.js";
-import aiRoutes from "./routes/ai.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -110,7 +109,6 @@ app.use("/api/faqs", faqRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/activity-logs", activityLogRoutes);
-app.use("/api/ai", aiRoutes);
 
 // Serve static files from frontend build if available
 const frontendPath = path.join(__dirname, "../frontend/dist");
