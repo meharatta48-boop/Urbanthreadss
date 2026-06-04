@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import api from "../../services/api";
 import { toast } from "react-toastify";
-import { FiShield, FiFileText, FiTrash2, FiUsers, FiLock, FiDatabase, FiDownload, FiCheckCircle } from "react-icons/fi";
+import { FiShield, FiFileText, FiTrash2, FiUsers, FiDatabase, FiDownload } from "react-icons/fi";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SecurityCenter() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("logs");
   const [logs, setLogs] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [updatingUserId, setUpdatingUserId] = useState(null);
 
   const loadLogs = async () => {
     setLoading(true);
@@ -20,6 +24,20 @@ export default function SecurityCenter() {
       toast.error("Failed to load security logs");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const res = await api.get("/auth/users");
+      if (res.data.success) {
+        setUsers(res.data.users || []);
+      }
+    } catch {
+      toast.error("Failed to load admin users");
+    } finally {
+      setLoadingUsers(false);
     }
   };
 
@@ -36,9 +54,43 @@ export default function SecurityCenter() {
     }
   };
 
+  const handleToggleUserStatus = async (userRecord) => {
+    setUpdatingUserId(userRecord._id);
+    try {
+      const res = await api.put(`/auth/users/${userRecord._id}/status`, { isActive: !userRecord.isActive });
+      if (res.data.success) {
+        toast.success(`User ${res.data.user.email} is now ${res.data.user.isActive ? "Active" : "Blocked"}`);
+        setUsers((current) => current.map((u) => (u._id === userRecord._id ? res.data.user : u)));
+      }
+    } catch {
+      toast.error("Unable to update user status");
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
+  const handleChangeUserRole = async (userRecord, newRole) => {
+    if (userRecord.role === newRole) return;
+    setUpdatingUserId(userRecord._id);
+    try {
+      const res = await api.put(`/auth/users/${userRecord._id}/role`, { role: newRole });
+      if (res.data.success) {
+        toast.success(`Role updated to ${res.data.user.role}`);
+        setUsers((current) => current.map((u) => (u._id === userRecord._id ? res.data.user : u)));
+      }
+    } catch {
+      toast.error("Unable to update user role");
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "logs") {
       loadLogs();
+    }
+    if (activeTab === "roles") {
+      loadUsers();
     }
   }, [activeTab]);
 
@@ -90,7 +142,7 @@ export default function SecurityCenter() {
             ) : logs.length === 0 ? (
               <p className="text-xs text-(--text-muted) text-center py-6 border border-dashed border-(--border) rounded-xl">No administrative activity recorded yet.</p>
             ) : (
-              <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-100 overflow-y-auto pr-1">
                 {logs.map((log) => (
                   <div key={log._id} className="p-3 rounded-xl bg-(--bg-elevated) border border-(--border) flex justify-between items-start text-xs">
                     <div>
@@ -113,23 +165,52 @@ export default function SecurityCenter() {
         {/* TAB 2: Roles */}
         {activeTab === "roles" && (
           <div className="space-y-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-(--text-primary)">Authorized Admin Accounts</h4>
-            <div className="space-y-2 text-xs">
-              {[
-                { name: "Super CTO", email: "cto@urbanthread.pk", role: "Super Administrator", active: true },
-                { name: "Fulfillment Executive", email: "ops@urbanthread.pk", role: "Staff Handler (Orders Only)", active: true }
-              ].map((staff, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-(--bg-elevated) border border-(--border) flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-(--text-primary)">{staff.name}</p>
-                    <p className="text-[10px] text-(--text-muted) font-mono">{staff.email}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="bg-(--gold)/10 text-(--gold) border border-(--gold)/25 px-2 py-0.5 rounded text-[10px] font-bold">{staff.role}</span>
-                  </div>
-                </div>
-              ))}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-(--border)/50 pb-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-(--text-primary)">Authorized Admin Accounts</h4>
+              <span className="text-[10px] text-(--text-muted)">{loadingUsers ? "Refreshing admin roster..." : `${users.length} accounts loaded`}</span>
             </div>
+
+            {loadingUsers ? (
+              <p className="text-xs text-(--text-muted) text-center py-6">Loading admin user list...</p>
+            ) : users.length === 0 ? (
+              <div className="p-6 rounded-xl border border-dashed border-(--border) text-center text-[10px] text-(--text-muted)">
+                No admin roster available yet. Use the admin login panel to invite users and assign roles. Refresh this page after user creation.
+              </div>
+            ) : (
+              <div className="space-y-3 text-xs">
+                {users.map((userRecord) => (
+                  <div key={userRecord._id} className="p-4 rounded-xl bg-(--bg-elevated) border border-(--border) grid gap-4 md:grid-cols-[1fr_auto] items-start">
+                    <div>
+                      <p className="font-bold text-(--text-primary)">{userRecord.name || userRecord.email}</p>
+                      <p className="text-[10px] text-(--text-muted) font-mono">{userRecord.email}</p>
+                      <p className="text-[10px] text-(--text-muted) mt-1">Joined: {new Date(userRecord.createdAt).toLocaleDateString("en-PK")}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-end gap-2 text-right">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold ${userRecord.role === "admin" ? "bg-(--gold)/15 text-(--gold) border border-(--gold)/20" : "bg-slate-700/10 text-(--text-muted) border border-(--border)"}`}>
+                        {userRecord.role === "admin" ? "Administrator" : "User"}
+                      </span>
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold ${userRecord.isActive ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
+                        {userRecord.isActive ? "Active" : "Blocked"}
+                      </span>
+                      <button
+                        disabled={updatingUserId === userRecord._id || user?.id === userRecord._id}
+                        onClick={() => handleToggleUserStatus(userRecord)}
+                        className="btn-outline text-[10px] py-1 px-2"
+                      >
+                        {userRecord.isActive ? "Block" : "Activate"}
+                      </button>
+                      <button
+                        disabled={updatingUserId === userRecord._id || user?.id === userRecord._id}
+                        onClick={() => handleChangeUserRole(userRecord, userRecord.role === "admin" ? "user" : "admin")}
+                        className="btn-gold text-[10px] py-1 px-2"
+                      >
+                        {userRecord.role === "admin" ? "Demote to User" : "Promote to Admin"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

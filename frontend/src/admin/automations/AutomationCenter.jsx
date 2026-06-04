@@ -1,37 +1,90 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { FiMail, FiMessageSquare, FiSmartphone, FiBell, FiZap, FiSettings, FiCheckCircle, FiEdit } from "react-icons/fi";
+import { useState, useEffect } from "react";
+import { FiMail, FiMessageSquare, FiSmartphone, FiBell } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { useSettings } from "../../context/SettingsContext";
 
-export default function AutomationCenter() {
-  const [activeTab, setActiveTab] = useState("email");
-
-  // Email Triggers State
-  const [emailTriggers, setEmailTriggers] = useState([
+const DEFAULT_AUTOMATION = {
+  email: [
     { id: "welcome", name: "Welcome Sequence", desc: "Sent immediately after user registration.", isActive: true, subject: "Welcome to Urban Threads Family! 🎉" },
     { id: "cart_recovery", name: "Abandoned Cart Alert", desc: "Sent 2 hours after shopper leaves items in cart.", isActive: true, subject: "Don't forget your streetwear drip! 🛍️" },
-    { id: "order_confirmation", name: "Order Receipt Notification", desc: "Sent instantly on order placement.", isActive: true, subject: "Order Confirmed - ID #{{orderId}}" }
-  ]);
-
-  // WhatsApp Templates State
-  const [waTemplates, setWaTemplates] = useState([
+    { id: "order_confirmation", name: "Order Receipt Notification", desc: "Sent instantly on order placement.", isActive: true, subject: "Order Confirmed - ID #{{orderId}}" },
+  ],
+  whatsapp: [
     { id: "cod_confirm", name: "COD Order Verification", body: "Assalam-o-Alaikum {{name}}, Aap ka Urban Threads order received ho gaya hai. Total billing Rs. {{total}} hai. Kia aap delivery confirm karte hain?", isActive: true },
-    { id: "shipped_alert", name: "Courier Shipped Alert", body: "Hello {{name}}, Aap ka streetwear block par dispatch ho gaya hai! Leopard tracking link: {{trackingLink}}", isActive: true }
-  ]);
+    { id: "shipped_alert", name: "Courier Shipped Alert", body: "Hello {{name}}, Aap ka streetwear block par dispatch ho gaya hai! Leopard tracking link: {{trackingLink}}", isActive: true },
+  ],
+  sms: [
+    { id: "sms_ship", name: "Courier dispatch text", body: "Urban Threads: Order #{{id}} has been shipped via Leopard. Track here: {{link}}", isActive: true },
+  ],
+  push: {
+    title: "New Drop Live!",
+    body: "Shop the latest Pakistani streetwear drop now before stock sells out!",
+    isEnabled: true,
+  },
+};
 
-  // SMS Notifications
-  const [smsTemplates, setSmsTemplates] = useState([
-    { id: "sms_ship", name: "Courier dispatch text", body: "Urban Threads: Order #{{id}} has been shipped via Leopard. Track here: {{link}}", isActive: true }
-  ]);
+export default function AutomationCenter() {
+  const { settings, updateSettings } = useSettings();
+  const [activeTab, setActiveTab] = useState("email");
+  const [emailTriggers, setEmailTriggers] = useState(DEFAULT_AUTOMATION.email);
+  const [waTemplates, setWaTemplates] = useState(DEFAULT_AUTOMATION.whatsapp);
+  const [smsTemplates, setSmsTemplates] = useState(DEFAULT_AUTOMATION.sms);
+  const [pushTemplate, setPushTemplate] = useState(DEFAULT_AUTOMATION.push);
+  const [saving, setSaving] = useState(false);
 
-  const toggleTrigger = (id) => {
-    setEmailTriggers(emailTriggers.map(t => t.id === id ? { ...t, isActive: !t.isActive } : t));
-    toast.success("Trigger configuration saved!");
+  useEffect(() => {
+    if (!settings) return;
+    const automation = settings.automationTemplates || {};
+    setEmailTriggers(automation.email?.length ? automation.email : DEFAULT_AUTOMATION.email);
+    setWaTemplates(automation.whatsapp?.length ? automation.whatsapp : DEFAULT_AUTOMATION.whatsapp);
+    setSmsTemplates(automation.sms?.length ? automation.sms : DEFAULT_AUTOMATION.sms);
+    setPushTemplate({ ...DEFAULT_AUTOMATION.push, ...(automation.push || {}) });
+  }, [settings]);
+
+  const saveAutomationSettings = async (payload) => {
+    setSaving(true);
+    try {
+      const res = await updateSettings({ automationTemplates: payload });
+      if (res.success) {
+        toast.success("Automation settings saved to the control center");
+      } else {
+        toast.error(res.message || "Unable to save automation settings");
+      }
+    } catch (error) {
+      toast.error("Unable to save automation settings");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const toggleWa = (id) => {
-    setWaTemplates(waTemplates.map(t => t.id === id ? { ...t, isActive: !t.isActive } : t));
-    toast.success("WhatsApp template status toggled!");
+  const toggleTrigger = async (id) => {
+    const updated = emailTriggers.map((t) => (t.id === id ? { ...t, isActive: !t.isActive } : t));
+    setEmailTriggers(updated);
+    await saveAutomationSettings({ ...DEFAULT_AUTOMATION, email: updated, whatsapp: waTemplates, sms: smsTemplates, push: pushTemplate });
+  };
+
+  const toggleWa = async (id) => {
+    const updated = waTemplates.map((t) => (t.id === id ? { ...t, isActive: !t.isActive } : t));
+    setWaTemplates(updated);
+    await saveAutomationSettings({ ...DEFAULT_AUTOMATION, email: emailTriggers, whatsapp: updated, sms: smsTemplates, push: pushTemplate });
+  };
+
+  const toggleSms = async (id) => {
+    const updated = smsTemplates.map((t) => (t.id === id ? { ...t, isActive: !t.isActive } : t));
+    setSmsTemplates(updated);
+    await saveAutomationSettings({ ...DEFAULT_AUTOMATION, email: emailTriggers, whatsapp: waTemplates, sms: updated, push: pushTemplate });
+  };
+
+  const handlePushChange = async (field, value) => {
+    const updated = { ...pushTemplate, [field]: value };
+    setPushTemplate(updated);
+    if (field === "isEnabled") {
+      await saveAutomationSettings({ ...DEFAULT_AUTOMATION, email: emailTriggers, whatsapp: waTemplates, sms: smsTemplates, push: updated });
+    }
+  };
+
+  const handleSavePush = async () => {
+    await saveAutomationSettings({ ...DEFAULT_AUTOMATION, email: emailTriggers, whatsapp: waTemplates, sms: smsTemplates, push: pushTemplate });
   };
 
   const handleTestTrigger = (triggerName) => {
@@ -157,17 +210,52 @@ export default function AutomationCenter() {
         {activeTab === "push" && (
           <div className="space-y-4 max-w-md">
             <h4 className="text-xs font-bold uppercase tracking-wider text-(--text-primary)">Broadcast Push Notification</h4>
+            <div className="flex items-center gap-3">
+              <label className="text-[10px] text-(--text-muted) font-bold uppercase tracking-wider">Push Enabled</label>
+              <button
+                onClick={() => handlePushChange("isEnabled", !pushTemplate.isEnabled)}
+                className={`w-12 h-6 rounded-full transition-all relative border border-(--border) ${pushTemplate.isEnabled ? "bg-(--gold)" : "bg-(--bg-elevated)"}`}
+              >
+                <span
+                  className="absolute top-0.5 w-5 h-5 rounded-full transition-all"
+                  style={{ left: pushTemplate.isEnabled ? "calc(100% - 22px)" : 2, background: pushTemplate.isEnabled ? "#000" : "var(--text-muted)" }}
+                />
+              </button>
+            </div>
             <div>
               <label className="text-[10px] text-(--text-muted) block mb-1">Notification Title</label>
-              <input placeholder="e.g. New Drop Live!" className="lux-input w-full" />
+              <input
+                value={pushTemplate.title}
+                onChange={(e) => setPushTemplate((prev) => ({ ...prev, title: e.target.value }))}
+                placeholder="e.g. New Drop Live!"
+                className="lux-input w-full"
+              />
             </div>
             <div>
               <label className="text-[10px] text-(--text-muted) block mb-1">Message Body</label>
-              <textarea placeholder="Shop the Winter Pakistani drop now before stock sells out!" className="lux-input w-full" rows={3} />
+              <textarea
+                value={pushTemplate.body}
+                onChange={(e) => setPushTemplate((prev) => ({ ...prev, body: e.target.value }))}
+                placeholder="Shop the latest Pakistani streetwear drop now before stock sells out!"
+                className="lux-input w-full"
+                rows={3}
+              />
             </div>
-            <button onClick={() => toast.success("Push broadcast dispatched to 1,240 subscribers!")} className="btn-gold">
-              Send Broadcast Push
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={handleSavePush}
+                disabled={saving}
+                className="btn-gold"
+              >
+                {saving ? "Saving..." : "Save Push Settings"}
+              </button>
+              <button
+                onClick={() => toast[pushTemplate.isEnabled ? "success" : "warning"](pushTemplate.isEnabled ? "Push broadcast dispatched to 1,240 subscribers!" : "Enable push notifications before sending.")}
+                className="btn-outline"
+              >
+                Send Broadcast Push
+              </button>
+            </div>
           </div>
         )}
       </div>

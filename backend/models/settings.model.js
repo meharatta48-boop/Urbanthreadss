@@ -252,6 +252,62 @@ const siteSettingsSchema = new mongoose.Schema(
       ],
     },
 
+    // ── Automation & Notification Templates ──
+    automationTemplates: {
+      type: {
+        email: {
+          type: [{
+            id: { type: String },
+            name: { type: String },
+            desc: { type: String },
+            isActive: { type: Boolean, default: true },
+            subject: { type: String, default: "" },
+          }],
+          default: [
+            { id: "welcome", name: "Welcome Sequence", desc: "Sent immediately after user registration.", isActive: true, subject: "Welcome to Urban Threads Family! 🎉" },
+            { id: "cart_recovery", name: "Abandoned Cart Alert", desc: "Sent 2 hours after shopper leaves items in cart.", isActive: true, subject: "Don't forget your streetwear drip! 🛍️" },
+            { id: "order_confirmation", name: "Order Receipt Notification", desc: "Sent instantly on order placement.", isActive: true, subject: "Order Confirmed - ID #{{orderId}}" },
+          ],
+        },
+        whatsapp: {
+          type: [{
+            id: { type: String },
+            name: { type: String },
+            body: { type: String },
+            isActive: { type: Boolean, default: true },
+          }],
+          default: [
+            { id: "cod_confirm", name: "COD Order Verification", body: "Assalam-o-Alaikum {{name}}, Aap ka Urban Threads order received ho gaya hai. Total billing Rs. {{total}} hai. Kia aap delivery confirm karte hain?", isActive: true },
+            { id: "shipped_alert", name: "Courier Shipped Alert", body: "Hello {{name}}, Aap ka streetwear block par dispatch ho gaya hai! Leopard tracking link: {{trackingLink}}", isActive: true },
+          ],
+        },
+        sms: {
+          type: [{
+            id: { type: String },
+            name: { type: String },
+            body: { type: String },
+            isActive: { type: Boolean, default: true },
+          }],
+          default: [
+            { id: "sms_ship", name: "Courier dispatch text", body: "Urban Threads: Order #{{id}} has been shipped via Leopard. Track here: {{link}}", isActive: true },
+          ],
+        },
+        push: {
+          type: {
+            title: { type: String, default: "New Drop Live!" },
+            body: { type: String, default: "Shop the latest Pakistani streetwear drop now before stock sells out!" },
+            isEnabled: { type: Boolean, default: true },
+          },
+          default: {
+            title: "New Drop Live!",
+            body: "Shop the latest Pakistani streetwear drop now before stock sells out!",
+            isEnabled: true,
+          },
+        },
+      },
+      default: {},
+    },
+
     // ── Section Order & Visibility ──
     sectionOrder: {
       type: [{

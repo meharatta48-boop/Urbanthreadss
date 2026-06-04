@@ -40,6 +40,12 @@ export const prepareSettingsPatch = (payload = {}) => {
     } catch {}
   }
 
+  if (rest.automationTemplates && typeof rest.automationTemplates === "string") {
+    try {
+      rest.automationTemplates = JSON.parse(rest.automationTemplates);
+    } catch {}
+  }
+
   for (const field of RICH_TEXT_FIELDS) {
     if (typeof rest[field] === "string") {
       rest[field] = sanitizeRichText(rest[field]);
