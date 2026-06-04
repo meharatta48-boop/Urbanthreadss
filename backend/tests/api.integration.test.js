@@ -42,3 +42,44 @@ test("product endpoint validates invalid product id", async () => {
   assert.equal(response.statusCode, 400);
   assert.equal(response.body.success, false);
 });
+
+test("AI generation endpoint rejects unauthenticated requests", async () => {
+  const response = await request(app).post("/api/ai/generate").send({
+    type: "description",
+    inputs: { name: "Classic Tee" }
+  });
+  assert.equal(response.statusCode, 401);
+  assert.equal(response.body.success, false);
+});
+
+test("AI generation controller fallback generator returns correct content types", async () => {
+  const { generateAIContent } = await import("../controllers/ai.controller.js");
+  
+  let resultJson = null;
+  const mockReq = {
+    body: {
+      type: "description",
+      inputs: { name: "Test Hoodie", features: "Soft Cotton", language: "en" }
+    },
+    headers: {},
+    user: { _id: "123456789012345678901234", name: "CTO Admin" }
+  };
+
+  const mockRes = {
+    status(code) {
+      this.statusCode = code;
+      return this;
+    },
+    json(data) {
+      resultJson = data;
+      return this;
+    }
+  };
+
+  await generateAIContent(mockReq, mockRes);
+  assert.equal(mockRes.statusCode, 200);
+  assert.equal(resultJson.success, true);
+  assert.equal(resultJson.isMock, true);
+  assert.match(resultJson.data, /Test Hoodie/);
+});
+
