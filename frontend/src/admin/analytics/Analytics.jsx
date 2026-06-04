@@ -447,6 +447,19 @@ export default function Analytics() {
           ]);
         });
         filename = "customer_sales_margins_report.csv";
+      } else if (type === "categories") {
+        headers = ["Category", "Revenue (Rs.)", "Units Sold", "Revenue Share %"];
+        const categories = topCategories;
+        const overallRevenue = categories.reduce((sum, category) => sum + (category.revenue || 0), 0) || 1;
+        categories.forEach((category) => {
+          rows.push([
+            category.category,
+            category.revenue,
+            category.units,
+            ((category.revenue / overallRevenue) * 100).toFixed(1)
+          ]);
+        });
+        filename = "category_performance_report.csv";
       }
 
       // Download CSV
@@ -540,6 +553,30 @@ export default function Analytics() {
     if (fieldA > fieldB) return prodSortOrder === "asc" ? 1 : -1;
     return 0;
   }) : [];
+
+  /* Derived display variables */
+  const topCategories = data?.topCategories || [];
+  const paymentMethods = data?.paymentMethods || [];
+
+  // 30-day revenue forecast based on recent daily average
+  const forecastRevenue = data?.last7Days?.length
+    ? Math.round(
+        (data.last7Days.reduce((s, d) => s + (d.revenue || 0), 0) /
+          data.last7Days.length) *
+          30
+      )
+    : 0;
+
+  // 30-day profit forecast based on recent monthly average
+  const forecastProfit = profitData?.last6Months?.length
+    ? (() => {
+        const recent = profitData.last6Months.slice(-2);
+        const avg =
+          recent.reduce((s, m) => s + (m.profit || 0), 0) /
+          (recent.length || 1);
+        return Math.round(avg);
+      })()
+    : 0;
 
   const toggleProductSort = (field) => {
     if (prodSort === field) {
@@ -639,9 +676,9 @@ export default function Analytics() {
         <div className="space-y-6 no-print">
           {/* KPI CARDS */}
           <motion.div variants={stagger} initial="hidden" animate="show"
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            className="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <KpiCard label="Total Revenue" Icon={FiDollarSign} color="#c9a84c" bg="rgba(201,168,76,0.1)"
-              value={`Rs. ${(data?.totalRevenue || 0).toLocaleString()}`}
+              value={`Rs. ${(data?.totalRevenue || 0).toLocaleString()}`} 
               sub={`This month: Rs. ${(data?.thisMonthRevenue || 0).toLocaleString()}`}
               trend={revenueGrowth >= 0 ? "up" : "down"}
               trendVal={revenueGrowth !== null ? `${Math.abs(revenueGrowth)}%` : undefined} />
@@ -656,7 +693,54 @@ export default function Analytics() {
             <KpiCard label="Total Customers" Icon={FiUsers} color="#c084fc" bg="rgba(192,132,252,0.1)"
               value={data?.totalUsers || 0}
               sub={`+${data?.newUsersThisMonth || 0} this month`} />
+            <KpiCard label="30-Day Revenue Forecast" Icon={FiCalendar} color="#f97316" bg="rgba(249,115,22,0.1)"
+              value={`Rs. ${(forecastRevenue || 0).toLocaleString()}`}
+              sub={`Est. profit: Rs. ${(forecastProfit || 0).toLocaleString()}`} />
           </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+              <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+                <FiTrendingUp size={14} className="text-(--gold)" /> Category Revenue Leaders
+              </h3>
+              {topCategories.length ? (
+                <div className="space-y-3">
+                  {topCategories.map((cat) => (
+                    <div key={cat.category} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-(--bg-elevated) border border-(--border)/50">
+                      <div>
+                        <p className="text-xs font-semibold text-(--text-primary)">{cat.category}</p>
+                        <p className="text-[10px] text-(--text-muted)">Units sold: {cat.units}</p>
+                      </div>
+                      <div className="text-right font-mono font-bold text-(--gold)">Rs. {Math.round(cat.revenue).toLocaleString()}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-6 text-center text-(--text-muted) text-xs">No category revenue data available.</div>
+              )}
+            </div>
+
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+              <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+                <FiActivity size={14} className="text-(--gold)" /> Payment Method Breakdown
+              </h3>
+              {paymentMethods.length ? (
+                <div className="space-y-3">
+                  {paymentMethods.map((item) => (
+                    <div key={item.method} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-(--bg-elevated) border border-(--border)/50">
+                      <div>
+                        <p className="text-xs font-semibold text-(--text-primary)">{item.method}</p>
+                        <p className="text-[10px] text-(--text-muted)">{item.orders} orders</p>
+                      </div>
+                      <div className="text-right font-mono font-bold text-(--gold)">Rs. {Math.round(item.revenue).toLocaleString()}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-6 text-center text-(--text-muted) text-xs">Payment method data unavailable.</div>
+              )}
+            </div>
+          </div>
 
           {/* MAIN REVENUE CHART */}
           <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
@@ -767,6 +851,25 @@ export default function Analytics() {
               value={`${profitData?.cancelledStats?.count || 0} Orders`}
               sub={`Potential loss: Rs. ${Math.round(profitData?.cancelledStats?.lostRevenue || 0).toLocaleString()}`} />
           </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+              <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+                <FiAlertTriangle size={14} className="text-red-500" /> Inventory Risk Value
+              </h3>
+              <p className="text-xs text-(--text-muted) mb-3">Estimated capital exposed by low-stock products with cost risk.</p>
+              <p className="text-2xl font-black text-(--gold)">Rs. {Math.round(profitData?.inventoryValueAtRisk || 0).toLocaleString()}</p>
+              <p className="text-[10px] text-(--text-muted) mt-2">Low stock items (≤5 units) may require restock action.</p>
+            </div>
+            <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+              <h3 className="text-(--text-primary) font-bold text-sm mb-4 flex items-center gap-2 border-b border-(--border)/50 pb-3">
+                <FiCalendar size={14} className="text-(--gold)" /> Goal Completion Forecast
+              </h3>
+              <p className="text-xs text-(--text-muted) mb-3">Projected completion date based on current profit pace.</p>
+              <p className="text-2xl font-black text-(--text-primary)">{profitData?.goalStatus?.estimatedCompletionDate || "N/A"}</p>
+              <p className="text-[10px] text-(--text-muted) mt-2">Current pace: Rs. {profitData?.goalStatus?.profitPerDay || 0}/day</p>
+            </div>
+          </div>
 
           {/* SIDE-BY-SIDE REVENUE VS PROFIT CHART */}
           <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
@@ -1055,12 +1158,31 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {/* Goal Timeline SVG Chart */}
-            <CumulativeChart data={profitData?.last6Months || []} targetProfit={profitData?.goalStatus?.targetProfit || 500000} />
+          <div className="grid grid-cols-1 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+                <h3 className="text-(--text-primary) font-bold text-sm mb-4 border-b border-(--border)/50 pb-3 flex items-center gap-2">
+                  <FiAlertTriangle className="text-red-500" /> Inventory Risk Value
+                </h3>
+                <p className="text-xs text-(--text-muted) mb-3">Estimated capital exposed by low-stock, high-cost SKUs.</p>
+                <p className="text-2xl font-black text-(--gold)">Rs. {Math.round(profitData?.inventoryValueAtRisk || 0).toLocaleString()}</p>
+                <p className="text-[10px] text-(--text-muted) mt-2">Low supply items (≤5 units) may need restock planning.</p>
+              </div>
+              <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+                <h3 className="text-(--text-primary) font-bold text-sm mb-4 border-b border-(--border)/50 pb-3 flex items-center gap-2">
+                  <FiCalendar className="text-(--gold)" /> Goal Completion Forecast
+                </h3>
+                <p className="text-xs text-(--text-muted) mb-3">Projected completion date based on current profit pace.</p>
+                <p className="text-2xl font-black text-(--text-primary)">{profitData?.goalStatus?.estimatedCompletionDate || "N/A"}</p>
+                <p className="text-[10px] text-(--text-muted) mt-2">Current pace: Rs. {profitData?.goalStatus?.profitPerDay || 0}/day</p>
+              </div>
+            </div>
 
-            {/* Edit Goal Settings */}
-            <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <CumulativeChart data={profitData?.last6Months || []} targetProfit={profitData?.goalStatus?.targetProfit || 500000} />
+
+              {/* Edit Goal Settings */}
+              <div className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 shadow-sm">
               <h3 className="text-(--text-primary) font-bold text-sm mb-4 border-b border-(--border)/50 pb-3 flex items-center gap-2">
                 <FiEdit3 className="text-(--gold)" /> Update Business Goal Parameters
               </h3>
@@ -1119,6 +1241,7 @@ export default function Analytics() {
             </div>
           </div>
         </div>
+        </div>
       )}
 
       {/* ──────────────── TAB 5: REPORTS ──────────────── */}
@@ -1150,6 +1273,16 @@ export default function Analytics() {
               >
                 <span className="flex items-center gap-2.5">
                   <FiPackage className="text-(--gold)" /> Catalog Products Profit Margins Report
+                </span>
+                <FiDownload />
+              </button>
+
+              <button
+                onClick={() => handleExportCSV("categories")}
+                className="w-full flex items-center justify-between text-xs font-semibold px-4 py-3 rounded-xl border border-(--border) hover:border-(--gold)/30 bg-(--bg-elevated)/40 hover:bg-(--bg-elevated) transition-all text-(--text-primary) cursor-pointer"
+              >
+                <span className="flex items-center gap-2.5">
+                  <FiPieChart className="text-(--gold)" /> Category Performance Report
                 </span>
                 <FiDownload />
               </button>

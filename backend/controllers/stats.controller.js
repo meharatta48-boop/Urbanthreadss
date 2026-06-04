@@ -113,6 +113,77 @@ export const getAdvancedStats = async (req, res) => {
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 5);
 
+    // ── Payment method, category, and return insights ──
+    const allOrders = await Order.find({}, "paymentMethod orderStatus totalPrice returnStatus createdAt deliveredAt orderItems").lean();
+    const paymentMethodMap = {};
+    let returnCount = 0;
+    allOrders.forEach((order) => {
+      const method = order.paymentMethod || "Other";
+      const entry = paymentMethodMap[method] || { method, orders: 0, revenue: 0 };
+      entry.orders += 1;
+      if (order.orderStatus === "delivered") {
+        entry.revenue += order.totalPrice || 0;
+      }
+      paymentMethodMap[method] = entry;
+      if (order.returnStatus && order.returnStatus !== "none") {
+        returnCount += 1;
+      }
+    });
+
+    const paymentMethods = Object.values(paymentMethodMap);
+    const totalOrdersCount = allOrders.length;
+    const returnRate = totalOrdersCount > 0 ? Math.round((returnCount / totalOrdersCount) * 100) : 0;
+
+    const deliveredWithDates = allOrders.filter(
+      (order) => order.orderStatus === "delivered" && order.deliveredAt && order.createdAt
+    );
+    const avgDeliveryDays = deliveredWithDates.length
+      ? Number(
+          (
+            deliveredWithDates.reduce(
+              (sum, order) => sum + ((new Date(order.deliveredAt) - new Date(order.createdAt)) / (1000 * 60 * 60 * 24)),
+              0
+            ) / deliveredWithDates.length
+          ).toFixed(1)
+        )
+      : 0;
+
+    const productsForCategory = await Product.find({}, "category fabricCost printingCost packagingCost brandingCost deliveryCost adsCost miscCost").populate("category", "name").lean();
+    const categoryLookup = {};
+    const productCostLookup = {};
+    productsForCategory.forEach((product) => {
+      categoryLookup[product._id.toString()] = product.category?.name || "Uncategorized";
+      productCostLookup[product._id.toString()] = (
+        (product.fabricCost || 0) +
+        (product.printingCost || 0) +
+        (product.packagingCost || 0) +
+        (product.brandingCost || 0) +
+        (product.deliveryCost || 0) +
+        (product.adsCost || 0) +
+        (product.miscCost || 0)
+      );
+    });
+
+    const categoryMap = {};
+    let deliveredProfitTotal = 0;
+    allDelivered.forEach((order) => {
+      order.orderItems?.forEach((item) => {
+        const productId = String(item.product);
+        const category = categoryLookup[productId] || "Uncategorized";
+        const entry = categoryMap[category] || { category, revenue: 0, units: 0 };
+        entry.revenue += item.price * item.quantity;
+        entry.units += item.quantity;
+        categoryMap[category] = entry;
+
+        const unitCost = item.unitCost && item.unitCost > 0 ? item.unitCost : (productCostLookup[productId] || 0);
+        const itemRevenue = item.price * item.quantity;
+        deliveredProfitTotal += itemRevenue - unitCost * item.quantity;
+      });
+    });
+    const topCategories = Object.values(categoryMap)
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 5);
+
     // ── Today's stats ──
     const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
     const todayEnd   = new Date(); todayEnd.setHours(23, 59, 59, 999);
@@ -208,6 +279,10 @@ export const getAdvancedStats = async (req, res) => {
       ? Math.round((delivered / totalOrders) * 100) : 0;
     const cancelRate = totalOrders > 0
       ? Math.round((cancelled / totalOrders) * 100) : 0;
+    const avgDailyRevenue = last30Days.reduce((sum, d) => sum + (d.revenue || 0), 0) / 30;
+    const forecastRevenue30Days = Math.round(avgDailyRevenue * 30);
+    const profitMarginRatio = totalRevenue > 0 ? Math.max(0, Math.min(1, deliveredProfitTotal / totalRevenue)) : 0;
+    const forecastProfit30Days = Math.round(forecastRevenue30Days * profitMarginRatio);
 
     res.json({
       success: true,
@@ -221,12 +296,12 @@ export const getAdvancedStats = async (req, res) => {
         totalProducts,
         conversionRate,
         cancelRate,
-        avgOrderValue,
-        newUsersToday,
-        newUsersThisMonth,
-        lowStockCount,
-        outOfStockCount,
-        ordersByStatus: { pending, processing, shipped, delivered, cancelled },
+        returnRate,
+        avgDeliveryDays,
+        forecastRevenue30Days,
+        forecastProfit30Days,
+        paymentMethods,
+        topCategories,
         last7Days: last7,
         last6Months,
         last30Days,
@@ -479,13 +554,37 @@ export const getProfitAnalytics = async (req, res) => {
       };
     });
 
+    const totalCost = Math.max(0, totalRevenue - totalProfit);
+    const averageMarginPct = totalRevenue > 0 ? Number(((totalProfit / totalRevenue) * 100).toFixed(1)) : 0;
+    const inventoryValueAtRisk = products.reduce((sum, p) => {
+      const totalCost =
+        (p.fabricCost || 0) +
+        (p.printingCost || 0) +
+        (p.packagingCost || 0) +
+        (p.brandingCost || 0) +
+        (p.deliveryCost || 0) +
+        (p.adsCost || 0) +
+        (p.miscCost || 0);
+      return p.stock <= 5 ? sum + totalCost * (p.stock || 0) : sum;
+    }, 0);
+
+    const goalDaysPassed = Math.max(1, Math.ceil((Date.now() - goalStart.getTime()) / (1000 * 60 * 60 * 24)));
+    const profitPerDay = goalProfit / goalDaysPassed;
+    const estimatedDaysToComplete = profitPerDay > 0 ? Math.ceil(remainingProfit / profitPerDay) : null;
+    const estimatedCompletionDate = estimatedDaysToComplete
+      ? new Date(Date.now() + estimatedDaysToComplete * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+      : null;
+
     res.status(200).json({
       success: true,
       data: {
         totalRevenue,
         totalProfit,
+        totalCost,
+        averageMarginPct,
         codPendingAmount,
         pendingOrdersCount,
+        inventoryValueAtRisk,
         last6Months,
         cancelledStats: {
           count: cancelledCount,
@@ -503,6 +602,8 @@ export const getProfitAnalytics = async (req, res) => {
           remainingMonths,
           monthlyRequiredProfit,
           progressPct: Math.min(100, Math.round((goalProfit / goal.targetProfit) * 100) || 0),
+          estimatedCompletionDate,
+          profitPerDay: Number(profitPerDay.toFixed(2)),
         },
         productStats,
       },
