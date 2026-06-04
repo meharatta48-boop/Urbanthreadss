@@ -141,6 +141,8 @@ if (fs.existsSync(frontendPath)) {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.join(frontendPath, "index.html"));
   });
+} else {
+  console.warn(`Frontend build not found at ${frontendPath}. Static asset serving is disabled.`);
 }
 
 app.use(errorHandler);
