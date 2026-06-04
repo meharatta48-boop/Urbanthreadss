@@ -1,8 +1,7 @@
 import axios from "axios";
 
-const DEFAULT_SERVER_URL = "https://urbanthreadss.onrender.com";
-const API_URL = import.meta.env.VITE_API_URL || `${DEFAULT_SERVER_URL}/api`;
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || DEFAULT_SERVER_URL;
+const API_URL = "https://urbanthreadss.onrender.com/api";
+const SERVER_URL = "https://urbanthreadss.onrender.com";
 
 const api = axios.create({
   baseURL: API_URL,

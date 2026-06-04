@@ -1,8 +1,6 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import ComboOffer from "../models/comboOffer.model.js";
-import Coupon from "../models/coupon.model.js";
-import SiteSettings from "../models/settings.model.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
 
 const MAX_LIMIT = 100;
@@ -11,54 +9,21 @@ const parsePositiveInt = (value, fallback) => {
   return Number.isFinite(num) && num > 0 ? num : fallback;
 };
 
-const validateCoupon = async (code, itemsPrice) => {
-  if (!code) return { coupon: null, discountAmount: 0 };
-
-  const coupon = await Coupon.findOne({ code: code.toUpperCase().trim(), isActive: true });
-  if (!coupon) throw new Error("Invalid or inactive coupon code");
-
-  const now = new Date();
-  if (now < coupon.startDate) throw new Error("This coupon is not active yet");
-  if (now > coupon.endDate) throw new Error("This coupon has expired");
-
-  if (coupon.usageLimit !== null && coupon.usageCount >= coupon.usageLimit) {
-    throw new Error("Coupon usage limit has been reached");
-  }
-
-  if (itemsPrice < (coupon.minOrderValue || 0)) {
-    throw new Error(
-      `Minimum order value of Rs. ${coupon.minOrderValue.toLocaleString()} required for this coupon`
-    );
-  }
-
-  let discountAmount = 0;
-  if (coupon.discountType === "percentage") {
-    discountAmount = Math.round((itemsPrice * coupon.discountValue) / 100);
-  } else {
-    discountAmount = coupon.discountValue;
-  }
-
-  return { coupon, discountAmount };
-};
-
 /* ─── CREATE ORDER (works for both logged-in & guest users) ─── */
 export const createOrder = async (req, res) => {
   try {
     const {
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      couponCode,
-      guestName,
-      guestEmail,
+      orderItems, shippingAddress, paymentMethod,
+      itemsPrice: clientItemsPrice,
+      shippingPrice: clientShippingPrice,
+      totalPrice: clientTotalPrice,
+      couponCode, couponDiscount,
+      guestName, guestEmail,
     } = req.body;
 
     if (!orderItems || orderItems.length === 0) {
       return sendError(res, "No order items", 400);
     }
-
-    const settings = await SiteSettings.findOne();
-    const shippingPrice = Number(settings?.deliveryCharges ?? 250);
 
     let itemsPrice = 0;
     const formattedItems = [];
@@ -175,8 +140,9 @@ export const createOrder = async (req, res) => {
       }
     }
 
-    const { coupon, discountAmount } = await validateCoupon(couponCode, itemsPrice);
-    const totalPrice = Math.max(0, itemsPrice + shippingPrice - discountAmount);
+    const shippingPrice  = clientShippingPrice ?? 250;
+    const discountAmount = couponDiscount ?? 0;
+    const totalPrice     = itemsPrice + shippingPrice - discountAmount;
 
     const totalCost = formattedItems.reduce((sum, item) => sum + (item.unitCost * item.quantity), 0);
     const netProfit = totalPrice - totalCost;
@@ -187,7 +153,7 @@ export const createOrder = async (req, res) => {
       paymentMethod: paymentMethod || "COD",
       itemsPrice,
       shippingPrice,
-      couponCode: coupon?.code || "",
+      couponCode:     couponCode || "",
       couponDiscount: discountAmount,
       totalPrice,
       totalCost,
@@ -206,11 +172,6 @@ export const createOrder = async (req, res) => {
     }
 
     const order = await Order.create(orderData);
-
-    if (coupon) {
-      await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usageCount: 1 } });
-    }
-
     return sendSuccess(res, { order, orderId: order._id }, 201);
   } catch (error) {
     console.error("CREATE ORDER ERROR:", error);
