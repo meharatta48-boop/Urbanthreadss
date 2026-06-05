@@ -8,6 +8,7 @@ import {
   createProduct, updateProduct,
   deleteProduct, deleteProductImage,
   addProductReview, deleteProductReview,
+  bulkProductAction,
 } from "../controllers/product.controller.js";
 import validateRequest from "../middleware/validate.middleware.js";
 import {
@@ -39,6 +40,7 @@ const productFields = productUpload.fields([
   { name: "images",       maxCount: 8 },
   { name: "productVideo", maxCount: 1 },
 ]);
+router.post("/bulk", protect, adminOnly, bulkProductAction);
 router.post("/",    protect, adminOnly, productFields, createProductValidation, validateRequest, createProduct);
 router.put("/:id",  protect, adminOnly, productIdParamValidation, productFields, validateRequest, updateProduct);
 router.delete("/:id/image", protect, adminOnly, productIdParamValidation, validateRequest, deleteProductImage);

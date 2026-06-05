@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   FiPlus, FiEdit, FiTrash2, FiPackage, FiSearch,
   FiAlertTriangle, FiChevronLeft, FiChevronRight, FiAlertCircle,
-  FiRefreshCw,
+  FiRefreshCw, FiSquare, FiCheckSquare
 } from "react-icons/fi";
 import { useProducts } from "../../context/ProductContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { getImageUrl } from "../../utils/imageUrl";
 import LazyImage from "../../components/LazyImage";
+import api from "../../services/api";
 export default function ProductList() {
   const { products, removeProduct, loading, fetchProducts } = useProducts();
   const [search, setSearch] = useState("");
@@ -17,6 +18,24 @@ export default function ProductList() {
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const itemsPerPage = 20;
+
+  // Bulk & Advanced Filters State
+  const [selected, setSelected] = useState([]);
+  const [stockFilter, setStockFilter] = useState("all");
+  const [featuredFilter, setFeaturedFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [bulkAction, setBulkAction] = useState("");
+  const [bulkValue, setBulkValue] = useState("");
+  const [performingBulk, setPerformingBulk] = useState(false);
+
+  // Dynamically extract categories
+  const categories = Array.from(
+    new Set(products.map((p) => p.category?._id).filter(Boolean))
+  ).map((id) => {
+    const found = products.find((p) => p.category?._id === id);
+    return found ? found.category : null;
+  }).filter(Boolean);
 
   const handleDelete = async (id, name) => {
     setDeleting(true);
@@ -31,9 +50,77 @@ export default function ProductList() {
     }
   };
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleBulkAction = async () => {
+    if (!selected.length) return toast.warn("No products selected");
+    if (!bulkAction) return toast.warn("Please select an action");
+    if (bulkAction === "delete" && !window.confirm(`Delete ${selected.length} products?`)) return;
+    if (bulkAction === "adjustPrice" && !bulkValue) return toast.warn("Specify adjustment amount");
+
+    setPerformingBulk(true);
+    try {
+      const { data } = await api.post("/products/bulk", {
+        productIds: selected,
+        action: bulkAction,
+        value: bulkValue,
+      });
+
+      if (data.success) {
+        toast.success(data.message || "Bulk operation successful!");
+        setSelected([]);
+        setBulkAction("");
+        setBulkValue("");
+        fetchProducts();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Operation failed");
+    } finally {
+      setPerformingBulk(false);
+    }
+  };
+
+  const toggleSelect = (id) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.length === paginated.length) {
+      setSelected([]);
+    } else {
+      setSelected(paginated.map((p) => p._id));
+    }
+  };
+
+  const clearSelect = () => {
+    setSelected([]);
+  };
+
+  const filtered = products.filter((p) => {
+    const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesStock = 
+      stockFilter === "all" ? true :
+      stockFilter === "instock" ? p.stock > 0 :
+      stockFilter === "outofstock" ? p.stock === 0 :
+      p.stock > 0 && p.stock <= 5;
+
+    const matchesFeatured = 
+      featuredFilter === "all" ? true :
+      featuredFilter === "featured" ? p.isFeatured === true :
+      p.isFeatured !== true;
+
+    const matchesActive = 
+      activeFilter === "all" ? true :
+      activeFilter === "active" ? p.isActive !== false :
+      p.isActive === false;
+
+    const matchesCategory = 
+      categoryFilter === "all" ? true :
+      p.category?._id === categoryFilter;
+
+    return matchesSearch && matchesStock && matchesFeatured && matchesActive && matchesCategory;
+  });
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -167,34 +254,157 @@ export default function ProductList() {
         ))}
       </div>
 
-      {/* ── SEARCH ── */}
-      <div className="relative">
-        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" size={14} />
-        <input
-          value={search}
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Search products by name..."
-          className="lux-input"
-          style={{ paddingLeft: "40px" }}
-        />
-        {search && (
-          <button
-            onClick={() => handleSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-(--text-muted) hover:text-(--text-primary) transition-colors"
+      {/* ── SEARCH + FILTERS ── */}
+      <div className="space-y-2">
+        <div className="relative">
+          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-(--text-muted)" size={14} />
+          <input
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+            placeholder="Search products by name..."
+            className="lux-input"
+            style={{ paddingLeft: "40px" }}
+          />
+          {search && (
+            <button
+              onClick={() => handleSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-(--text-muted) hover:text-(--text-primary) transition-colors"
+            >
+              <FiAlertCircle size={14} />
+            </button>
+          )}
+        </div>
+        {/* Advanced Filters */}
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={categoryFilter}
+            onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
+            className="lux-input text-xs py-1.5 px-3 flex-1 min-w-32"
           >
-            <FiAlertCircle size={14} />
-          </button>
-        )}
+            <option value="all">All Categories</option>
+            {categories.map((c) => (
+              <option key={c._id} value={c._id}>{c.name}</option>
+            ))}
+          </select>
+          <select
+            value={stockFilter}
+            onChange={(e) => { setStockFilter(e.target.value); setCurrentPage(1); }}
+            className="lux-input text-xs py-1.5 px-3 flex-1 min-w-28"
+          >
+            <option value="all">All Stock</option>
+            <option value="instock">In Stock</option>
+            <option value="lowstock">Low Stock (≤5)</option>
+            <option value="outofstock">Out of Stock</option>
+          </select>
+          <select
+            value={activeFilter}
+            onChange={(e) => { setActiveFilter(e.target.value); setCurrentPage(1); }}
+            className="lux-input text-xs py-1.5 px-3 flex-1 min-w-28"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select
+            value={featuredFilter}
+            onChange={(e) => { setFeaturedFilter(e.target.value); setCurrentPage(1); }}
+            className="lux-input text-xs py-1.5 px-3 flex-1 min-w-28"
+          >
+            <option value="all">All Types</option>
+            <option value="featured">Featured</option>
+            <option value="notfeatured">Not Featured</option>
+          </select>
+          {(categoryFilter !== "all" || stockFilter !== "all" || activeFilter !== "all" || featuredFilter !== "all") && (
+            <button
+              onClick={() => { setCategoryFilter("all"); setStockFilter("all"); setActiveFilter("all"); setFeaturedFilter("all"); }}
+              className="text-xs px-3 py-1.5 rounded-xl border border-(--border) text-red-400 hover:bg-red-500/10 transition-all"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* ── BULK ACTION TOOLBAR ── */}
+      <AnimatePresence>
+        {selected.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="bg-(--gold)/5 border border-(--gold)/30 rounded-2xl px-5 py-3 flex flex-wrap items-center gap-3"
+          >
+            <span className="text-xs font-bold text-(--gold)">{selected.length} selected</span>
+            <button onClick={clearSelect} className="text-xs text-(--text-muted) hover:text-(--text-primary) transition-colors">✕ Clear</button>
+            <div className="flex-1" />
+            <select
+              value={bulkAction}
+              onChange={(e) => setBulkAction(e.target.value)}
+              className="lux-input text-xs py-1.5 px-3 w-40"
+            >
+              <option value="">Choose Action</option>
+              <option value="toggleStatus" data-val="true">Enable All</option>
+              <option value="toggleStatus" data-val="false">Disable All</option>
+              <option value="adjustPrice">Adjust Price (+/-)</option>
+              <option value="delete">Delete Selected</option>
+            </select>
+            {bulkAction === "adjustPrice" && (
+              <input
+                type="number"
+                value={bulkValue}
+                onChange={(e) => setBulkValue(e.target.value)}
+                placeholder="e.g. -100"
+                className="lux-input text-xs py-1.5 px-3 w-28"
+              />
+            )}
+            {(bulkAction === "toggleStatus") && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setBulkValue("true"); setTimeout(handleBulkAction, 0); }}
+                  disabled={performingBulk}
+                  className="text-xs px-3 py-1.5 rounded-xl border border-green-500/30 text-green-400 hover:bg-green-500/10 disabled:opacity-50 transition-all"
+                >
+                  {performingBulk ? "..." : "Enable"}
+                </button>
+                <button
+                  onClick={() => { setBulkValue("false"); setTimeout(handleBulkAction, 0); }}
+                  disabled={performingBulk}
+                  className="text-xs px-3 py-1.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 disabled:opacity-50 transition-all"
+                >
+                  {performingBulk ? "..." : "Disable"}
+                </button>
+              </div>
+            )}
+            {bulkAction !== "toggleStatus" && (
+              <button
+                onClick={handleBulkAction}
+                disabled={performingBulk}
+                className="btn-gold text-xs py-1.5 px-4 disabled:opacity-50"
+              >
+                {performingBulk ? "Processing..." : "Apply"}
+              </button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── LIST ── */}
       <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
         <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between">
           <h3 className="text-(--text-primary) font-semibold flex items-center gap-2 text-sm">
+            <button
+              onClick={toggleSelectAll}
+              className="text-(--text-muted) hover:text-(--gold) transition-colors mr-1"
+              title={selected.length === paginated.length ? "Deselect all" : "Select all on page"}
+            >
+              {selected.length === paginated.length && paginated.length > 0
+                ? <FiCheckSquare size={16} className="text-(--gold)" />
+                : <FiSquare size={16} />}
+            </button>
             <FiPackage size={15} className="text-(--gold)" /> All Products
           </h3>
           <span className="badge-gold">
-            {search ? `${filtered.length} of ${products.length}` : `${products.length} items`}
+            {filtered.length !== products.length ? `${filtered.length} of ${products.length}` : `${products.length} items`}
           </span>
         </div>
 
@@ -264,6 +474,15 @@ export default function ProductList() {
                         </motion.div>
                       ) : (
                         <div className="flex items-center justify-between gap-3">
+                          {/* CHECKBOX */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleSelect(p._id); }}
+                            className="shrink-0 text-(--text-muted) hover:text-(--gold) transition-colors"
+                          >
+                            {selected.includes(p._id)
+                              ? <FiCheckSquare size={16} className="text-(--gold)" />
+                              : <FiSquare size={16} />}
+                          </button>
                           <div className="flex items-center gap-3 min-w-0 flex-1">
                             {/* IMAGE */}
                             <div className="relative w-12 h-12 shrink-0 rounded-xl overflow-hidden bg-(--bg-deep) border border-(--border) aspect-square">

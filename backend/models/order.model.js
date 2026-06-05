@@ -73,6 +73,14 @@ const orderSchema = new mongoose.Schema(
     refundAmount: { type: Number, default: 0 },
     trackingNumber: { type: String, default: "" },
     courierPartner: { type: String, default: "" },
+    orderTimeline: [
+      {
+        status: { type: String, required: true },
+        note: { type: String, default: "" },
+        updatedBy: { type: String, default: "System" },
+        timestamp: { type: Date, default: Date.now },
+      }
+    ],
   },
   { timestamps: true }
 );

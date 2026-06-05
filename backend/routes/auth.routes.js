@@ -12,6 +12,10 @@ import {
   updateUserCredit,
   updateUserSegment,
   updateUserPhone,
+  getLoginHistory,
+  generate2faSecret,
+  enable2fa,
+  disable2fa,
 } from "../controllers/auth.controller.js";
 import protect from "../middleware/auth.middleware.js";
 import adminOnly from "../middleware/admin.middleware.js";
@@ -47,6 +51,18 @@ router.put("/users/:userId/credit", protect, adminOnly, updateUserCredit);
 router.put("/users/:userId/segment", protect, adminOnly, updateUserSegment);
 // PUT /api/auth/users/:userId/phone — admin only
 router.put("/users/:userId/phone", protect, adminOnly, updateUserPhone);
+// GET /api/auth/login-history — admin only
+router.get("/login-history", protect, adminOnly, getLoginHistory);
+
+// POST /api/auth/2fa/generate
+router.post("/2fa/generate", protect, generate2faSecret);
+
+// POST /api/auth/2fa/enable
+router.post("/2fa/enable", protect, enable2fa);
+
+// POST /api/auth/2fa/disable
+router.post("/2fa/disable", protect, disable2fa);
+
 // DELETE /api/auth/users/:userId — admin only
 router.delete("/users/:userId", protect, adminOnly, deleteUser);
 

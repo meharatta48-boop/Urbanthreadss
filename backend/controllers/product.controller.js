@@ -8,6 +8,23 @@ const parsePositiveInt = (value, fallback) => {
   return Number.isFinite(num) && num > 0 ? num : fallback;
 };
 
+const logAdminAction = async (req, action, details) => {
+  try {
+    if (req.user) {
+      const ActivityLog = (await import("../models/activityLog.model.js")).default;
+      await ActivityLog.create({
+        adminId: req.user._id,
+        adminName: req.user.name,
+        action,
+        details,
+        ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      });
+    }
+  } catch (err) {
+    console.error("Activity logging failed:", err);
+  }
+};
+
 /* ─── HELPERS ─── */
 const deleteFile = (filePath) => {
   if (!filePath) return;
@@ -146,6 +163,8 @@ export const createProduct = async (req, res, next) => {
       .populate("category", "name")
       .populate("subCategory", "name");
 
+    await logAdminAction(req, "CREATE_PRODUCT", `Created product "${name}" (Price: Rs. ${price}, Stock: ${stock})`);
+
     res.status(201).json({ success: true, data: populated });
   } catch (error) {
     next(error);
@@ -227,6 +246,8 @@ export const updateProduct = async (req, res, next) => {
       .populate("category", "name")
       .populate("subCategory", "name");
 
+    await logAdminAction(req, "UPDATE_PRODUCT", `Updated product "${updated.name}"`);
+
     res.status(200).json({ success: true, data: updated });
   } catch (error) {
     next(error);
@@ -260,8 +281,12 @@ export const deleteProduct = async (req, res, next) => {
     if (!product)
       return res.status(404).json({ success: false, message: "Product not found" });
 
+    const prodName = product.name;
     product.images.forEach((img) => deleteFile(img));
+    if (product.video) deleteFile(product.video);
     await product.deleteOne();
+
+    await logAdminAction(req, "DELETE_PRODUCT", `Deleted product "${prodName}"`);
 
     res.status(200).json({ success: true, message: "Product deleted" });
   } catch (error) {
@@ -345,6 +370,48 @@ export const deleteProductReview = async (req, res) => {
     res.json({ success: true, message: "Review delete ho gayi", reviews: product.reviews });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/* ─── BULK PRODUCTS ACTION (admin only) ─── */
+export const bulkProductAction = async (req, res, next) => {
+  try {
+    const { productIds, action, value } = req.body;
+    if (!productIds || !Array.isArray(productIds) || !productIds.length) {
+      return res.status(400).json({ success: false, message: "No product IDs provided" });
+    }
+
+    if (action === "delete") {
+      const products = await Product.find({ _id: { $in: productIds } });
+      products.forEach((p) => {
+        p.images?.forEach((img) => deleteFile(img));
+        if (p.video) deleteFile(p.video);
+      });
+      await Product.deleteMany({ _id: { $in: productIds } });
+      await logAdminAction(req, "BULK_DELETE_PRODUCTS", `Bulk deleted ${productIds.length} products`);
+      return res.status(200).json({ success: true, message: `${productIds.length} products deleted` });
+    }
+
+    if (action === "toggleStatus") {
+      const active = value === "true" || value === true;
+      await Product.updateMany({ _id: { $in: productIds } }, { isActive: active });
+      await logAdminAction(req, "BULK_UPDATE_PRODUCTS_STATUS", `Bulk updated status of ${productIds.length} products to ${active}`);
+      return res.status(200).json({ success: true, message: `Status updated for ${productIds.length} products` });
+    }
+
+    if (action === "adjustPrice") {
+      const amount = Number(value);
+      if (Number.isNaN(amount)) {
+        return res.status(400).json({ success: false, message: "Invalid adjustment value" });
+      }
+      await Product.updateMany({ _id: { $in: productIds } }, { $inc: { price: amount } });
+      await logAdminAction(req, "BULK_ADJUST_PRODUCTS_PRICE", `Bulk adjusted price of ${productIds.length} products by Rs. ${amount}`);
+      return res.status(200).json({ success: true, message: `Prices adjusted for ${productIds.length} products` });
+    }
+
+    return res.status(400).json({ success: false, message: "Invalid action" });
+  } catch (error) {
+    next(error);
   }
 };
 

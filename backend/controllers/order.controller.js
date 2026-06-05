@@ -11,6 +11,23 @@ const parsePositiveInt = (value, fallback) => {
   return Number.isFinite(num) && num > 0 ? num : fallback;
 };
 
+const logAdminAction = async (req, action, details) => {
+  try {
+    if (req.user) {
+      const ActivityLog = (await import("../models/activityLog.model.js")).default;
+      await ActivityLog.create({
+        adminId: req.user._id,
+        adminName: req.user.name,
+        action,
+        details,
+        ipAddress: req.ip || req.headers["x-forwarded-for"] || "",
+      });
+    }
+  } catch (err) {
+    console.error("Activity logging failed:", err);
+  }
+};
+
 const validateCoupon = async (code, itemsPrice) => {
   if (!code) return { coupon: null, discountAmount: 0 };
 
@@ -192,6 +209,14 @@ export const createOrder = async (req, res) => {
       totalPrice,
       totalCost,
       netProfit,
+      orderTimeline: [
+        {
+          status: "pending",
+          note: "Order placed successfully",
+          updatedBy: req.user ? req.user.name : (guestName || shippingAddress?.fullName || "Guest"),
+          timestamp: new Date(),
+        }
+      ],
     };
 
     if (req.user) {
@@ -373,7 +398,15 @@ export const updateOrderStatus = async (req, res) => {
       }
     }
 
+    order.orderTimeline.push({
+      status,
+      note: `Status updated from "${prevStatus}" to "${status}"`,
+      updatedBy: req.user?.name || "Admin",
+      timestamp: new Date()
+    });
+
     await order.save();
+    await logAdminAction(req, "UPDATE_ORDER_STATUS", `Updated order #${order._id.toString().slice(-8).toUpperCase()} status to "${status}"`);
     return sendSuccess(res, { message: "Order status updated", order });
   } catch (err) {
     return sendError(res, err.message);
@@ -393,9 +426,18 @@ export const bulkUpdateStatus = async (req, res) => {
       {
         orderStatus: status,
         ...(status === "delivered" ? { deliveredAt: new Date(), paymentStatus: "paid", paidAt: new Date() } : {}),
+        $push: {
+          orderTimeline: {
+            status,
+            note: `Status bulk updated to "${status}"`,
+            updatedBy: req.user?.name || "Admin",
+            timestamp: new Date()
+          }
+        }
       }
     );
 
+    await logAdminAction(req, "BULK_UPDATE_ORDER_STATUS", `Bulk updated ${orderIds.length} orders to status "${status}"`);
     return sendSuccess(res, { message: `${orderIds.length} orders updated to ${status}` });
   } catch (err) {
     return sendError(res, err.message);
@@ -424,7 +466,9 @@ export const deleteOrder = async (req, res) => {
       }
     }
 
+    const orderId = order._id.toString().slice(-8).toUpperCase();
     await order.deleteOne();
+    await logAdminAction(req, "DELETE_ORDER", `Deleted order #${orderId}`);
     return sendSuccess(res, { message: "Order deleted" });
   } catch (err) {
     return sendError(res, err.message);
@@ -441,7 +485,15 @@ export const updateOrderTracking = async (req, res) => {
     if (trackingNumber !== undefined) order.trackingNumber = trackingNumber;
     if (courierPartner !== undefined) order.courierPartner = courierPartner;
 
+    order.orderTimeline.push({
+      status: order.orderStatus,
+      note: `Tracking details updated: Courier: "${courierPartner || order.courierPartner}", Tracking ID: "${trackingNumber || order.trackingNumber}"`,
+      updatedBy: req.user?.name || "Admin",
+      timestamp: new Date()
+    });
+
     await order.save();
+    await logAdminAction(req, "UPDATE_ORDER_TRACKING", `Updated order #${order._id.toString().slice(-8).toUpperCase()} tracking details`);
     res.json({ success: true, message: "Tracking details updated", order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -483,7 +535,15 @@ export const updateReturnStatus = async (req, res) => {
       }
     }
 
+    order.orderTimeline.push({
+      status: order.orderStatus,
+      note: `Return status updated to "${status}"`,
+      updatedBy: req.user?.name || "Admin",
+      timestamp: new Date()
+    });
+
     await order.save();
+    await logAdminAction(req, "UPDATE_RETURN_STATUS", `Updated order #${order._id.toString().slice(-8).toUpperCase()} return status to "${status}"`);
     res.json({ success: true, message: "Return status updated", order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -503,7 +563,15 @@ export const processOrderRefund = async (req, res) => {
     // Adjust netProfit
     order.netProfit = (order.totalPrice - order.refundAmount) - order.totalCost;
 
+    order.orderTimeline.push({
+      status: order.orderStatus,
+      note: `Refund of Rs. ${amount} processed`,
+      updatedBy: req.user?.name || "Admin",
+      timestamp: new Date()
+    });
+
     await order.save();
+    await logAdminAction(req, "PROCESS_REFUND", `Processed refund of Rs. ${amount} for order #${order._id.toString().slice(-8).toUpperCase()}`);
     res.json({ success: true, message: "Refund processed successfully", order });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

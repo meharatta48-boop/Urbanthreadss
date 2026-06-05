@@ -135,6 +135,18 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(new Date());
   const [timeRange, setTimeRange] = useState("7d"); // Custom State for filter analytics visually
+  const [liveVisitors, setLiveVisitors] = useState(18);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveVisitors((prev) => {
+        const change = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + change;
+        return next > 5 ? (next < 50 ? next : prev) : 8;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -220,7 +232,7 @@ export default function Dashboard() {
     },
     {
       label: "Live Visitors",
-      val: 18,
+      val: liveVisitors,
       sub: "Active users on storefront",
       sub2: "Real-time monitoring",
       Icon: FiUsers, color: "#38bdf8", bg: "rgba(56,189,248,0.12)",

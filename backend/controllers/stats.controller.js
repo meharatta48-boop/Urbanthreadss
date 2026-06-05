@@ -63,7 +63,13 @@ export const getAdvancedStats = async (req, res) => {
   try {
     const now = new Date();
 
-    // ── Last 7 days: daily order count + revenue ──
+    // ── Last 7 days: daily order count + revenue (optimized to 1 query) ──
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const recentOrders = await Order.find({ createdAt: { $gte: sevenDaysAgo } }).lean();
+
     const last7 = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(now);
@@ -71,7 +77,9 @@ export const getAdvancedStats = async (req, res) => {
       const start = new Date(date.setHours(0, 0, 0, 0));
       const end   = new Date(date.setHours(23, 59, 59, 999));
 
-      const dayOrders = await Order.find({ createdAt: { $gte: start, $lte: end } }).lean();
+      const dayOrders = recentOrders.filter(
+        (o) => new Date(o.createdAt) >= start && new Date(o.createdAt) <= end
+      );
       const dayRevenue = dayOrders
         .filter((o) => o.orderStatus === "delivered")
         .reduce((s, o) => s + (o.totalPrice || 0), 0);
@@ -80,25 +88,30 @@ export const getAdvancedStats = async (req, res) => {
       last7.push({ date: dayLabel, orders: dayOrders.length, revenue: dayRevenue });
     }
 
-    // ── Last 6 months: monthly revenue ──
+    // ── Last 6 months: monthly revenue (optimized to 1 query) ──
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+    const sixMonthsOrders = await Order.find({
+      orderStatus: "delivered",
+      createdAt: { $gte: sixMonthsAgo }
+    }).lean();
+
     const last6Months = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const start = new Date(d.getFullYear(), d.getMonth(), 1);
       const end   = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
 
-      const monthOrders = await Order.find({
-        orderStatus: "delivered",
-        createdAt: { $gte: start, $lte: end },
-      }).lean();
+      const monthOrders = sixMonthsOrders.filter(
+        (o) => new Date(o.createdAt) >= start && new Date(o.createdAt) <= end
+      );
 
       const monthRevenue = monthOrders.reduce((s, o) => s + (o.totalPrice || 0), 0);
       const monthLabel   = start.toLocaleDateString("en-PK", { month: "short", year: "2-digit" });
       last6Months.push({ month: monthLabel, revenue: monthRevenue, orders: monthOrders.length });
     }
 
-    // ── Top 5 selling products ──
-    const allDelivered = await Order.find({ orderStatus: "delivered" }, "orderItems").lean();
+    // ── Top 5 selling products (Bug fix: project totalPrice, returnStatus, createdAt, deliveredAt) ──
+    const allDelivered = await Order.find({ orderStatus: "delivered" }, "orderItems totalPrice returnStatus createdAt deliveredAt").lean();
     const productMap   = {};
     allDelivered.forEach((order) => {
       order.orderItems?.forEach((item) => {

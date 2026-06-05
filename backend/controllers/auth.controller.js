@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import User from "../models/user.model.js";
+import LoginHistory from "../models/loginHistory.model.js";
 import generateToken from "../utils/generateToken.js";
 import { sendError, sendSuccess } from "../utils/apiResponse.js";
 
@@ -52,22 +53,32 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    const ipAddress = req.ip || req.headers["x-forwarded-for"] || "";
+    const userAgent = req.headers["user-agent"] || "";
 
     if (!email || !password) {
       return sendError(res, "Email and password are required", 400);
     }
 
     const user = await User.findOne({ email }).select("+password");
-    if (!user)
+    if (!user) {
+      await LoginHistory.create({ email, ipAddress, userAgent, status: "failed", failureReason: "Invalid email" });
       return sendError(res, "Invalid credentials", 401);
+    }
 
     if (user.isActive === false) {
+      await LoginHistory.create({ userId: user._id, email: user.email, ipAddress, userAgent, status: "failed", failureReason: "Account disabled" });
       return sendError(res, "Account is disabled", 403);
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
+      await LoginHistory.create({ userId: user._id, email: user.email, ipAddress, userAgent, status: "failed", failureReason: "Wrong password" });
       return sendError(res, "Invalid credentials", 401);
+    }
+
+    // Record successful login
+    await LoginHistory.create({ userId: user._id, email: user.email, ipAddress, userAgent, status: "success" });
 
     // ✅ Generate token
     const token = generateToken(user._id);
@@ -179,14 +190,35 @@ export const resetPassword = async (req, res) => {
 };
 
 /* =====================
-   GET ALL USERS (admin only)
+   GET ALL USERS (admin only, paginated)
 ===================== */
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
+    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(Math.max(1, Number.parseInt(req.query.limit, 10) || 20), 100);
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    const total = await User.countDocuments(query);
+    const users = await User.find(query)
       .sort({ createdAt: -1 })
-      .select("name email role isActive createdAt loyaltyPoints storeCredit customerSegment phone");
-    return sendSuccess(res, { users });
+      .select("name email role isActive createdAt loyaltyPoints storeCredit customerSegment phone")
+      .skip(skip)
+      .limit(limit);
+
+    const pages = Math.ceil(total / limit);
+
+    return sendSuccess(res, {
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages,
+        hasNextPage: page < pages,
+        hasPrevPage: page > 1,
+      }
+    });
   } catch (error) {
     return sendError(res, error.message);
   }
@@ -356,6 +388,81 @@ export const updateUserPhone = async (req, res) => {
 
     if (!user) return sendError(res, "User not found", 404);
     return sendSuccess(res, { message: "Phone number updated", user });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   GET LOGIN HISTORY (admin only)
+===================== */
+export const getLoginHistory = async (req, res) => {
+  try {
+    const history = await LoginHistory.find()
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 })
+      .limit(100);
+    return sendSuccess(res, { history });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+/* =====================
+   2FA READINESS (admin or user own account)
+===================== */
+export const generate2faSecret = async (req, res) => {
+  try {
+    const secret = crypto.randomBytes(20).toString("hex");
+    const backupCodes = Array.from({ length: 8 }, () => crypto.randomBytes(4).toString("hex"));
+
+    const user = await User.findById(req.user._id);
+    if (!user) return sendError(res, "User not found", 404);
+
+    user.twoFactorSecret = secret;
+    user.twoFactorBackupCodes = backupCodes;
+    await user.save();
+
+    return sendSuccess(res, {
+      secret,
+      backupCodes,
+      qrCodePlaceholder: `otpauth://totp/UrbanThreads:${user.email}?secret=${secret}&issuer=UrbanThreads`
+    });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+export const enable2fa = async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code) {
+      return sendError(res, "Verification code is required", 400);
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) return sendError(res, "User not found", 404);
+
+    user.isTwoFactorEnabled = true;
+    await user.save();
+
+    return sendSuccess(res, { message: "Two-factor authentication enabled successfully" });
+  } catch (error) {
+    return sendError(res, error.message);
+  }
+};
+
+export const disable2fa = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return sendError(res, "User not found", 404);
+
+    user.isTwoFactorEnabled = false;
+    user.twoFactorSecret = null;
+    user.twoFactorBackupCodes = [];
+    await user.save();
+
+    return sendSuccess(res, { message: "Two-factor authentication disabled" });
   } catch (error) {
     return sendError(res, error.message);
   }

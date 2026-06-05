@@ -7,7 +7,7 @@ import {
   FiRefreshCw, FiPhone, FiMail, FiMapPin, FiSearch,
   FiChevronDown, FiChevronUp, FiPackage, FiUser,
   FiTrash2, FiMessageCircle, FiPrinter, FiCheckSquare,
-  FiSquare
+  FiSquare, FiDownload, FiClock
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
 import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
@@ -321,6 +321,33 @@ export default function OrderList() {
     } catch { toast.error("Delete fail"); }
   };
 
+  /* CSV EXPORT */
+  const exportCSV = () => {
+    const rows = [
+      ["Order ID", "Customer", "Phone", "Email", "Status", "Items", "Total", "Payment", "Date"],
+      ...filtered.map((o) => [
+        `#${o._id.slice(-10).toUpperCase()}`,
+        getName(o),
+        getPhone(o),
+        getEmail(o),
+        o.orderStatus,
+        o.orderItems?.length || 0,
+        o.totalPrice || 0,
+        o.paymentMethod || "COD",
+        new Date(o.createdAt).toLocaleDateString("en-PK"),
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `orders_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${filtered.length} orders`);
+  };
+
   const bulkUpdate = async () => {
     if (!selected.length) return toast.warn("No orders selected");
     try {
@@ -370,10 +397,16 @@ export default function OrderList() {
             <span className="text-(--gold) font-bold ml-1">Rs. {totalRevenue.toLocaleString()}</span>
           </p>
         </div>
-        <button onClick={fetchOrders}
-          className="flex items-center gap-2 text-xs text-(--text-muted) border border-(--border) px-3 py-2.5 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all">
-          <FiRefreshCw size={13} className={loading ? "animate-spin" : ""} /> Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={exportCSV}
+            className="flex items-center gap-2 text-xs text-green-500 border border-green-500/30 px-3 py-2.5 rounded-xl hover:bg-green-500/10 transition-all">
+            <FiDownload size={13} /> Export CSV
+          </button>
+          <button onClick={fetchOrders}
+            className="flex items-center gap-2 text-xs text-(--text-muted) border border-(--border) px-3 py-2.5 rounded-xl hover:text-(--text-primary) hover:border-(--border-light) transition-all">
+            <FiRefreshCw size={13} className={loading ? "animate-spin" : ""} /> Refresh
+          </button>
+        </div>
       </div>
 
       {/* SEARCH */}
@@ -803,7 +836,55 @@ export default function OrderList() {
                                     </div>
                                   </div>
                                 </div>
-                              </div>
+
+                                {/* ORDER TIMELINE */}
+                                {order.orderTimeline?.length > 0 && (
+                                  <div className="bg-(--bg-surface) border border-(--border) rounded-xl p-4">
+                                    <p className="text-(--text-muted) text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5 mb-4">
+                                      <FiClock size={11} /> Order Timeline
+                                    </p>
+                                    <div className="relative pl-6">
+                                      <div className="absolute left-2.5 top-2 bottom-2 w-px bg-(--border)" />
+                                      <div className="space-y-4">
+                                        {order.orderTimeline.map((entry, ti) => {
+                                          const isLast = ti === order.orderTimeline.length - 1;
+                                          const tst = STATUS_STYLE[entry.status] || STATUS_STYLE.pending;
+                                          return (
+                                            <div key={ti} className="relative flex items-start gap-3">
+                                              <div
+                                                className="absolute -left-6 mt-0.5 w-3 h-3 rounded-full border-2 shrink-0"
+                                                style={{
+                                                  background: isLast ? tst.text : "transparent",
+                                                  borderColor: tst.text,
+                                                  boxShadow: isLast ? `0 0 8px ${tst.text}60` : "none",
+                                                }}
+                                              />
+                                              <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                  <span
+                                                    className="text-[10px] font-bold px-2 py-0.5 rounded capitalize"
+                                                    style={{ background: tst.bg, color: tst.text, border: `1px solid ${tst.border}` }}
+                                                  >
+                                                    {entry.status}
+                                                  </span>
+                                                  <span className="text-[10px] text-(--text-muted)">
+                                                    {new Date(entry.timestamp).toLocaleString("en-PK", {
+                                                      day: "numeric", month: "short",
+                                                      hour: "2-digit", minute: "2-digit"
+                                                    })}
+                                                  </span>
+                                                </div>
+                                                {entry.note && (
+                                                  <p className="text-[10px] text-(--text-muted) mt-0.5 italic">"{entry.note}"</p>
+                                                )}
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                             </td>
                           </motion.tr>
                         )}
