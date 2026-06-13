@@ -885,6 +885,7 @@ export default function OrderList() {
                                     </div>
                                   </div>
                                 )}
+                              </div>
                             </td>
                           </motion.tr>
                         )}

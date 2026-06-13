@@ -3,6 +3,7 @@ import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import SiteSettings from "../models/settings.model.js";
 import BusinessGoal from "../models/businessGoal.model.js";
+import { getActiveVisitorCount } from "../utils/visitorTracker.js";
 
 /* ─── BASIC STATS (used by old dashboard) ─── */
 export const getAdminStats = async (req, res) => {
@@ -50,6 +51,7 @@ export const getAdminStats = async (req, res) => {
         totalRevenue,   // ← only delivered
         ordersByStatus,
         lowStock,
+        liveVisitors: getActiveVisitorCount(),
       },
     });
   } catch (error) {
@@ -319,6 +321,7 @@ export const getAdvancedStats = async (req, res) => {
         last6Months,
         last30Days,
         topProducts,
+        liveVisitors: getActiveVisitorCount(),
       },
     });
   } catch (error) {

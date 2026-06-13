@@ -10,6 +10,7 @@ import { fileURLToPath } from "url";
 
 import errorHandler from "./middleware/error.middleware.js";
 import { requestContext, requestLogger } from "./middleware/requestContext.middleware.js";
+import { trackVisitor } from "./utils/visitorTracker.js";
 
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -42,6 +43,7 @@ const allowedOrigins = new Set([
 ]);
 
 app.use(requestContext);
+app.use(trackVisitor);
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);

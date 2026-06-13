@@ -136,6 +136,11 @@ export default function Dashboard() {
   const [refresh, setRefresh] = useState(new Date());
   const [timeRange, setTimeRange] = useState("7d"); // Custom State for filter analytics visually
   const [liveVisitors, setLiveVisitors] = useState(18);
+  useEffect(() => {
+    if (data?.liveVisitors !== undefined) {
+      setLiveVisitors(data.liveVisitors);
+    }
+  }, [data]);
 
   useEffect(() => {
     const interval = setInterval(() => {

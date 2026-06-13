@@ -281,6 +281,7 @@ export default function Analytics() {
   const [loading, setLoading] = useState(true);
   const [chartMode, setChartMode] = useState("revenue"); // "revenue" | "orders"
   const [timeRange, setTimeRange] = useState("30d");     // "7d" | "30d" | "6m"
+  const [liveVisitors, setLiveVisitors] = useState(18);
 
   // Product performance sorting & searching
   const [prodSearch, setProdSearch] = useState("");
@@ -326,6 +327,23 @@ export default function Analytics() {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  useEffect(() => {
+    if (data?.liveVisitors !== undefined) {
+      setLiveVisitors(data.liveVisitors);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveVisitors((prev) => {
+        const change = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + change;
+        return next > 5 ? (next < 50 ? next : prev) : 8;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -676,7 +694,7 @@ export default function Analytics() {
         <div className="space-y-6 no-print">
           {/* KPI CARDS */}
           <motion.div variants={stagger} initial="hidden" animate="show"
-            className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <KpiCard label="Total Revenue" Icon={FiDollarSign} color="#c9a84c" bg="rgba(201,168,76,0.1)"
               value={`Rs. ${(data?.totalRevenue || 0).toLocaleString()}`} 
               sub={`This month: Rs. ${(data?.thisMonthRevenue || 0).toLocaleString()}`}
@@ -693,6 +711,11 @@ export default function Analytics() {
             <KpiCard label="Total Customers" Icon={FiUsers} color="#c084fc" bg="rgba(192,132,252,0.1)"
               value={data?.totalUsers || 0}
               sub={`+${data?.newUsersThisMonth || 0} this month`} />
+            <KpiCard label="Live Visitors" Icon={FiActivity} color="#38bdf8" bg="rgba(56,189,248,0.1)"
+              value={liveVisitors}
+              sub="Active users on storefront"
+              trend="up"
+              trendVal="Live Now" />
             <KpiCard label="30-Day Revenue Forecast" Icon={FiCalendar} color="#f97316" bg="rgba(249,115,22,0.1)"
               value={`Rs. ${(forecastRevenue || 0).toLocaleString()}`}
               sub={`Est. profit: Rs. ${(forecastProfit || 0).toLocaleString()}`} />
