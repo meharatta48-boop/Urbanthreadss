@@ -6,7 +6,7 @@ import {
   FiTrendingUp, FiTrendingDown, FiDollarSign, FiShoppingBag,
   FiUsers, FiPackage, FiRefreshCw, FiBarChart2, FiPieChart,
   FiActivity, FiTarget, FiAward, FiAlertTriangle, FiSearch,
-  FiFilter, FiDownload, FiEdit3, FiCalendar, FiFileText, FiPrinter
+  FiFilter, FiDownload, FiEdit3, FiCalendar, FiFileText, FiPrinter, FiCpu, FiZap
 } from "react-icons/fi";
 
 /* ── Animation variants ── */
@@ -275,13 +275,18 @@ function KpiCard({ label, value, sub, Icon, color, bg, trend, trendVal }) {
 }
 
 export default function Analytics() {
-  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "profitability" | "products" | "goals" | "reports"
+  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "profitability" | "products" | "goals" | "reports" | "ai"
   const [data, setData] = useState(null); // Advanced stats
   const [profitData, setProfitData] = useState(null); // Profit metrics
   const [loading, setLoading] = useState(true);
   const [chartMode, setChartMode] = useState("revenue"); // "revenue" | "orders"
   const [timeRange, setTimeRange] = useState("30d");     // "7d" | "30d" | "6m"
   const [liveVisitors, setLiveVisitors] = useState(18);
+
+  // AI Advisor State
+  const [aiInsights, setAiInsights] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiGenerated, setAiGenerated] = useState(false);
 
   // Product performance sorting & searching
   const [prodSearch, setProdSearch] = useState("");
@@ -670,6 +675,7 @@ export default function Analytics() {
           { id: "products", label: "Product Performance", Icon: FiPackage },
           { id: "goals", label: "Goal & Growth Tracker", Icon: FiTarget },
           { id: "reports", label: "Report Exporter", Icon: FiFileText },
+          { id: "ai", label: "✦ AI Advisor", Icon: FiCpu },
         ].map((tab) => {
           const ActiveIcon = tab.Icon;
           return (
@@ -1472,6 +1478,139 @@ export default function Analytics() {
           <p>© 2026 Urban Threads Streetwear. All rights reserved.</p>
         </div>
       </div>
+
+      {/* ──────────────── TAB 6: AI ADVISOR ──────────────── */}
+      {activeTab === "ai" && (
+        <div className="space-y-6 no-print">
+          {/* Header */}
+          <div className="bg-linear-to-r from-cyan-950/30 to-slate-900/20 border border-cyan-900/30 p-6 rounded-2xl shadow-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-bold tracking-wider text-cyan-400 uppercase mb-0.5">✦ Gemini 1.5 Flash</p>
+                <h3 className="font-display text-xl font-black text-(--text-primary)">AI Business Advisor</h3>
+                <p className="text-(--text-muted) text-xs mt-1">Deep AI analysis of your revenue, profitability, products, and growth opportunities</p>
+              </div>
+              <button
+                onClick={async () => {
+                  if (!data || !profitData) return toast.warn("Analytics data not loaded yet.");
+                  setAiLoading(true);
+                  setAiInsights("");
+                  try {
+                    const statsPayload = {
+                      totalRevenue: data.totalRevenue,
+                      thisMonthRevenue: data.thisMonthRevenue,
+                      totalOrders: data.totalOrders,
+                      conversionRate: data.conversionRate,
+                      cancelRate: data.cancelRate,
+                      avgOrderValue: data.avgOrderValue,
+                      ordersByStatus: data.ordersByStatus,
+                      topCategories: data.topCategories,
+                      last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
+                      lowStockCount: data.lowStockCount,
+                      totalNetProfit: profitData.totalNetProfit,
+                      overallMarginPct: profitData.overallMarginPct,
+                      totalProductCost: profitData.totalProductCost,
+                      last6Months: profitData.last6Months,
+                      topPerformingProducts: profitData.productStats?.slice(0, 5).map(p => ({
+                        name: p.name,
+                        marginPct: p.marginPct,
+                        qtySold: p.qtySold,
+                        profitGenerated: p.profitGenerated
+                      })),
+                      marginBreakdown: {
+                        greenMargin: profitData.productStats?.filter(p => p.marginStatus === "Green").length,
+                        yellowMargin: profitData.productStats?.filter(p => p.marginStatus === "Yellow").length,
+                        redMargin: profitData.productStats?.filter(p => p.marginStatus === "Red").length,
+                      }
+                    };
+                    const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
+                    if (res.success) {
+                      setAiInsights(res.insights);
+                      setAiGenerated(true);
+                    } else {
+                      toast.error("AI could not generate insights.");
+                    }
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || "AI insights failed.");
+                  } finally {
+                    setAiLoading(false);
+                  }
+                }}
+                disabled={aiLoading || !data}
+                className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl transition-all disabled:opacity-40 shrink-0"
+                style={{ background: "rgba(201,168,76,0.15)", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.3)" }}
+              >
+                {aiLoading ? (
+                  <><div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing Business...</>
+                ) : (
+                  <><FiZap size={14} /> {aiGenerated ? "Refresh AI Analysis" : "Generate Full AI Analysis"}</>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Feature Cards */}
+          {!aiInsights && !aiLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { icon: "📊", title: "Revenue Analysis", desc: "Deep dive into revenue trends, growth rates, and forecasting" },
+                { icon: "💰", title: "Profit Optimization", desc: "Identify your best and worst margin products instantly" },
+                { icon: "🎯", title: "Action Recommendations", desc: "Top 3 specific steps to grow your business right now" },
+                { icon: "📈", title: "30-Day Forecast", desc: "AI-powered revenue and profit predictions based on your trends" },
+              ].map((card, i) => (
+                <div key={i} className="bg-(--bg-card) border border-(--border) rounded-2xl p-5 hover:border-(--border-light) transition-all">
+                  <div className="text-2xl mb-3">{card.icon}</div>
+                  <p className="text-sm font-bold text-(--text-primary) mb-1">{card.title}</p>
+                  <p className="text-xs text-(--text-muted) leading-relaxed">{card.desc}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* AI Output */}
+          <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+            {aiLoading ? (
+              <div className="flex flex-col items-center gap-4 py-20">
+                <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-(--text-primary)">Gemini AI is analyzing your business...</p>
+                  <p className="text-xs text-(--text-muted) mt-1">Processing revenue data, profit margins, and growth trends</p>
+                </div>
+              </div>
+            ) : aiInsights ? (
+              <>
+                <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between"
+                  style={{ background: "rgba(201,168,76,0.04)" }}>
+                  <div className="flex items-center gap-2">
+                    <FiCpu size={14} style={{ color: "var(--gold)" }} />
+                    <span className="text-xs font-bold text-(--text-primary)">AI Business Intelligence Report</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded-full font-bold"
+                      style={{ background: "rgba(201,168,76,0.1)", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.2)" }}>
+                      ✦ Generated by Gemini 1.5 Flash
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(aiInsights).then(() => toast.success("Copied!"))}
+                    className="text-xs text-(--text-muted) hover:text-(--gold) transition-colors">
+                    Copy Report
+                  </button>
+                </div>
+                <div className="p-6">
+                  <pre className="text-sm text-(--text-primary) leading-loose whitespace-pre-wrap font-sans">{aiInsights}</pre>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center gap-4 py-20 text-(--text-muted)">
+                <FiCpu size={48} className="opacity-10" />
+                <div className="text-center">
+                  <p className="text-base font-semibold">Ready to analyze your business</p>
+                  <p className="text-sm mt-1 opacity-60">Click "Generate Full AI Analysis" above to get started</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -1,18 +1,23 @@
 import https from "https";
 
-const callGemini = (prompt, apiKey) => {
+/* ─── Core Gemini API caller ─── */
+const callGemini = (prompt, apiKey, systemInstruction = "") => {
   return new Promise((resolve, reject) => {
-    const postData = JSON.stringify({
+    const body = {
       contents: [
         {
-          parts: [
-            {
-              text: prompt
-            }
-          ]
+          parts: [{ text: prompt }]
         }
       ]
-    });
+    };
+
+    if (systemInstruction) {
+      body.system_instruction = {
+        parts: [{ text: systemInstruction }]
+      };
+    }
+
+    const postData = JSON.stringify(body);
 
     const options = {
       hostname: "generativelanguage.googleapis.com",
@@ -27,9 +32,7 @@ const callGemini = (prompt, apiKey) => {
 
     const req = https.request(options, (res) => {
       let body = "";
-      res.on("data", (chunk) => {
-        body += chunk;
-      });
+      res.on("data", (chunk) => { body += chunk; });
       res.on("end", () => {
         try {
           const parsed = JSON.parse(body);
@@ -38,40 +41,39 @@ const callGemini = (prompt, apiKey) => {
           } else {
             resolve(parsed);
           }
-        } catch (e) {
-          reject(e);
-        }
+        } catch (e) { reject(e); }
       });
     });
 
-    req.on("error", (e) => {
-      reject(e);
-    });
-
+    req.on("error", (e) => reject(e));
     req.write(postData);
     req.end();
   });
 };
 
+/* ─── Helper to extract text ─── */
+const extractText = (response) => response.candidates?.[0]?.content?.parts?.[0]?.text || null;
+
+/* ─── GET API KEY ─── */
+const getApiKey = (req) => req.headers["x-gemini-key"] || process.env.GEMINI_API_KEY;
+
+/* ══════════════════════════════════════════════
+   1. CONTENT GENERATION (Admin AI Tools Hub)
+══════════════════════════════════════════════ */
 export const generateContent = async (req, res) => {
   try {
     const { type, inputs, customPrompt } = req.body;
-    
-    // Retrieve Gemini API Key
-    const apiKey = req.headers["x-gemini-key"] || process.env.GEMINI_API_KEY;
+    const apiKey = getApiKey(req);
 
     if (!apiKey) {
       return res.status(400).json({
         success: false,
-        message: "Gemini API Key is missing. Please save it in API Config settings or configure GEMINI_API_KEY in the server .env."
+        message: "Gemini API Key is missing. Please configure GEMINI_API_KEY in server .env."
       });
     }
 
     if (!type || !inputs) {
-      return res.status(400).json({
-        success: false,
-        message: "Type and inputs are required for content generation."
-      });
+      return res.status(400).json({ success: false, message: "Type and inputs are required." });
     }
 
     let prompt = "";
@@ -185,34 +187,240 @@ Instructions:
         break;
       }
 
-      default: {
-        return res.status(400).json({
-          success: false,
-          message: `Invalid type "${type}" specified.`
-        });
-      }
+      default:
+        return res.status(400).json({ success: false, message: `Invalid type "${type}" specified.` });
     }
 
     const response = await callGemini(prompt, apiKey);
-    const generatedText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    const generatedText = extractText(response);
 
     if (!generatedText) {
-      return res.status(500).json({
-        success: false,
-        message: "Gemini API did not return any content parts. Please check your prompt or API status."
-      });
+      return res.status(500).json({ success: false, message: "Gemini API did not return content." });
+    }
+
+    return res.status(200).json({ success: true, data: generatedText.trim() });
+
+  } catch (err) {
+    console.error("AI generate error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Failed to generate content." });
+  }
+};
+
+/* ══════════════════════════════════════════════
+   2. CUSTOMER SUPPORT CHAT (Public)
+══════════════════════════════════════════════ */
+export const supportChat = async (req, res) => {
+  try {
+    const { message, history = [] } = req.body;
+    const apiKey = getApiKey(req);
+
+    if (!apiKey) {
+      return res.status(400).json({ success: false, message: "AI not configured." });
+    }
+
+    if (!message?.trim()) {
+      return res.status(400).json({ success: false, message: "Message is required." });
+    }
+
+    const systemInstruction = `You are "Urban Assistant", the friendly AI customer support agent for URBAN THREADS — a premium Pakistani streetwear brand based in Lahore.
+
+Your personality: Warm, helpful, and knowledgeable. Mix Urdu/Roman Urdu with English naturally (like real Pakistani e-commerce support). Use emojis occasionally.
+
+You know the following about Urban Threads:
+- Brand: URBAN THREADS — premium streetwear (hoodies, tees, cargos, joggers)
+- Products: 100% cotton, 300-360 GSM quality, heavyweight streetwear
+- Delivery: Lahore 1-2 days, rest of Pakistan 3-5 working days  
+- Payment: Cash on Delivery (COD), JazzCash, EasyPaisa, Bank Transfer
+- Returns: 7-day return policy for unopened items
+- Price range: Rs. 1,500 - Rs. 5,000
+- WhatsApp: Available for urgent queries
+- Website: urbanthreadss.store
+- Sizing: XS to 3XL available, size guide on each product page
+
+Rules:
+- Keep responses concise (2-5 lines max)
+- For order tracking, ask for Order ID
+- For sizing, direct to product page size chart
+- Be encouraging about purchases
+- If asked something outside scope, politely redirect
+- Do NOT make up specific prices or product names unless you know them
+- End responses with a helpful follow-up question when appropriate`;
+
+    // Build conversation history for context
+    let conversationPrompt = "";
+    
+    if (history.length > 0) {
+      const recentHistory = history.slice(-6); // Last 3 exchanges
+      conversationPrompt = recentHistory.map(msg => 
+        `${msg.from === "user" ? "Customer" : "Assistant"}: ${msg.text}`
+      ).join("\n") + "\n\n";
+    }
+
+    conversationPrompt += `Customer: ${message}\nAssistant:`;
+
+    const response = await callGemini(conversationPrompt, apiKey, systemInstruction);
+    const reply = extractText(response);
+
+    if (!reply) {
+      return res.status(500).json({ success: false, message: "Could not generate reply." });
     }
 
     return res.status(200).json({
       success: true,
-      data: generatedText.trim()
+      reply: reply.trim()
     });
 
   } catch (err) {
-    console.error("AI controller generation error:", err);
+    console.error("Support chat AI error:", err);
     return res.status(500).json({
       success: false,
-      message: err.message || "Failed to generate content via Gemini API."
+      message: err.message || "AI chat failed.",
+      fallback: true
     });
+  }
+};
+
+/* ══════════════════════════════════════════════
+   3. ANALYTICS AI INSIGHTS (Admin)
+══════════════════════════════════════════════ */
+export const analyticsInsights = async (req, res) => {
+  try {
+    const { statsData } = req.body;
+    const apiKey = getApiKey(req);
+
+    if (!apiKey) {
+      return res.status(400).json({ success: false, message: "Gemini API Key missing." });
+    }
+
+    if (!statsData) {
+      return res.status(400).json({ success: false, message: "Stats data is required." });
+    }
+
+    const prompt = `You are an expert e-commerce business analyst for URBAN THREADS, a Pakistani streetwear brand.
+
+Analyze the following business performance data and provide actionable insights:
+
+${JSON.stringify(statsData, null, 2)}
+
+Provide your analysis in EXACTLY this format (keep each section brief):
+
+🔥 KEY PERFORMANCE SUMMARY
+[2-3 sentences about overall performance trend]
+
+✅ WINS THIS PERIOD
+• [Best performing area]
+• [Second best area]
+• [Third win if applicable]
+
+⚠️ AREAS NEEDING ATTENTION
+• [Main concern with specific metric]
+• [Second concern]
+
+💡 TOP 3 ACTION RECOMMENDATIONS
+1. [Specific, actionable step with expected impact]
+2. [Specific, actionable step]
+3. [Specific, actionable step]
+
+📈 30-DAY REVENUE FORECAST
+[One line prediction based on trends]
+
+Keep all points concise and Pakistan-market specific. Use Pakistani Rupee (Rs.) for amounts.`;
+
+    const response = await callGemini(prompt, apiKey);
+    const insights = extractText(response);
+
+    if (!insights) {
+      return res.status(500).json({ success: false, message: "AI could not generate insights." });
+    }
+
+    return res.status(200).json({ success: true, insights: insights.trim() });
+
+  } catch (err) {
+    console.error("Analytics AI error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Failed to generate insights." });
+  }
+};
+
+/* ══════════════════════════════════════════════
+   4. ORDER AI ANALYSIS (Admin)
+══════════════════════════════════════════════ */
+export const orderAnalysis = async (req, res) => {
+  try {
+    const { orders } = req.body;
+    const apiKey = getApiKey(req);
+
+    if (!apiKey) {
+      return res.status(400).json({ success: false, message: "Gemini API Key missing." });
+    }
+
+    if (!orders?.length) {
+      return res.status(400).json({ success: false, message: "Orders data is required." });
+    }
+
+    // Summarize order data to avoid token limits
+    const summary = {
+      totalOrders: orders.length,
+      statusBreakdown: orders.reduce((acc, o) => {
+        acc[o.orderStatus] = (acc[o.orderStatus] || 0) + 1;
+        return acc;
+      }, {}),
+      totalRevenue: orders.filter(o => o.orderStatus === "delivered").reduce((s, o) => s + (o.totalPrice || 0), 0),
+      avgOrderValue: Math.round(orders.reduce((s, o) => s + (o.totalPrice || 0), 0) / orders.length),
+      topCities: (() => {
+        const cities = {};
+        orders.forEach(o => {
+          const city = o.shippingAddress?.city;
+          if (city) cities[city] = (cities[city] || 0) + 1;
+        });
+        return Object.entries(cities).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([city, count]) => ({ city, count }));
+      })(),
+      paymentMethods: orders.reduce((acc, o) => {
+        const pm = o.paymentMethod || "COD";
+        acc[pm] = (acc[pm] || 0) + 1;
+        return acc;
+      }, {}),
+      cancelRate: Math.round(((orders.filter(o => o.orderStatus === "cancelled").length) / orders.length) * 100),
+      guestVsRegistered: {
+        guest: orders.filter(o => !o.user).length,
+        registered: orders.filter(o => o.user).length
+      }
+    };
+
+    const prompt = `As an e-commerce analyst for URBAN THREADS (Pakistani streetwear brand), analyze this order data and give concise actionable insights:
+
+${JSON.stringify(summary, null, 2)}
+
+Give insights in this format:
+
+📦 ORDER HEALTH SCORE: [X/10 with brief reason]
+
+🏙️ GEOGRAPHIC INSIGHTS
+[2 lines about city performance and expansion opportunities]
+
+💳 PAYMENT PATTERN INSIGHT
+[1-2 lines about payment method trends]
+
+🚨 CANCELLATION ANALYSIS
+[Why cancel rate is ${summary.cancelRate}% and how to reduce it]
+
+💡 QUICK WINS
+• [Immediate action 1]
+• [Immediate action 2]
+• [Immediate action 3]
+
+Keep it brief, data-driven, and Pakistan e-commerce specific.`;
+
+    const response = await callGemini(prompt, apiKey);
+    const analysis = extractText(response);
+
+    if (!analysis) {
+      return res.status(500).json({ success: false, message: "AI could not analyze orders." });
+    }
+
+    return res.status(200).json({ success: true, analysis: analysis.trim() });
+
+  } catch (err) {
+    console.error("Order AI error:", err);
+    return res.status(500).json({ success: false, message: err.message || "Failed to analyze orders." });
   }
 };

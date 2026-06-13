@@ -7,7 +7,7 @@ import {
   FiRefreshCw, FiPhone, FiMail, FiMapPin, FiSearch,
   FiChevronDown, FiChevronUp, FiPackage, FiUser,
   FiTrash2, FiMessageCircle, FiPrinter, FiCheckSquare,
-  FiSquare, FiDownload, FiClock
+  FiSquare, FiDownload, FiClock, FiCpu, FiZap
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
 import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
@@ -287,6 +287,11 @@ export default function OrderList() {
   const [selected, setSelected] = useState([]);
   const [bulkStatus, setBulkStatus] = useState("processing");
 
+  // AI Order Analysis State
+  const [aiAnalysis, setAiAnalysis] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showAi, setShowAi] = useState(false);
+
   // Always fetch fresh settings so invoice fields are up-to-date
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
 
@@ -398,6 +403,37 @@ export default function OrderList() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={async () => {
+              if (!orders.length) return toast.warn("No orders to analyze.");
+              setAiLoading(true);
+              setAiAnalysis("");
+              setShowAi(true);
+              try {
+                const { data: res } = await api.post("/ai/order-analysis", { orders: orders.slice(0, 100) });
+                if (res.success) {
+                  setAiAnalysis(res.analysis);
+                } else {
+                  toast.error("AI analysis failed.");
+                  setShowAi(false);
+                }
+              } catch (err) {
+                toast.error(err.response?.data?.message || "AI failed.");
+                setShowAi(false);
+              } finally {
+                setAiLoading(false);
+              }
+            }}
+            disabled={aiLoading || loading}
+            className="flex items-center gap-2 text-xs font-bold border px-3 py-2.5 rounded-xl transition-all disabled:opacity-40"
+            style={{ background: "rgba(56,189,248,0.08)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}
+          >
+            {aiLoading ? (
+              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing...</>
+            ) : (
+              <><FiCpu size={13} /> AI Analysis</>
+            )}
+          </button>
           <button onClick={exportCSV}
             className="flex items-center gap-2 text-xs text-green-500 border border-green-500/30 px-3 py-2.5 rounded-xl hover:bg-green-500/10 transition-all">
             <FiDownload size={13} /> Export CSV
@@ -905,6 +941,45 @@ export default function OrderList() {
       <div className="text-right text-(--text-muted) text-xs">
         Showing {filtered.length} of {orders.length} orders
       </div>
+
+      {/* AI ORDER ANALYSIS PANEL */}
+      <AnimatePresence>
+        {showAi && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="bg-(--bg-card) border border-cyan-500/20 rounded-2xl overflow-hidden shadow-sm"
+          >
+            <div className="px-5 py-4 border-b border-cyan-500/15 flex items-center justify-between"
+              style={{ background: "rgba(56,189,248,0.05)" }}>
+              <div className="flex items-center gap-2">
+                <FiCpu size={15} style={{ color: "#38bdf8" }} />
+                <h3 className="text-(--text-primary) font-bold text-sm">AI Order Intelligence Report</h3>
+                <span className="text-[9px] px-2 py-0.5 rounded-full font-bold"
+                  style={{ background: "rgba(56,189,248,0.1)", color: "#38bdf8", border: "1px solid rgba(56,189,248,0.2)" }}>
+                  ✦ Gemini Powered
+                </span>
+              </div>
+              <button onClick={() => { setShowAi(false); setAiAnalysis(""); }}
+                className="text-xs text-(--text-muted) hover:text-(--text-primary) transition-colors px-2 py-1 rounded-lg">
+                ✕ Close
+              </button>
+            </div>
+            <div className="p-5">
+              {aiLoading ? (
+                <div className="flex flex-col items-center gap-3 py-8">
+                  <div className="w-8 h-8 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
+                  <p className="text-xs text-(--text-muted) animate-pulse">Gemini is analyzing {orders.length} orders...</p>
+                </div>
+              ) : aiAnalysis ? (
+                <pre className="text-xs text-(--text-primary) leading-relaxed whitespace-pre-wrap font-sans">{aiAnalysis}</pre>
+              ) : null}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

@@ -3,11 +3,12 @@ import { useSettings } from "../context/SettingsContext";
 import {
   FiSend, FiPhone, FiMail, FiMapPin,
   FiClock, FiCheckCircle, FiChevronRight,
-  FiInstagram, FiFacebook, FiMessageCircle,
+  FiInstagram, FiFacebook, FiMessageCircle, FiZap,
 } from "react-icons/fi";
 import { RiWhatsappLine } from "react-icons/ri";
+import api from "../services/api";
 
-/* ── Smart auto-reply ── */
+/* ── Fallback auto-reply (when AI unavailable) ── */
 const autoReply = (msg) => {
   const m = msg.toLowerCase();
   if (m.match(/order|track|status|kahan/))   return "Aapka order track karne ke liye apna Order ID share karein ya 'My Orders' section check karein 📦";
@@ -35,19 +36,20 @@ export default function SupportChat() {
   const brand = settings?.brandName || "Urban Threads";
 
   const [messages, setMessages] = useState([
-    { from: "support", text: `Assalam-o-Alaikum! 👋 ${brand} mein khush amdeed.\n\nHum aapki kaise madad kar sakte hain?`, time: new Date() },
+    { from: "support", text: `Assalam-o-Alaikum! 👋 ${brand} mein khush amdeed.\n\nMain aapka AI assistant hoon — order tracking, size guide, returns, payments — kuch bhi poochhein! ✨`, time: new Date() },
   ]);
-  const [input, setInput]   = useState("");
-  const [typing, setTyping] = useState(false);
-  const [tab, setTab]       = useState("chat");
-  const bottomRef           = useRef(null);
-  const inputRef            = useRef(null);
+  const [input, setInput]         = useState("");
+  const [typing, setTyping]       = useState(false);
+  const [tab, setTab]             = useState("chat");
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const bottomRef                 = useRef(null);
+  const inputRef                  = useRef(null);
 
   useEffect(() => {
     if (settings?.brandName) {
       setMessages([{
         from: "support",
-        text: `Assalam-o-Alaikum! 👋 ${settings.brandName} mein khush amdeed.\n\nHum aapki kaise madad kar sakte hain?`,
+        text: `Assalam-o-Alaikum! 👋 ${settings.brandName} mein khush amdeed.\n\nMain aapka AI assistant hoon — order tracking, size guide, returns, payments — kuch bhi poochhein! ✨`,
         time: new Date(),
       }]);
     }
@@ -57,19 +59,44 @@ export default function SupportChat() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing]);
 
-  const getSupportReplyDelay = () => 1000 + Math.random() * 600;
-
-  const send = (text = input) => {
+  /* ── Send message with real Gemini AI ── */
+  const send = async (text = input) => {
     const msg = text.trim();
-    if (!msg) return;
+    if (!msg || typing) return;
     setInput("");
-    setMessages(prev => [...prev, { from: "user", text: msg, time: new Date() }]);
+
+    const userMsg = { from: "user", text: msg, time: new Date() };
+    setMessages(prev => [...prev, userMsg]);
     setTyping(true);
-    const delay = getSupportReplyDelay();
-    setTimeout(() => {
-      setTyping(false);
-      setMessages(prev => [...prev, { from: "support", text: autoReply(msg), time: new Date() }]);
-    }, delay);
+
+    try {
+      if (aiEnabled) {
+        // Build history from last 6 messages for context
+        const history = messages.slice(-6).map(m => ({ from: m.from, text: m.text }));
+        
+        const { data } = await api.post("/ai/chat", {
+          message: msg,
+          history
+        });
+
+        if (data.success) {
+          setTimeout(() => {
+            setTyping(false);
+            setMessages(prev => [...prev, { from: "support", text: data.reply, time: new Date(), aiPowered: true }]);
+          }, 300 + Math.random() * 400);
+          return;
+        }
+      }
+      throw new Error("Using fallback");
+    } catch {
+      // Fallback to local auto-reply
+      const delay = 900 + Math.random() * 600;
+      setTimeout(() => {
+        setTyping(false);
+        setMessages(prev => [...prev, { from: "support", text: autoReply(msg), time: new Date(), aiPowered: false }]);
+        if (aiEnabled) setAiEnabled(false); // disable AI if it's failing
+      }, delay);
+    }
   };
 
   const handleKey = (e) => {
@@ -107,8 +134,7 @@ export default function SupportChat() {
               color: tab === t.id ? "var(--gold)" : "var(--text-muted)",
               borderBottom: tab === t.id ? "2px solid var(--gold)" : "2px solid transparent",
               background: "transparent",
-            }}>
-            {t.icon} {t.label}
+            }}> {t.icon} {t.label}
           </button>
         ))}
       </div>
@@ -170,6 +196,19 @@ export default function SupportChat() {
               </div>
             </div>
           )}
+
+          {/* AI Badge */}
+          <div className="p-3.5 rounded-xl flex items-center gap-3"
+            style={{ background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+              style={{ background: "rgba(201,168,76,0.1)" }}>
+              <FiZap size={15} style={{ color: "var(--gold)" }} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold" style={{ color: "var(--gold)" }}>Powered by Gemini AI</p>
+              <p className="text-[10px] mt-0.5" style={{ color: "var(--text-muted)" }}>Smart responses in real-time</p>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT: Chat Box */}
@@ -188,9 +227,15 @@ export default function SupportChat() {
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-500 border-2"
                 style={{ borderColor: "var(--bg-elevated)" }} />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{brand} Support</p>
-              <p className="text-green-500 text-xs">Online — replies in minutes</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-green-500 text-xs">Online — AI-powered support</p>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" 
+                  style={{ background: "rgba(201,168,76,0.15)", color: "var(--gold)" }}>
+                  ✦ Gemini AI
+                </span>
+              </div>
             </div>
           </div>
 
@@ -219,12 +264,15 @@ export default function SupportChat() {
                   <div className={`flex items-center gap-1 ${msg.from === "user" ? "flex-row-reverse" : ""}`}>
                     <span className="text-[10px]" style={{ color: "var(--text-muted)" }}>{fmtTime(msg.time)}</span>
                     {msg.from === "user" && <FiCheckCircle size={9} style={{ color: "var(--gold)" }} />}
+                    {msg.from === "support" && msg.aiPowered && (
+                      <span className="text-[9px]" style={{ color: "var(--gold)" }}>✦ AI</span>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
 
-            {/* Typing */}
+            {/* Typing Indicator */}
             {typing && (
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-black shrink-0"
@@ -264,7 +312,7 @@ export default function SupportChat() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                placeholder="Message likhein..."
+                placeholder="Koi bhi sawaal karein..."
                 rows={1}
                 className="flex-1 resize-none rounded-xl px-3 sm:px-4 py-2.5 text-sm outline-none"
                 style={{
@@ -282,18 +330,18 @@ export default function SupportChat() {
               />
               <button
                 onClick={() => send()}
-                disabled={!input.trim()}
+                disabled={!input.trim() || typing}
                 className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 transition-all"
                 style={{
-                  background: input.trim() ? "linear-gradient(135deg,#c9a84c,#e8c96a)" : "var(--bg-elevated)",
-                  color: input.trim() ? "#000" : "var(--text-muted)",
-                  border: `1px solid ${input.trim() ? "transparent" : "var(--border)"}`,
+                  background: input.trim() && !typing ? "linear-gradient(135deg,#c9a84c,#e8c96a)" : "var(--bg-elevated)",
+                  color: input.trim() && !typing ? "#000" : "var(--text-muted)",
+                  border: `1px solid ${input.trim() && !typing ? "transparent" : "var(--border)"}`,
                 }}>
                 <FiSend size={15} />
               </button>
             </div>
             <p className="text-[9px] mt-1.5 text-center hidden sm:block" style={{ color: "var(--text-muted)" }}>
-              Enter to send · Shift+Enter for new line
+              Enter to send · Shift+Enter for new line · ✦ Powered by Gemini AI
             </p>
           </div>
         </div>

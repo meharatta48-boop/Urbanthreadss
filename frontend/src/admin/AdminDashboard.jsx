@@ -8,7 +8,7 @@ import {
   FiUsers, FiPackage, FiDollarSign, FiShoppingBag,
   FiTrendingUp, FiAlertTriangle, FiClock, FiCheckCircle,
   FiPlus, FiRefreshCw, FiBarChart2, FiCopy, FiLayers, FiCalendar,
-  FiTarget, FiXCircle, FiPieChart, FiSettings, FiTag, FiZap
+  FiTarget, FiXCircle, FiPieChart, FiSettings, FiTag, FiZap, FiCpu
 } from "react-icons/fi";
 
 /* ── Status config ── */
@@ -136,6 +136,11 @@ export default function Dashboard() {
   const [refresh, setRefresh] = useState(new Date());
   const [timeRange, setTimeRange] = useState("7d"); // Custom State for filter analytics visually
   const [liveVisitors, setLiveVisitors] = useState(18);
+
+  // AI Insights State
+  const [aiInsights, setAiInsights] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiGenerated, setAiGenerated] = useState(false);
   useEffect(() => {
     if (data?.liveVisitors !== undefined) {
       setLiveVisitors(data.liveVisitors);
@@ -569,6 +574,79 @@ export default function Dashboard() {
 
         </div>
       </div>
+
+      {/* ── AI BUSINESS INSIGHTS ── */}
+      <div className="bg-(--bg-card) border border-(--border) rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-5 py-4 border-b border-(--border) flex items-center justify-between bg-linear-to-r from-cyan-950/20 to-slate-900/10">
+          <div className="flex items-center gap-2">
+            <FiCpu size={15} className="text-cyan-400" />
+            <h3 className="text-(--text-primary) font-bold text-sm">Gemini AI Business Advisor</h3>
+            <span className="text-[9px] px-2 py-0.5 rounded-full font-bold border" style={{ background: "rgba(201,168,76,0.1)", color: "var(--gold)", borderColor: "rgba(201,168,76,0.2)" }}>✦ Powered by Gemini</span>
+          </div>
+          <button
+            onClick={async () => {
+              if (!data) return toast.warn("Dashboard data not loaded yet.");
+              setAiLoading(true);
+              setAiInsights("");
+              try {
+                const statsPayload = {
+                  totalRevenue: data.totalRevenue,
+                  thisMonthRevenue: data.thisMonthRevenue,
+                  totalOrders: data.totalOrders,
+                  todayOrders: data.todayOrders,
+                  totalUsers: data.totalUsers,
+                  newUsersThisMonth: data.newUsersThisMonth,
+                  conversionRate: data.conversionRate,
+                  cancelRate: data.cancelRate,
+                  avgOrderValue: data.avgOrderValue,
+                  ordersByStatus: data.ordersByStatus,
+                  topCategories: data.topCategories,
+                  last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
+                  lowStockCount: data.lowStockCount,
+                };
+                const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
+                if (res.success) {
+                  setAiInsights(res.insights);
+                  setAiGenerated(true);
+                } else {
+                  toast.error("AI could not generate insights.");
+                }
+              } catch (err) {
+                toast.error(err.response?.data?.message || "AI insights failed.");
+              } finally {
+                setAiLoading(false);
+              }
+            }}
+            disabled={aiLoading || !data}
+            className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-40"
+            style={{ background: "rgba(201,168,76,0.1)", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.2)" }}
+          >
+            {aiLoading ? (
+              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing...</>
+            ) : (
+              <><FiZap size={12} /> {aiGenerated ? "Refresh Insights" : "Generate AI Insights"}</>
+            )}
+          </button>
+        </div>
+
+        <div className="p-5">
+          {aiLoading ? (
+            <div className="flex flex-col items-center gap-3 py-10">
+              <div className="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
+              <p className="text-xs text-(--text-muted) animate-pulse">Gemini is analyzing your business data...</p>
+            </div>
+          ) : aiInsights ? (
+            <pre className="text-xs text-(--text-primary) leading-relaxed whitespace-pre-wrap font-sans">{aiInsights}</pre>
+          ) : (
+            <div className="flex flex-col items-center gap-3 py-10 text-(--text-muted)">
+              <FiCpu size={32} className="opacity-15" />
+              <p className="text-sm font-medium">Click "Generate AI Insights" to get real-time business analysis</p>
+              <p className="text-xs opacity-60">Powered by Gemini 1.5 Flash — analyzes your revenue, orders, and growth trends</p>
+            </div>
+          )}
+        </div>
+      </div>
+
     </div>
   );
 }
