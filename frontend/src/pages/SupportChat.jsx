@@ -122,7 +122,7 @@ export default function SupportChat() {
     <div className="flex flex-col" style={{ minHeight: "100dvh", background: "var(--bg-deep)" }}>
 
       {/* Mobile tab switcher */}
-      <div className="lg:hidden flex shrink-0 mx-3 sm:mx-5 mt-4 md:mt-6 z-30 rounded-xl overflow-hidden"
+      <div className="lg:hidden flex shrink-0 mx-3 sm:mx-5 mt-4 md:mt-6 z-30 rounded-xl overflow-hidden sticky top-[75px]"
         style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
         {[
           { id: "chat", icon: <FiMessageCircle size={13} />, label: "Chat" },
@@ -133,7 +133,7 @@ export default function SupportChat() {
             style={{
               color: tab === t.id ? "var(--gold)" : "var(--text-muted)",
               borderBottom: tab === t.id ? "2px solid var(--gold)" : "2px solid transparent",
-              background: tab === t.id ? "var(--bg-elevated)" : "transparent",
+              background: tab === t.id ? "var(--bg-elevated)" : "var(--bg-surface)",
             }}> {t.icon} {t.label}
           </button>
         ))}
@@ -214,7 +214,7 @@ export default function SupportChat() {
         {/* RIGHT: Chat Box */}
         <div
           className={`lg:col-span-2 flex flex-col rounded-2xl overflow-hidden ${tab === "chat" ? "flex" : "hidden"} lg:flex`}
-          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", height: "clamp(400px, calc(100dvh - 140px), 720px)" }}
+          style={{ background: "var(--bg-surface)", border: "1px solid var(--border)", height: "clamp(400px, calc(100dvh - 220px), 720px)" }}
         >
           {/* Chat Header */}
           <div className="px-4 py-3 flex items-center gap-3 shrink-0"
