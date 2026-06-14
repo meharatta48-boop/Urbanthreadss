@@ -122,25 +122,25 @@ export default function SupportChat() {
     <div className="flex flex-col" style={{ minHeight: "100dvh", background: "var(--bg-deep)" }}>
 
       {/* Mobile tab switcher */}
-      <div className="lg:hidden flex shrink-0 fixed top-16 left-0 right-0 z-30"
-        style={{ background: "var(--bg-surface)", borderBottom: "1px solid var(--border)" }}>
+      <div className="lg:hidden flex shrink-0 mx-3 sm:mx-5 mt-4 md:mt-6 z-30 rounded-xl overflow-hidden"
+        style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
         {[
           { id: "chat", icon: <FiMessageCircle size={13} />, label: "Chat" },
           { id: "info", icon: <FiPhone size={13} />, label: "Contact Info" },
         ].map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-medium transition-all"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-medium transition-all"
             style={{
               color: tab === t.id ? "var(--gold)" : "var(--text-muted)",
               borderBottom: tab === t.id ? "2px solid var(--gold)" : "2px solid transparent",
-              background: "transparent",
+              background: tab === t.id ? "var(--bg-elevated)" : "transparent",
             }}> {t.icon} {t.label}
           </button>
         ))}
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-5 pt-36 sm:pt-32 pb-6 grid lg:grid-cols-3 gap-4 min-h-0">
+      <div className="flex-1 max-w-6xl w-full mx-auto px-3 sm:px-5 pt-4 lg:pt-8 pb-6 grid lg:grid-cols-3 gap-4 min-h-0">
 
         {/* LEFT: Contact Cards */}
         <div className={`space-y-3 ${tab === "info" ? "block" : "hidden"} lg:block`}>
