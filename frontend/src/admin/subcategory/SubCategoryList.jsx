@@ -39,7 +39,7 @@ function ImagePicker({ current, onFile, onRemove, label = "Image" }) {
       {displaySrc ? (
         <div className="relative group w-20 h-20 rounded-xl overflow-hidden border border-(--border) bg-(--bg-deep)">
           <img src={displaySrc} alt="subcat" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5">
+          <div className="absolute inset-0 bg-black/50 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 z-10">
             <button
               type="button"
               onClick={() => ref.current?.click()}

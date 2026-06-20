@@ -367,19 +367,20 @@ export default function ProductForm() {
                     />
                     {/* MAIN BADGE */}
                     {i === 0 && (
-                      <span className="absolute top-1.5 left-1.5 text-[9px] gold-gradient text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                      <span className="absolute top-1.5 left-1.5 text-[9px] gold-gradient text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider z-20">
                         Main
                       </span>
                     )}
+                    {/* OVERLAY */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 lg:group-hover:opacity-100 transition-opacity z-10" />
                     {/* DELETE BUTTON */}
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); removeExisting(i); }}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity shadow-lg z-20"
                     >
                       <FiX size={11} />
                     </button>
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -395,13 +396,13 @@ export default function ProductForm() {
                     className="relative group aspect-square rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card)"
                   >
                     <LazyImage src={url} alt={`new-${i}`} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium">
+                    <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium z-20">
                       New
                     </span>
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); removeNew(i); }}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity shadow-lg z-20"
                     >
                       <FiX size={11} />
                     </button>

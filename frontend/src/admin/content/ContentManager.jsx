@@ -429,7 +429,7 @@ export default function ContentManager() {
                 ].map((item, idx) => (
                   <div key={idx} className="group relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-elevated) aspect-square">
                     <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                    <div className="absolute inset-0 bg-black/60 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
                       <p className="text-[10px] font-bold text-white truncate">{item.name}</p>
                       <button
                         onClick={() => {

@@ -513,7 +513,7 @@ export default function ComboForm() {
                     <button
                       type="button"
                       onClick={() => handleRemoveExistingImage(img)}
-                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-10"
                     >
                       <FiTrash2 size={12} />
                     </button>
@@ -532,7 +532,7 @@ export default function ComboForm() {
                     <button
                       type="button"
                       onClick={() => handleRemoveNewImage(idx)}
-                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-lg opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-10"
                     >
                       <FiTrash2 size={12} />
                     </button>
