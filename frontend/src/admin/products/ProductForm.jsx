@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUpload, FiX, FiArrowLeft, FiSave, FiImage,
   FiStar, FiDollarSign, FiPackage, FiLayers, FiAlignLeft,
-  FiVideo
+  FiVideo, FiRefreshCw, FiTrash2
 } from "react-icons/fi";
 
 import { SERVER_URL } from "../../services/api";
@@ -28,6 +28,8 @@ export default function ProductForm() {
   const isEdit = Boolean(id);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
+  const replaceInputRef = useRef(null);
+  const [replaceTargetIndex, setReplaceTargetIndex] = useState(null);
 
   /* ── FORM STATE ── */
   const [form, setForm] = useState({
@@ -144,6 +146,19 @@ export default function ProductForm() {
     URL.revokeObjectURL(newPreviews[index]);
     setNewFiles((prev) => prev.filter((_, i) => i !== index));
     setNewPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  /* Replace an existing image at a specific index with a new file */
+  const replaceExisting = (index, file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error(`${file.name} is not an image`); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} exceeds 5MB limit`); return; }
+    // Remove the old existing image at that index
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    // Add the replacement as a new file
+    setNewFiles((prev) => [...prev, file]);
+    setNewPreviews((prev) => [...prev, URL.createObjectURL(file)]);
+    toast.success("Image replaced — save to apply");
   };
 
   /* ── VIDEO HANDLERS ── */
@@ -347,6 +362,21 @@ export default function ProductForm() {
           </div>
 
           {/* IMAGE GRID PREVIEW */}
+          {/* Hidden replace input */}
+          <input
+            ref={replaceInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              if (replaceTargetIndex !== null) {
+                replaceExisting(replaceTargetIndex, e.target.files[0]);
+                setReplaceTargetIndex(null);
+              }
+              e.target.value = "";
+            }}
+          />
+
           {totalImages > 0 && (
             <div className="grid grid-cols-2 gap-2.5">
               {/* EXISTING IMAGES */}
@@ -357,30 +387,42 @@ export default function ProductForm() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="relative group aspect-square rounded-xl overflow-hidden border border-(--border) bg-(--bg-card)"
+                    className="relative rounded-xl overflow-hidden border border-(--border) bg-(--bg-card) flex flex-col"
                   >
-                    <LazyImage
-                      src={getImageUrl(img)}
-                      alt={`existing-${i}`}
-                      className="absolute inset-0 w-full h-full object-cover object-center"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                    {/* MAIN BADGE */}
-                    {i === 0 && (
-                      <span className="absolute top-1.5 left-1.5 text-[9px] gold-gradient text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider z-20">
-                        Main
-                      </span>
-                    )}
-                    {/* OVERLAY */}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 lg:group-hover:opacity-100 transition-opacity z-10" />
-                    {/* DELETE BUTTON */}
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); removeExisting(i); }}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity shadow-lg z-20"
-                    >
-                      <FiX size={11} />
-                    </button>
+                    {/* Image area */}
+                    <div className="relative aspect-square">
+                      <LazyImage
+                        src={getImageUrl(img)}
+                        alt={`existing-${i}`}
+                        className="absolute inset-0 w-full h-full object-cover object-center"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                      {i === 0 && (
+                        <span className="absolute top-1.5 left-1.5 text-[9px] gold-gradient text-black px-1.5 py-0.5 rounded font-bold uppercase tracking-wider z-10">
+                          Main
+                        </span>
+                      )}
+                    </div>
+                    {/* Action bar — always visible */}
+                    <div className="flex border-t border-(--border)">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setReplaceTargetIndex(i); replaceInputRef.current?.click(); }}
+                        className="flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-medium text-(--text-muted) hover:text-(--gold) hover:bg-(--gold)/5 transition-all"
+                        title="Replace image"
+                      >
+                        <FiRefreshCw size={10} /> Replace
+                      </button>
+                      <div className="w-px bg-(--border)" />
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); removeExisting(i); }}
+                        className="flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-medium text-(--text-muted) hover:text-red-400 hover:bg-red-500/5 transition-all"
+                        title="Delete image"
+                      >
+                        <FiTrash2 size={10} /> Delete
+                      </button>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -393,19 +435,26 @@ export default function ProductForm() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="relative group aspect-square rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card)"
+                    className="relative rounded-xl overflow-hidden border border-(--gold)/30 bg-(--bg-card) flex flex-col"
                   >
-                    <LazyImage src={url} alt={`new-${i}`} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <span className="absolute bottom-1.5 left-1.5 text-[9px] bg-(--bg-card) text-(--gold) border border-(--gold)/30 px-1.5 py-0.5 rounded font-medium z-20">
-                      New
-                    </span>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); removeNew(i); }}
-                      className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity shadow-lg z-20"
-                    >
-                      <FiX size={11} />
-                    </button>
+                    {/* Image area */}
+                    <div className="relative aspect-square">
+                      <LazyImage src={url} alt={`new-${i}`} className="absolute inset-0 w-full h-full object-cover object-center" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <span className="absolute top-1.5 left-1.5 text-[9px] bg-black/70 text-(--gold) px-1.5 py-0.5 rounded font-bold z-10">
+                        New
+                      </span>
+                    </div>
+                    {/* Action bar — always visible */}
+                    <div className="flex border-t border-(--gold)/20">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); removeNew(i); }}
+                        className="flex-1 flex items-center justify-center gap-1 py-1.5 text-[10px] font-medium text-(--text-muted) hover:text-red-400 hover:bg-red-500/5 transition-all"
+                        title="Remove"
+                      >
+                        <FiTrash2 size={10} /> Remove
+                      </button>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
