@@ -95,13 +95,17 @@ function StatusBadge({ status }) {
   );
 }
 
-function printInvoice(order) {
+function downloadInvoicePDF(order) {
   const name = getName(order);
   const phone = getPhone(order);
   const email = getEmail(order);
   const addr = order.shippingAddress;
   const invoiceNo = order._id.slice(-10).toUpperCase();
+  const orderId   = order._id.slice(-8).toUpperCase();
   const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  const printDate = new Date().toLocaleDateString("en-PK", {
     day: "numeric", month: "long", year: "numeric"
   });
 
@@ -109,106 +113,208 @@ function printInvoice(order) {
     pending: "#f59e0b", processing: "#c9a84c",
     shipped: "#818cf8", delivered: "#16a34a",
     cancelled: "#ef4444",
-  }[order.orderStatus] || "#555";
+  }[order.orderStatus] || "#888";
 
-  const itemRows = (order.orderItems || []).map((item, i) => `
+  const statusLabel = {
+    pending: "Order Received", processing: "Packing",
+    shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled",
+  }[order.orderStatus] || order.orderStatus;
+
+  const itemRows = (order.orderItems || []).map((item, i) => {
+    const variant = [item.size, item.color].filter(Boolean).join(", ");
+    const lineTotal = (item.price * item.quantity).toLocaleString();
+    return `
     <tr>
-      <td class="num">${i + 1}</td>
-      <td class="name">${item.name}${item.size ? ` (${item.size}` : ""}${item.color ? `, ${item.color}` : ""}${item.size || item.color ? ")" : ""}</td>
-      <td class="center">${item.quantity}</td>
-      <td class="right">Rs. ${item.price}</td>
-      <td class="right">Rs. ${item.price * item.quantity}</td>
-    </tr>`).join("");
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;color:#888;font-size:12px;">${i + 1}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;">
+        <div style="font-weight:600;color:#1a1208;font-size:13px;">${item.name}</div>
+        ${variant ? `<div style="font-size:11px;color:#9e8a6a;margin-top:2px;">${variant}</div>` : ""}
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:center;font-weight:600;color:#1a1208;">${item.quantity}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;color:#5a4a30;">Rs. ${item.price.toLocaleString()}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;font-weight:700;color:#c9a84c;">Rs. ${lineTotal}</td>
+    </tr>`;
+  }).join("");
 
-  const win = window.open("", "_blank", "width=800,height=600");
-  win.document.write(`<!DOCTYPE html>
-<html>
+  const html = `<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Invoice #${invoiceNo}</title>
+  <title>Invoice #${invoiceNo} - Urban Threads</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; font-size: 11px; color: #000; background: #fff; }
-    .page-container { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 100%; }
-    .invoice { border: 1px dashed #ccc; padding: 12px; page-break-inside: avoid; height: 50vh; display: flex; flex-direction: column; }
-    .header { border-bottom: 1px solid #000; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .brand { font-size: 13px; font-weight: bold; text-transform: uppercase; }
-    .inv-info { text-align: right; font-size: 10px; }
-    .inv-no { font-weight: bold; }
-    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; font-size: 10px; }
-    .meta-box { border: 1px solid #ddd; padding: 4px; background: #f9f9f9; }
-    .meta-label { font-weight: bold; font-size: 9px; text-transform: uppercase; color: #666; }
-    .meta-val { margin-top: 2px; word-break: break-word; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 10px; }
-    thead { background: #f0f0f0; }
-    th { padding: 3px; text-align: left; font-weight: bold; border-bottom: 1px solid #ddd; }
-    td { padding: 2px 3px; border-bottom: 1px solid #eee; }
-    .num { width: 20px; }
-    .center { text-align: center; width: 35px; }
-    .right { text-align: right; width: 70px; }
-    .totals { display: flex; justify-content: flex-end; margin-bottom: 6px; }
-    .totals-box { width: 140px; font-size: 10px; }
-    .totals-row { display: flex; justify-content: space-between; padding: 2px 4px; border-bottom: 1px solid #eee; }
-    .totals-row.total { border-top: 1px solid #000; font-weight: bold; background: #f0f0f0; }
-    .footer { font-size: 9px; color: #666; text-align: center; margin-top: auto; border-top: 1px solid #ddd; padding-top: 4px; }
-    @media print { .invoice { page-break-inside: avoid; border: none; padding: 0; } }
+    body { font-family: 'Inter', Arial, sans-serif; background: #faf8f4; color: #1a1208; font-size: 13px; }
+    .page { max-width: 780px; margin: 0 auto; background: #ffffff; border-radius: 0; }
+    /* ── HEADER ── */
+    .inv-header { background: linear-gradient(135deg, #1a1208 0%, #2d2010 60%, #3d2e14 100%); padding: 36px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .brand-name { font-size: 26px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: #c9a84c; }
+    .brand-tagline { font-size: 10px; color: rgba(201,168,76,0.6); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+    .inv-title-block { text-align: right; }
+    .inv-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 3px; text-transform: uppercase; }
+    .inv-number { font-size: 22px; font-weight: 800; color: #c9a84c; margin-top: 4px; }
+    .inv-date { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+    /* ── STATUS BAR ── */
+    .status-bar { background: #f7f3ec; border-bottom: 2px solid #e8e0d0; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; }
+    .status-pill { display: inline-flex; align-items: center; gap: 7px; background: ${statusColor}22; border: 1.5px solid ${statusColor}55; color: ${statusColor}; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: ${statusColor}; }
+    .payment-badge { background: #1a120808; border: 1px solid #c9a84c44; color: #8a6f3a; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    /* ── META INFO ── */
+    .meta-section { padding: 28px 40px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .meta-card { background: #faf8f4; border: 1px solid #e8e0d0; border-radius: 8px; padding: 16px 18px; }
+    .meta-card-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #9e8a6a; margin-bottom: 10px; border-bottom: 1px solid #e8e0d0; padding-bottom: 7px; }
+    .meta-card-name { font-size: 14px; font-weight: 700; color: #1a1208; margin-bottom: 4px; }
+    .meta-card-line { font-size: 12px; color: #6a5a3a; margin-bottom: 2px; line-height: 1.5; }
+    /* ── TABLE ── */
+    .items-section { padding: 24px 40px 0; }
+    .section-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #9e8a6a; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #e8e0d0; border-radius: 8px; overflow: hidden; }
+    thead tr { background: #2d2010; }
+    thead th { padding: 11px 12px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #c9a84c; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fdf9f3; }
+    /* ── TOTALS ── */
+    .totals-section { padding: 20px 40px 0; display: flex; justify-content: flex-end; }
+    .totals-box { width: 280px; border: 1px solid #e8e0d0; border-radius: 8px; overflow: hidden; }
+    .totals-row { display: flex; justify-content: space-between; padding: 9px 16px; border-bottom: 1px solid #f0ebe0; font-size: 12px; }
+    .totals-row .label { color: #6a5a3a; }
+    .totals-row .val { color: #1a1208; font-weight: 500; }
+    .totals-row.discount .val { color: #16a34a; }
+    .totals-grand { display: flex; justify-content: space-between; padding: 13px 16px; background: #2d2010; }
+    .totals-grand .label { color: #c9a84c; font-weight: 700; font-size: 13px; }
+    .totals-grand .val { color: #c9a84c; font-weight: 800; font-size: 15px; }
+    /* ── FOOTER ── */
+    .inv-footer { padding: 24px 40px 30px; margin-top: 24px; border-top: 1px solid #e8e0d0; display: flex; justify-content: space-between; align-items: center; }
+    .footer-msg { font-size: 12px; color: #9e8a6a; }
+    .footer-msg strong { color: #c9a84c; }
+    .footer-print { font-size: 10px; color: #b8a898; text-align: right; }
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; }
+      .page { max-width: 100%; }
+      @page { margin: 0; size: A4; }
+    }
   </style>
 </head>
 <body>
-<div class="page-container">
-  <div class="invoice">
-    <div class="header">
-      <div class="brand">URBAN THREAD</div>
-      <div class="inv-info">
-        <div class="inv-no">INV #${invoiceNo}</div>
-        <div>${orderDate}</div>
-        <div><span style="display: inline-block; background: ${statusColor}; color: white; padding: 1px 4px; border-radius: 2px; font-size: 9px; margin-top: 2px;">${order.orderStatus}</span></div>
-      </div>
-    </div>
+<div class="page">
 
-    <div class="meta-grid">
-      <div class="meta-box">
-        <div class="meta-label">Bill To</div>
-        <div class="meta-val"><strong>${name}</strong><br/>${phone ? phone + "<br/>" : ""}${email || ""}</div>
-      </div>
-      <div class="meta-box">
-        <div class="meta-label">Ship To</div>
-        <div class="meta-val">${addr ? `<strong>${addr.fullName}</strong><br/>${addr.address}<br/>${addr.city}` : "—"}</div>
-      </div>
+  <!-- HEADER -->
+  <div class="inv-header">
+    <div>
+      <div class="brand-name">Urban Threads</div>
+      <div class="brand-tagline">Premium Fashion Pakistan</div>
     </div>
+    <div class="inv-title-block">
+      <div class="inv-title">Invoice</div>
+      <div class="inv-number">#${invoiceNo}</div>
+      <div class="inv-date">${orderDate}</div>
+    </div>
+  </div>
 
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      ${statusLabel}
+    </div>
+    <div class="payment-badge">Payment: ${order.paymentMethod || "COD"}</div>
+  </div>
+
+  <!-- META INFO -->
+  <div class="meta-section">
+    <div class="meta-card">
+      <div class="meta-card-label">Bill To</div>
+      <div class="meta-card-name">${name}</div>
+      ${phone ? `<div class="meta-card-line">📞 ${phone}</div>` : ""}
+      ${email ? `<div class="meta-card-line">✉ ${email}</div>` : ""}
+    </div>
+    <div class="meta-card">
+      <div class="meta-card-label">Ship To</div>
+      ${addr ? `
+        <div class="meta-card-name">${addr.fullName}</div>
+        <div class="meta-card-line">${addr.address}</div>
+        <div class="meta-card-line">${addr.city}${addr.province ? ", " + addr.province : ""}</div>
+        ${addr.postalCode && addr.postalCode !== "00000" ? `<div class="meta-card-line">Postal: ${addr.postalCode}</div>` : ""}
+      ` : "<div class=\"meta-card-line\">—</div>"}
+    </div>
+    <div class="meta-card">
+      <div class="meta-card-label">Order Info</div>
+      <div class="meta-card-line"><strong>Order ID:</strong> #${orderId}</div>
+      <div class="meta-card-line"><strong>Date:</strong> ${orderDate}</div>
+      <div class="meta-card-line"><strong>Items:</strong> ${(order.orderItems || []).length}</div>
+      ${order.trackingNumber ? `<div class="meta-card-line"><strong>Tracking:</strong> ${order.trackingNumber}</div>` : ""}
+      ${order.courierPartner ? `<div class="meta-card-line"><strong>Courier:</strong> ${order.courierPartner}</div>` : ""}
+    </div>
+  </div>
+
+  <!-- ITEMS TABLE -->
+  <div class="items-section" style="margin-top:24px;">
+    <div class="section-title">Order Items</div>
     <table>
       <thead>
         <tr>
-          <th class="num">#</th>
-          <th>Item</th>
-          <th class="center">Qty</th>
-          <th class="right">Price</th>
-          <th class="right">Total</th>
+          <th style="width:36px;">#</th>
+          <th>Product</th>
+          <th style="text-align:center;width:60px;">Qty</th>
+          <th style="text-align:right;width:110px;">Unit Price</th>
+          <th style="text-align:right;width:110px;">Total</th>
         </tr>
       </thead>
-      <tbody>
-        ${itemRows}
-      </tbody>
+      <tbody>${itemRows}</tbody>
     </table>
+  </div>
 
-    <div class="totals">
-      <div class="totals-box">
-        <div class="totals-row"><span>Subtotal:</span><span>Rs. ${order.itemsPrice || 0}</span></div>
-        <div class="totals-row"><span>Delivery:</span><span>Rs. ${order.shippingPrice ?? 250}</span></div>
-        ${order.couponDiscount ? `<div class="totals-row"><span>Discount:</span><span>- Rs. ${order.couponDiscount}</span></div>` : ""}
-        <div class="totals-row total"><span>Total:</span><span>Rs. ${order.totalPrice || 0}</span></div>
+  <!-- TOTALS -->
+  <div class="totals-section">
+    <div class="totals-box">
+      <div class="totals-row">
+        <span class="label">Subtotal</span>
+        <span class="val">Rs. ${(order.itemsPrice || 0).toLocaleString()}</span>
+      </div>
+      <div class="totals-row">
+        <span class="label">Delivery Charges</span>
+        <span class="val">Rs. ${(order.shippingPrice ?? 250).toLocaleString()}</span>
+      </div>
+      ${
+        order.couponDiscount > 0
+          ? `<div class="totals-row discount">
+               <span class="label">Discount (${order.couponCode || "Coupon"})</span>
+               <span class="val">− Rs. ${order.couponDiscount.toLocaleString()}</span>
+             </div>`
+          : ""
+      }
+      <div class="totals-grand">
+        <span class="label">Grand Total</span>
+        <span class="val">Rs. ${(order.totalPrice || 0).toLocaleString()}</span>
       </div>
     </div>
+  </div>
 
-    <div class="footer">
-      <p>Thank you for your order!</p>
-      <p style="margin-top: 3px;">Payment: ${order.paymentMethod || "COD"}</p>
+  <!-- FOOTER -->
+  <div class="inv-footer">
+    <div class="footer-msg">
+      Thank you for shopping with <strong>Urban Threads</strong>! 🌸<br/>
+      <span style="font-size:11px;">For any queries, contact us on WhatsApp.</span>
+    </div>
+    <div class="footer-print">
+      Printed on: ${printDate}<br/>
+      Urban Threads Pakistan
     </div>
   </div>
+
 </div>
+<script>
+  window.onload = function() {
+    setTimeout(function() { window.print(); }, 400);
+  };
+<\/script>
 </body>
-</html>`);
+</html>`;
+
+  const win = window.open("", "_blank", "width=900,height=700");
+  if (!win) { alert("Pop-up blocked! Please allow pop-ups for this site."); return; }
+  win.document.write(html);
   win.document.close();
 }
 
@@ -650,9 +756,9 @@ export default function OrderList() {
                                     </div>
                                   </div>
                                   <div className="flex gap-2">
-                                    <button onClick={() => printInvoice(order)}
+                                    <button onClick={() => downloadInvoicePDF(order)}
                                       className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all">
-                                      <FiPrinter size={14} /> Print Invoice
+                                      <FiDownload size={14} /> Download Invoice PDF
                                     </button>
                                     <button onClick={() => printShippingLabel(order)}
                                       className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--border-light) text-(--text-primary) font-bold py-2.5 px-4 rounded-lg transition-all">

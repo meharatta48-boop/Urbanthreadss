@@ -6,7 +6,7 @@ import api from "../services/api";
 import {
   FiPackage, FiClock, FiTruck, FiCheckCircle,
   FiXCircle, FiChevronDown, FiChevronUp, FiArrowLeft,
-  FiAlertCircle, FiTrash2
+  FiAlertCircle, FiTrash2, FiDownload
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../services/api";
@@ -22,6 +22,174 @@ const STATUS = {
 };
 
 const STEPS = ["pending", "processing", "shipped", "delivered"];
+
+function downloadOrderInvoice(order) {
+  const addr = order.shippingAddress;
+  const name = addr?.fullName || "Customer";
+  const phone = addr?.phone || "";
+  const invoiceNo = order._id.slice(-10).toUpperCase();
+  const orderId   = order._id.slice(-8).toUpperCase();
+  const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  const printDate = new Date().toLocaleDateString("en-PK", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+
+  const statusColor = {
+    pending: "#f59e0b", processing: "#c9a84c",
+    shipped: "#818cf8", delivered: "#16a34a",
+    cancelled: "#ef4444",
+  }[order.orderStatus] || "#888";
+
+  const statusLabel = {
+    pending: "Order Received", processing: "Packing",
+    shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled",
+  }[order.orderStatus] || order.orderStatus;
+
+  const itemRows = (order.orderItems || []).map((item, i) => {
+    const variant = [item.size, item.color].filter(Boolean).join(", ");
+    const lineTotal = (item.price * item.quantity).toLocaleString();
+    return `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;color:#888;font-size:12px;">${i + 1}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;">
+        <div style="font-weight:600;color:#1a1208;font-size:13px;">${item.name}</div>
+        ${variant ? `<div style="font-size:11px;color:#9e8a6a;margin-top:2px;">${variant}</div>` : ""}
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:center;font-weight:600;color:#1a1208;">${item.quantity}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;color:#5a4a30;">Rs. ${item.price.toLocaleString()}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;font-weight:700;color:#c9a84c;">Rs. ${lineTotal}</td>
+    </tr>`;
+  }).join("");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice #${invoiceNo} - Urban Threads</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', Arial, sans-serif; background: #faf8f4; color: #1a1208; font-size: 13px; }
+    .page { max-width: 780px; margin: 0 auto; background: #ffffff; }
+    .inv-header { background: linear-gradient(135deg, #1a1208 0%, #2d2010 60%, #3d2e14 100%); padding: 36px 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .brand-name { font-size: 26px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: #c9a84c; }
+    .brand-tagline { font-size: 10px; color: rgba(201,168,76,0.6); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+    .inv-title-block { text-align: right; }
+    .inv-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 3px; text-transform: uppercase; }
+    .inv-number { font-size: 22px; font-weight: 800; color: #c9a84c; margin-top: 4px; }
+    .inv-date { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 6px; }
+    .status-bar { background: #f7f3ec; border-bottom: 2px solid #e8e0d0; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; }
+    .status-pill { display: inline-flex; align-items: center; gap: 7px; background: ${statusColor}22; border: 1.5px solid ${statusColor}55; color: ${statusColor}; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: ${statusColor}; }
+    .payment-badge { background: #1a120808; border: 1px solid #c9a84c44; color: #8a6f3a; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .meta-section { padding: 28px 40px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .meta-card { background: #faf8f4; border: 1px solid #e8e0d0; border-radius: 8px; padding: 16px 18px; }
+    .meta-card-label { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #9e8a6a; margin-bottom: 10px; border-bottom: 1px solid #e8e0d0; padding-bottom: 7px; }
+    .meta-card-name { font-size: 14px; font-weight: 700; color: #1a1208; margin-bottom: 4px; }
+    .meta-card-line { font-size: 12px; color: #6a5a3a; margin-bottom: 2px; line-height: 1.5; }
+    .items-section { padding: 24px 40px 0; }
+    .section-title { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #9e8a6a; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; border: 1px solid #e8e0d0; border-radius: 8px; overflow: hidden; }
+    thead tr { background: #2d2010; }
+    thead th { padding: 11px 12px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #c9a84c; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fdf9f3; }
+    .totals-section { padding: 20px 40px 0; display: flex; justify-content: flex-end; }
+    .totals-box { width: 280px; border: 1px solid #e8e0d0; border-radius: 8px; overflow: hidden; }
+    .totals-row { display: flex; justify-content: space-between; padding: 9px 16px; border-bottom: 1px solid #f0ebe0; font-size: 12px; }
+    .totals-row .label { color: #6a5a3a; }
+    .totals-row .val { color: #1a1208; font-weight: 500; }
+    .totals-row.discount .val { color: #16a34a; }
+    .totals-grand { display: flex; justify-content: space-between; padding: 13px 16px; background: #2d2010; }
+    .totals-grand .label { color: #c9a84c; font-weight: 700; font-size: 13px; }
+    .totals-grand .val { color: #c9a84c; font-weight: 800; font-size: 15px; }
+    .inv-footer { padding: 24px 40px 30px; margin-top: 24px; border-top: 1px solid #e8e0d0; display: flex; justify-content: space-between; align-items: center; }
+    .footer-msg { font-size: 12px; color: #9e8a6a; }
+    .footer-msg strong { color: #c9a84c; }
+    .footer-print { font-size: 10px; color: #b8a898; text-align: right; }
+    @media print {
+      body { background: #fff; }
+      .page { max-width: 100%; }
+      @page { margin: 0; size: A4; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="inv-header">
+    <div>
+      <div class="brand-name">Urban Threads</div>
+      <div class="brand-tagline">Premium Fashion Pakistan</div>
+    </div>
+    <div class="inv-title-block">
+      <div class="inv-title">Invoice</div>
+      <div class="inv-number">#${invoiceNo}</div>
+      <div class="inv-date">${orderDate}</div>
+    </div>
+  </div>
+  <div class="status-bar">
+    <div class="status-pill"><span class="status-dot"></span>${statusLabel}</div>
+    <div class="payment-badge">Payment: ${order.paymentMethod || "COD"}</div>
+  </div>
+  <div class="meta-section">
+    <div class="meta-card">
+      <div class="meta-card-label">Bill To</div>
+      <div class="meta-card-name">${name}</div>
+      ${phone ? `<div class="meta-card-line">📞 ${phone}</div>` : ""}
+    </div>
+    <div class="meta-card">
+      <div class="meta-card-label">Ship To</div>
+      ${addr ? `
+        <div class="meta-card-name">${addr.fullName}</div>
+        <div class="meta-card-line">${addr.address}</div>
+        <div class="meta-card-line">${addr.city}${addr.province ? ", " + addr.province : ""}</div>
+      ` : "<div class=\"meta-card-line\">—</div>"}
+    </div>
+    <div class="meta-card">
+      <div class="meta-card-label">Order Info</div>
+      <div class="meta-card-line"><strong>Order ID:</strong> #${orderId}</div>
+      <div class="meta-card-line"><strong>Date:</strong> ${orderDate}</div>
+      <div class="meta-card-line"><strong>Items:</strong> ${(order.orderItems || []).length}</div>
+    </div>
+  </div>
+  <div class="items-section" style="margin-top:24px;">
+    <div class="section-title">Order Items</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:36px;">#</th>
+          <th>Product</th>
+          <th style="text-align:center;width:60px;">Qty</th>
+          <th style="text-align:right;width:110px;">Unit Price</th>
+          <th style="text-align:right;width:110px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+  </div>
+  <div class="totals-section">
+    <div class="totals-box">
+      <div class="totals-row"><span class="label">Subtotal</span><span class="val">Rs. ${(order.itemsPrice || 0).toLocaleString()}</span></div>
+      <div class="totals-row"><span class="label">Delivery Charges</span><span class="val">Rs. ${(order.shippingPrice ?? 250).toLocaleString()}</span></div>
+      ${order.couponDiscount > 0 ? `<div class="totals-row discount"><span class="label">Discount (${order.couponCode || "Coupon"})</span><span class="val">− Rs. ${order.couponDiscount.toLocaleString()}</span></div>` : ""}
+      <div class="totals-grand"><span class="label">Grand Total</span><span class="val">Rs. ${(order.totalPrice || 0).toLocaleString()}</span></div>
+    </div>
+  </div>
+  <div class="inv-footer">
+    <div class="footer-msg">Thank you for shopping with <strong>Urban Threads</strong>! 🌸<br/><span style="font-size:11px;">For any queries, contact us on WhatsApp.</span></div>
+    <div class="footer-print">Printed on: ${printDate}<br/>Urban Threads Pakistan</div>
+  </div>
+</div>
+<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script>
+</body></html>`;
+
+  const win = window.open("", "_blank", "width=900,height=700");
+  if (!win) { alert("Pop-up blocked! Please allow pop-ups."); return; }
+  win.document.write(html);
+  win.document.close();
+}
 
 export default function MyOrders() {
   const { user } = useAuth();
@@ -308,13 +476,25 @@ export default function MyOrders() {
                               )}
                             </div>
                             
-                            <button
-                              onClick={() => handleDeleteOrder(order._id)}
-                              className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors hover:bg-red-500/10 cursor-pointer"
-                            >
-                              <FiTrash2 size={13} />
-                              Delete Order
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => downloadOrderInvoice(order)}
+                                className="text-xs font-semibold flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                                style={{ color: "var(--gold)", border: "1px solid var(--gold-20)", background: "var(--gold-8)" }}
+                                onMouseEnter={e => e.currentTarget.style.background = "var(--gold-20)"}
+                                onMouseLeave={e => e.currentTarget.style.background = "var(--gold-8)"}
+                              >
+                                <FiDownload size={13} />
+                                Invoice PDF
+                              </button>
+                              <button
+                                onClick={() => handleDeleteOrder(order._id)}
+                                className="text-xs text-red-500 hover:text-red-600 font-semibold flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors hover:bg-red-500/10 cursor-pointer"
+                              >
+                                <FiTrash2 size={13} />
+                                Delete
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </motion.div>
