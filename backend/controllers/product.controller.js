@@ -32,6 +32,21 @@ const deleteFile = (filePath) => {
   if (fs.existsSync(full)) fs.unlinkSync(full);
 };
 
+const normalizePathForComparison = (p) => {
+  if (typeof p !== "string") return "";
+  let normalized = p.replace(/\\/g, "/").trim();
+  normalized = normalized.replace(/^\//, "");
+  try {
+    if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+      const url = new URL(normalized);
+      return url.pathname.replace(/^\//, "");
+    }
+  } catch (e) {
+    // ignore
+  }
+  return normalized;
+};
+
 // FormData sends arrays as JSON strings e.g. '["S","M","L"]'
 // or as multiple fields, or as comma-separated strings
 const parseArray = (val) => {
@@ -197,22 +212,36 @@ export const updateProduct = async (req, res, next) => {
       imagesToKeep = product.images; // keep all if not specified
     }
 
+    // Normalize paths to ensure robust match (Windows backslashes, leading slashes, URLs, etc.)
+    const normalizedKeep = imagesToKeep.map(normalizePathForComparison);
+
     // Delete removed images from disk
     product.images.forEach((img) => {
-      if (!imagesToKeep.includes(img)) deleteFile(img);
+      const normImg = normalizePathForComparison(img);
+      if (!normalizedKeep.includes(normImg)) deleteFile(img);
     });
 
     // New uploaded images (req.files is now an object from fields())
     const imageFiles = req.files?.images || [];
-    const newImages = imageFiles.map((f) => f.path);
-    product.images = [...imagesToKeep, ...newImages];
+    const newImages = imageFiles.map((f) => f.path.replace(/\\/g, "/"));
+
+    // Filter product.images to retain only the kept images, using original paths
+    const finalImages = [];
+    product.images.forEach((img) => {
+      const normImg = normalizePathForComparison(img);
+      if (normalizedKeep.includes(normImg)) {
+        finalImages.push(img);
+      }
+    });
+
+    product.images = [...finalImages, ...newImages];
 
     // --- VIDEO handling ---
     const videoFile = req.files?.productVideo?.[0] || null;
     if (videoFile) {
       // New video uploaded — delete old one
       if (product.video) deleteFile(product.video);
-      product.video = videoFile.path;
+      product.video = videoFile.path.replace(/\\/g, "/");
     } else if (removeVideo === "true" || removeVideo === true) {
       // Admin explicitly removed the video
       if (product.video) deleteFile(product.video);
@@ -224,7 +253,9 @@ export const updateProduct = async (req, res, next) => {
     product.price = price ? Number(price) : product.price;
     product.comparePrice = comparePrice !== undefined ? Number(comparePrice) : product.comparePrice;
     product.category = category ?? product.category;
-    product.subCategory = subCategory || product.subCategory;
+    if (subCategory !== undefined) {
+      product.subCategory = subCategory === "" ? null : subCategory;
+    }
     product.description = description ?? product.description;
     product.stock = stock !== undefined ? Number(stock) : product.stock;
     product.sizes = sizes;
@@ -264,7 +295,8 @@ export const deleteProductImage = async (req, res, next) => {
     if (!product)
       return res.status(404).json({ success: false, message: "Product not found" });
 
-    product.images = product.images.filter((img) => img !== imagePath);
+    const normTarget = normalizePathForComparison(imagePath);
+    product.images = product.images.filter((img) => normalizePathForComparison(img) !== normTarget);
     await product.save();
     deleteFile(imagePath);
 

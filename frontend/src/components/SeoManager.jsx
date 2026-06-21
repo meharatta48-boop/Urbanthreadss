@@ -98,7 +98,19 @@ export default function SeoManager() {
       "lahore clothing brand",
       "karachi online shopping",
       "islamabad fashion brand",
-      "cotton clothing pakistani store"
+      "cotton clothing pakistani store",
+      "streetwear brands in pakistan",
+      "oversized t-shirts pakistan",
+      "buy hoodies online pakistan",
+      "mens oversized tees lahore",
+      "unisex clothing brand karachi",
+      "streetwear collection islamabad",
+      "boys fashion clothing store",
+      "street style fashion pakistan",
+      "cash on delivery clothing",
+      "urban threads pakistan",
+      "unisex hoodies pakistan",
+      "cargos in pakistan"
     ];
 
     if (pathname === "/") {
@@ -122,7 +134,7 @@ export default function SeoManager() {
       if (filterName) {
         pageTitle = `Buy ${filterName} Online in Pakistan | ${siteName}`;
         pageDesc = `Explore premium ${filterName} online at ${siteName}. High-quality fabrics, modern streetwear fits, and fast Cash on Delivery (COD) all over Pakistan.`;
-        finalKeywords = `${filterName.toLowerCase()}, buy ${filterName.toLowerCase()} pakistan, ${baseKeywords}`;
+        finalKeywords = `${filterName.toLowerCase()}, buy ${filterName.toLowerCase()} pakistan, streetwear brand pakistan, oversized clothing lahore, ${baseKeywords}`;
       } else {
         pageTitle = `Shop Latest Streetwear & Pakistani Fashion | ${siteName}`;
         pageDesc = `Browse the latest collection of premium hoodies, cargo pants, oversized tees, activewear, and accessories online at ${siteName}. Nationwide fast delivery.`;
@@ -131,7 +143,7 @@ export default function SeoManager() {
     } else if (pathname.startsWith("/product/")) {
       isProductPage = true;
       if (activeProduct) {
-        pageTitle = `Buy ${activeProduct.name} Online in Pakistan | ${siteName}`;
+        pageTitle = `Buy ${activeProduct.name} Online in Pakistan - Rs. ${activeProduct.price?.toLocaleString()} | ${siteName}`;
         pageDesc = `Get ${activeProduct.name} at ${siteName} for Rs. ${activeProduct.price?.toLocaleString()}. ${activeProduct.description || "Original quality product."} Cash on Delivery available all over Pakistan with 2-5 days fast delivery.`;
         
         if (activeProduct.images?.length > 0) {
@@ -143,7 +155,11 @@ export default function SeoManager() {
           activeProduct.category?.name?.toLowerCase(),
           activeProduct.subCategory?.name?.toLowerCase(),
           `buy ${activeProduct.name?.toLowerCase()} pakistan`,
-          `${activeProduct.name?.toLowerCase()} price in pakistan`
+          `${activeProduct.name?.toLowerCase()} price in pakistan`,
+          `${activeProduct.name?.toLowerCase()} online lahore`,
+          `${activeProduct.name?.toLowerCase()} shopping karachi`,
+          "streetwear clothes pakistan",
+          "cash on delivery clothing store"
         ].filter(Boolean);
         finalKeywords = `${prodKeywords.join(", ")}, ${baseKeywords}`;
       } else {

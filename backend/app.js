@@ -135,13 +135,140 @@ if (fs.existsSync(frontendPath)) {
     },
   }));
 
-  // SPA fallback - serve index.html for all non-API routes
-  app.get("*", (req, res, next) => {
+  // SPA fallback - serve index.html for all non-API routes with dynamic SEO preview for bots
+  app.get("*", async (req, res, next) => {
     if (req.path.startsWith("/api") || req.path.includes(".") || req.path.startsWith("/assets")) {
       return next();
     }
+    
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.sendFile(path.join(frontendPath, "index.html"));
+    const indexPath = path.join(frontendPath, "index.html");
+
+    // Detect if the request comes from a crawler/bot
+    const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype|discord|telegram|viber/i.test(req.headers['user-agent'] || '');
+
+    if (isBot && fs.existsSync(indexPath)) {
+      try {
+        let html = fs.readFileSync(indexPath, "utf8");
+        
+        // Dynamic imports to avoid circular dependency
+        const Product = (await import("./models/product.model.js")).default;
+        const SiteSettings = (await import("./models/settings.model.js")).default;
+
+        const settings = await SiteSettings.findOne().lean();
+        const brandName = settings?.brandName || "URBAN THREADS";
+        const baseTitle = settings?.siteTitle || brandName;
+        const baseDesc = settings?.defaultMetaDesc || "Premium men's & women's fashion in Pakistan.";
+        
+        let host = "https://www.urbanthreadss.store";
+        if (process.env.PUBLIC_SITE_URL) {
+          host = process.env.PUBLIC_SITE_URL;
+        } else if (process.env.FRONTEND_URL) {
+          const urls = process.env.FRONTEND_URL.split(",");
+          const prodUrl = urls.find(u => u.includes("urbanthreadss.store"));
+          if (prodUrl) host = prodUrl;
+          else if (urls.length > 0 && !urls[0].includes("localhost")) host = urls[0];
+        }
+        host = host.trim().replace(/\/$/, "");
+
+        const getAbsoluteUrl = (pathStr) => {
+          if (!pathStr) return "";
+          if (pathStr.startsWith("http://") || pathStr.startsWith("https://")) {
+            let url = pathStr;
+            if (url.startsWith("http://") && !url.includes("localhost")) {
+              url = url.replace("http://", "https://");
+            }
+            return url.replace(/\\/g, "/");
+          }
+          let backendHost = req.protocol + "://" + req.get("host");
+          if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
+            backendHost = backendHost.replace("http://", "https://");
+          }
+          return `${backendHost.replace(/\/$/, "")}/${pathStr.replace(/^\//, "")}`.replace(/\\/g, "/");
+        };
+
+        let fallbackImage = settings?.logoImage ? settings.logoImage : "/ut.png";
+        let defaultSeoImg = settings?.seoDefaultImage || fallbackImage;
+        let image = getAbsoluteUrl(defaultSeoImg);
+
+        let title = baseTitle;
+        let desc = baseDesc;
+        let urlPath = req.originalUrl || req.path;
+        let pageUrl = `${host}${urlPath}`;
+
+        // Parse route-specific details
+        if (req.path.startsWith("/product/")) {
+          const productId = req.path.split("/product/")[1]?.split("/")[0];
+          if (productId && productId.match(/^[0-9a-fA-F]{24}$/)) {
+            const product = await Product.findById(productId).lean();
+            if (product) {
+              title = `${product.name} - ${brandName}`;
+              desc = product.description ? product.description.substring(0, 160) : `Buy ${product.name} online in Pakistan.`;
+              if (product.images && product.images.length > 0) {
+                image = getAbsoluteUrl(product.images[0]);
+              }
+            }
+          }
+        } else if (req.path.startsWith("/page/")) {
+          const slug = req.path.split("/page/")[1]?.split("/")[0];
+          if (slug) {
+            const CustomPage = (await import("./models/customPage.model.js")).default;
+            const page = await CustomPage.findOne({ slug, isVisible: true }).lean();
+            if (page) {
+              title = `${page.title} - ${brandName}`;
+              desc = page.metaDescription || baseDesc;
+            }
+          }
+        } else if (req.path.startsWith("/shop")) {
+          if (req.query.category) {
+            const Category = (await import("./models/category.model.js")).default;
+            const cat = await Category.findById(req.query.category).lean();
+            if (cat) {
+              title = `Buy ${cat.name} Online - ${brandName}`;
+              desc = `Shop premium ${cat.name} clothing online at ${brandName}.`;
+              if (cat.image) image = getAbsoluteUrl(cat.image);
+            }
+          } else if (req.query.subCategory) {
+            const SubCategory = (await import("./models/subCategory.model.js")).default;
+            const subcat = await SubCategory.findById(req.query.subCategory).lean();
+            if (subcat) {
+              title = `Buy ${subcat.name} Online - ${brandName}`;
+              desc = `Explore premium ${subcat.name} online at ${brandName}.`;
+              if (subcat.image) image = getAbsoluteUrl(subcat.image);
+            }
+          }
+        } else if (req.path.startsWith("/about")) {
+          title = `About Us - ${brandName}`;
+          desc = settings?.aboutUsStory || `Learn more about ${brandName} and our vision.`;
+          if (settings?.brandStoryImage) image = getAbsoluteUrl(settings.brandStoryImage);
+        }
+
+        // Clean HTML replacements
+        const replaceMeta = (htmlContent, attrName, attrVal, newContent) => {
+          const regex = new RegExp(`<meta\\s+[^>]*?(?:name|property)="${attrVal}"[^>]*?content=".*?"[^>]*?>`, "is");
+          return htmlContent.replace(regex, `<meta ${attrName}="${attrVal}" content="${newContent}" />`);
+        };
+
+        html = html.replace(/<title>.*?<\/title>/is, `<title>${title}</title>`);
+        html = replaceMeta(html, "name", "title", title);
+        html = replaceMeta(html, "name", "description", desc);
+        html = replaceMeta(html, "property", "og:title", title);
+        html = replaceMeta(html, "property", "og:description", desc);
+        html = replaceMeta(html, "property", "og:image", image);
+        html = replaceMeta(html, "property", "og:url", pageUrl);
+        html = replaceMeta(html, "name", "twitter:title", title);
+        html = replaceMeta(html, "name", "twitter:description", desc);
+        html = replaceMeta(html, "name", "twitter:image", image);
+        html = replaceMeta(html, "name", "twitter:url", pageUrl);
+        html = html.replace(/<link\s+[^>]*?rel="canonical"[^>]*?href=".*?"[^>]*?>/is, `<link rel="canonical" href="${pageUrl}" />`);
+
+        return res.status(200).send(html);
+      } catch (err) {
+        console.error("[SEO Crawler Intercept Error]:", err);
+      }
+    }
+
+    return res.sendFile(indexPath);
   });
 } else {
   console.warn(`Frontend build not found at ${frontendPath}. Static asset serving is disabled.`);

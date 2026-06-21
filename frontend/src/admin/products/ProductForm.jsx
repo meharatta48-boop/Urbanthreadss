@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUpload, FiX, FiArrowLeft, FiSave, FiImage,
   FiStar, FiDollarSign, FiPackage, FiLayers, FiAlignLeft,
-  FiVideo, FiRefreshCw, FiTrash2
+  FiVideo, FiRefreshCw, FiTrash2, FiLoader
 } from "react-icons/fi";
 
-import { SERVER_URL } from "../../services/api";
+import api, { SERVER_URL } from "../../services/api";
 import { getImageUrl } from "../../utils/imageUrl";
 import LazyImage from "../../components/LazyImage";
 const API_BASE = SERVER_URL;
@@ -71,13 +71,10 @@ export default function ProductForm() {
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [fetching, setFetching] = useState(false);
 
-  /* ── LOAD PRODUCT FOR EDIT ── */
-  useEffect(() => {
-    if (!id) return;
-    const product = products.find((p) => p._id === id);
-    if (!product) return;
-
+  /* ── POPULATE FORM Helper ── */
+  const populateForm = useCallback((product) => {
     setForm({
       name: product.name || "",
       price: product.price || "",
@@ -103,7 +100,43 @@ export default function ProductForm() {
     setVideoFile(null);
     setVideoPreview("");
     setRemoveVideo(false);
-  }, [id, products]);
+  }, []);
+
+  /* ── LOAD PRODUCT FOR EDIT ── */
+  useEffect(() => {
+    if (!id) return;
+    
+    // Try to check local products array first
+    const foundProduct = products.find((p) => p._id === id);
+    if (foundProduct) {
+      populateForm(foundProduct);
+    }
+
+    // Fetch fresh details from database
+    let isMounted = true;
+    const fetchProduct = async () => {
+      try {
+        setFetching(true);
+        const res = await api.get(`/products/${id}`);
+        if (res.data?.success && res.data?.data && isMounted) {
+          populateForm(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error loading product details:", err);
+        if (!foundProduct) {
+          toast.error("Product load nahi ho saka!");
+        }
+      } finally {
+        if (isMounted) setFetching(false);
+      }
+    };
+
+    fetchProduct();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, products, populateForm]);
 
   /* ── CLEANUP object URLs ── */
   useEffect(() => {
@@ -281,6 +314,15 @@ export default function ProductForm() {
   const profitMarginVal = sellingPriceVal > 0 ? ((netProfitVal / sellingPriceVal) * 100).toFixed(1) : "0.0";
   const roiVal = totalCostVal > 0 ? ((netProfitVal / totalCostVal) * 100).toFixed(1) : "0.0";
   const breakEvenVal = totalCostVal;
+
+  if (isEdit && fetching) {
+    return (
+      <div className="py-20 flex flex-col items-center justify-center">
+        <FiLoader className="animate-spin text-(--gold)" size={32} />
+        <p className="text-(--text-muted) text-sm mt-3">Loading product details...</p>
+      </div>
+    );
+  }
 
   const totalImages = existingImages.length + newFiles.length;
 
