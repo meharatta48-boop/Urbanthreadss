@@ -182,13 +182,30 @@ function downloadOrderInvoice(order) {
     <div class="footer-print">Printed on: ${printDate}<br/>Urban Threads Pakistan</div>
   </div>
 </div>
-<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script>
 </body></html>`;
 
-  const win = window.open("", "_blank", "width=900,height=700");
-  if (!win) { alert("Pop-up blocked! Please allow pop-ups."); return; }
-  win.document.write(html);
-  win.document.close();
+  const fileName = `Urban-Threads-Invoice-${invoiceNo}`;
+  const prevTitle = document.title;
+  document.title = fileName;
+
+  const iframe = document.createElement("iframe");
+  iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
+  document.body.appendChild(iframe);
+
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+
+  iframe.contentWindow.onload = () => {
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => {
+        document.title = prevTitle;
+        document.body.removeChild(iframe);
+      }, 2000);
+    }, 300);
+  };
 }
 
 export default function MyOrders() {

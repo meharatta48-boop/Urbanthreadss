@@ -312,10 +312,32 @@ function downloadInvoicePDF(order) {
 </body>
 </html>`;
 
-  const win = window.open("", "_blank", "width=900,height=700");
-  if (!win) { alert("Pop-up blocked! Please allow pop-ups for this site."); return; }
-  win.document.write(html);
-  win.document.close();
+  // Use hidden iframe — avoids popup blockers & sets filename properly
+  const fileName = `Urban-Threads-Invoice-${invoiceNo}`;
+
+  // Save + temporarily change page title (Chrome uses this as PDF filename)
+  const prevTitle = document.title;
+  document.title = fileName;
+
+  const iframe = document.createElement("iframe");
+  iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
+  document.body.appendChild(iframe);
+
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+
+  iframe.contentWindow.onload = () => {
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      // Restore original title after brief delay
+      setTimeout(() => {
+        document.title = prevTitle;
+        document.body.removeChild(iframe);
+      }, 2000);
+    }, 300);
+  };
 }
 
 function printShippingLabel(order) {
