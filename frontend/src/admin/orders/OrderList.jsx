@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
 import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered", "cancelled"];
 const STATUS_STYLE = {
@@ -21,9 +23,9 @@ const STATUS_STYLE = {
   cancelled:  { bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.2)", text: "#f87171" },
 };
 
-const getPhone = (o) => o.shippingAddress?.phone || o.guestInfo?.phone || "";
-const getEmail = (o) => o.user?.email || o.guestInfo?.email || "";
-const getName  = (o) => o.user?.name || o.guestInfo?.name || o.shippingAddress?.fullName || "Guest";
+const getPhone = (o) => o?.shippingAddress?.phone || o?.guestInfo?.phone || "";
+const getEmail = (o) => o?.user?.email || o?.guestInfo?.email || "";
+const getName  = (o) => o?.user?.name || o?.guestInfo?.name || o?.shippingAddress?.fullName || "Guest";
 
 const getWhatsAppMessageLink = (order) => {
   const phone = getPhone(order);
@@ -95,52 +97,52 @@ function StatusBadge({ status }) {
   );
 }
 
-function downloadInvoicePDF(order) {
+async function downloadInvoicePDF(order) {
   const name = getName(order);
   const phone = getPhone(order);
   const email = getEmail(order);
-  const addr = order.shippingAddress;
-  const invoiceNo = order._id.slice(-10).toUpperCase();
-  const orderId   = order._id.slice(-8).toUpperCase();
-  const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", {
+  const addr = order?.shippingAddress || null;
+  const invoiceNo = (order?._id || "ORDER").slice(-10).toUpperCase();
+  const orderId   = (order?._id || "ORDER").slice(-8).toUpperCase();
+  
+  const orderDate = order?.createdAt ? new Date(order.createdAt).toLocaleDateString("en-PK", {
     day: "numeric", month: "long", year: "numeric"
-  });
+  }) : "N/A";
+  
   const printDate = new Date().toLocaleDateString("en-PK", {
     day: "numeric", month: "long", year: "numeric"
   });
+
+  const orderStatus = order?.orderStatus || "pending";
 
   const statusColor = {
     pending: "#f59e0b", processing: "#c9a84c",
     shipped: "#818cf8", delivered: "#16a34a",
     cancelled: "#ef4444",
-  }[order.orderStatus] || "#888";
+  }[orderStatus] || "#888";
 
   const statusLabel = {
     pending: "Order Received", processing: "Packing",
     shipped: "Shipped", delivered: "Delivered", cancelled: "Cancelled",
-  }[order.orderStatus] || order.orderStatus;
+  }[orderStatus] || orderStatus;
 
-  const itemRows = (order.orderItems || []).map((item, i) => {
-    const variant = [item.size, item.color].filter(Boolean).join(", ");
-    const lineTotal = (item.price * item.quantity).toLocaleString();
+  const itemRows = (order?.orderItems || []).map((item, i) => {
+    const variant = [item?.size, item?.color].filter(Boolean).join(", ");
+    const lineTotal = ((item?.price || 0) * (item?.quantity || 0)).toLocaleString();
     return `
     <tr>
       <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;color:#888;font-size:12px;">${i + 1}</td>
       <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;">
-        <div style="font-weight:600;color:#1a1208;font-size:13px;">${item.name}</div>
+        <div style="font-weight:600;color:#1a1208;font-size:13px;">${item?.name || "Item"}</div>
         ${variant ? `<div style="font-size:11px;color:#9e8a6a;margin-top:2px;">${variant}</div>` : ""}
       </td>
-      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:center;font-weight:600;color:#1a1208;">${item.quantity}</td>
-      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;color:#5a4a30;">Rs. ${item.price.toLocaleString()}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:center;font-weight:600;color:#1a1208;">${item?.quantity || 0}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;color:#5a4a30;">Rs. ${(item?.price || 0).toLocaleString()}</td>
       <td style="padding:10px 12px;border-bottom:1px solid #f0ebe0;text-align:right;font-weight:700;color:#c9a84c;">Rs. ${lineTotal}</td>
     </tr>`;
   }).join("");
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Invoice #${invoiceNo} - Urban Threads</title>
+  const styleBlock = `
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -188,156 +190,169 @@ function downloadInvoicePDF(order) {
     .footer-msg { font-size: 12px; color: #9e8a6a; }
     .footer-msg strong { color: #c9a84c; }
     .footer-print { font-size: 10px; color: #b8a898; text-align: right; }
-    /* ── PRINT ── */
-    @media print {
-      body { background: #fff; }
-      .page { max-width: 100%; }
-      @page { margin: 0; size: A4; }
-    }
   </style>
-</head>
-<body>
-<div class="page">
+  `;
 
-  <!-- HEADER -->
-  <div class="inv-header">
-    <div>
-      <div class="brand-name">Urban Threads</div>
-      <div class="brand-tagline">Premium Fashion Pakistan</div>
-    </div>
-    <div class="inv-title-block">
-      <div class="inv-title">Invoice</div>
-      <div class="inv-number">#${invoiceNo}</div>
-      <div class="inv-date">${orderDate}</div>
-    </div>
-  </div>
+  const pageContent = `
+  <div class="page">
 
-  <!-- STATUS BAR -->
-  <div class="status-bar">
-    <div class="status-pill">
-      <span class="status-dot"></span>
-      ${statusLabel}
-    </div>
-    <div class="payment-badge">Payment: ${order.paymentMethod || "COD"}</div>
-  </div>
-
-  <!-- META INFO -->
-  <div class="meta-section">
-    <div class="meta-card">
-      <div class="meta-card-label">Bill To</div>
-      <div class="meta-card-name">${name}</div>
-      ${phone ? `<div class="meta-card-line">📞 ${phone}</div>` : ""}
-      ${email ? `<div class="meta-card-line">✉ ${email}</div>` : ""}
-    </div>
-    <div class="meta-card">
-      <div class="meta-card-label">Ship To</div>
-      ${addr ? `
-        <div class="meta-card-name">${addr.fullName}</div>
-        <div class="meta-card-line">${addr.address}</div>
-        <div class="meta-card-line">${addr.city}${addr.province ? ", " + addr.province : ""}</div>
-        ${addr.postalCode && addr.postalCode !== "00000" ? `<div class="meta-card-line">Postal: ${addr.postalCode}</div>` : ""}
-      ` : "<div class=\"meta-card-line\">—</div>"}
-    </div>
-    <div class="meta-card">
-      <div class="meta-card-label">Order Info</div>
-      <div class="meta-card-line"><strong>Order ID:</strong> #${orderId}</div>
-      <div class="meta-card-line"><strong>Date:</strong> ${orderDate}</div>
-      <div class="meta-card-line"><strong>Items:</strong> ${(order.orderItems || []).length}</div>
-      ${order.trackingNumber ? `<div class="meta-card-line"><strong>Tracking:</strong> ${order.trackingNumber}</div>` : ""}
-      ${order.courierPartner ? `<div class="meta-card-line"><strong>Courier:</strong> ${order.courierPartner}</div>` : ""}
-    </div>
-  </div>
-
-  <!-- ITEMS TABLE -->
-  <div class="items-section" style="margin-top:24px;">
-    <div class="section-title">Order Items</div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:36px;">#</th>
-          <th>Product</th>
-          <th style="text-align:center;width:60px;">Qty</th>
-          <th style="text-align:right;width:110px;">Unit Price</th>
-          <th style="text-align:right;width:110px;">Total</th>
-        </tr>
-      </thead>
-      <tbody>${itemRows}</tbody>
-    </table>
-  </div>
-
-  <!-- TOTALS -->
-  <div class="totals-section">
-    <div class="totals-box">
-      <div class="totals-row">
-        <span class="label">Subtotal</span>
-        <span class="val">Rs. ${(order.itemsPrice || 0).toLocaleString()}</span>
+    <!-- HEADER -->
+    <div class="inv-header">
+      <div>
+        <div class="brand-name">Urban Threads</div>
+        <div class="brand-tagline">Premium Fashion Pakistan</div>
       </div>
-      <div class="totals-row">
-        <span class="label">Delivery Charges</span>
-        <span class="val">Rs. ${(order.shippingPrice ?? 250).toLocaleString()}</span>
-      </div>
-      ${
-        order.couponDiscount > 0
-          ? `<div class="totals-row discount">
-               <span class="label">Discount (${order.couponCode || "Coupon"})</span>
-               <span class="val">− Rs. ${order.couponDiscount.toLocaleString()}</span>
-             </div>`
-          : ""
-      }
-      <div class="totals-grand">
-        <span class="label">Grand Total</span>
-        <span class="val">Rs. ${(order.totalPrice || 0).toLocaleString()}</span>
+      <div class="inv-title-block">
+        <div class="inv-title">Invoice</div>
+        <div class="inv-number">#${invoiceNo}</div>
+        <div class="inv-date">${orderDate}</div>
       </div>
     </div>
-  </div>
 
-  <!-- FOOTER -->
-  <div class="inv-footer">
-    <div class="footer-msg">
-      Thank you for shopping with <strong>Urban Threads</strong>! 🌸<br/>
-      <span style="font-size:11px;">For any queries, contact us on WhatsApp.</span>
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        ${statusLabel}
+      </div>
+      <div class="payment-badge">Payment: ${order?.paymentMethod || "COD"}</div>
     </div>
-    <div class="footer-print">
-      Printed on: ${printDate}<br/>
-      Urban Threads Pakistan
+
+    <!-- META INFO -->
+    <div class="meta-section">
+      <div class="meta-card">
+        <div class="meta-card-label">Bill To</div>
+        <div class="meta-card-name">${name}</div>
+        ${phone ? `<div class="meta-card-line">📞 ${phone}</div>` : ""}
+        ${email ? `<div class="meta-card-line">✉ ${email}</div>` : ""}
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-label">Ship To</div>
+        ${addr ? `
+          <div class="meta-card-name">${addr.fullName || "N/A"}</div>
+          <div class="meta-card-line">${addr.address || "N/A"}</div>
+          <div class="meta-card-line">${addr.city || "N/A"}${addr.province ? ", " + addr.province : ""}</div>
+          ${addr.postalCode && addr.postalCode !== "00000" ? `<div class="meta-card-line">Postal: ${addr.postalCode}</div>` : ""}
+        ` : "<div class=\"meta-card-line\">—</div>"}
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-label">Order Info</div>
+        <div class="meta-card-line"><strong>Order ID:</strong> #${orderId}</div>
+        <div class="meta-card-line"><strong>Date:</strong> ${orderDate}</div>
+        <div class="meta-card-line"><strong>Items:</strong> ${(order?.orderItems || []).length}</div>
+        ${order?.trackingNumber ? `<div class="meta-card-line"><strong>Tracking:</strong> ${order.trackingNumber}</div>` : ""}
+        ${order?.courierPartner ? `<div class="meta-card-line"><strong>Courier:</strong> ${order.courierPartner}</div>` : ""}
+      </div>
     </div>
+
+    <!-- ITEMS TABLE -->
+    <div class="items-section" style="margin-top:24px;">
+      <div class="section-title">Order Items</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>Product</th>
+            <th style="text-align:center;width:60px;">Qty</th>
+            <th style="text-align:right;width:110px;">Unit Price</th>
+            <th style="text-align:right;width:110px;">Total</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-section">
+      <div class="totals-box">
+        <div class="totals-row">
+          <span class="label">Subtotal</span>
+          <span class="val">Rs. ${(order?.itemsPrice || 0).toLocaleString()}</span>
+        </div>
+        <div class="totals-row">
+          <span class="label">Delivery Charges</span>
+          <span class="val">Rs. ${(order?.shippingPrice ?? 250).toLocaleString()}</span>
+        </div>
+        ${
+          (order?.couponDiscount || 0) > 0
+            ? `<div class="totals-row discount">
+                 <span class="label">Discount (${order?.couponCode || "Coupon"})</span>
+                 <span class="val">− Rs. ${(order?.couponDiscount || 0).toLocaleString()}</span>
+               </div>`
+            : ""
+        }
+        <div class="totals-grand">
+          <span class="label">Grand Total</span>
+          <span class="val">Rs. ${(order?.totalPrice || 0).toLocaleString()}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="inv-footer">
+      <div class="footer-msg">
+        Thank you for shopping with <strong>Urban Threads</strong>! 🌸<br/>
+        <span style="font-size:11px;">For any queries, contact us on WhatsApp.</span>
+      </div>
+      <div class="footer-print">
+        Printed on: ${printDate}<br/>
+        Urban Threads Pakistan
+      </div>
+    </div>
+
   </div>
+  `;
 
-</div>
-<script>
-  window.onload = function() {
-    setTimeout(function() { window.print(); }, 400);
-  };
-<\/script>
-</body>
-</html>`;
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.left = "-9999px";
+  container.style.top = "-9999px";
+  container.style.width = "780px";
+  container.style.background = "#ffffff";
+  container.innerHTML = styleBlock + pageContent;
+  document.body.appendChild(container);
 
-  // Use hidden iframe — avoids popup blockers & sets filename properly
-  const fileName = `Urban-Threads-Invoice-${invoiceNo}`;
+  try {
+    await document.fonts.ready;
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false
+    });
 
-  // Save + temporarily change page title (Chrome uses this as PDF filename)
-  const prevTitle = document.title;
-  document.title = fileName;
+    const imgData = canvas.toDataURL("image/png");
+    
+    // A4 sizes in mm
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    
+    const pdf = new jsPDF("p", "mm", "a4");
+    let heightLeft = imgHeight;
+    let position = 0;
 
-  const iframe = document.createElement("iframe");
-  iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
-  document.body.appendChild(iframe);
+    // Add first page
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
 
-  iframe.contentDocument.open();
-  iframe.contentDocument.write(html);
-  iframe.contentDocument.close();
+    // Add remaining pages
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+    }
 
-  iframe.contentWindow.onload = () => {
-    setTimeout(() => {
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-      // Restore original title after brief delay
-      setTimeout(() => {
-        document.title = prevTitle;
-        document.body.removeChild(iframe);
-      }, 2000);
-    }, 300);
-  };
+    pdf.save(`Urban-Threads-Invoice-${invoiceNo}.pdf`);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    toast.error("Failed to download invoice PDF");
+  } finally {
+    document.body.removeChild(container);
+  }
 }
 
 function printShippingLabel(order) {
