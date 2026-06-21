@@ -22,6 +22,7 @@ router.get("/robots.txt", async (req, res) => {
 router.get("/sitemap.xml", async (req, res) => {
   const host = (process.env.PUBLIC_SITE_URL || process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
   const pages = await CustomPage.find({ isVisible: true }).select("slug updatedAt").lean();
+  const products = await Product.find({ isActive: { $ne: false } }).select("_id updatedAt").lean();
   const staticPaths = ["", "/shop", "/support", "/cart"];
 
   const urls = [
@@ -29,6 +30,10 @@ router.get("/sitemap.xml", async (req, res) => {
     ...pages.map((page) => ({
       loc: `${host}/${page.slug}`,
       lastmod: (page.updatedAt || new Date()).toISOString(),
+    })),
+    ...products.map((p) => ({
+      loc: `${host}/product/${p._id}`,
+      lastmod: (p.updatedAt || new Date()).toISOString(),
     })),
   ];
 
@@ -73,18 +78,38 @@ router.get("/social-preview/product/:id", async (req, res) => {
     
     // Convert cloudinary URI to URL if needed, assuming the image string is already a URL or path
     let image = "";
+    const fallbackImage = settings?.seoDefaultImage || settings?.logoImage || "/ut.png";
+
     if (product.images && product.images.length > 0) {
-      image = product.images[0];
-      if (!image.startsWith("http")) {
-        let backendHost = req.protocol + "://" + req.get("host");
-        if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
-          backendHost = backendHost.replace("http://", "https://");
+      const firstImg = product.images[0];
+      if (firstImg.startsWith("http")) {
+        image = firstImg;
+      } else {
+        const fs = await import("fs");
+        const path = await import("path");
+        const fileURLToPath = await import("url").then(m => m.fileURLToPath);
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        const localPath = path.join(dirname, "..", firstImg.replace(/^\//, ""));
+        if (fs.existsSync(localPath)) {
+          image = firstImg;
+        } else {
+          image = fallbackImage;
         }
-        image = `${backendHost}${image.startsWith("/") ? "" : "/"}${image}`;
-      } else if (image.startsWith("http://") && !image.includes("localhost")) {
-        image = image.replace("http://", "https://");
       }
+    } else {
+      image = fallbackImage;
     }
+
+    if (!image.startsWith("http")) {
+      let backendHost = req.protocol + "://" + req.get("host");
+      if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
+        backendHost = backendHost.replace("http://", "https://");
+      }
+      image = `${backendHost.replace(/\/$/, "")}/${image.replace(/^\//, "")}`;
+    } else if (image.startsWith("http://") && !image.includes("localhost")) {
+      image = image.replace("http://", "https://");
+    }
+
     // Standardize all backslashes to forward slashes for standard URLs
     if (image) {
       image = image.replace(/\\/g, "/");

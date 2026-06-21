@@ -42,7 +42,7 @@
       "destination": "https://urbanthreadss.onrender.com/api/:path*"
     },
     {
-      "source": "/product/:id",
+      "source": "/:path((?!api|assets|.*\\..*).*)",
       "has": [
         {
           "type": "header",
@@ -50,7 +50,7 @@
           "value": "(?i).*(bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype|discord|telegram|viber).*"
         }
       ],
-      "destination": "https://urbanthreadss.onrender.com/api/seo/social-preview/product/:id"
+      "destination": "https://urbanthreadss.onrender.com/:path"
     },
     {
       "source": "/(.*)",

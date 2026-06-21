@@ -147,10 +147,8 @@ if (fs.existsSync(frontendPath)) {
     // Detect if the request comes from a crawler/bot
     const isBot = /bot|facebook|whatsapp|twitter|pinterest|slack|linkedin|skype|discord|telegram|viber/i.test(req.headers['user-agent'] || '');
 
-    if (isBot && fs.existsSync(indexPath)) {
+    if (isBot) {
       try {
-        let html = fs.readFileSync(indexPath, "utf8");
-        
         // Dynamic imports to avoid circular dependency
         const Product = (await import("./models/product.model.js")).default;
         const SiteSettings = (await import("./models/settings.model.js")).default;
@@ -172,7 +170,8 @@ if (fs.existsSync(frontendPath)) {
         host = host.trim().replace(/\/$/, "");
 
         const getAbsoluteUrl = (pathStr) => {
-          if (!pathStr) return "";
+          if (!pathStr) return `${host}/ut.png`;
+          
           if (pathStr.startsWith("http://") || pathStr.startsWith("https://")) {
             let url = pathStr;
             if (url.startsWith("http://") && !url.includes("localhost")) {
@@ -180,11 +179,20 @@ if (fs.existsSync(frontendPath)) {
             }
             return url.replace(/\\/g, "/");
           }
-          let backendHost = req.protocol + "://" + req.get("host");
-          if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
-            backendHost = backendHost.replace("http://", "https://");
+
+          // Check if local file exists
+          const cleanPath = pathStr.replace(/^\//, "");
+          const localPath = path.join(__dirname, cleanPath);
+          if (fs.existsSync(localPath)) {
+            let backendHost = req.protocol + "://" + req.get("host");
+            if (backendHost.startsWith("http://") && !backendHost.includes("localhost")) {
+              backendHost = backendHost.replace("http://", "https://");
+            }
+            return `${backendHost.replace(/\/$/, "")}/${cleanPath}`.replace(/\\/g, "/");
           }
-          return `${backendHost.replace(/\/$/, "")}/${pathStr.replace(/^\//, "")}`.replace(/\\/g, "/");
+
+          // Fallback to static logo on Vercel domain
+          return `${host}/ut.png`;
         };
 
         let fallbackImage = settings?.logoImage ? settings.logoImage : "/ut.png";
@@ -243,32 +251,45 @@ if (fs.existsSync(frontendPath)) {
           if (settings?.brandStoryImage) image = getAbsoluteUrl(settings.brandStoryImage);
         }
 
-        // Clean HTML replacements
-        const replaceMeta = (htmlContent, attrName, attrVal, newContent) => {
-          const regex = new RegExp(`<meta\\s+[^>]*?(?:name|property)="${attrVal}"[^>]*?content=".*?"[^>]*?>`, "is");
-          return htmlContent.replace(regex, `<meta ${attrName}="${attrVal}" content="${newContent}" />`);
-        };
+        // Return a lightweight, standalone HTML file specifically for crawler bots
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <meta name="title" content="${title}" />
+  <meta name="description" content="${desc}" />
+  <meta property="og:type" content="${req.path.startsWith("/product/") ? "product" : "website"}" />
+  <meta property="og:url" content="${pageUrl}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:image" content="${image}" />
+  <meta property="og:site_name" content="${brandName}" />
+  <meta property="og:locale" content="en_PK" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="${pageUrl}" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${desc}" />
+  <meta name="twitter:image" content="${image}" />
+  <link rel="canonical" href="${pageUrl}" />
+</head>
+<body>
+  <script>window.location.replace("${pageUrl}");</script>
+</body>
+</html>`;
 
-        html = html.replace(/<title>.*?<\/title>/is, `<title>${title}</title>`);
-        html = replaceMeta(html, "name", "title", title);
-        html = replaceMeta(html, "name", "description", desc);
-        html = replaceMeta(html, "property", "og:title", title);
-        html = replaceMeta(html, "property", "og:description", desc);
-        html = replaceMeta(html, "property", "og:image", image);
-        html = replaceMeta(html, "property", "og:url", pageUrl);
-        html = replaceMeta(html, "name", "twitter:title", title);
-        html = replaceMeta(html, "name", "twitter:description", desc);
-        html = replaceMeta(html, "name", "twitter:image", image);
-        html = replaceMeta(html, "name", "twitter:url", pageUrl);
-        html = html.replace(/<link\s+[^>]*?rel="canonical"[^>]*?href=".*?"[^>]*?>/is, `<link rel="canonical" href="${pageUrl}" />`);
-
+        res.setHeader("Content-Type", "text/html");
         return res.status(200).send(html);
       } catch (err) {
         console.error("[SEO Crawler Intercept Error]:", err);
       }
     }
 
-    return res.sendFile(indexPath);
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+
+    return res.status(200).send("Urban Threads Store is running! API Active.");
   });
 } else {
   console.warn(`Frontend build not found at ${frontendPath}. Static asset serving is disabled.`);
