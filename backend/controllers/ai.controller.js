@@ -1,58 +1,4 @@
-import https from "https";
-
-/* ─── Core Gemini API caller ─── */
-const callGemini = (prompt, apiKey, systemInstruction = "") => {
-  return new Promise((resolve, reject) => {
-    const body = {
-      contents: [
-        {
-          parts: [{ text: prompt }]
-        }
-      ]
-    };
-
-    if (systemInstruction) {
-      body.system_instruction = {
-        parts: [{ text: systemInstruction }]
-      };
-    }
-
-    const postData = JSON.stringify(body);
-
-    const options = {
-      hostname: "generativelanguage.googleapis.com",
-      port: 443,
-      path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(postData)
-      }
-    };
-
-    const req = https.request(options, (res) => {
-      let body = "";
-      res.on("data", (chunk) => { body += chunk; });
-      res.on("end", () => {
-        try {
-          const parsed = JSON.parse(body);
-          if (res.statusCode >= 400) {
-            reject(new Error(parsed.error?.message || `Gemini API returned status ${res.statusCode}`));
-          } else {
-            resolve(parsed);
-          }
-        } catch (e) { reject(e); }
-      });
-    });
-
-    req.on("error", (e) => reject(e));
-    req.write(postData);
-    req.end();
-  });
-};
-
-/* ─── Helper to extract text ─── */
-const extractText = (response) => response.candidates?.[0]?.content?.parts?.[0]?.text || null;
+import { callGeminiWithSDK } from "../services/gemini.service.js";
 
 /* ─── GET API KEY ─── */
 const getApiKey = (req) => req.headers["x-gemini-key"] || process.env.GEMINI_API_KEY;
@@ -191,12 +137,7 @@ Instructions:
         return res.status(400).json({ success: false, message: `Invalid type "${type}" specified.` });
     }
 
-    const response = await callGemini(prompt, apiKey);
-    const generatedText = extractText(response);
-
-    if (!generatedText) {
-      return res.status(500).json({ success: false, message: "Gemini API did not return content." });
-    }
+    const generatedText = await callGeminiWithSDK(prompt, apiKey);
 
     return res.status(200).json({ success: true, data: generatedText.trim() });
 
@@ -258,12 +199,7 @@ Rules:
 
     conversationPrompt += `Customer: ${message}\nAssistant:`;
 
-    const response = await callGemini(conversationPrompt, apiKey, systemInstruction);
-    const reply = extractText(response);
-
-    if (!reply) {
-      return res.status(500).json({ success: false, message: "Could not generate reply." });
-    }
+    const reply = await callGeminiWithSDK(conversationPrompt, apiKey, systemInstruction);
 
     return res.status(200).json({
       success: true,
@@ -326,12 +262,7 @@ Provide your analysis in EXACTLY this format (keep each section brief):
 
 Keep all points concise and Pakistan-market specific. Use Pakistani Rupee (Rs.) for amounts.`;
 
-    const response = await callGemini(prompt, apiKey);
-    const insights = extractText(response);
-
-    if (!insights) {
-      return res.status(500).json({ success: false, message: "AI could not generate insights." });
-    }
+    const insights = await callGeminiWithSDK(prompt, apiKey);
 
     return res.status(200).json({ success: true, insights: insights.trim() });
 
@@ -410,12 +341,7 @@ Give insights in this format:
 
 Keep it brief, data-driven, and Pakistan e-commerce specific.`;
 
-    const response = await callGemini(prompt, apiKey);
-    const analysis = extractText(response);
-
-    if (!analysis) {
-      return res.status(500).json({ success: false, message: "AI could not analyze orders." });
-    }
+    const analysis = await callGeminiWithSDK(prompt, apiKey);
 
     return res.status(200).json({ success: true, analysis: analysis.trim() });
 
