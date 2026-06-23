@@ -1,5 +1,12 @@
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+// Always load .env from the backend directory (where this file lives),
+// regardless of the working directory the process was started from.
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: resolve(__dirname, ".env") });
 
 import cors from "cors";
 import colors from "colors";
