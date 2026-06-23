@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 /**
- * Calls Gemini model using the official SDK.
+ * Calls Gemini model using the new @google/genai SDK (v2.x, stable v1 API).
  * @param {string} prompt - The main prompt to send to the model.
  * @param {string} apiKey - The Gemini API key (defaults to process.env.GEMINI_API_KEY).
  * @param {string} [systemInstruction] - Optional system instruction to guide the model.
@@ -13,20 +13,21 @@ export const callGeminiWithSDK = async (prompt, apiKey, systemInstruction = "") 
     throw new Error("Gemini API Key is missing. Please configure GEMINI_API_KEY in server .env.");
   }
 
-  // Initialize the SDK
-  const genAI = new GoogleGenerativeAI(finalApiKey);
+  // Initialize the new SDK
+  const ai = new GoogleGenAI({ apiKey: finalApiKey });
 
-  const modelOptions = { model: "gemini-1.5-flash" };
+  const generateOptions = {
+    model: "gemini-2.0-flash",
+    contents: prompt,
+  };
+
   if (systemInstruction) {
-    modelOptions.systemInstruction = systemInstruction;
+    generateOptions.config = { systemInstruction };
   }
 
-  // Get the generative model
-  const model = genAI.getGenerativeModel(modelOptions);
-
-  // Generate content
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  // Generate content using the new SDK's generateContent method
+  const response = await ai.models.generateContent(generateOptions);
+  const text = response.text;
 
   if (!text) {
     throw new Error("Gemini API did not return any content.");
