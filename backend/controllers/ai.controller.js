@@ -3,6 +3,17 @@ import { callGeminiWithSDK } from "../services/gemini.service.js";
 /* ─── GET API KEY ─── */
 const getApiKey = (req) => req.headers["x-gemini-key"] || process.env.GEMINI_API_KEY;
 
+/* ─── QUOTA / RATE-LIMIT DETECTOR ─── */
+const isQuotaError = (err) => {
+  const msg = (err?.message || "").toLowerCase();
+  return (
+    err?.status === 429 ||
+    msg.includes("resource_exhausted") ||
+    msg.includes("quota") ||
+    msg.includes("rate limit")
+  );
+};
+
 /* ══════════════════════════════════════════════
    1. CONTENT GENERATION (Admin AI Tools Hub)
 ══════════════════════════════════════════════ */
@@ -143,6 +154,9 @@ Instructions:
 
   } catch (err) {
     console.error("AI generate error:", err);
+    if (isQuotaError(err)) {
+      return res.status(429).json({ success: false, message: "AI quota exceeded. Please wait a minute and try again." });
+    }
     return res.status(500).json({ success: false, message: err.message || "Failed to generate content." });
   }
 };
@@ -208,6 +222,9 @@ Rules:
 
   } catch (err) {
     console.error("Support chat AI error:", err);
+    if (isQuotaError(err)) {
+      return res.status(429).json({ success: false, message: "AI quota exceeded. Please wait a minute and try again.", fallback: true });
+    }
     return res.status(500).json({
       success: false,
       message: err.message || "AI chat failed.",
@@ -268,6 +285,9 @@ Keep all points concise and Pakistan-market specific. Use Pakistani Rupee (Rs.) 
 
   } catch (err) {
     console.error("Analytics AI error:", err);
+    if (isQuotaError(err)) {
+      return res.status(429).json({ success: false, message: "AI quota exceeded. Please wait a minute and try again." });
+    }
     return res.status(500).json({ success: false, message: err.message || "Failed to generate insights." });
   }
 };
@@ -347,6 +367,9 @@ Keep it brief, data-driven, and Pakistan e-commerce specific.`;
 
   } catch (err) {
     console.error("Order AI error:", err);
+    if (isQuotaError(err)) {
+      return res.status(429).json({ success: false, message: "AI quota exceeded. Please wait a minute and try again." });
+    }
     return res.status(500).json({ success: false, message: err.message || "Failed to analyze orders." });
   }
 };

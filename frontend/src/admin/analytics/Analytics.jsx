@@ -1531,7 +1531,13 @@ export default function Analytics() {
                       toast.error("AI could not generate insights.");
                     }
                   } catch (err) {
-                    toast.error(err.response?.data?.message || "AI insights failed.");
+                    const status = err.response?.status;
+                    const msg = err.response?.data?.message || "";
+                    if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
+                      toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
+                    } else {
+                      toast.error(msg || "AI insights failed.");
+                    }
                   } finally {
                     setAiLoading(false);
                   }

@@ -122,7 +122,13 @@ export default function AiTools() {
             }
         } catch (error) {
             console.error("AI tools generation error:", error);
-            toast.error(error.response?.data?.message || "Failed to generate content");
+            const status = error.response?.status;
+            const msg = error.response?.data?.message || "";
+            if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
+                toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
+            } else {
+                toast.error(msg || "Failed to generate content");
+            }
         } finally {
             setLoading(false);
         }
