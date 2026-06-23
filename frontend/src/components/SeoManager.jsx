@@ -132,9 +132,24 @@ export default function SeoManager() {
       }
 
       if (filterName) {
-        pageTitle = `Buy ${filterName} Online in Pakistan | ${siteName}`;
-        pageDesc = `Explore premium ${filterName} online at ${siteName}. High-quality fabrics, modern streetwear fits, and fast Cash on Delivery (COD) all over Pakistan.`;
-        finalKeywords = `${filterName.toLowerCase()}, buy ${filterName.toLowerCase()} pakistan, streetwear brand pakistan, oversized clothing lahore, ${baseKeywords}`;
+        const lowerFilter = filterName.toLowerCase();
+        if (lowerFilter.includes("polo")) {
+          pageTitle = `Buy Premium Polo Shirts Online in Pakistan | ${siteName}`;
+          pageDesc = `Shop premium polo shirts for men at ${siteName}. Made from 100% breathable pique cotton with custom embroidery details. Fast Cash on Delivery (COD) across Pakistan.`;
+          finalKeywords = `polo shirts pakistan, mens polo shirts online, pique polo tees lahore, premium polo brands pakistan, polo shirts price, COD, ${baseKeywords}`;
+        } else if (lowerFilter.includes("casual shirt") || lowerFilter.includes("button down")) {
+          pageTitle = `Premium Casual Shirts for Men in Pakistan | ${siteName}`;
+          pageDesc = `Explore lightweight, modern-fit casual shirts for men at ${siteName}. Perfect for semi-formal or daily wear in Lahore, Karachi, & Islamabad. Easy exchanges & COD.`;
+          finalKeywords = `casual shirts pakistan, buy mens shirts online, linen shirts lahore, cotton casual shirts karachi, cash on delivery shirts, ${baseKeywords}`;
+        } else if (lowerFilter.includes("men") || lowerFilter.includes("clothing") || lowerFilter.includes("apparel")) {
+          pageTitle = `Men's Premium Streetwear & Clothing in Pakistan | ${siteName}`;
+          pageDesc = `Discover modern men's streetwear, oversized tees, hoodies, cargo pants, and aesthetic shirts at ${siteName}. Designed and manufactured in Pakistan. Nationwide fast delivery.`;
+          finalKeywords = `mens clothing pakistan, pakistani streetwear brand, oversized t-shirts online, cargos lahore, boys fashion brand, COD, ${baseKeywords}`;
+        } else {
+          pageTitle = `Buy ${filterName} Online in Pakistan | ${siteName}`;
+          pageDesc = `Explore premium ${filterName} online at ${siteName}. High-quality fabrics, modern streetwear fits, and fast Cash on Delivery (COD) all over Pakistan.`;
+          finalKeywords = `${filterName.toLowerCase()}, buy ${filterName.toLowerCase()} pakistan, streetwear brand pakistan, oversized clothing lahore, ${baseKeywords}`;
+        }
       } else {
         pageTitle = `Shop Latest Streetwear & Pakistani Fashion | ${siteName}`;
         pageDesc = `Browse the latest collection of premium hoodies, cargo pants, oversized tees, activewear, and accessories online at ${siteName}. Nationwide fast delivery.`;
@@ -217,21 +232,44 @@ export default function SeoManager() {
       image: imageUrl,
       url: window.location.origin,
       priceRange: "PKR",
+      logo: fallbackImage,
       address: {
         "@type": "PostalAddress",
         addressLocality: geoPlacename,
         addressRegion: geoRegion,
         addressCountry: "PK",
       },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: geoPosition.split(";")[0] || "31.5204",
+        longitude: geoPosition.split(";")[1] || "74.3587"
+      },
       areaServed: {
         "@type": "Country",
         name: "Pakistan"
       },
+      openingHoursSpecification: {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+        ],
+        opens: "00:00",
+        closes: "23:59"
+      },
+      sameAs: [
+        safeText(settings.instagram, ""),
+        safeText(settings.facebook, ""),
+        safeText(settings.youtube, ""),
+        safeText(settings.tiktok, "")
+      ].filter(Boolean),
       telephone: safeText(settings.phone, ""),
       email: safeText(settings.email, "")
     };
 
     if (isProductPage && activeProduct) {
+      const avgRating = activeProduct.rating || 5;
+      const numReviews = activeProduct.numReviews || 0;
+
       jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
@@ -239,6 +277,11 @@ export default function SeoManager() {
         description: activeProduct.description || pageDesc,
         image: imageUrl,
         sku: activeProduct._id,
+        mpn: activeProduct._id,
+        brand: {
+          "@type": "Brand",
+          name: siteName
+        },
         offers: {
           "@type": "Offer",
           price: activeProduct.price,
@@ -246,6 +289,7 @@ export default function SeoManager() {
           itemCondition: "https://schema.org/NewCondition",
           availability: activeProduct.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           url: canonical,
+          priceValidUntil: new Date(new Date().getFullYear() + 1, 11, 31).toISOString().split('T')[0],
           seller: {
             "@type": "Organization",
             name: siteName,
@@ -257,12 +301,33 @@ export default function SeoManager() {
             priceCurrency: "PKR",
             valueAddedTaxIncluded: true
           }
-        },
-        brand: {
-          "@type": "Brand",
-          name: siteName
         }
       };
+
+      if (numReviews > 0) {
+        jsonLd.aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue: avgRating.toString(),
+          reviewCount: numReviews.toString(),
+          bestRating: "5",
+          worstRating: "1"
+        };
+        
+        jsonLd.review = activeProduct.reviews.map(r => ({
+          "@type": "Review",
+          author: {
+            "@type": "Person",
+            name: r.name || "Customer"
+          },
+          datePublished: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          reviewBody: r.comment || "",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: (r.rating || 5).toString(),
+            bestRating: "5"
+          }
+        }));
+      }
     }
 
     let scriptEl = document.getElementById("ut-seo-jsonld");

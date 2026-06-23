@@ -2,6 +2,8 @@ import express from "express";
 import SiteSettings from "../models/settings.model.js";
 import CustomPage from "../models/customPage.model.js";
 import Product from "../models/product.model.js";
+import Category from "../models/category.model.js";
+import SubCategory from "../models/subCategory.model.js";
 
 const router = express.Router();
 
@@ -11,6 +13,11 @@ router.get("/robots.txt", async (req, res) => {
   const robots = [
     "User-agent: *",
     `Allow: /`,
+    `Disallow: /admin`,
+    `Disallow: /checkout`,
+    `Disallow: /cart`,
+    `Disallow: /login`,
+    `Disallow: /signup`,
     `Sitemap: ${host.replace(/\/$/, "")}/api/seo/sitemap.xml`,
     "",
   ].join("\n");
@@ -20,34 +27,95 @@ router.get("/robots.txt", async (req, res) => {
 });
 
 router.get("/sitemap.xml", async (req, res) => {
-  const host = (process.env.PUBLIC_SITE_URL || process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
-  const pages = await CustomPage.find({ isVisible: true }).select("slug updatedAt").lean();
-  const products = await Product.find({ isActive: { $ne: false } }).select("_id updatedAt").lean();
-  const staticPaths = ["", "/shop", "/support", "/cart"];
+  try {
+    const host = (
+      process.env.PUBLIC_SITE_URL ||
+      process.env.FRONTEND_URL ||
+      "http://localhost:5173"
+    ).replace(/\/$/, "");
 
-  const urls = [
-    ...staticPaths.map((p) => ({ loc: `${host}${p}`, lastmod: new Date().toISOString() })),
-    ...pages.map((page) => ({
-      loc: `${host}/${page.slug}`,
-      lastmod: (page.updatedAt || new Date()).toISOString(),
-    })),
-    ...products.map((p) => ({
-      loc: `${host}/product/${p._id}`,
-      lastmod: (p.updatedAt || new Date()).toISOString(),
-    })),
-  ];
+    const now = new Date().toISOString();
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls
-    .map(
-      (url) => `<url><loc>${url.loc}</loc><lastmod>${url.lastmod}</lastmod></url>`
-    )
-    .join("\n")}
+    // Static high-priority pages
+    const staticUrls = [
+      { loc: `${host}/`,        priority: "1.0",  changefreq: "daily"   },
+      { loc: `${host}/shop`,    priority: "0.9",  changefreq: "daily"   },
+      { loc: `${host}/support`, priority: "0.5",  changefreq: "monthly" },
+    ].map((u) => ({ ...u, lastmod: now }));
+
+    // Custom pages (blog, about, policies, etc.)
+    const customPages = await CustomPage.find({ isVisible: true })
+      .select("slug updatedAt")
+      .lean();
+    const customPageUrls = customPages.map((p) => ({
+      loc:        `${host}/${p.slug}`,
+      lastmod:    (p.updatedAt || new Date()).toISOString(),
+      priority:   "0.6",
+      changefreq: "weekly",
+    }));
+
+    // Active product pages
+    const products = await Product.find({ isActive: { $ne: false } })
+      .select("_id updatedAt")
+      .lean();
+    const productUrls = products.map((p) => ({
+      loc:        `${host}/product/${p._id}`,
+      lastmod:    (p.updatedAt || new Date()).toISOString(),
+      priority:   "0.8",
+      changefreq: "weekly",
+    }));
+
+    // Active category pages  — /shop?category=SLUG
+    const categories = await Category.find({ isActive: { $ne: false } })
+      .select("name updatedAt")
+      .lean();
+    const categoryUrls = categories.map((c) => ({
+      loc:        `${host}/shop?category=${encodeURIComponent(c.name)}`,
+      lastmod:    (c.updatedAt || new Date()).toISOString(),
+      priority:   "0.75",
+      changefreq: "weekly",
+    }));
+
+    // Active subcategory pages — /shop?subcategory=SLUG
+    const subCategories = await SubCategory.find({ isActive: { $ne: false } })
+      .select("name updatedAt")
+      .lean();
+    const subCategoryUrls = subCategories.map((s) => ({
+      loc:        `${host}/shop?subcategory=${encodeURIComponent(s.name)}`,
+      lastmod:    (s.updatedAt || new Date()).toISOString(),
+      priority:   "0.7",
+      changefreq: "weekly",
+    }));
+
+    const allUrls = [
+      ...staticUrls,
+      ...customPageUrls,
+      ...categoryUrls,
+      ...subCategoryUrls,
+      ...productUrls,
+    ];
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+    http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+${allUrls
+  .map(
+    (u) =>
+      `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${u.lastmod}</lastmod>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
+  )
+  .join("\n")}
 </urlset>`;
 
-  res.setHeader("Content-Type", "application/xml");
-  return res.status(200).send(xml);
+    res.setHeader("Content-Type", "application/xml");
+    res.setHeader("Cache-Control", "public, max-age=3600"); // cache 1 hour
+    return res.status(200).send(xml);
+  } catch (err) {
+    console.error("[sitemap.xml error]", err);
+    return res.status(500).send("Error generating sitemap");
+  }
 });
 
 router.get("/social-preview/product/:id", async (req, res) => {

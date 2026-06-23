@@ -305,11 +305,33 @@ export default function ThemeInjector() {
       linkEl.href = `https://fonts.googleapis.com/css2?${q}&display=swap`;
     }
 
-    // Phase 0 hardening: disable execution of arbitrary custom scripts.
-    const scriptContainer = document.getElementById("ut-custom-scripts");
-    if (scriptContainer) {
-      scriptContainer.innerHTML = "";
-      scriptContainer.remove();
+    // Re-enable safe execution of custom integration scripts (Google Analytics, Facebook Pixel, GSC, etc.)
+    if (settings.customScripts) {
+      let scriptContainer = document.getElementById("ut-custom-scripts");
+      if (!scriptContainer) {
+        scriptContainer = document.createElement("div");
+        scriptContainer.id = "ut-custom-scripts";
+        scriptContainer.style.display = "none";
+        document.body.appendChild(scriptContainer);
+      }
+      scriptContainer.innerHTML = settings.customScripts;
+      
+      const scripts = scriptContainer.querySelectorAll("script");
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement("script");
+        Array.from(oldScript.attributes).forEach((attr) => newScript.setAttribute(attr.name, attr.value));
+        if (oldScript.src) {
+          newScript.src = oldScript.src;
+        } else {
+          newScript.textContent = oldScript.textContent;
+        }
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+      });
+    } else {
+      const scriptContainer = document.getElementById("ut-custom-scripts");
+      if (scriptContainer) {
+        scriptContainer.remove();
+      }
     }
   }, [settings]);
 

@@ -244,7 +244,8 @@ export default function ProductDetail() {
                       src={getProductImageUrl(images[activeImg])}
                       srcSet={getResponsiveImageSrcSet(images[activeImg], 800)}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                      alt={product.name}
+                      alt={`${product.name} - Premium Streetwear Urban Threads Pakistan`}
+                      priority={activeImg === 0}
                       className="w-full h-full object-cover"
                     />
                   </motion.div>
@@ -304,7 +305,7 @@ export default function ProductDetail() {
                   >
                     <LazyImage 
                       src={getThumbnailUrl(img)} 
-                      alt={`thumb-${i}`} 
+                      alt={`${product.name} View ${i + 1} - Urban Threads`} 
                       className="w-full h-full object-cover"
                     />
                   </button>
