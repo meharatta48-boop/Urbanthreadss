@@ -59,7 +59,7 @@ const pakistanData = {
   Islamabad: ["Islamabad"],
 };
 
-const API_BASE = SERVER_URL + "/api";
+const API_BASE = "/api";
 
 export default function Checkout() {
   const { cart, clearCart } = useCart();

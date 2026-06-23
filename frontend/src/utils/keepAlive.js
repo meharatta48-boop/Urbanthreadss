@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { SERVER_URL } from '../services/api';
 
 /**
  * Keep-alive system for Render backend
@@ -43,7 +42,7 @@ class KeepAliveManager {
   async ping() {
     if (typeof document !== "undefined" && document.hidden) return;
     try {
-      const response = await axios.get(`${SERVER_URL}/api/health`, {
+      const response = await axios.get(`/api/health`, {
         timeout: 5000,
         headers: {
           'Cache-Control': 'no-cache',
