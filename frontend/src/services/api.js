@@ -19,6 +19,14 @@ api.interceptors.request.use((req) => {
       req.headers.Authorization = `Bearer ${authUser.token}`;
     }
   } catch { /* ignore parse errors */ }
+
+  try {
+    const savedKey = localStorage.getItem("urban_threads_gemini_key") || import.meta.env.VITE_GEMINI_API_KEY;
+    if (savedKey) {
+      req.headers["x-gemini-key"] = savedKey;
+    }
+  } catch { /* ignore */ }
+
   return req;
 });
 

@@ -99,7 +99,7 @@ export default function AiTools() {
         setResult("");
         try {
             const headers = {};
-            const savedKey = localStorage.getItem("urban_threads_gemini_key");
+            const savedKey = localStorage.getItem("urban_threads_gemini_key") || import.meta.env.VITE_GEMINI_API_KEY;
             if (savedKey) {
                 headers["x-gemini-key"] = savedKey;
             }
