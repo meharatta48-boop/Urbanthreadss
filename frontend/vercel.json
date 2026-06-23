@@ -18,7 +18,7 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/assets/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css|woff2|woff|ttf|png|jpg|svg|ico|webp))",
+      "source": "/:path*\\.(js|css|woff2|woff|ttf|png|jpg|svg|ico|webp)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -53,7 +53,7 @@
       "destination": "https://urbanthreadss.onrender.com/:path"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
