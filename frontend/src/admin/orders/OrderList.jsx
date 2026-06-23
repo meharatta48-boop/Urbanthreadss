@@ -11,7 +11,7 @@ import {
 } from "react-icons/fi";
 import LazyImage from "../../components/LazyImage";
 import { getCartImageUrl } from "../../utils/cloudinaryOptimized";
-import { downloadInvoicePDF } from "../../utils/invoicePdf";
+import { downloadInvoicePDF, printInvoiceHTML, downloadShippingLabelPDF, printShippingLabelHTML } from "../../utils/invoicePdf";
 
 const STATUS_OPTIONS = ["pending", "processing", "shipped", "delivered", "cancelled"];
 const STATUS_STYLE = {
@@ -104,69 +104,12 @@ async function downloadInvoice(order, settings) {
   }
 }
 
-function printShippingLabel(order) {
-  const name = getName(order);
-  const phone = getPhone(order);
-  const addr = order.shippingAddress;
-  const orderNo = order._id.slice(-10).toUpperCase();
-  const dateStr = new Date(order.createdAt).toLocaleDateString("en-PK");
-
-  const win = window.open("", "_blank", "width=600,height=400");
-  win.document.write(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <title>Shipping Label #${orderNo}</title>
-  <style>
-    body { font-family: monospace; font-size: 14px; margin: 20px; color: #000; }
-    .label-box { border: 4px solid #000; padding: 15px; max-width: 450px; margin: 0 auto; }
-    .title { font-size: 20px; font-weight: bold; text-align: center; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-    .section { border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
-    .label { font-weight: bold; font-size: 11px; text-transform: uppercase; color: #555; }
-    .val { font-size: 16px; margin-top: 3px; }
-    .row { display: flex; justify-content: space-between; }
-    .barcode { font-size: 24px; letter-spacing: 5px; text-align: center; margin-top: 15px; }
-  </style>
-</head>
-<body>
-  <div class="label-box">
-    <div class="title">URBAN THREADS SHIPMENT</div>
-    <div class="section">
-      <div class="label">TO:</div>
-      <div class="val"><strong>${addr?.fullName || name}</strong></div>
-      <div class="val">${addr?.address || "N/A"}</div>
-      <div class="val">${addr?.city || "N/A"}, Pakistan</div>
-    </div>
-    <div class="section">
-      <div class="row">
-        <div>
-          <div class="label">ORDER NUMBER</div>
-          <div class="val"><strong>#${orderNo}</strong></div>
-        </div>
-        <div>
-          <div class="label">PHONE</div>
-          <div class="val"><strong>${phone}</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="section">
-      <div class="row">
-        <div>
-          <div class="label">CARRIER</div>
-          <div class="val">${order.courierPartner || "COD (Leopard/TCS)"}</div>
-        </div>
-        <div>
-          <div class="label">TOTAL CHARGES</div>
-          <div class="val"><strong>Rs. ${order.totalPrice?.toLocaleString()}</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="barcode">||||| | ||||| | ||||| | ||</div>
-  </div>
-  <script>window.print();</script>
-</body>
-</html>`);
-  win.document.close();
+async function downloadShippingLabel(order, settings) {
+  try {
+    await downloadShippingLabelPDF(order, settings);
+  } catch {
+    toast.error("Failed to download shipping label PDF");
+  }
 }
 
 export default function OrderList() {
@@ -541,14 +484,30 @@ export default function OrderList() {
                                       </span>
                                     </div>
                                   </div>
-                                  <div className="flex gap-2">
+                                  <div className="flex gap-2 flex-wrap">
+                                    {/* Invoice: Download PDF */}
                                     <button onClick={() => downloadInvoice(order, settings)}
                                       className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--gold) hover:bg-(--gold-light) text-black font-bold py-2.5 px-4 rounded-lg transition-all">
-                                      <FiDownload size={14} /> Download Invoice PDF
+                                      <FiDownload size={14} /> Invoice PDF
                                     </button>
-                                    <button onClick={() => printShippingLabel(order)}
+                                    {/* Invoice: Print */}
+                                    <button
+                                      onClick={() => printInvoiceHTML(order, settings)}
+                                      className="mt-4 flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--gold)/40 text-(--text-primary) font-bold py-2.5 px-3 rounded-lg transition-all"
+                                      title="Print Invoice">
+                                      <FiPrinter size={14} />
+                                    </button>
+                                    {/* Shipping Label: Download PDF */}
+                                    <button onClick={() => downloadShippingLabel(order, settings)}
                                       className="mt-4 flex-1 flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--border-light) text-(--text-primary) font-bold py-2.5 px-4 rounded-lg transition-all">
-                                      <FiPackage size={14} /> Shipping Label
+                                      <FiPackage size={14} /> Shipping Label PDF
+                                    </button>
+                                    {/* Shipping Label: Print */}
+                                    <button
+                                      onClick={() => printShippingLabelHTML(order, settings)}
+                                      className="mt-4 flex items-center justify-center gap-2 bg-(--bg-elevated) border border-(--border) hover:border-(--gold)/40 text-(--text-primary) font-bold py-2.5 px-3 rounded-lg transition-all"
+                                      title="Print Shipping Label">
+                                      <FiPrinter size={14} />
                                     </button>
                                   </div>
                                 </div>

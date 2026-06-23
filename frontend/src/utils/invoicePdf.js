@@ -354,3 +354,232 @@ export const printInvoiceHTML = (order, settings) => {
     }, 300);
   };
 };
+
+/* ═══════════════════════════════════════════════════
+   SHIPPING LABEL  —  PDF & Print
+   Same pipeline as invoice (html2canvas + jsPDF)
+   ═══════════════════════════════════════════════════ */
+
+export const generateShippingLabelHtml = (order, settings) => {
+  const name    = getName(order);
+  const phone   = getPhone(order);
+  const addr    = order?.shippingAddress || {};
+  const orderNo = (order?._id || "ORDER").slice(-10).toUpperCase();
+  const orderId = (order?._id || "ORDER").slice(-8).toUpperCase();
+
+  const orderDate = order?.createdAt
+    ? new Date(order.createdAt).toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" })
+    : "N/A";
+  const printDate = new Date().toLocaleDateString("en-PK", { day: "numeric", month: "long", year: "numeric" });
+
+  const brandName    = settings?.brandName    || "URBAN THREADS";
+  const brandPhone   = settings?.contactPhone || "0300-0000000";
+  const brandEmail   = settings?.contactEmail || "support@urbanthreads.pk";
+  const brandAddress = settings?.address      || "Pakistan";
+  const courier      = order?.courierPartner  || "TCS / Leopard";
+  const tracking     = order?.trackingNumber  || "";
+  const isCOD        = (order?.paymentMethod || "COD").toLowerCase().includes("cod");
+  const totalAmt     = (order?.totalPrice || 0).toLocaleString();
+
+  const itemLines = (order?.orderItems || []).slice(0, 5).map((item) => {
+    const variant = [item?.size, item?.color].filter(Boolean).join(", ");
+    return `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#1a1208;margin-bottom:3px;">
+      <span style="font-weight:600;">${item?.name || "Item"}${variant ? ` <span style="font-weight:400;color:#9e8a6a;font-size:10px;">(${variant})</span>` : ""}</span>
+      <span style="font-weight:700;color:#5a4a30;">×${item?.quantity || 1}</span>
+    </div>`;
+  }).join("");
+
+  const moreItems = (order?.orderItems || []).length - 5;
+
+  const logoHtml = (settings?.invoiceShowLogo && settings?.logoImage)
+    ? `<img src="${getImageUrl(settings.logoImage)}" alt="${brandName}" style="max-height:30px;max-width:120px;object-fit:contain;" />`
+    : `<div style="font-size:18px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;">${brandName}</div>`;
+
+  // CSS barcode bars
+  const barWidths = [1,2,1,3,1,2,2,1,3,1,2,1,1,3,2,1,2,1,3,1,1,2,1,2,3,1,2,1,1,2,3,1,2,1,2,3,1,1,2,1,3,2];
+  const bars = barWidths.map(w =>
+    `<div style="width:${w}px;background:#1a1208;height:100%;display:inline-block;margin-right:2px;"></div>`
+  ).join("");
+
+  return `
+  <div style="width:680px;background:#ffffff;border:2px solid #1a1208;font-family:'Inter',Arial,sans-serif;">
+
+    <!-- HEADER -->
+    <div style="background:linear-gradient(135deg,#1a1208 0%,#2d2010 60%,#3d2e14 100%);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        ${logoHtml}
+        <div style="font-size:9px;color:rgba(201,168,76,0.65);letter-spacing:3px;text-transform:uppercase;margin-top:4px;">Shipping Label</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="background:rgba(201,168,76,0.18);border:1.5px solid rgba(201,168,76,0.45);color:#c9a84c;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;">${courier}</div>
+        ${tracking ? `<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:1px;">TRK: ${tracking}</div>` : ""}
+      </div>
+    </div>
+
+    <!-- FROM / TO -->
+    <div style="display:flex;align-items:stretch;border-bottom:2px dashed #e0d8c8;">
+      <div style="width:210px;padding:18px 20px;border-right:1.5px dashed #e0d8c8;background:#faf8f4;flex-shrink:0;">
+        <div style="font-size:8px;font-weight:800;letter-spacing:2.5px;color:#9e8a6a;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #e0d8c8;padding-bottom:5px;">FROM</div>
+        <div style="font-size:13px;font-weight:800;color:#1a1208;margin-bottom:4px;">${brandName}</div>
+        <div style="font-size:10px;color:#6a5a3a;margin-bottom:2px;">${brandAddress}</div>
+        <div style="font-size:10px;color:#6a5a3a;margin-bottom:2px;">📞 ${brandPhone}</div>
+        <div style="font-size:10px;color:#6a5a3a;">✉ ${brandEmail}</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;width:36px;font-size:20px;color:#c9a84c;flex-shrink:0;background:#fff8ec;">▶</div>
+      <div style="flex:1;padding:18px 20px;">
+        <div style="font-size:8px;font-weight:800;letter-spacing:2.5px;color:#2d2010;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid #e0d8c8;padding-bottom:5px;">DELIVER TO</div>
+        <div style="font-size:18px;font-weight:800;color:#1a1208;margin-bottom:4px;">${addr.fullName || name}</div>
+        <div style="font-size:12px;color:#3a3020;margin-bottom:2px;">${addr.address || "—"}</div>
+        <div style="font-size:12px;color:#3a3020;font-weight:600;margin-bottom:4px;">${addr.city || "—"}${addr.province ? ", " + addr.province : ""}, Pakistan</div>
+        ${addr.postalCode && addr.postalCode !== "00000" ? `<div style="font-size:10px;color:#6a5a3a;margin-bottom:2px;">Postal: ${addr.postalCode}</div>` : ""}
+        <div style="font-size:14px;color:#1a1208;margin-top:6px;">📞 <strong>${phone || "—"}</strong></div>
+      </div>
+    </div>
+
+    <!-- INFO STRIP -->
+    <div style="display:flex;background:#2d2010;border-bottom:2px dashed #e0d8c8;">
+      ${[
+        ["Order ID", `#${orderId}`],
+        ["Date", orderDate],
+        ["Items", (order?.orderItems || []).length],
+        ["Payment", order?.paymentMethod || "COD"],
+      ].map(([label, val]) => `
+        <div style="flex:1;padding:10px 16px;border-right:1px solid rgba(201,168,76,0.15);">
+          <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin-bottom:2px;">${label}</div>
+          <div style="font-size:12px;font-weight:700;color:#fff;">${val}</div>
+        </div>`).join("")}
+      ${isCOD ? `
+        <div style="flex:1;padding:10px 16px;background:rgba(201,168,76,0.1);border-left:2px solid rgba(201,168,76,0.4);">
+          <div style="font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(201,168,76,0.55);margin-bottom:2px;">COD Amount</div>
+          <div style="font-size:14px;font-weight:800;color:#c9a84c;">Rs. ${totalAmt}</div>
+        </div>` : ""}
+    </div>
+
+    <!-- ITEMS SUMMARY -->
+    <div style="padding:14px 24px;border-bottom:1.5px solid #e8e0d0;">
+      <div style="font-size:8px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9e8a6a;margin-bottom:8px;">Items Ordered</div>
+      ${itemLines}
+      ${moreItems > 0 ? `<div style="font-size:10px;color:#9e8a6a;font-style:italic;margin-top:2px;">+ ${moreItems} more item(s)</div>` : ""}
+      <div style="display:flex;justify-content:space-between;padding-top:8px;margin-top:8px;border-top:1px solid #e8e0d0;font-size:12px;font-weight:700;color:#1a1208;">
+        <span>Grand Total</span>
+        <span style="color:#c9a84c;font-size:14px;">Rs. ${totalAmt}</span>
+      </div>
+    </div>
+
+    <!-- BARCODE -->
+    <div style="padding:14px 24px 10px;display:flex;flex-direction:column;align-items:center;background:#faf8f4;border-bottom:1.5px solid #e0d8c8;">
+      <div style="display:flex;align-items:stretch;height:48px;">
+        ${bars}
+      </div>
+      <div style="margin-top:5px;font-family:monospace;font-size:11px;letter-spacing:4px;color:#5a4a30;">${orderNo}</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="padding:8px 24px;display:flex;justify-content:space-between;font-size:9px;color:#b8a898;background:#1a1208;">
+      <span>Handle with care · ${brandName} Pakistan</span>
+      <span>Printed: ${printDate}</span>
+    </div>
+
+  </div>`;
+};
+
+export const shippingLabelStyleBlock = `
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { font-family:'Inter',Arial,sans-serif;background:#f5f5f5;-webkit-print-color-adjust:exact;print-color-adjust:exact; }
+  @media print { body{background:#fff!important;} @page{margin:6mm;size:A5 landscape;} }
+</style>`;
+
+/** Download shipping label as PDF (A5 landscape) — same html2canvas+jsPDF as invoice */
+export const downloadShippingLabelPDF = async (order, settings) => {
+  const orderNo  = (order?._id || "ORDER").slice(-10).toUpperCase();
+  const html     = generateShippingLabelHtml(order, settings);
+
+  const container = document.createElement("div");
+  container.style.cssText = "position:absolute;left:0;top:0;width:680px;background:#fff;z-index:-9999;opacity:0;pointer-events:none;";
+  container.innerHTML = shippingLabelStyleBlock + html;
+  document.body.appendChild(container);
+
+  try {
+    await document.fonts.ready;
+    await new Promise((r) => setTimeout(r, 300));
+
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      x: 0,
+      y: 0,
+      width: 680,
+      height: container.scrollHeight,
+      windowWidth: 680,
+      windowHeight: container.scrollHeight,
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    // A5 landscape → 210 × 148 mm
+    const pdf   = new jsPDF("l", "mm", "a5");
+    const pdfW  = 210;
+    const pdfH  = 148;
+    const imgW  = pdfW;
+    const imgH  = (canvas.height * pdfW) / canvas.width;
+
+    let heightLeft = imgH;
+    let position   = 0;
+    pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+    heightLeft -= pdfH;
+    while (heightLeft > 0) {
+      position = heightLeft - imgH;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+      heightLeft -= pdfH;
+    }
+    pdf.save(`Urban-Threads-ShippingLabel-${orderNo}.pdf`);
+  } catch (err) {
+    console.error("Shipping label PDF error:", err);
+    throw err;
+  } finally {
+    document.body.removeChild(container);
+  }
+};
+
+/** Print shipping label via hidden iframe (same as printInvoiceHTML) */
+export const printShippingLabelHTML = (order, settings) => {
+  const orderNo  = (order?._id || "ORDER").slice(-10).toUpperCase();
+  const content  = generateShippingLabelHtml(order, settings);
+  const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shipping Label #${orderNo} - Urban Threads</title>
+  ${shippingLabelStyleBlock}
+</head>
+<body>${content}</body>
+</html>`;
+
+  const prevTitle = document.title;
+  document.title  = `Urban-Threads-ShippingLabel-${orderNo}`;
+
+  const iframe = document.createElement("iframe");
+  iframe.style.cssText = "position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;";
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(fullHtml);
+  iframe.contentDocument.close();
+
+  iframe.contentWindow.onload = () => {
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => {
+        document.title = prevTitle;
+        document.body.removeChild(iframe);
+      }, 2000);
+    }, 350);
+  };
+};
