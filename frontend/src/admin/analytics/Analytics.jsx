@@ -287,6 +287,7 @@ export default function Analytics() {
   const [aiInsights, setAiInsights] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   // Product performance sorting & searching
   const [prodSearch, setProdSearch] = useState("");
@@ -352,6 +353,60 @@ export default function Analytics() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  /* ── AI Advisor Handler ── */
+  const handleAiAdvisor = async () => {
+    if (!data || !profitData) return toast.warn("Analytics data not loaded yet.");
+    setAiLoading(true);
+    setAiInsights("");
+    setAiError("");
+    try {
+      const statsPayload = {
+        totalRevenue: data.totalRevenue,
+        thisMonthRevenue: data.thisMonthRevenue,
+        totalOrders: data.totalOrders,
+        conversionRate: data.conversionRate,
+        cancelRate: data.cancelRate,
+        avgOrderValue: data.avgOrderValue,
+        ordersByStatus: data.ordersByStatus,
+        topCategories: data.topCategories,
+        last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
+        lowStockCount: data.lowStockCount,
+        totalNetProfit: profitData.totalNetProfit,
+        overallMarginPct: profitData.overallMarginPct,
+        totalProductCost: profitData.totalProductCost,
+        last6Months: profitData.last6Months,
+        topPerformingProducts: profitData.productStats?.slice(0, 5).map(p => ({
+          name: p.name,
+          marginPct: p.marginPct,
+          qtySold: p.qtySold,
+          profitGenerated: p.profitGenerated
+        })),
+        marginBreakdown: {
+          greenMargin: profitData.productStats?.filter(p => p.marginStatus === "Green").length,
+          yellowMargin: profitData.productStats?.filter(p => p.marginStatus === "Yellow").length,
+          redMargin: profitData.productStats?.filter(p => p.marginStatus === "Red").length,
+        }
+      };
+      const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
+      if (res.success) {
+        setAiInsights(res.insights);
+        setAiGenerated(true);
+      } else {
+        setAiError("AI could not generate insights. Please try again.");
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      const msg = err.response?.data?.message || "";
+      if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
+        setAiError("AI is currently busy. Please wait a minute and try again.");
+      } else {
+        setAiError(msg || "AI insights failed. Please try again.");
+      }
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const handleUpdateGoal = async (e) => {
     e.preventDefault();
@@ -1491,63 +1546,13 @@ export default function Analytics() {
                 <p className="text-(--text-muted) text-xs mt-1">Deep AI analysis of your revenue, profitability, products, and growth opportunities</p>
               </div>
               <button
-                onClick={async () => {
-                  if (!data || !profitData) return toast.warn("Analytics data not loaded yet.");
-                  setAiLoading(true);
-                  setAiInsights("");
-                  try {
-                    const statsPayload = {
-                      totalRevenue: data.totalRevenue,
-                      thisMonthRevenue: data.thisMonthRevenue,
-                      totalOrders: data.totalOrders,
-                      conversionRate: data.conversionRate,
-                      cancelRate: data.cancelRate,
-                      avgOrderValue: data.avgOrderValue,
-                      ordersByStatus: data.ordersByStatus,
-                      topCategories: data.topCategories,
-                      last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
-                      lowStockCount: data.lowStockCount,
-                      totalNetProfit: profitData.totalNetProfit,
-                      overallMarginPct: profitData.overallMarginPct,
-                      totalProductCost: profitData.totalProductCost,
-                      last6Months: profitData.last6Months,
-                      topPerformingProducts: profitData.productStats?.slice(0, 5).map(p => ({
-                        name: p.name,
-                        marginPct: p.marginPct,
-                        qtySold: p.qtySold,
-                        profitGenerated: p.profitGenerated
-                      })),
-                      marginBreakdown: {
-                        greenMargin: profitData.productStats?.filter(p => p.marginStatus === "Green").length,
-                        yellowMargin: profitData.productStats?.filter(p => p.marginStatus === "Yellow").length,
-                        redMargin: profitData.productStats?.filter(p => p.marginStatus === "Red").length,
-                      }
-                    };
-                    const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
-                    if (res.success) {
-                      setAiInsights(res.insights);
-                      setAiGenerated(true);
-                    } else {
-                      toast.error("AI could not generate insights.");
-                    }
-                  } catch (err) {
-                    const status = err.response?.status;
-                    const msg = err.response?.data?.message || "";
-                    if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
-                      toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
-                    } else {
-                      toast.error(msg || "AI insights failed.");
-                    }
-                  } finally {
-                    setAiLoading(false);
-                  }
-                }}
+                onClick={handleAiAdvisor}
                 disabled={aiLoading || !data}
                 className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl transition-all disabled:opacity-40 shrink-0"
                 style={{ background: "rgba(201,168,76,0.15)", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.3)" }}
               >
                 {aiLoading ? (
-                  <><div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing Business...</>
+                  <><div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> Thinking...</>
                 ) : (
                   <><FiZap size={14} /> {aiGenerated ? "Refresh AI Analysis" : "Generate Full AI Analysis"}</>
                 )}
@@ -1556,7 +1561,7 @@ export default function Analytics() {
           </div>
 
           {/* Feature Cards */}
-          {!aiInsights && !aiLoading && (
+          {!aiInsights && !aiLoading && !aiError && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { icon: "📊", title: "Revenue Analysis", desc: "Deep dive into revenue trends, growth rates, and forecasting" },
@@ -1581,6 +1586,16 @@ export default function Analytics() {
                 <div className="text-center">
                   <p className="text-sm font-semibold text-(--text-primary)">Gemini AI is analyzing your business...</p>
                   <p className="text-xs text-(--text-muted) mt-1">Processing revenue data, profit margins, and growth trends</p>
+                </div>
+              </div>
+            ) : aiError ? (
+              <div className="flex flex-col items-center gap-4 py-20">
+                <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                  <FiCpu size={24} className="text-red-400" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-red-400">{aiError}</p>
+                  <button onClick={handleAiAdvisor} className="mt-3 text-xs text-(--gold) underline hover:no-underline">Try again</button>
                 </div>
               </div>
             ) : aiInsights ? (

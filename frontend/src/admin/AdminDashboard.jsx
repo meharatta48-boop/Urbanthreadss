@@ -141,6 +141,7 @@ export default function Dashboard() {
   const [aiInsights, setAiInsights] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
+  const [aiError, setAiError] = useState("");
   useEffect(() => {
     if (data?.liveVisitors !== undefined) {
       setLiveVisitors(data.liveVisitors);
@@ -184,6 +185,48 @@ export default function Dashboard() {
   const copyToClipboard = (id) => {
     navigator.clipboard.writeText(id);
     toast.success(`ID #${id.slice(-8).toUpperCase()} copied!`, { autoClose: 1500 });
+  };
+
+  /* ── AI Business Insights Handler ── */
+  const handleAnalyticsInsights = async () => {
+    if (!data) return toast.warn("Dashboard data not loaded yet.");
+    setAiLoading(true);
+    setAiInsights("");
+    setAiError("");
+    try {
+      const statsPayload = {
+        totalRevenue: data.totalRevenue,
+        thisMonthRevenue: data.thisMonthRevenue,
+        totalOrders: data.totalOrders,
+        todayOrders: data.todayOrders,
+        totalUsers: data.totalUsers,
+        newUsersThisMonth: data.newUsersThisMonth,
+        conversionRate: data.conversionRate,
+        cancelRate: data.cancelRate,
+        avgOrderValue: data.avgOrderValue,
+        ordersByStatus: data.ordersByStatus,
+        topCategories: data.topCategories,
+        last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
+        lowStockCount: data.lowStockCount,
+      };
+      const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
+      if (res.success) {
+        setAiInsights(res.insights);
+        setAiGenerated(true);
+      } else {
+        setAiError("AI could not generate insights. Please try again.");
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      const msg = err.response?.data?.message || "";
+      if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
+        setAiError("AI is currently busy. Please wait a minute and try again.");
+      } else {
+        setAiError(msg || "AI insights failed. Please try again.");
+      }
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const hour = new Date().getHours();
@@ -584,51 +627,13 @@ export default function Dashboard() {
             <span className="text-[9px] px-2 py-0.5 rounded-full font-bold border" style={{ background: "rgba(201,168,76,0.1)", color: "var(--gold)", borderColor: "rgba(201,168,76,0.2)" }}>✦ Powered by Gemini</span>
           </div>
           <button
-            onClick={async () => {
-              if (!data) return toast.warn("Dashboard data not loaded yet.");
-              setAiLoading(true);
-              setAiInsights("");
-              try {
-                const statsPayload = {
-                  totalRevenue: data.totalRevenue,
-                  thisMonthRevenue: data.thisMonthRevenue,
-                  totalOrders: data.totalOrders,
-                  todayOrders: data.todayOrders,
-                  totalUsers: data.totalUsers,
-                  newUsersThisMonth: data.newUsersThisMonth,
-                  conversionRate: data.conversionRate,
-                  cancelRate: data.cancelRate,
-                  avgOrderValue: data.avgOrderValue,
-                  ordersByStatus: data.ordersByStatus,
-                  topCategories: data.topCategories,
-                  last7DaysRevenue: data.last7Days?.reduce((s, d) => s + d.revenue, 0),
-                  lowStockCount: data.lowStockCount,
-                };
-                const { data: res } = await api.post("/ai/analytics-insights", { statsData: statsPayload });
-                if (res.success) {
-                  setAiInsights(res.insights);
-                  setAiGenerated(true);
-                } else {
-                  toast.error("AI could not generate insights.");
-                }
-              } catch (err) {
-                const status = err.response?.status;
-                const msg = err.response?.data?.message || "";
-                if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
-                  toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
-                } else {
-                  toast.error(msg || "AI insights failed.");
-                }
-              } finally {
-                setAiLoading(false);
-              }
-            }}
+            onClick={handleAnalyticsInsights}
             disabled={aiLoading || !data}
             className="flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl transition-all disabled:opacity-40"
             style={{ background: "rgba(201,168,76,0.1)", color: "var(--gold)", border: "1px solid rgba(201,168,76,0.2)" }}
           >
             {aiLoading ? (
-              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing...</>
+              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Thinking...</>
             ) : (
               <><FiZap size={12} /> {aiGenerated ? "Refresh Insights" : "Generate AI Insights"}</>
             )}
@@ -640,6 +645,14 @@ export default function Dashboard() {
             <div className="flex flex-col items-center gap-3 py-10">
               <div className="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
               <p className="text-xs text-(--text-muted) animate-pulse">Gemini is analyzing your business data...</p>
+            </div>
+          ) : aiError ? (
+            <div className="flex flex-col items-center gap-3 py-10">
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <FiCpu size={18} className="text-red-400" />
+              </div>
+              <p className="text-sm font-semibold text-red-400">{aiError}</p>
+              <button onClick={handleAnalyticsInsights} className="text-xs text-(--gold) underline hover:no-underline">Try again</button>
             </div>
           ) : aiInsights ? (
             <pre className="text-xs text-(--text-primary) leading-relaxed whitespace-pre-wrap font-sans">{aiInsights}</pre>

@@ -88,8 +88,27 @@ export default function SupportChat() {
         }
       }
       throw new Error("Using fallback");
-    } catch {
-      // Fallback to local auto-reply
+    } catch (err) {
+      const status = err.response?.status;
+      const msgText = err.response?.data?.message || "";
+      const is429 = status === 429 || msgText.toLowerCase().includes("quota") || msgText.toLowerCase().includes("resource_exhausted");
+
+      if (is429) {
+        // Show quota error directly in chat — do NOT loop back
+        setAiEnabled(false);
+        setTimeout(() => {
+          setTyping(false);
+          setMessages(prev => [...prev, {
+            from: "support",
+            text: "AI is currently busy. Please wait a minute and try again. In the meantime, you can reach us via WhatsApp below! 📲",
+            time: new Date(),
+            aiPowered: false
+          }]);
+        }, 500);
+        return;
+      }
+
+      // Fallback to local auto-reply for all other errors
       const delay = 900 + Math.random() * 600;
       setTimeout(() => {
         setTyping(false);
@@ -98,6 +117,7 @@ export default function SupportChat() {
       }, delay);
     }
   };
+
 
   const handleKey = (e) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }

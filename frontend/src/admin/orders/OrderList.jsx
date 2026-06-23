@@ -126,6 +126,7 @@ export default function OrderList() {
   const [aiAnalysis, setAiAnalysis] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [showAi, setShowAi] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   // Always fetch fresh settings so invoice fields are up-to-date
   useEffect(() => { fetchSettings(); }, [fetchSettings]);
@@ -161,7 +162,35 @@ export default function OrderList() {
     } catch { toast.error("Delete fail"); }
   };
 
-  /* CSV EXPORT */
+  /* ── AI Order Analysis Handler ── */
+  const handleOrderAnalysis = async () => {
+    if (!orders.length) return toast.warn("No orders to analyze.");
+    setAiLoading(true);
+    setAiAnalysis("");
+    setAiError("");
+    setShowAi(true);
+    try {
+      const { data: res } = await api.post("/ai/order-analysis", { orders: orders.slice(0, 100) });
+      if (res.success) {
+        setAiAnalysis(res.analysis);
+      } else {
+        setAiError("AI analysis failed. Please try again.");
+        setShowAi(false);
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      const msg = err.response?.data?.message || "";
+      if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
+        setAiError("AI is currently busy. Please wait a minute and try again.");
+      } else {
+        setAiError(msg || "AI failed. Please try again.");
+      }
+      setShowAi(false);
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const exportCSV = () => {
     const rows = [
       ["Order ID", "Customer", "Phone", "Email", "Status", "Items", "Total", "Payment", "Date"],
@@ -239,38 +268,13 @@ export default function OrderList() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={async () => {
-              if (!orders.length) return toast.warn("No orders to analyze.");
-              setAiLoading(true);
-              setAiAnalysis("");
-              setShowAi(true);
-              try {
-                const { data: res } = await api.post("/ai/order-analysis", { orders: orders.slice(0, 100) });
-                if (res.success) {
-                  setAiAnalysis(res.analysis);
-                } else {
-                  toast.error("AI analysis failed.");
-                  setShowAi(false);
-                }
-              } catch (err) {
-                const status = err.response?.status;
-                const msg = err.response?.data?.message || "";
-                if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
-                  toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
-                } else {
-                  toast.error(msg || "AI failed.");
-                }
-                setShowAi(false);
-              } finally {
-                setAiLoading(false);
-              }
-            }}
+            onClick={handleOrderAnalysis}
             disabled={aiLoading || loading}
             className="flex items-center gap-2 text-xs font-bold border px-3 py-2.5 rounded-xl transition-all disabled:opacity-40"
             style={{ background: "rgba(56,189,248,0.08)", color: "#38bdf8", borderColor: "rgba(56,189,248,0.2)" }}
           >
             {aiLoading ? (
-              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Analyzing...</>
+              <><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" /> Thinking...</>
             ) : (
               <><FiCpu size={13} /> AI Analysis</>
             )}
@@ -801,7 +805,7 @@ export default function OrderList() {
 
       {/* AI ORDER ANALYSIS PANEL */}
       <AnimatePresence>
-        {showAi && (
+        {(showAi || aiError) && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -818,7 +822,7 @@ export default function OrderList() {
                   ✦ Gemini Powered
                 </span>
               </div>
-              <button onClick={() => { setShowAi(false); setAiAnalysis(""); }}
+              <button onClick={() => { setShowAi(false); setAiAnalysis(""); setAiError(""); }}
                 className="text-xs text-(--text-muted) hover:text-(--text-primary) transition-colors px-2 py-1 rounded-lg">
                 ✕ Close
               </button>
@@ -828,6 +832,14 @@ export default function OrderList() {
                 <div className="flex flex-col items-center gap-3 py-8">
                   <div className="w-8 h-8 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin" />
                   <p className="text-xs text-(--text-muted) animate-pulse">Gemini is analyzing {orders.length} orders...</p>
+                </div>
+              ) : aiError ? (
+                <div className="flex flex-col items-center gap-3 py-8">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                    <FiCpu size={16} className="text-red-400" />
+                  </div>
+                  <p className="text-sm font-semibold text-red-400">{aiError}</p>
+                  <button onClick={handleOrderAnalysis} className="text-xs text-[#38bdf8] underline hover:no-underline">Try again</button>
                 </div>
               ) : aiAnalysis ? (
                 <pre className="text-xs text-(--text-primary) leading-relaxed whitespace-pre-wrap font-sans">{aiAnalysis}</pre>

@@ -22,6 +22,7 @@ export default function AiTools() {
     const [activeTab, setActiveTab] = useState("description");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState("");
+    const [aiError, setAiError] = useState("");
     const [customPrompt, setCustomPrompt] = useState("");
 
     // Local API Key Configuration
@@ -97,6 +98,7 @@ export default function AiTools() {
     const handleGenerate = async (type, inputs) => {
         setLoading(true);
         setResult("");
+        setAiError("");
         try {
             const headers = {};
             const savedKey = localStorage.getItem("urban_threads_gemini_key") || import.meta.env.VITE_GEMINI_API_KEY;
@@ -125,9 +127,9 @@ export default function AiTools() {
             const status = error.response?.status;
             const msg = error.response?.data?.message || "";
             if (status === 429 || msg.toLowerCase().includes("quota") || msg.toLowerCase().includes("resource_exhausted")) {
-                toast.error("⏳ AI is busy — quota exceeded. Please wait a minute and try again.", { autoClose: 6000 });
+                setAiError("AI is currently busy. Please wait a minute and try again.");
             } else {
-                toast.error(msg || "Failed to generate content");
+                setAiError(msg || "Failed to generate content. Please try again.");
             }
         } finally {
             setLoading(false);
@@ -322,7 +324,7 @@ export default function AiTools() {
                                         className="btn-gold w-full flex items-center justify-center gap-2 mt-2 py-3 text-xs"
                                     >
                                         <FiCpu />
-                                        <span>{loading ? "Generating..." : "Generate Description"}</span>
+                                        <span>{loading ? "Thinking..." : "Generate Description"}</span>
                                     </button>
                                 </>
                             )}
@@ -363,7 +365,7 @@ export default function AiTools() {
                                         className="btn-gold w-full flex items-center justify-center gap-2 mt-2 py-3 text-xs"
                                     >
                                         <FiGlobe />
-                                        <span>{loading ? "Generating..." : "Generate SEO Meta & Schema"}</span>
+                                        <span>{loading ? "Thinking..." : "Generate SEO Meta & Schema"}</span>
                                     </button>
                                 </>
                             )}
@@ -432,7 +434,7 @@ export default function AiTools() {
                                         className="btn-gold w-full flex items-center justify-center gap-2 mt-2 py-3 text-xs"
                                     >
                                         <FiZap />
-                                        <span>{loading ? "Generating..." : "Generate Marketing Copy"}</span>
+                                        <span>{loading ? "Thinking..." : "Generate Marketing Copy"}</span>
                                     </button>
                                 </>
                             )}
@@ -502,7 +504,7 @@ export default function AiTools() {
                                         className="btn-gold w-full flex items-center justify-center gap-2 mt-2 py-3 text-xs"
                                     >
                                         <FiLayout />
-                                        <span>{loading ? "Generating..." : "Generate Banner Layout Copy"}</span>
+                                        <span>{loading ? "Thinking..." : "Generate Banner Layout Copy"}</span>
                                     </button>
                                 </>
                             )}
@@ -548,7 +550,7 @@ export default function AiTools() {
                                         className="btn-gold w-full flex items-center justify-center gap-2 mt-2 py-3 text-xs"
                                     >
                                         <FiFileText />
-                                        <span>{loading ? "Generating..." : "Generate Rich Content"}</span>
+                                        <span>{loading ? "Thinking..." : "Generate Rich Content"}</span>
                                     </button>
                                 </>
                             )}
@@ -599,6 +601,13 @@ export default function AiTools() {
                                 <pre className="text-xs text-(--text-primary) font-mono leading-relaxed whitespace-pre-wrap font-light select-text">
                                     {result}
                                 </pre>
+                            ) : aiError ? (
+                                <div className="flex flex-col items-center justify-center gap-3 py-16">
+                                    <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                                        <FiCpu size={18} className="text-red-400" />
+                                    </div>
+                                    <p className="text-xs font-semibold text-red-400 text-center px-4">{aiError}</p>
+                                </div>
                             ) : (
                                 <div className="text-center py-16 text-(--text-muted) space-y-2">
                                     <FiCpu size={32} className="mx-auto opacity-15" />
