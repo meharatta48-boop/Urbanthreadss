@@ -24,7 +24,19 @@ export default function OrderSuccess() {
 
   useEffect(() => {
     if (!orderId || !orderTotal) return;
-    metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+    
+    // Prevent duplicate Purchase events (Requirement 5)
+    try {
+      const key = `tracked_purchase_${orderId}`;
+      const alreadyTracked = sessionStorage.getItem(key);
+      if (!alreadyTracked) {
+        metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+        sessionStorage.setItem(key, "true");
+      }
+    } catch (err) {
+      // Fallback in case sessionStorage is disabled or throws error
+      metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+    }
   }, [orderId, orderTotal]);
 
 

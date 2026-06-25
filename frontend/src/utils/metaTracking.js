@@ -16,9 +16,20 @@ class MetaTracker {
   // Initialize Meta Pixel
   init() {
     if (typeof window === 'undefined') return;
+
+    // If window.fbq is already loaded statically, process queued events immediately
+    if (window.fbq) {
+      this.loaded = true;
+      this.queue.forEach(event => {
+        if (window.fbq) window.fbq('track', event[0], event[1]);
+      });
+      this.queue = [];
+      return;
+    }
+
     if (!this.pixelId) return;
 
-    // Load Facebook Pixel script
+    // Load Facebook Pixel script dynamically as fallback
     (function (f, b, e, v, n, t, s) {
       if (f.fbq) return;
       n = f.fbq = function () {
@@ -53,14 +64,15 @@ class MetaTracker {
 
   // Track custom events
   track(event, parameters = {}) {
-    if (!this.pixelId) return;
-    if (!this.loaded) {
-      this.queue.push([event, parameters]);
+    // Check if fbq exists before calling it (Requirement 7)
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('track', event, parameters);
       return;
     }
 
-    if (typeof window !== 'undefined' && window.fbq) {
-      window.fbq('track', event, parameters);
+    // Queue if not loaded/available yet
+    if (!this.loaded) {
+      this.queue.push([event, parameters]);
     }
   }
 

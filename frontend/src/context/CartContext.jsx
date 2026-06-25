@@ -21,6 +21,7 @@ export const CartProvider = ({ children }) => {
   // Add product to cart
   const addToCart = (product) => {
     if (product.isCombo) {
+      metaTracker.trackAddToCart(product, product.quantity || 1, product.price);
       setCart((prev) => {
         const exists = prev.find(
           (item) =>
