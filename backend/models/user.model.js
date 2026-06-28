@@ -10,8 +10,10 @@ const userSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
+      sparse: true,   // null/undefined values unique constraint se bahar hain
+      default: null,
     },
 
     password: {
@@ -37,7 +39,9 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      default: "",
+      default: null,
+      unique: true,
+      sparse: true,   // null values unique constraint se bahar hain
     },
     loyaltyPoints: {
       type: Number,

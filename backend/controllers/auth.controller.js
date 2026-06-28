@@ -14,23 +14,36 @@ const hashResetToken = (token) =>
 ===================== */
 export const signup = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, phone, password } = req.body;
 
-    if (!name || !email || !password) {
-      return sendError(res, "All fields are required", 400);
+    // Name aur password zaroori hain
+    if (!name || !password) {
+      return sendError(res, "Name aur password zaroori hain", 400);
     }
 
-    const userExists = await User.findOne({ email });
-    if (userExists)
-      return sendError(res, "User already exists", 400);
+    // Email ya phone — ek zaroori hai
+    if (!email && !phone) {
+      return sendError(res, "Email ya phone number — ek dena zaroori hai", 400);
+    }
+
+    // Duplicate check
+    if (email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) return sendError(res, "Ye email pehle se registered hai", 400);
+    }
+    if (phone) {
+      const phoneExists = await User.findOne({ phone });
+      if (phoneExists) return sendError(res, "Ye phone number pehle se registered hai", 400);
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await User.create({
       name,
-      email,
+      email: email || null,
+      phone: phone || null,
       password: hashedPassword,
-      role: "user", // default role
+      role: "user",
     });
 
     return sendSuccess(res, {
@@ -39,6 +52,7 @@ export const signup = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
       },
     }, 201);
@@ -47,22 +61,32 @@ export const signup = async (req, res) => {
   }
 };
 
+
 /* =====================
    LOGIN (USER + ADMIN)
 ===================== */
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, phone, password } = req.body;
     const ipAddress = req.ip || req.headers["x-forwarded-for"] || "";
     const userAgent = req.headers["user-agent"] || "";
 
-    if (!email || !password) {
-      return sendError(res, "Email and password are required", 400);
+    // Email ya phone dono mein se ek zaroori hai
+    const identifier = email || phone;
+    if (!identifier || !password) {
+      return sendError(res, "Email/Phone aur password zaroori hain", 400);
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    // Email ya phone se user dhundo
+    let user = null;
+    if (email) {
+      user = await User.findOne({ email }).select("+password");
+    } else if (phone) {
+      user = await User.findOne({ phone }).select("+password");
+    }
+
     if (!user) {
-      await LoginHistory.create({ email, ipAddress, userAgent, status: "failed", failureReason: "Invalid email" });
+      await LoginHistory.create({ email: identifier, ipAddress, userAgent, status: "failed", failureReason: "Invalid email/phone" });
       return sendError(res, "Invalid credentials", 401);
     }
 

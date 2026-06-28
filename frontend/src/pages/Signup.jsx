@@ -2,12 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
-import { motion } from "framer-motion";
-import { FiUser, FiMail, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
-import { SERVER_URL } from "../services/api";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiUser, FiMail, FiPhone, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { getImageUrl } from "../utils/imageUrl";
-
-const API_BASE = SERVER_URL;
 
 export default function Signup() {
   const { signup } = useAuth();
@@ -15,16 +12,32 @@ export default function Signup() {
   const brandName = settings?.brandName || "URBAN THREAD";
   const logoImg = settings?.logoImage ? getImageUrl(settings.logoImage) : null;
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+
+  // "email" ya "phone" mode
+  const [signupMode, setSignupMode] = useState("email");
+  const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const success = await signup(form);
+    // Sirf active mode ka field bhejo (dusra null/empty rakho)
+    const payload = {
+      name: form.name,
+      password: form.password,
+      ...(signupMode === "email"
+        ? { email: form.email, phone: null }
+        : { phone: form.phone, email: null }),
+    };
+    const success = await signup(payload);
     setLoading(false);
     if (success) navigate("/shop");
+  };
+
+  const switchMode = (mode) => {
+    setSignupMode(mode);
+    setForm((f) => ({ ...f, email: "", phone: "" }));
   };
 
   return (
@@ -34,8 +47,9 @@ export default function Signup() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22,1,0.36,1] }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
+          {/* HEADER */}
           <div className="text-center mb-10 overflow-hidden">
             <div className="w-14 h-14 rounded-xl mx-auto flex items-center justify-center mb-5 overflow-hidden relative">
               <div className={`absolute inset-0 gold-gradient flex items-center justify-center rounded-xl transition-opacity duration-300${logoImg ? ' opacity-0' : ''}`}>
@@ -50,33 +64,110 @@ export default function Signup() {
             <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{brandName} family mein khush aamdeed!</p>
           </div>
 
-          <div className="rounded-2xl p-8 shadow-2xl"
+          {/* CARD */}
+          <div className="rounded-2xl p-6 sm:p-8 shadow-2xl"
             style={{ background: "var(--bg-surface)", border: "1px solid var(--border)" }}>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {[
-                { label: "Full Name", key: "name", type: "text", Icon: FiUser, placeholder: "Aapka pura naam" },
-                { label: "Email Address", key: "email", type: "email", Icon: FiMail, placeholder: "aapka@email.com" },
-              ].map(({ label, key, type, Icon, placeholder }) => (
-                <div key={key}>
-                  <label className="text-xs uppercase tracking-wider block mb-2"
-                    style={{ color: "var(--text-muted)" }}>{label}</label>
-                  <div className="relative">
-                    <Icon className="absolute left-4 top-1/2 -translate-y-1/2" size={16}
-                      style={{ color: "var(--text-muted)" }} />
-                    <input
-                      type={type}
-                      placeholder={placeholder}
-                      className="lux-input"
-                      style={{ paddingLeft: "42px" }}
-                      value={form[key]}
-                      onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-              ))}
+            {/* MODE TOGGLE */}
+            <div className="flex rounded-xl overflow-hidden mb-6" style={{ border: "1px solid var(--border)", background: "var(--bg-deep)" }}>
+              <button
+                type="button"
+                onClick={() => switchMode("email")}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-all duration-300"
+                style={{
+                  background: signupMode === "email" ? "var(--gold)" : "transparent",
+                  color: signupMode === "email" ? "#000" : "var(--text-muted)",
+                  borderRadius: "10px 0 0 10px",
+                }}
+              >
+                <FiMail size={15} />
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode("phone")}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-all duration-300"
+                style={{
+                  background: signupMode === "phone" ? "var(--gold)" : "transparent",
+                  color: signupMode === "phone" ? "#000" : "var(--text-muted)",
+                  borderRadius: "0 10px 10px 0",
+                }}
+              >
+                <FiPhone size={15} />
+                Phone
+              </button>
+            </div>
 
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* FULL NAME */}
+              <div>
+                <label className="text-xs uppercase tracking-wider block mb-2"
+                  style={{ color: "var(--text-muted)" }}>Full Name</label>
+                <div className="relative">
+                  <FiUser className="absolute left-4 top-1/2 -translate-y-1/2" size={16}
+                    style={{ color: "var(--text-muted)" }} />
+                  <input
+                    type="text"
+                    placeholder="Aapka pura naam"
+                    className="lux-input"
+                    style={{ paddingLeft: "42px" }}
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* EMAIL or PHONE — animated switch */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={signupMode}
+                  initial={{ opacity: 0, x: signupMode === "email" ? -20 : 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: signupMode === "email" ? 20 : -20 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {signupMode === "email" ? (
+                    <div>
+                      <label className="text-xs uppercase tracking-wider block mb-2"
+                        style={{ color: "var(--text-muted)" }}>Email Address</label>
+                      <div className="relative">
+                        <FiMail className="absolute left-4 top-1/2 -translate-y-1/2" size={16}
+                          style={{ color: "var(--text-muted)" }} />
+                        <input
+                          type="email"
+                          placeholder="aapka@email.com"
+                          className="lux-input"
+                          style={{ paddingLeft: "42px" }}
+                          value={form.email}
+                          onChange={(e) => setForm({ ...form, email: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="text-xs uppercase tracking-wider block mb-2"
+                        style={{ color: "var(--text-muted)" }}>Phone Number</label>
+                      <div className="relative">
+                        <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2" size={16}
+                          style={{ color: "var(--text-muted)" }} />
+                        <input
+                          type="tel"
+                          placeholder="03xx-xxxxxxx"
+                          className="lux-input"
+                          style={{ paddingLeft: "42px" }}
+                          value={form.phone}
+                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* PASSWORD */}
               <div>
                 <label className="text-xs uppercase tracking-wider block mb-2"
                   style={{ color: "var(--text-muted)" }}>Password</label>
@@ -105,7 +196,7 @@ export default function Signup() {
               </div>
 
               <button type="submit" disabled={loading} className="btn-gold w-full mt-2" style={{ width: "100%" }}>
-                {loading ? "Creating Account..." : <>Create Account <FiArrowRight /></>}
+                {loading ? "Creating Account..." : <> Create Account <FiArrowRight /></>}
               </button>
             </form>
 

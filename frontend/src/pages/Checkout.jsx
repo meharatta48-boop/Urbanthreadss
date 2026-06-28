@@ -281,7 +281,8 @@ export default function Checkout() {
 
                   <div>
                     <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-                      Email Address
+                      Email Address{" "}
+                      <span className="text-xs font-normal opacity-60 ml-1">(Optional)</span>
                     </label>
                     <input
                       type="email"
@@ -289,7 +290,7 @@ export default function Checkout() {
                       value={form.email}
                       onChange={handleChange}
                       className="lux-input"
-                      placeholder="your@email.com"
+                      placeholder="your@email.com (optional)"
                     />
                   </div>
 
