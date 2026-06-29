@@ -18,6 +18,8 @@ export default function OrderSuccess() {
   const orderTotal = location.state?.total;
   const isGuest    = location.state?.isGuest;
   const guestName  = location.state?.name;
+  const email      = location.state?.email;
+  const phone      = location.state?.phone;
   const products   = location.state?.products || [];
 
   useEffect(() => {
@@ -32,16 +34,18 @@ export default function OrderSuccess() {
       const key = `tracked_purchase_${orderId}`;
       const alreadyTracked = sessionStorage.getItem(key);
       if (!alreadyTracked) {
+        tiktokTracker.identifyUser({ email, phone });
         metaTracker.trackPurchase(orderId, Number(orderTotal), products);
         tiktokTracker.trackPurchase(orderId, Number(orderTotal), products);
         sessionStorage.setItem(key, "true");
       }
     } catch (err) {
       // Fallback in case sessionStorage is disabled or throws error
+      tiktokTracker.identifyUser({ email, phone });
       metaTracker.trackPurchase(orderId, Number(orderTotal), products);
       tiktokTracker.trackPurchase(orderId, Number(orderTotal), products);
     }
-  }, [orderId, orderTotal, products]);
+  }, [orderId, orderTotal, products, email, phone]);
 
 
   if (!orderId) return null;

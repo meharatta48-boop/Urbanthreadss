@@ -106,10 +106,16 @@ export default function Checkout() {
 
   useEffect(() => {
     if (cart.length > 0) {
+      if (user) {
+        tiktokTracker.identifyUser(user);
+      } else if (form.email || form.phone) {
+        tiktokTracker.identifyUser(form);
+      }
       metaTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
       tiktokTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
+      tiktokTracker.trackAddPaymentInfo(subtotal + DELIVERY, cart);
     }
-  }, [cart, subtotal, DELIVERY]);
+  }, [cart, subtotal, DELIVERY, user]);
 
   if (!cart.length) {
     navigate("/cart");
@@ -210,6 +216,8 @@ export default function Checkout() {
             total: total,
             isGuest: !user,
             name: form.name,
+            email: form.email || user?.email,
+            phone: form.phone || user?.phone,
             products: cart,
           },
         });

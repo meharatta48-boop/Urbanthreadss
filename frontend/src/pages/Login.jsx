@@ -7,6 +7,7 @@ import { FiMail, FiPhone, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-ic
 import { SERVER_URL } from "../services/api";
 import { getImageUrl } from "../utils/imageUrl";
 import { toast } from "react-toastify";
+import { tiktokTracker } from "../utils/tiktokTracking";
 
 const API_BASE = SERVER_URL;
 
@@ -44,6 +45,11 @@ export default function Login() {
     const data = await login(payload);
     setLoading(false);
     if (data) {
+      tiktokTracker.identifyUser({
+        email: data.user.email,
+        phone: data.user.phone,
+        id: data.user._id || data.user.id
+      });
       navigate(data.user.role === "admin" ? "/admin-dashboard" : "/shop");
     }
   };

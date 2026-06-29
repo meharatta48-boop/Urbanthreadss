@@ -5,6 +5,7 @@ import { useSettings } from "../context/SettingsContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiUser, FiMail, FiPhone, FiLock, FiArrowRight, FiEye, FiEyeOff } from "react-icons/fi";
 import { getImageUrl } from "../utils/imageUrl";
+import { tiktokTracker } from "../utils/tiktokTracking";
 
 export default function Signup() {
   const { signup } = useAuth();
@@ -32,7 +33,15 @@ export default function Signup() {
     };
     const success = await signup(payload);
     setLoading(false);
-    if (success) navigate("/shop");
+    if (success) {
+      // Identify user and track CompleteRegistration
+      tiktokTracker.identifyUser({
+        email: payload.email,
+        phone: payload.phone
+      });
+      tiktokTracker.trackCompleteRegistration();
+      navigate("/shop");
+    }
   };
 
   const switchMode = (mode) => {

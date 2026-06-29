@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { tiktokTracker } from '../utils/tiktokTracking';
 
 // Initial state
 const initialState = {
@@ -136,6 +137,7 @@ export const WishlistProvider = ({ children }) => {
       }
 
       dispatch({ type: WISHLIST_ACTIONS.ADD_TO_WISHLIST, payload: wishlistItem });
+      tiktokTracker.trackAddToWishlist(product, product.price);
       toast.success(`${product.name} added to wishlist!`);
     } catch (error) {
       console.error('Failed to add to wishlist:', error);
