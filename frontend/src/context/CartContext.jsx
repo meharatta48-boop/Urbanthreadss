@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { v4 } from "uuid"; // ✅ Vite compatible UUID
 import { metaTracker } from "../utils/metaTracking";
+import { tiktokTracker } from "../utils/tiktokTracking";
 
 const CartContext = createContext();
 
@@ -22,6 +23,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product) => {
     if (product.isCombo) {
       metaTracker.trackAddToCart(product, product.quantity || 1, product.price);
+      tiktokTracker.trackAddToCart(product, product.quantity || 1, product.price);
       setCart((prev) => {
         const exists = prev.find(
           (item) =>
@@ -59,6 +61,7 @@ export const CartProvider = ({ children }) => {
     }
 
     metaTracker.trackAddToCart(product, product.quantity || 1, product.price);
+    tiktokTracker.trackAddToCart(product, product.quantity || 1, product.price);
 
     setCart((prev) => {
       const exists = prev.find(

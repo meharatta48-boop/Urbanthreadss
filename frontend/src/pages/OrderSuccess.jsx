@@ -7,6 +7,7 @@ import {
 } from "react-icons/fi";
 import { useSettings } from "../context/SettingsContext";
 import { metaTracker } from "../utils/metaTracking";
+import { tiktokTracker } from "../utils/tiktokTracking";
 
 export default function OrderSuccess() {
   const location = useLocation();
@@ -17,6 +18,7 @@ export default function OrderSuccess() {
   const orderTotal = location.state?.total;
   const isGuest    = location.state?.isGuest;
   const guestName  = location.state?.name;
+  const products   = location.state?.products || [];
 
   useEffect(() => {
     if (!orderId) navigate("/shop", { replace: true });
@@ -30,14 +32,16 @@ export default function OrderSuccess() {
       const key = `tracked_purchase_${orderId}`;
       const alreadyTracked = sessionStorage.getItem(key);
       if (!alreadyTracked) {
-        metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+        metaTracker.trackPurchase(orderId, Number(orderTotal), products);
+        tiktokTracker.trackPurchase(orderId, Number(orderTotal), products);
         sessionStorage.setItem(key, "true");
       }
     } catch (err) {
       // Fallback in case sessionStorage is disabled or throws error
-      metaTracker.trackPurchase(orderId, Number(orderTotal), []);
+      metaTracker.trackPurchase(orderId, Number(orderTotal), products);
+      tiktokTracker.trackPurchase(orderId, Number(orderTotal), products);
     }
-  }, [orderId, orderTotal]);
+  }, [orderId, orderTotal, products]);
 
 
   if (!orderId) return null;

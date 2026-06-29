@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useSettings } from "../context/SettingsContext";
 import { metaTracker } from "../utils/metaTracking";
+import { tiktokTracker } from "../utils/tiktokTracking";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import api from "../services/api";
@@ -75,6 +76,7 @@ export default function ProductDetail() {
     
     // Track Meta Pixel ViewContent event
     metaTracker.trackViewContent(product);
+    tiktokTracker.trackViewContent(product);
     
     // Dynamically inject OG tags for crawlers that support JS
     const upsertMeta = (property, content) => {

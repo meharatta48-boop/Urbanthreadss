@@ -14,6 +14,7 @@ import { SERVER_URL } from "../services/api";
 import { getCartImageUrl } from "../utils/cloudinaryOptimized";
 import LazyImage from "../components/LazyImage";
 import { metaTracker } from "../utils/metaTracking";
+import { tiktokTracker } from "../utils/tiktokTracking";
 
 /* ─── ALL PAKISTAN CITIES (100+) ─── */
 const pakistanData = {
@@ -106,6 +107,7 @@ export default function Checkout() {
   useEffect(() => {
     if (cart.length > 0) {
       metaTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
+      tiktokTracker.trackInitiateCheckout(cart, subtotal + DELIVERY);
     }
   }, [cart, subtotal, DELIVERY]);
 
@@ -208,6 +210,7 @@ export default function Checkout() {
             total: total,
             isGuest: !user,
             name: form.name,
+            products: cart,
           },
         });
       } else {

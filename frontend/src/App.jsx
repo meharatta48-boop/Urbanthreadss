@@ -81,6 +81,7 @@ const SecurityCenter = lazyWithRetry(() => import("./admin/security/SecurityCent
 import { registerImageCache } from "./utils/imageCache";
 import { keepAliveManager } from "./utils/keepAlive";
 import { metaTracker } from "./utils/metaTracking";
+import { tiktokTracker } from "./utils/tiktokTracking";
 
 /* ADMIN GUARD */
 function AdminRoute({ children }) {
@@ -138,6 +139,7 @@ function RouteObservers() {
 
   useEffect(() => {
     metaTracker.trackPageView();
+    tiktokTracker.trackPageView();
   }, [location.pathname, location.search]);
 
   return null;
@@ -155,6 +157,7 @@ export default function App() {
     // preloadCriticalImages(["/logo.png"]); // Disabled to prevent unused preload warning
     keepAliveManager.start();
     metaTracker.init();
+    tiktokTracker.init();
   }, []);
 
   useEffect(() => {
