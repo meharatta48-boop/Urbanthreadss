@@ -33,7 +33,7 @@ router.post(
   ]),
   addProductReview
 );
-router.delete("/:id/reviews/:reviewId", protect, deleteProductReview);
+router.delete("/:id/reviews/:reviewId", protect, adminOnly, deleteProductReview);
 
 /* ADMIN ONLY */
 const productFields = productUpload.fields([

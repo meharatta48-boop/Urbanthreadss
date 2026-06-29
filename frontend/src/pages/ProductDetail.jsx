@@ -964,12 +964,13 @@ function ProductReviews({ product, setProduct }) {
                         {r.video && <FiVideo size={9} className="ml-1"/>}
                       </span>
                     )}
-                    {(isOwn || user?.role === "admin") && (
+                    {user?.role === "admin" && (
                       <button onClick={() => handleDelete(r._id)}
                         className="p-1.5 rounded-lg transition-colors"
                         style={{ color: "var(--text-muted)" }}
                         onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
-                        onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}>
+                        onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
+                        title="Admin: Review Delete Karo">
                         <FiTrash2 size={12} />
                       </button>
                     )}

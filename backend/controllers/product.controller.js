@@ -380,7 +380,7 @@ export const addProductReview = async (req, res) => {
   }
 };
 
-/* ─── DELETE PRODUCT REVIEW (admin or own review) ─── */
+/* ─── DELETE PRODUCT REVIEW (admin only) ─── */
 export const deleteProductReview = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -389,9 +389,9 @@ export const deleteProductReview = async (req, res) => {
     const review = product.reviews.id(req.params.reviewId);
     if (!review) return res.status(404).json({ success: false, message: "Review not found" });
 
-    // Only admin or review owner can delete
-    if (review.user?.toString() !== req.user._id.toString() && req.user.role !== "admin") {
-      return res.status(403).json({ success: false, message: "Permission nahi hai" });
+    // Only admin can delete reviews
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Sirf admin review delete kar sakta hai" });
     }
 
     product.reviews = product.reviews.filter((r) => r._id.toString() !== req.params.reviewId);
@@ -404,6 +404,7 @@ export const deleteProductReview = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 /* ─── BULK PRODUCTS ACTION (admin only) ─── */
 export const bulkProductAction = async (req, res, next) => {
