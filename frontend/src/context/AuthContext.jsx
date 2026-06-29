@@ -99,7 +99,12 @@ export const AuthProvider = ({ children }) => {
       toast.success("Login successful");
       return authData;
     } catch (error) {
-      const errMsg = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || "Login failed";
+      const errData = error.response?.data;
+      // Sab validation errors collect karo
+      const errMsg =
+        errData?.errors?.[0]?.message ||
+        errData?.message ||
+        "Login failed. Email/phone ya password check karein.";
       toast.error(errMsg);
       return null;
     }
@@ -121,7 +126,11 @@ export const AuthProvider = ({ children }) => {
       toast.success("Signup successful");
       return authData;
     } catch (error) {
-      const errMsg = error.response?.data?.errors?.[0]?.message || error.response?.data?.message || "Signup failed";
+      const errData = error.response?.data;
+      const errMsg =
+        errData?.errors?.[0]?.message ||
+        errData?.message ||
+        "Signup failed. Dobara koshish karein.";
       toast.error(errMsg);
       return null;
     }
