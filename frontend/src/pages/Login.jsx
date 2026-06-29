@@ -36,6 +36,15 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validation
+    if (loginMode === "email" && (!form.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))) {
+      toast.error("Valid email address dalein, jaise example@gmail.com");
+      return;
+    }
+    if (loginMode === "phone" && (!form.phone || !/^(\+92|0)[0-9]{9,10}$/.test(form.phone))) {
+      toast.error("Valid Pakistan phone number dalein, jaise 03001234567");
+      return;
+    }
     setLoading(true);
     // Sirf active mode ka field bhejo
     const payload = {
@@ -146,6 +155,7 @@ export default function Login() {
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                           required
+                          autoComplete="email"
                         />
                       </div>
                     </div>
@@ -162,8 +172,15 @@ export default function Login() {
                           className="lux-input"
                           style={{ paddingLeft: "42px" }}
                           value={form.phone}
-                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                          onChange={(e) => {
+                            // Sirf numbers aur + allow karo
+                            const val = e.target.value.replace(/[^\d+\-]/g, "");
+                            setForm({ ...form, phone: val });
+                          }}
                           required
+                          pattern="^(\+92|0)[0-9]{9,10}$"
+                          title="Valid Pakistan number dalein, jaise 03001234567 ya +923001234567"
+                          autoComplete="tel"
                         />
                       </div>
                     </div>
