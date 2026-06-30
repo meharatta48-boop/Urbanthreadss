@@ -14,6 +14,7 @@ export default function ComboOffers() {
   const [selections, setSelections] = useState({});
   const [shareOpen, setShareOpen] = useState({});
   const [copied, setCopied] = useState({});
+  const [linkColors, setLinkColors] = useState({});  // per-combo: same color for both items
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const comboRefs = useRef({});
@@ -120,16 +121,43 @@ export default function ComboOffers() {
   };
 
   const handleSelectionChange = (comboId, productIndex, key, value) => {
-    setSelections((prev) => ({
-      ...prev,
-      [comboId]: {
-        ...prev[comboId],
-        [productIndex]: {
-          ...prev[comboId]?.[productIndex],
-          [key]: value,
+    setSelections((prev) => {
+      const updated = {
+        ...prev,
+        [comboId]: {
+          ...prev[comboId],
+          [productIndex]: {
+            ...prev[comboId]?.[productIndex],
+            [key]: value,
+          },
         },
-      },
-    }));
+      };
+      // If same-color is linked and color changed on item 0 → mirror to item 1
+      if (key === "color" && productIndex === 0 && linkColors[comboId]) {
+        updated[comboId][1] = {
+          ...updated[comboId][1],
+          color: value,
+        };
+      }
+      return updated;
+    });
+  };
+
+  const toggleLinkColors = (comboId, currentColor) => {
+    setLinkColors(prev => {
+      const next = { ...prev, [comboId]: !prev[comboId] };
+      // When turning ON, immediately sync item 1 color to item 2
+      if (next[comboId] && currentColor) {
+        setSelections(sel => ({
+          ...sel,
+          [comboId]: {
+            ...sel[comboId],
+            1: { ...sel[comboId]?.[1], color: currentColor },
+          },
+        }));
+      }
+      return next;
+    });
   };
 
   const handleQuantityChange = (comboId, val) => {
@@ -441,6 +469,26 @@ export default function ComboOffers() {
                   </div>
 
                   {/* VARIANT CONTROLS */}
+                  {/* SAME COLOR TOGGLE — only show if both products have colors */}
+                  {colors1.length > 0 && colors2.length > 0 && (
+                    <div className="flex items-center justify-between px-3 py-2 rounded-xl mb-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)" }}>
+                      <span className="text-[11px] font-semibold" style={{ color: "var(--text-secondary)" }}>
+                        🎨 Dono ka same color chahiye?
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => toggleLinkColors(combo._id, sel[0]?.color)}
+                        className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full transition-all"
+                        style={linkColors[combo._id]
+                          ? { background: "var(--gold)", color: "#000" }
+                          : { background: "rgba(255,255,255,0.08)", color: "var(--text-muted)", border: "1px solid var(--border)" }
+                        }
+                      >
+                        {linkColors[combo._id] ? "✓ Same Color ON" : "Same Color OFF"}
+                      </button>
+                    </div>
+                  )}
+
                   <div
                     className="grid sm:grid-cols-2 gap-6 p-4 sm:p-5 rounded-xl border border-(--border)"
                     style={{ background: "rgba(255,255,255,0.02)" }}
@@ -530,6 +578,9 @@ export default function ComboOffers() {
                         >
                           {p2.name}
                         </h4>
+                        {linkColors[combo._id] && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: "var(--gold)", color: "#000" }}>🔗 Color Linked</span>
+                        )}
                       </div>
 
                       {/* Product 2 Color */}
@@ -540,19 +591,23 @@ export default function ComboOffers() {
                             style={{ color: "var(--text-muted)" }}
                           >
                             Select Color
+                            {linkColors[combo._id] && (
+                              <span className="ml-1 normal-case" style={{ color: "var(--gold)" }}>(item 1 se same)</span>
+                            )}
                           </label>
                           <div className="flex flex-wrap gap-1.5">
                             {colors2.map((c) => (
                               <button
                                 key={c}
                                 type="button"
+                                disabled={linkColors[combo._id]}
                                 onClick={() =>
                                   handleSelectionChange(combo._id, 1, "color", c)
                                 }
                                 className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${sel[1].color === c
                                     ? "bg-(--gold) text-black border-(--gold) shadow-sm"
                                     : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                  }`}
+                                  } ${linkColors[combo._id] ? "opacity-60 cursor-not-allowed" : ""}`}
                               >
                                 {c}
                               </button>
