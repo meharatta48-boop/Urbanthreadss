@@ -91,9 +91,30 @@ export default function ComboOffers() {
     }, 2000);
   };
 
-  const handleWhatsAppShare = (combo) => {
+  const handleWhatsAppShare = async (combo, p1, p2) => {
     const link = `${window.location.origin}/#combo-${combo._id}`;
-    const text = `🎉 *${combo.name}* - Combo Deal!\n💰 *Price:* Rs. ${combo.price?.toLocaleString()}\n🔥 *Sirf aaj:* ${link}`;
+    const savings = combo.comparePrice > combo.price
+      ? `\n💸 *Bachat:* Rs. ${(combo.comparePrice - combo.price).toLocaleString()} OFF!` : "";
+    const items = `\n📦 *Includes:*\n  ✅ ${p1?.name || "Item 1"}\n  ✅ ${p2?.name || "Item 2"}`;
+    const text = `🎉 *${combo.name}*\n━━━━━━━━━━━━━━━━━━━━\n💰 *Price:* Rs. ${combo.price?.toLocaleString()}${combo.comparePrice > combo.price ? `\n~~Rs. ${combo.comparePrice?.toLocaleString()}~~` : ""}${savings}${items}\n━━━━━━━━━━━━━━━━━━━━\n🛒 *Order Karo:* ${link}\n✨ _Urban Threads Pakistan_`;
+
+    // Try Web Share API (shows image on mobile WhatsApp)
+    const imageUrl = combo.images?.[0] || p1?.images?.[0];
+    if (navigator.share && imageUrl) {
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const ext = blob.type.includes("png") ? "png" : "jpg";
+        const file = new File([blob], `combo-${combo._id}.${ext}`, { type: blob.type });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], text, title: combo.name });
+          setShareOpen(prev => ({ ...prev, [combo._id]: false }));
+          return;
+        }
+      } catch (e) {
+        // fallback to WhatsApp link
+      }
+    }
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
     setShareOpen(prev => ({ ...prev, [combo._id]: false }));
   };
@@ -316,7 +337,7 @@ export default function ComboOffers() {
                           <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Share Deal</p>
                         </div>
                         <button
-                          onClick={() => handleWhatsAppShare(combo)}
+                          onClick={() => handleWhatsAppShare(combo, p1, p2)}
                           className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-(--bg-elevated) text-left"
                           style={{ color: "var(--text-secondary)" }}
                         >
