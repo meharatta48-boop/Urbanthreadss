@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FiShoppingCart, FiTag, FiLoader, FiPlus, FiMinus } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiShoppingCart, FiTag, FiLoader, FiPlus, FiMinus, FiShare2, FiLink, FiCheck } from "react-icons/fi";
 import api from "../../services/api";
 import { useCart } from "../../context/CartContext";
 import { toast } from "react-toastify";
@@ -12,8 +12,11 @@ export default function ComboOffers() {
   const [combos, setCombos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selections, setSelections] = useState({});
+  const [shareOpen, setShareOpen] = useState({});
+  const [copied, setCopied] = useState({});
   const { addToCart } = useCart();
   const navigate = useNavigate();
+  const comboRefs = useRef({});
 
   useEffect(() => {
     setLoading(true);
@@ -50,6 +53,20 @@ export default function ComboOffers() {
           }
         });
         setSelections(initialSelections);
+
+        // Auto-scroll to combo if URL has #combo-ID
+        setTimeout(() => {
+          const hash = window.location.hash;
+          if (hash && hash.startsWith("#combo-")) {
+            const targetId = hash.replace("#", "");
+            const el = document.getElementById(targetId);
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "center" });
+              el.style.boxShadow = "0 0 0 2px var(--gold)";
+              setTimeout(() => { el.style.boxShadow = ""; }, 2500);
+            }
+          }
+        }, 500);
       })
       .catch((err) => {
         console.error("Error fetching combos:", err);
@@ -58,6 +75,28 @@ export default function ComboOffers() {
         setLoading(false);
       });
   }, []);
+
+  const handleShareToggle = (comboId) => {
+    setShareOpen(prev => ({ ...prev, [comboId]: !prev[comboId] }));
+  };
+
+  const handleCopyLink = (combo) => {
+    const link = `${window.location.origin}/#combo-${combo._id}`;
+    navigator.clipboard.writeText(link);
+    setCopied(prev => ({ ...prev, [combo._id]: true }));
+    toast.success("Link copy ho gaya! 🔗");
+    setTimeout(() => {
+      setCopied(prev => ({ ...prev, [combo._id]: false }));
+      setShareOpen(prev => ({ ...prev, [combo._id]: false }));
+    }, 2000);
+  };
+
+  const handleWhatsAppShare = (combo) => {
+    const link = `${window.location.origin}/#combo-${combo._id}`;
+    const text = `🎉 *${combo.name}* - Combo Deal!\n💰 *Price:* Rs. ${combo.price?.toLocaleString()}\n🔥 *Sirf aaj:* ${link}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+    setShareOpen(prev => ({ ...prev, [combo._id]: false }));
+  };
 
   const handleSelectionChange = (comboId, productIndex, key, value) => {
     setSelections((prev) => ({
@@ -231,11 +270,13 @@ export default function ComboOffers() {
             return (
               <motion.div
                 key={combo._id}
+                id={`combo-${combo._id}`}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center bg-(--bg-surface) p-5 sm:p-10 rounded-2xl border border-(--border) shadow-xl relative overflow-hidden"
+                style={{ scrollMarginTop: "90px", transition: "box-shadow 0.4s ease" }}
               >
                 {/* COMBO DISCOUNT BADGE */}
                 {discountPercent > 0 && (
@@ -243,6 +284,69 @@ export default function ComboOffers() {
                     Save {discountPercent}%
                   </div>
                 )}
+
+                {/* SHARE BUTTON */}
+                <div className="absolute top-4 left-4 z-30">
+                  <button
+                    onClick={() => handleShareToggle(combo._id)}
+                    title="Share karo"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold backdrop-blur-sm transition-all shadow-lg ${
+                      shareOpen[combo._id]
+                        ? "text-black"
+                        : "border text-white hover:bg-white/20"
+                    }`}
+                    style={shareOpen[combo._id]
+                      ? { background: "var(--gold)", border: "none" }
+                      : { background: "rgba(0,0,0,0.55)", border: "1px solid rgba(255,255,255,0.15)" }
+                    }
+                  >
+                    <FiShare2 size={12} /> Share
+                  </button>
+
+                  <AnimatePresence>
+                    {shareOpen[combo._id] && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                        className="absolute left-0 top-full mt-2 rounded-2xl shadow-2xl overflow-hidden z-50 min-w-44"
+                        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+                      >
+                        <div className="px-4 py-2.5" style={{ borderBottom: "1px solid var(--border)" }}>
+                          <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>Share Deal</p>
+                        </div>
+                        <button
+                          onClick={() => handleWhatsAppShare(combo)}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-(--bg-elevated) text-left"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
+                          <span>💬</span> WhatsApp
+                        </button>
+                        <button
+                          onClick={() => handleCopyLink(combo)}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-(--bg-elevated) text-left"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
+                          {copied[combo._id]
+                            ? <><FiCheck size={14} className="text-green-400" /> Copied!</>
+                            : <><FiLink size={14} /> Link Copy Karo</>
+                          }
+                        </button>
+                        <button
+                          onClick={() => {
+                            const link = `${window.location.origin}/#combo-${combo._id}`;
+                            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`);
+                            setShareOpen(prev => ({ ...prev, [combo._id]: false }));
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-(--bg-elevated) text-left"
+                          style={{ color: "var(--text-secondary)" }}
+                        >
+                          <span>📘</span> Facebook
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 {/* IMAGES SIDE BY SIDE (PRO MOBILE LOOK) */}
                 <div className="lg:col-span-5 flex items-center justify-center gap-3 sm:gap-6 relative w-full pt-4 lg:pt-0">
