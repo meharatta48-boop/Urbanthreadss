@@ -468,186 +468,248 @@ export default function ComboOffers() {
                     )}
                   </div>
 
-                  {/* VARIANT CONTROLS */}
-                  {/* SAME COLOR TOGGLE — only show if both products have colors */}
-                  {colors1.length > 0 && colors2.length > 0 && (
-                    <div className="flex items-center justify-between px-3 py-2 rounded-xl mb-2" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)" }}>
-                      <span className="text-[11px] font-semibold" style={{ color: "var(--text-secondary)" }}>
-                        🎨 Dono ka same color chahiye?
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => toggleLinkColors(combo._id, sel[0]?.color)}
-                        className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full transition-all"
-                        style={linkColors[combo._id]
-                          ? { background: "var(--gold)", color: "#000" }
-                          : { background: "rgba(255,255,255,0.08)", color: "var(--text-muted)", border: "1px solid var(--border)" }
-                        }
-                      >
-                        {linkColors[combo._id] ? "✓ Same Color ON" : "Same Color OFF"}
-                      </button>
-                    </div>
-                  )}
+                  {/* ══════ VARIANT CONTROLS ══════ */}
+                  <div className="space-y-4">
 
-                  <div
-                    className="grid sm:grid-cols-2 gap-6 p-4 sm:p-5 rounded-xl border border-(--border)"
-                    style={{ background: "rgba(255,255,255,0.02)" }}
-                  >
-                    {/* PRODUCT 1 CONTROLS */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">
-                          1
-                        </span>
-                        <h4
-                          className="text-xs font-bold uppercase tracking-wider truncate"
-                          style={{ color: "var(--text-primary)" }}
-                        >
-                          {p1.name}
-                        </h4>
+                    {/* SAME COLOR TOGGLE — only show if both products have colors */}
+                    {colors1.length > 0 && colors2.length > 0 && (() => {
+                      const commonColors = colors1.filter(c => colors2.includes(c));
+                      if (commonColors.length === 0) return null;
+                      return (
+                        <div className="flex items-center justify-between px-3 py-2.5 rounded-xl"
+                          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--border)" }}>
+                          <div>
+                            <p className="text-[11px] font-bold" style={{ color: "var(--text-primary)" }}>🎨 Dono ka same color?</p>
+                            <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>Color ek — size alag alag</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => toggleLinkColors(combo._id, sel[0]?.color)}
+                            className="relative flex items-center gap-2 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all"
+                            style={linkColors[combo._id]
+                              ? { background: "var(--gold)", color: "#000" }
+                              : { background: "rgba(255,255,255,0.08)", color: "var(--text-muted)", border: "1px solid var(--border)" }
+                            }
+                          >
+                            <span className={`w-3 h-3 rounded-full border-2 transition-all ${linkColors[combo._id] ? "bg-black border-black" : "bg-transparent border-current"}`} />
+                            {linkColors[combo._id] ? "✓ Same Color ON" : "Same Color OFF"}
+                          </button>
+                        </div>
+                      );
+                    })()}
+
+                    {/* ── SAME COLOR ON: Single color picker + 2 size pickers ── */}
+                    {linkColors[combo._id] ? (() => {
+                      const commonColors = colors1.filter(c => colors2.includes(c));
+                      const sharedColor = sel[0]?.color;
+                      return (
+                        <div className="rounded-xl border border-(--border) overflow-hidden" style={{ background: "rgba(255,255,255,0.02)" }}>
+                          {/* SHARED COLOR PICKER */}
+                          {commonColors.length > 0 && (
+                            <div className="px-4 py-3 border-b border-(--border)">
+                              <label className="block text-[10px] font-bold uppercase tracking-widest mb-2"
+                                style={{ color: "var(--gold)" }}>
+                                🎨 Color — Dono Items ke liye
+                              </label>
+                              <div className="flex flex-wrap gap-2">
+                                {commonColors.map((c) => (
+                                  <button
+                                    key={c}
+                                    type="button"
+                                    onClick={() => {
+                                      handleSelectionChange(combo._id, 0, "color", c);
+                                    }}
+                                    className={`flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg border font-semibold transition-all ${sharedColor === c
+                                      ? "text-black shadow-md"
+                                      : "text-(--text-secondary) hover:border-(--gold)/60"
+                                    }`}
+                                    style={sharedColor === c
+                                      ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                      : { background: "transparent", borderColor: "var(--border)" }
+                                    }
+                                  >
+                                    {c}
+                                  </button>
+                                ))}
+                              </div>
+                              {sharedColor && (
+                                <p className="text-[10px] mt-1.5" style={{ color: "var(--text-muted)" }}>
+                                  ✓ <strong style={{ color: "var(--gold)" }}>{sharedColor}</strong> — dono items ke liye select hai
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* TWO SIZE PICKERS SIDE BY SIDE */}
+                          <div className="grid grid-cols-2 divide-x divide-(--border)">
+                            {/* Item 1 Size */}
+                            <div className="px-3 py-3 space-y-2">
+                              <div className="flex items-center gap-1.5 mb-2">
+                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-black" style={{ background: "var(--gold)" }}>1</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider truncate" style={{ color: "var(--text-primary)" }}>{p1.name}</span>
+                              </div>
+                              {sizes1.length > 0 ? (
+                                <>
+                                  <label className="block text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Size</label>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {sizes1.map((s) => (
+                                      <button key={s} type="button"
+                                        onClick={() => handleSelectionChange(combo._id, 0, "size", s)}
+                                        className={`text-[11px] min-w-9 px-2 py-1.5 rounded-lg border font-bold text-center transition-all ${sel[0]?.size === s
+                                          ? "text-black shadow-sm"
+                                          : "text-(--text-secondary) hover:border-(--gold)/60"
+                                        }`}
+                                        style={sel[0]?.size === s
+                                          ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                          : { background: "transparent", borderColor: "var(--border)" }
+                                        }
+                                      >{s}</button>
+                                    ))}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>Standard size</p>
+                              )}
+                            </div>
+
+                            {/* Item 2 Size */}
+                            <div className="px-3 py-3 space-y-2">
+                              <div className="flex items-center gap-1.5 mb-2">
+                                <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black text-black" style={{ background: "var(--gold)" }}>2</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider truncate" style={{ color: "var(--text-primary)" }}>{p2.name}</span>
+                              </div>
+                              {sizes2.length > 0 ? (
+                                <>
+                                  <label className="block text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>Size</label>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {sizes2.map((s) => (
+                                      <button key={s} type="button"
+                                        onClick={() => handleSelectionChange(combo._id, 1, "size", s)}
+                                        className={`text-[11px] min-w-9 px-2 py-1.5 rounded-lg border font-bold text-center transition-all ${sel[1]?.size === s
+                                          ? "text-black shadow-sm"
+                                          : "text-(--text-secondary) hover:border-(--gold)/60"
+                                        }`}
+                                        style={sel[1]?.size === s
+                                          ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                          : { background: "transparent", borderColor: "var(--border)" }
+                                        }
+                                      >{s}</button>
+                                    ))}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-[10px]" style={{ color: "var(--text-muted)" }}>Standard size</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })() : (
+                      /* ── SAME COLOR OFF: Fully independent selectors ── */
+                      <div className="grid sm:grid-cols-2 gap-5 p-4 sm:p-5 rounded-xl border border-(--border)"
+                        style={{ background: "rgba(255,255,255,0.02)" }}>
+
+                        {/* PRODUCT 1 CONTROLS */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-black" style={{ background: "var(--gold)" }}>1</span>
+                            <h4 className="text-xs font-bold uppercase tracking-wider truncate" style={{ color: "var(--text-primary)" }}>{p1.name}</h4>
+                          </div>
+                          {colors1.length > 0 && (
+                            <div>
+                              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>Color</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {colors1.map((c) => (
+                                  <button key={c} type="button"
+                                    onClick={() => handleSelectionChange(combo._id, 0, "color", c)}
+                                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-semibold transition-all ${sel[0]?.color === c
+                                      ? "text-black shadow-sm"
+                                      : "text-(--text-secondary) hover:border-(--gold)/60"
+                                    }`}
+                                    style={sel[0]?.color === c
+                                      ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                      : { background: "transparent", borderColor: "var(--border)" }
+                                    }
+                                  >{c}</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {sizes1.length > 0 && (
+                            <div>
+                              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>Size</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {sizes1.map((s) => (
+                                  <button key={s} type="button"
+                                    onClick={() => handleSelectionChange(combo._id, 0, "size", s)}
+                                    className={`text-[11px] min-w-9 px-2 py-1.5 rounded-lg border font-bold text-center transition-all ${sel[0]?.size === s
+                                      ? "text-black shadow-sm"
+                                      : "text-(--text-secondary) hover:border-(--gold)/60"
+                                    }`}
+                                    style={sel[0]?.size === s
+                                      ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                      : { background: "transparent", borderColor: "var(--border)" }
+                                    }
+                                  >{s}</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* PRODUCT 2 CONTROLS */}
+                        <div className="space-y-3 border-t sm:border-t-0 sm:border-l border-(--border) pt-4 sm:pt-0 sm:pl-5">
+                          <div className="flex items-center gap-2">
+                            <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-black" style={{ background: "var(--gold)" }}>2</span>
+                            <h4 className="text-xs font-bold uppercase tracking-wider truncate" style={{ color: "var(--text-primary)" }}>{p2.name}</h4>
+                          </div>
+                          {colors2.length > 0 && (
+                            <div>
+                              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>Color</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {colors2.map((c) => (
+                                  <button key={c} type="button"
+                                    onClick={() => handleSelectionChange(combo._id, 1, "color", c)}
+                                    className={`text-[11px] px-2.5 py-1 rounded-lg border font-semibold transition-all ${sel[1]?.color === c
+                                      ? "text-black shadow-sm"
+                                      : "text-(--text-secondary) hover:border-(--gold)/60"
+                                    }`}
+                                    style={sel[1]?.color === c
+                                      ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                      : { background: "transparent", borderColor: "var(--border)" }
+                                    }
+                                  >{c}</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {sizes2.length > 0 && (
+                            <div>
+                              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "var(--text-muted)" }}>Size</label>
+                              <div className="flex flex-wrap gap-1.5">
+                                {sizes2.map((s) => (
+                                  <button key={s} type="button"
+                                    onClick={() => handleSelectionChange(combo._id, 1, "size", s)}
+                                    className={`text-[11px] min-w-9 px-2 py-1.5 rounded-lg border font-bold text-center transition-all ${sel[1]?.size === s
+                                      ? "text-black shadow-sm"
+                                      : "text-(--text-secondary) hover:border-(--gold)/60"
+                                    }`}
+                                    style={sel[1]?.size === s
+                                      ? { background: "var(--gold)", borderColor: "var(--gold)" }
+                                      : { background: "transparent", borderColor: "var(--border)" }
+                                    }
+                                  >{s}</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-
-                      {/* Product 1 Color */}
-                      {colors1.length > 0 && (
-                        <div>
-                          <label
-                            className="block text-[10px] uppercase tracking-wider mb-1.5"
-                            style={{ color: "var(--text-muted)" }}
-                          >
-                            Select Color
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {colors1.map((c) => (
-                              <button
-                                key={c}
-                                type="button"
-                                onClick={() =>
-                                  handleSelectionChange(combo._id, 0, "color", c)
-                                }
-                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${sel[0].color === c
-                                    ? "bg-(--gold) text-black border-(--gold) shadow-sm"
-                                    : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                  }`}
-                              >
-                                {c}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Product 1 Size */}
-                      {sizes1.length > 0 && (
-                        <div>
-                          <label
-                            className="block text-[10px] uppercase tracking-wider mb-1.5"
-                            style={{ color: "var(--text-muted)" }}
-                          >
-                            Select Size
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {sizes1.map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() =>
-                                  handleSelectionChange(combo._id, 0, "size", s)
-                                }
-                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${sel[0].size === s
-                                    ? "bg-(--gold) text-black border-(--gold) shadow-sm"
-                                    : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                  }`}
-                              >
-                                {s}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* PRODUCT 2 CONTROLS */}
-                    <div className="space-y-4 border-t sm:border-t-0 sm:border-l border-(--border) pt-4 sm:pt-0 sm:pl-6">
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-(--gold)/20 border border-(--gold)/40 flex items-center justify-center text-[10px] font-bold text-(--gold)">
-                          2
-                        </span>
-                        <h4
-                          className="text-xs font-bold uppercase tracking-wider truncate"
-                          style={{ color: "var(--text-primary)" }}
-                        >
-                          {p2.name}
-                        </h4>
-                        {linkColors[combo._id] && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold" style={{ background: "var(--gold)", color: "#000" }}>🔗 Color Linked</span>
-                        )}
-                      </div>
-
-                      {/* Product 2 Color */}
-                      {colors2.length > 0 && (
-                        <div>
-                          <label
-                            className="block text-[10px] uppercase tracking-wider mb-1.5"
-                            style={{ color: "var(--text-muted)" }}
-                          >
-                            Select Color
-                            {linkColors[combo._id] && (
-                              <span className="ml-1 normal-case" style={{ color: "var(--gold)" }}>(item 1 se same)</span>
-                            )}
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {colors2.map((c) => (
-                              <button
-                                key={c}
-                                type="button"
-                                disabled={linkColors[combo._id]}
-                                onClick={() =>
-                                  handleSelectionChange(combo._id, 1, "color", c)
-                                }
-                                className={`text-[10px] px-2.5 py-1 rounded border font-semibold transition-all ${sel[1].color === c
-                                    ? "bg-(--gold) text-black border-(--gold) shadow-sm"
-                                    : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                  } ${linkColors[combo._id] ? "opacity-60 cursor-not-allowed" : ""}`}
-                              >
-                                {c}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Product 2 Size */}
-                      {sizes2.length > 0 && (
-                        <div>
-                          <label
-                            className="block text-[10px] uppercase tracking-wider mb-1.5"
-                            style={{ color: "var(--text-muted)" }}
-                          >
-                            Select Size
-                          </label>
-                          <div className="flex flex-wrap gap-1.5">
-                            {sizes2.map((s) => (
-                              <button
-                                key={s}
-                                type="button"
-                                onClick={() =>
-                                  handleSelectionChange(combo._id, 1, "size", s)
-                                }
-                                className={`text-[10px] min-w-8 px-2 py-1 rounded border font-bold text-center transition-all ${sel[1].size === s
-                                    ? "bg-(--gold) text-black border-(--gold) shadow-sm"
-                                    : "bg-transparent text-(--text-secondary) border-(--border) hover:border-(--text-secondary)"
-                                  }`}
-                              >
-                                {s}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
 
                   {/* PRICE & ADD TO CART CONTAINER */}
+
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                     <div>
                       <p
